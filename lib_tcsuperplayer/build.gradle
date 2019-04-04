@@ -1,8 +1,8 @@
 apply plugin: 'com.android.library'
 
 android {
-    compileSdkVersion 25
-    //buildToolsVersion = "25.0.2"
+    compileSdkVersion 27
+    buildToolsVersion = "26.0.2"
 
     defaultConfig {
         minSdkVersion 15
@@ -25,6 +25,6 @@ android {
 
 dependencies {
     compile fileTree(dir: 'libs', include: ['*.jar'])
-    compile(name: 'LiteAVSDK_Player_5.3.6001', ext: 'aar')
+    compile(name: 'LiteAVSDK_Player_5.3.265', ext: 'aar')
     compile 'com.github.ctiao:DanmakuFlameMaster:0.5.3'
 }

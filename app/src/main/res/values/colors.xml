@@ -1,6 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="colorPrimary">#3F51B5</color>
-    <color name="colorPrimaryDark">#303F9F</color>
-    <color name="colorAccent">#FF4081</color>
+    <color name="colorPrimary">#2A2A2A</color>
+    <color name="colorPrimaryDark">#2A2A2A</color>
+    <color name="colorAccent">#2A2A2A</color>
+
+    <!--MainActivity item被选中的颜色-->
+    <color name="main_item_selected_color">#555555</color>
+    <color name="main_item_unselected_color">#2A2A2A</color>
+    <color name="main_item_divide_color">#0d0d0d</color>
+
 </resources>

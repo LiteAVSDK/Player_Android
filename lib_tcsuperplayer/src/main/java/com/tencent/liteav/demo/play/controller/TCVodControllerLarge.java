@@ -66,6 +66,7 @@ public class TCVodControllerLarge extends TCVodControllerBase
     private TextView mTvVttText;
     private int mSelectedPos = -1;
     private HideLockViewRunnable mHideLockViewRunnable;
+    private ImageView mIvWatermark;
 
     public TCVodControllerLarge(Context context) {
         super(context);
@@ -223,6 +224,7 @@ public class TCVodControllerLarge extends TCVodControllerBase
         }
         mGestureVolumeBrightnessProgressLayout = (TCVolumeBrightnessProgressLayout) findViewById(R.id.gesture_progress);
         mGestureVideoProgressLayout = (TCVideoProgressLayout) findViewById(R.id.video_progress_layout);
+        mIvWatermark = findViewById(R.id.large_iv_water_mark);
     }
 
     @Override
@@ -320,7 +322,7 @@ public class TCVodControllerLarge extends TCVodControllerBase
         if (!mFirstShowQuality && mDefaultVideoQuality != null) {
             for (int i = 0 ; i  < mVideoQualityList.size(); i++) {
                 TCVideoQulity quality = mVideoQualityList.get(i);
-                if (quality!=null && quality.name!=null &&quality.name.equals(mDefaultVideoQuality.name)) {
+                if (quality!=null && quality.title!=null &&quality.title.equals(mDefaultVideoQuality.title)) {
                     mVodQualityView.setDefaultSelectedQuality(i);
                     break;
                 }
@@ -393,7 +395,7 @@ public class TCVodControllerLarge extends TCVodControllerBase
         if (mVideoQualityList != null && mVideoQualityList.size() != 0) {
             for (int i = 0 ; i  < mVideoQualityList.size(); i++) {
                 TCVideoQulity quality = mVideoQualityList.get(i);
-                if (quality!=null && quality.name!=null &&quality.name.equals(mDefaultVideoQuality.name)) {
+                if (quality!=null && quality.title!=null &&quality.title.equals(mDefaultVideoQuality.title)) {
                     mVodQualityView.setDefaultSelectedQuality(i);
                     break;
                 }
@@ -455,6 +457,16 @@ public class TCVodControllerLarge extends TCVodControllerBase
     public void release() {
         super.release();
         releaseTXImageSprite();
+    }
+
+    @Override
+    protected void finalize() throws Throwable {
+        super.finalize();
+        try {
+            release();
+        } catch (Exception e) {
+        } catch (Error e) {
+        }
     }
 
     private void releaseTXImageSprite() {
@@ -679,4 +691,29 @@ public class TCVodControllerLarge extends TCVodControllerBase
         }
     }
 
+
+    @Override
+    public void setWaterMarkBmp(final Bitmap bmp, final float xR, final float yR) {
+        super.setWaterMarkBmp(bmp, xR, yR);
+        if (bmp != null) {
+            this.post(new Runnable() {
+                @Override
+                public void run() {
+                    int width = TCVodControllerLarge.this.getWidth();
+                    int height = TCVodControllerLarge.this.getHeight();
+
+                    int x = (int) (width * xR) - bmp.getWidth() / 2;
+                    int y = (int) (height * yR) - bmp.getHeight() / 2;
+
+                    mIvWatermark.setX(x);
+                    mIvWatermark.setY(y);
+
+                    mIvWatermark.setVisibility(VISIBLE);
+                    setBitmap(mIvWatermark, bmp);
+                }
+            });
+        } else {
+            mIvWatermark.setVisibility(GONE);
+        }
+    }
 }

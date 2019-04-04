@@ -136,7 +136,9 @@ public class TCVodControllerFloat extends TCVodControllerBase implements View.On
             rect.x = x;
             rect.y = y;
         }
-        mVodController.onFloatUpdate(x, y);
+        if (mVodController != null) {
+            mVodController.onFloatUpdate(x, y);
+        }
     }
 
     @Override

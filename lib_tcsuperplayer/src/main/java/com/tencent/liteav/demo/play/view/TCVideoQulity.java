@@ -12,4 +12,13 @@ public class TCVideoQulity {
     public String title;
     public int bitrate;
     public String url;
+
+    public TCVideoQulity() {
+    }
+
+    public TCVideoQulity(int index, String title, String url) {
+        this.index = index;
+        this.title = title;
+        this.url = url;
+    }
 }

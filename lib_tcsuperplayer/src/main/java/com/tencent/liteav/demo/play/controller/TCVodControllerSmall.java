@@ -1,8 +1,13 @@
 package com.tencent.liteav.demo.play.controller;
 
+import android.animation.ValueAnimator;
 import android.content.Context;
+import android.graphics.Bitmap;
+import android.graphics.drawable.BitmapDrawable;
+import android.os.Build;
 import android.util.AttributeSet;
 import android.view.View;
+import android.view.animation.Animation;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
@@ -33,6 +38,9 @@ public class TCVodControllerSmall extends TCVodControllerBase implements View.On
 //    private LinearLayout mLayoutReplay;
     private TextView mTvBackToLive;
 //    private ProgressBar mPbLiveLoading;
+    private ImageView mBackground;
+    private Bitmap mBackgroundBmp;
+    private ImageView mIvWatermark;
 
     public TCVodControllerSmall(Context context) {
         super(context);
@@ -60,7 +68,10 @@ public class TCVodControllerSmall extends TCVodControllerBase implements View.On
         if (mPlayType == SuperPlayerConst.PLAYTYPE_LIVE_SHIFT) {
             mTvBackToLive.setVisibility(View.VISIBLE);
         }
+
     }
+
+
 
     /**
      * 隐藏播放控制界面
@@ -123,6 +134,69 @@ public class TCVodControllerSmall extends TCVodControllerBase implements View.On
         mGestureVolumeBrightnessProgressLayout = (TCVolumeBrightnessProgressLayout)findViewById(R.id.gesture_progress);
 
         mGestureVideoProgressLayout = (TCVideoProgressLayout) findViewById(R.id.video_progress_layout);
+
+        mBackground = (ImageView)findViewById(R.id.small_iv_background);
+        setBackground(mBackgroundBmp);
+
+        mIvWatermark = (ImageView)findViewById(R.id.small_iv_water_mark);
+    }
+
+
+    public void setBackground(final Bitmap bitmap) {
+        this.post(new Runnable() {
+            @Override
+            public void run() {
+                if (bitmap == null) return;
+                if (mBackground == null) {
+                    mBackgroundBmp = bitmap;
+                } else {
+                    setBitmap(mBackground, mBackgroundBmp);
+                }
+            }
+        });
+    }
+
+    public void dismissBackground() {
+        this.post(new Runnable() {
+            @Override
+            public void run() {
+                if (mBackground.getVisibility() != View.VISIBLE) return;
+                ValueAnimator alpha = ValueAnimator.ofFloat(1.0f, 0.0f);
+                alpha.setDuration(500);
+                alpha.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
+                    @Override
+                    public void onAnimationUpdate(ValueAnimator animation) {
+                        float value = (Float) animation.getAnimatedValue();
+                        mBackground.setAlpha(value);
+                        if (value == 0) {
+                            mBackground.setVisibility(GONE);
+                        }
+                    }
+                });
+                alpha.start();
+            }
+        });
+    }
+
+    public void showBackground() {
+        this.post(new Runnable() {
+            @Override
+            public void run() {
+                ValueAnimator alpha = ValueAnimator.ofFloat(0.0f, 1);
+                alpha.setDuration(500);
+                alpha.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
+                    @Override
+                    public void onAnimationUpdate(ValueAnimator animation) {
+                        float value = (Float) animation.getAnimatedValue();
+                        mBackground.setAlpha(value);
+                        if (value == 1) {
+                            mBackground.setVisibility(VISIBLE);
+                        }
+                    }
+                });
+                alpha.start();
+            }
+        });
     }
 
 
@@ -328,5 +402,31 @@ public class TCVodControllerSmall extends TCVodControllerBase implements View.On
         }
     }
 
+
+
+    @Override
+    public void setWaterMarkBmp(final Bitmap bmp, final float xR, final float yR) {
+        super.setWaterMarkBmp(bmp, xR, yR);
+        if (bmp != null) {
+            this.post(new Runnable() {
+                @Override
+                public void run() {
+                    int width = TCVodControllerSmall.this.getWidth();
+                    int height = TCVodControllerSmall.this.getHeight();
+
+                    int x = (int) (width * xR) - bmp.getWidth() / 2;
+                    int y = (int) (height * yR) - bmp.getHeight() / 2;
+
+                    mIvWatermark.setX(x);
+                    mIvWatermark.setY(y);
+
+                    mIvWatermark.setVisibility(VISIBLE);
+                    setBitmap(mIvWatermark, bmp);
+                }
+            });
+        } else {
+            mIvWatermark.setVisibility(GONE);
+        }
+    }
 
 }

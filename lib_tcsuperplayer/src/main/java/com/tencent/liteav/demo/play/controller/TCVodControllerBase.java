@@ -1,12 +1,19 @@
 package com.tencent.liteav.demo.play.controller;
 
 import android.content.Context;
+import android.graphics.Bitmap;
+import android.graphics.Canvas;
+import android.graphics.Color;
+import android.graphics.Paint;
+import android.graphics.drawable.BitmapDrawable;
+import android.os.Build;
 import android.text.TextUtils;
 import android.util.AttributeSet;
 import android.view.GestureDetector;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
@@ -56,6 +63,9 @@ public abstract class TCVodControllerBase extends RelativeLayout implements TCPo
     protected HideViewControllerViewRunnable mHideViewRunnable;
     protected boolean mIsChangingSeekBarProgress; // 标记状态，避免SeekBar由于视频播放的update而跳动
     protected boolean mFirstShowQuality;
+
+    protected Bitmap mWaterMarkBmp;
+    protected float mWaterMarkBmpX, mWaterMarkBmpY;
 
     public TCVodControllerBase(Context context) {
         super(context);
@@ -178,6 +188,20 @@ public abstract class TCVodControllerBase extends RelativeLayout implements TCPo
     public void setVideoQualityList(ArrayList<TCVideoQulity> videoQualityList) {
         mVideoQualityList = videoQualityList;
         mFirstShowQuality = false;
+    }
+
+    /**
+     * 设置明文水印
+     *
+     * @param bmp 水印内容
+     * @param x   归一化坐标: 水印中心点x坐标
+     * @param y   归一化坐标: 水印中心点y坐标
+     *            例子: x,y = 0.5 那么水印将放在播放视频的正中间
+     */
+    public void setWaterMarkBmp(Bitmap bmp, float x, float y) {
+        mWaterMarkBmp = bmp;
+        mWaterMarkBmpY = y;
+        mWaterMarkBmpX = x;
     }
 
     public void updateTitle(String title) {
@@ -390,7 +414,14 @@ public abstract class TCVodControllerBase extends RelativeLayout implements TCPo
     }
 
 
-
+    protected void setBitmap(ImageView view, Bitmap bitmap) {
+        if (view == null || bitmap == null) return;
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
+            view.setBackground(new BitmapDrawable(getContext().getResources(), bitmap));
+        } else {
+            view.setBackgroundDrawable(new BitmapDrawable(getContext().getResources(), bitmap));
+        }
+    }
 
     abstract void onShow();
 

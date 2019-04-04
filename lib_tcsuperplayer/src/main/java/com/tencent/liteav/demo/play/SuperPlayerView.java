@@ -1,5 +1,6 @@
 package com.tencent.liteav.demo.play;
 
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.AppOpsManager;
 import android.content.ContentResolver;
@@ -10,6 +11,7 @@ import android.content.pm.ActivityInfo;
 import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageInfo;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.PixelFormat;
 import android.net.Uri;
 import android.os.AsyncTask;
@@ -33,20 +35,20 @@ import android.widget.RelativeLayout;
 import android.widget.Toast;
 
 import com.tencent.liteav.basic.log.TXCLog;
-import com.tencent.liteav.demo.play.bean.TCPlayImageSpriteInfo;
 import com.tencent.liteav.demo.play.bean.TCPlayInfoStream;
-import com.tencent.liteav.demo.play.bean.TCVideoConfig;
+import com.tencent.liteav.demo.play.v3.SuperPlayerModelWrapper;
+import com.tencent.liteav.demo.play.v3.TCAdaptiveStreamingInfo;
 import com.tencent.liteav.demo.play.common.TCPlayerConstants;
 import com.tencent.liteav.demo.play.controller.TCVodControllerBase;
 import com.tencent.liteav.demo.play.controller.TCVodControllerFloat;
 import com.tencent.liteav.demo.play.controller.TCVodControllerLarge;
 import com.tencent.liteav.demo.play.controller.TCVodControllerSmall;
 import com.tencent.liteav.demo.play.net.LogReport;
-import com.tencent.liteav.demo.play.net.SuperVodInfoLoader;
+import com.tencent.liteav.demo.play.v3.SuperVodInfoLoaderV3;
 import com.tencent.liteav.demo.play.net.TCHttpURLClient;
 import com.tencent.liteav.demo.play.utils.NetWatcher;
-import com.tencent.liteav.demo.play.utils.PlayInfoResponseParser;
 import com.tencent.liteav.demo.play.utils.SuperPlayerUtil;
+import com.tencent.liteav.demo.play.v3.SuperPlayerVideoId;
 import com.tencent.liteav.demo.play.view.TCDanmuView;
 import com.tencent.liteav.demo.play.view.TCVideoQulity;
 import com.tencent.rtmp.ITXLivePlayListener;
@@ -60,20 +62,26 @@ import com.tencent.rtmp.TXVodPlayer;
 import com.tencent.rtmp.ui.TXCloudVideoView;
 
 import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
 import java.io.OutputStream;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Method;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.net.URLConnection;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.LinkedHashMap;
+
+import static com.tencent.rtmp.TXLiveConstants.PLAY_ERR_HLS_KEY;
 
 /**
  * Created by liyuejiao on 2018/7/3.
  */
 
 public class SuperPlayerView extends RelativeLayout implements ITXVodPlayListener, ITXLivePlayListener {
-    private static final String TAG = "SuperVodPlayerView";
+    private static final String TAG = "SuperPlayerView";
     private Context mContext;
 
     private int mPlayMode = SuperPlayerConst.PLAYMODE_WINDOW;
@@ -97,13 +105,10 @@ public class SuperPlayerView extends RelativeLayout implements ITXVodPlayListene
     // 直播播放器
     private TXLivePlayer mLivePlayer;
     private TXLivePlayConfig mLivePlayConfig;
-    private int mPlayType;
 
     private PlayerViewCallback mPlayerViewCallback;
     private int mCurrentPlayState = SuperPlayerConst.PLAYSTATE_PLAY;
     private boolean mDefaultSet;
-    private TCVideoConfig mTXVideoConfig;
-    private SuperPlayerModel mCurrentSuperPlayerModel;
     private long mReportLiveStartTime = -1;
     private long mReportVodStartTime = -1;
     private int mCurrentPlayType;
@@ -111,6 +116,12 @@ public class SuperPlayerView extends RelativeLayout implements ITXVodPlayListene
     private NetWatcher mWatcher;
     private boolean mIsMultiBitrateStream;
     private boolean mIsPlayWithFileid;
+
+    private String mCurrentPlayVideoURL;
+    private SuperPlayerModelWrapper mCurrentModelWrapper;
+
+    private Bitmap mWaterMarkBmp;
+    private float mWaterMarkBmpX, mWaterMarkBmpY;
 
     public SuperPlayerView(Context context) {
         super(context);
@@ -142,6 +153,9 @@ public class SuperPlayerView extends RelativeLayout implements ITXVodPlayListene
         mVodControllerLarge.setVodController(mVodController);
         mVodControllerSmall.setVodController(mVodController);
         mVodControllerFloat.setVodController(mVodController);
+
+        mVodControllerLarge.setWaterMarkBmp(mWaterMarkBmp, mWaterMarkBmpX, mWaterMarkBmpY);
+        mVodControllerSmall.setWaterMarkBmp(mWaterMarkBmp, mWaterMarkBmpX, mWaterMarkBmpY);
 
         removeAllViews();
         mRootView.removeView(mDanmuView);
@@ -190,19 +204,19 @@ public class SuperPlayerView extends RelativeLayout implements ITXVodPlayListene
     }
 
     private String getPackagename() {
-            PackageInfo info;
-            String packagename = "";
-            if (mContext != null) {
-                try {
-                    info = mContext.getPackageManager().getPackageInfo(mContext.getPackageName(), 0);
+        PackageInfo info;
+        String packagename = "";
+        if (mContext != null) {
+            try {
+                info = mContext.getPackageManager().getPackageInfo(mContext.getPackageName(), 0);
 
-                    // 当前版本的包名
-                    packagename = info.packageName;
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
+                // 当前版本的包名
+                packagename = info.packageName;
+            } catch (Exception e) {
+                e.printStackTrace();
             }
-            return packagename;
+        }
+        return packagename;
     }
 
     /**
@@ -240,9 +254,9 @@ public class SuperPlayerView extends RelativeLayout implements ITXVodPlayListene
         SuperPlayerGlobalConfig config = SuperPlayerGlobalConfig.getInstance();
 
         mLivePlayConfig = new TXLivePlayConfig();
-        HashMap<String, String> headers = new HashMap<>();
-        headers.put("Referer", "qcloud.com");
-        mLivePlayConfig.setHeaders(headers);
+        // HashMap<String, String> headers = new HashMap<>();
+        // headers.put("Referer", "qcloud.com");
+        // mLivePlayConfig.setHeaders(headers);
 
         mLivePlayer.setConfig(mLivePlayConfig);
         mLivePlayer.setRenderMode(config.renderMode);
@@ -251,81 +265,236 @@ public class SuperPlayerView extends RelativeLayout implements ITXVodPlayListene
         mLivePlayer.enableHardwareDecode(config.enableHWAcceleration);
     }
 
-    /**
-     * 播放一个点播或直播视频
-     *
-     * @param superPlayerModel
-     */
-    public void playWithMode(SuperPlayerModel superPlayerModel) {
-        initLivePlayer(getContext());
-        initVodPlayer(getContext());
-        stopPlay();
+    public void playWithModel(final SuperPlayerModel modelV3) {
+        SuperPlayerModelWrapper modelWrapper = new SuperPlayerModelWrapper(modelV3);
+        mCurrentModelWrapper = modelWrapper;
+        if (modelV3.videoId != null) { // 根据FileId播放
+            SuperVodInfoLoaderV3 v3Loader = new SuperVodInfoLoaderV3();
+            v3Loader.getVodByFileId(modelWrapper, new SuperVodInfoLoaderV3.OnVodInfoLoadListener() {
 
-        boolean isLivePlay = isLivePlay(superPlayerModel);
-        TXCLog.i(TAG, "playWithMode isLivePlay:" + isLivePlay);
+                @Override
+                public void onSuccess(SuperPlayerModelWrapper model) {
+                    Log.i(TAG, "onSuccess: requestModel = " + model.toString());
+                    stopPlay();
+                    initLivePlayer(getContext());
+                    initVodPlayer(getContext());
+                    mReportVodStartTime = System.currentTimeMillis();
+                    mVodPlayer.setPlayerView(mTXCloudVideoView);
+                    if (model.requestModel.videoId.version == SuperPlayerVideoId.FILE_ID_V3) {
+                        playV3ModelVideo(model);
+                    } else {
+                        playV2ModelVideo(model);
+                    }
+                    mCurrentPlayType = SuperPlayerConst.PLAYTYPE_VOD;
 
-        if (isLivePlay) {
-            mReportLiveStartTime = System.currentTimeMillis();
-            mLivePlayer.setPlayerView(mTXCloudVideoView);
-            if (mPlayType == TXLivePlayer.PLAY_TYPE_LIVE_FLV) { // flv流，再去判断是否支持时移
+                    mVodControllerSmall.updatePlayType(SuperPlayerConst.PLAYTYPE_VOD);
+                    mVodControllerLarge.updatePlayType(SuperPlayerConst.PLAYTYPE_VOD);
 
-                playTimeShiftLiveURL(superPlayerModel);
+                    String title = !TextUtils.isEmpty(modelV3.title) ? modelV3.title :
+                            (model.videoInfo != null && !TextUtils.isEmpty(model.videoInfo.videoName)) ? model.videoInfo.videoName : "";
+                    mVodControllerSmall.updateTitle(title);
+                    mVodControllerLarge.updateTitle(title);
 
-                if (superPlayerModel.multiVideoURLs != null && !superPlayerModel.multiVideoURLs.isEmpty()) {
-                    playMultiStreamLiveURL(superPlayerModel);
-                }  else {
-                    ArrayList<TCVideoQulity> videoQulities = new ArrayList<>();
-                    TCVideoQulity quality = new TCVideoQulity();
-                    quality.index = 2;
-                    quality.name = "FHD";
-                    quality.title = "超清";
-                    quality.url = superPlayerModel.videoURL;
-                    videoQulities.add(quality);
-                    mVodControllerLarge.setVideoQualityList(videoQulities);
-                    mVodControllerLarge.updateVideoQulity(quality);
+                    mVodControllerSmall.updateVideoProgress(0, 0);
+                    mVodControllerLarge.updateVideoProgress(0, 0);
+
+                    mVodControllerLarge.updateVttAndImages(model.imageInfo);
+                    mVodControllerLarge.updateKeyFrameDescInfos(model.keyFrameDescInfos);
+
+                    if (model.videoInfo != null && !TextUtils.isEmpty(model.videoInfo.coverUrl)) {
+                        // 显示封面图
+                        //showSmallCoverPic(model.videoInfo.coverUrl);
+                    }
                 }
 
-            } else { // 普通直播流，不支持时移，不支持多分辨率切换
-                ArrayList<TCVideoQulity> videoQulities = new ArrayList<>();
-                mVodControllerLarge.setVideoQualityList(videoQulities);
-                playNormalLiveURL(superPlayerModel);
+                @Override
+                public void onFail(int errCode, String message) {
+                    Log.i(TAG, "onFail: errorCode = " + errCode + " message = " + message);
+                    Toast.makeText(SuperPlayerView.this.getContext(), "播放视频文件失败 code = " + errCode + " msg = " + message, Toast.LENGTH_SHORT).show();
+                }
+            });
+        } else {
+            stopPlay();
+            initLivePlayer(getContext());
+            initVodPlayer(getContext());
+
+            ArrayList<TCVideoQulity> videoQualities = new ArrayList<>();
+            String videoURL = null;
+            if (modelWrapper.requestModel.multiURLs != null && !modelWrapper.requestModel.multiURLs.isEmpty()) {// 多码率URL播放
+                int i = 0;
+                for (SuperPlayerModel.SuperPlayerURL superPlayerURL : modelWrapper.requestModel.multiURLs) {
+                    if (i == modelWrapper.requestModel.playDefaultIndex) {
+                        videoURL = superPlayerURL.url;
+                    }
+                    videoQualities.add(new TCVideoQulity(i++, superPlayerURL.qualityName, superPlayerURL.url));
+                }
+                mVodControllerLarge.setVideoQualityList(videoQualities);
+                mVodControllerLarge.updateVideoQulity(videoQualities.get(modelWrapper.requestModel.playDefaultIndex));
+            } else if (!TextUtils.isEmpty(modelWrapper.requestModel.url)) { // 传统URL模式播放
+                videoQualities.add(new TCVideoQulity(0, modelWrapper.requestModel.qualityName, modelWrapper.requestModel.url));
+                videoURL = modelWrapper.requestModel.url;
+            }
+
+            if (TextUtils.isEmpty(videoURL)) {
+                Toast.makeText(this.getContext(), "播放视频失败，播放连接为空", Toast.LENGTH_SHORT).show();
+                return;
+            }
+            if (isRTMPPlay(videoURL)) {       // 直播播放器：普通RTMP流播放
+                mReportLiveStartTime = System.currentTimeMillis();
+                mLivePlayer.setPlayerView(mTXCloudVideoView);
+                playLiveURL(videoURL, TXLivePlayer.PLAY_TYPE_LIVE_RTMP);
+            } else if (isFLVPlay(videoURL)) { // 直播播放器：直播FLV流播放
+                mReportLiveStartTime = System.currentTimeMillis();
+                mLivePlayer.setPlayerView(mTXCloudVideoView);
+                playTimeShiftLiveURL(modelWrapper);
+                if (modelWrapper.requestModel.multiURLs != null && !modelWrapper.requestModel.multiURLs.isEmpty()) {
+                    startMultiStreamLiveURL(videoURL);
+                }
+            } else { // 点播播放器：播放点播文件
+                mReportVodStartTime = System.currentTimeMillis();
+                mVodPlayer.setPlayerView(mTXCloudVideoView);
+                mVodPlayer.setToken(modelWrapper.requestModel.token);
+                playVodURL(videoURL);
+            }
+            boolean isLivePlay = (isRTMPPlay(videoURL) || isFLVPlay(videoURL));
+            mCurrentPlayType = isLivePlay ? SuperPlayerConst.PLAYTYPE_LIVE : SuperPlayerConst.PLAYTYPE_VOD;
+
+            mVodControllerSmall.updatePlayType(isLivePlay ? SuperPlayerConst.PLAYTYPE_LIVE : SuperPlayerConst.PLAYTYPE_VOD);
+            mVodControllerLarge.updatePlayType(isLivePlay ? SuperPlayerConst.PLAYTYPE_LIVE : SuperPlayerConst.PLAYTYPE_VOD);
+
+            mVodControllerSmall.updateTitle(modelWrapper.requestModel.title);
+            mVodControllerLarge.updateTitle(modelWrapper.requestModel.title);
+
+            mVodControllerSmall.updateVideoProgress(0, 0);
+            mVodControllerLarge.updateVideoProgress(0, 0);
+        }
+    }
+
+    private void showSmallCoverPic(final String coverUrl) {
+        if (mTXCloudVideoView == null) return;
+        mTXCloudVideoView.post(new Runnable() {
+            @Override
+            public void run() {
+                AsyncTask.execute(new Runnable() {
+                    @Override
+                    public void run() {
+                        Bitmap bmp = null;
+                        InputStream in = null;
+                        try {
+                            URL imgUrl = new URL(coverUrl);
+                            //打开连接
+                            URLConnection con = imgUrl.openConnection();
+                            in = con.getInputStream();
+                            BitmapFactory.Options options = new BitmapFactory.Options();
+                            options.inJustDecodeBounds = true;
+                            bmp = BitmapFactory.decodeStream(in, null, options);
+                            int sampleSize = calculateInSampleSize(options.outWidth, options.outHeight, mTXCloudVideoView.getWidth(), mTXCloudVideoView.getHeight());
+
+                            options = new BitmapFactory.Options();
+                            options.inSampleSize = sampleSize;
+                            options.inJustDecodeBounds = false;
+
+                            in.close();
+
+                            //打开连接
+                            con = imgUrl.openConnection();
+                            in = con.getInputStream();
+                            bmp = BitmapFactory.decodeStream(in, null, options);
+                            in.close();
+                            mVodControllerSmall.setBackground(bmp);
+                            mVodControllerSmall.showBackground();
+
+                        } catch (MalformedURLException e) {
+                            e.printStackTrace();
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        } finally {
+                            if (in != null) {
+                                try {
+                                    in.close();
+                                } catch (IOException e) {
+                                    e.printStackTrace();
+                                }
+                            }
+                        }
+                    }
+                });
+            }
+        });
+    }
+
+    private int calculateInSampleSize(int inWidth, int inHeight,
+                                      int outWidth, int outHeight) {
+        // 源图片的高度和宽度
+        int inSampleSize = 1;
+        if (inHeight > outHeight || inWidth > outWidth) {
+            // 计算出实际宽高和目标宽高的比率
+            final int heightRatio = Math.round((float) inHeight / (float) outHeight);
+            final int widthRatio = Math.round((float) inWidth / (float) outWidth);
+            // 选择宽和高中最小的比率作为inSampleSize的值，这样可以保证最终图片的宽和高
+            // 一定都会大于等于目标的宽和高。
+            inSampleSize = heightRatio < widthRatio ? heightRatio : widthRatio;
+        }
+        return inSampleSize;
+    }
+
+    private void playV3ModelVideo(SuperPlayerModelWrapper model) {
+        // 播放顺序 Widevine 方式加密的 DASH，SimpleAES 方式加密的 HLS，未加密的 DASH，未加密的 HLS。
+        String videoURL = null;
+        boolean hasToken = !TextUtils.isEmpty(model.requestModel.token);
+        if (hasToken) { // 有Token的时候，才检测是否有drmType的连接
+            if (videoURL == null) {
+                videoURL = model.getDashWidevineURL();
+                model.currentPlayingType = SuperPlayerModelWrapper.URL_DASH_WIDE_VINE;
+            }
+
+            if (videoURL == null) {
+                videoURL = model.getSampleAESURL();
+                model.currentPlayingType = SuperPlayerModelWrapper.URL_HLS_SIMPLE_AES;
+
             }
         } else {
-            mReportVodStartTime = System.currentTimeMillis();
-            mVodPlayer.setPlayerView(mTXCloudVideoView);
-            if (!TextUtils.isEmpty(superPlayerModel.videoURL)) {
-                playWithURL(superPlayerModel);
-            } else {
-                playWithFileId(superPlayerModel);
-            }
+            Log.d(TAG, "playV3ModelVideo: token is null. ignore widevine and sampleaes url.");
         }
-        mCurrentPlayType = isLivePlay ? SuperPlayerConst.PLAYTYPE_LIVE : SuperPlayerConst.PLAYTYPE_VOD;
+        if (videoURL == null) {
+            videoURL = model.getDashURL();
+            model.currentPlayingType = SuperPlayerModelWrapper.URL_DASH;
+        }
+        if (videoURL == null) {
+            videoURL = model.getHLSURL();
+            model.currentPlayingType = SuperPlayerModelWrapper.URL_HLS;
+        }
 
-        mVodControllerSmall.updatePlayType(isLivePlay ? SuperPlayerConst.PLAYTYPE_LIVE : SuperPlayerConst.PLAYTYPE_VOD);
-        mVodControllerLarge.updatePlayType(isLivePlay ? SuperPlayerConst.PLAYTYPE_LIVE : SuperPlayerConst.PLAYTYPE_VOD);
-
-        mVodControllerSmall.updateTitle(superPlayerModel.title);
-        mVodControllerLarge.updateTitle(superPlayerModel.title);
-
-        mVodControllerSmall.updateVideoProgress(0, 0);
-        mVodControllerLarge.updateVideoProgress(0, 0);
-
-        TCPlayImageSpriteInfo info = superPlayerModel.imageInfo;
-        mVodControllerLarge.updateVttAndImages(info);
-        mVodControllerLarge.updateKeyFrameDescInfos(superPlayerModel.keyFrameDescInfos);
+        Log.i(TAG, "playV3ModelVideo: videoURL = " + videoURL + " currentPlayingType = " + model.currentPlayingType);
+        if (videoURL == null) {
+            Toast.makeText(SuperPlayerView.this.getContext(), "播放视频文件失败，无法找到对应的播放地址", Toast.LENGTH_SHORT).show();
+        } else {
+            if (hasToken
+                    && (model.currentPlayingType == SuperPlayerModelWrapper.URL_DASH_WIDE_VINE
+                    || model.currentPlayingType == SuperPlayerModelWrapper.URL_HLS_SIMPLE_AES)) {
+                mVodPlayer.setToken(model.requestModel.token);
+            } else {
+                mVodPlayer.setToken(null);
+            }
+            mVodPlayer.setConfig(mVodPlayConfig);
+            playVodURL(videoURL);
+        }
     }
+
 
     /**
      * 解析直播URL
      *
-     * @param videoURL
+     * @param url
+     * @param playType
      */
-    private void playLiveURL(String videoURL) {
+    private void playLiveURL(String url, int playType) {
+        mCurrentPlayVideoURL = url;
         if (mLivePlayer != null) {
             mLivePlayer.setPlayListener(this);
-            int result = mLivePlayer.startPlay(videoURL, mPlayType); // result返回值：0 success;  -1 empty url; -2 invalid url; -3 invalid playType;
+            int result = mLivePlayer.startPlay(url, playType); // result返回值：0 success;  -1 empty url; -2 invalid url; -3 invalid playType;
             if (result != 0) {
-                TXCLog.e(TAG, "playLiveURL videoURL:" + videoURL + ",result:" + result);
+                TXCLog.e(TAG, "playLiveURL videoURL:" + url + ",result:" + result);
             } else {
                 mCurrentPlayState = SuperPlayerConst.PLAYSTATE_PLAY;
                 TXCLog.e(TAG, "playLiveURL mCurrentPlayState:" + mCurrentPlayState);
@@ -334,213 +503,145 @@ public class SuperPlayerView extends RelativeLayout implements ITXVodPlayListene
     }
 
     /**
-     * 判断是否直播
-     *
-     * @param superPlayerModel
-     * @return
-     */
-    private boolean isLivePlay(SuperPlayerModel superPlayerModel) {
-        String videoURL = superPlayerModel.videoURL;
-        if (TextUtils.isEmpty(superPlayerModel.videoURL)) {
-            return false;
-        }
-        if (videoURL.startsWith("rtmp://")) {
-            mPlayType = TXLivePlayer.PLAY_TYPE_LIVE_RTMP;
-            return true;
-        } else if ((videoURL.startsWith("http://") || videoURL.startsWith("https://")) && videoURL.contains(".flv")) {
-            mPlayType = TXLivePlayer.PLAY_TYPE_LIVE_FLV;
-            return true;
-        } else {
-            return false;
-        }
-    }
-
-    /**
      * 播放点播
-     *
-     * @param superPlayerModel
      */
-    private void playWithURL(SuperPlayerModel superPlayerModel) {
-        mCurrentSuperPlayerModel = superPlayerModel;
-        TXCLog.i(TAG, "playWithURL videoURL:" + superPlayerModel.videoURL);
-        String videoURL = parseVodURL(superPlayerModel);
+    private void playVodURL(String url) {
+        mCurrentPlayVideoURL = url;
+        TXCLog.i(TAG, "playVodURL videoURL:" + url);
 
-        if (videoURL.endsWith(".m3u8")) {
+        if (url.endsWith(".m3u8")) {
             mIsMultiBitrateStream = true;
         }
         if (mVodPlayer != null) {
             mDefaultSet = false;
             mVodPlayer.setAutoPlay(true);
             mVodPlayer.setVodListener(this);
-            int ret = mVodPlayer.startPlay(videoURL);
+            int ret = mVodPlayer.startPlay(url);
             if (ret == 0) {
                 mCurrentPlayState = SuperPlayerConst.PLAYSTATE_PLAY;
-                TXCLog.e(TAG, "playWithURL mCurrentPlayState:" + mCurrentPlayState);
+                TXCLog.e(TAG, "playVodURL mCurrentPlayState:" + mCurrentPlayState);
             }
         }
         mIsPlayWithFileid = false;
     }
 
-    /**
-     * 解析点播地址
-     *
-     * @param superPlayerModel
-     * @return
-     */
-    private String parseVodURL(SuperPlayerModel superPlayerModel) {
-        return superPlayerModel.videoURL;
+    private boolean isRTMPPlay(String videoURL) {
+        if (!TextUtils.isEmpty(videoURL) && videoURL.startsWith("rtmp")) return true;
+        return false;
+    }
+
+    private boolean isFLVPlay(String videoURL) {
+        if ((!TextUtils.isEmpty(videoURL) && videoURL.startsWith("http://") || videoURL.startsWith("https://")) && videoURL.contains(".flv"))
+            return true;
+        return false;
     }
 
     /**
      * 解析直播地址
      *
-     * @param superPlayerModel
+     * @param model
      * @return
      */
-    private void playTimeShiftLiveURL(final SuperPlayerModel superPlayerModel) {
-        mCurrentSuperPlayerModel = superPlayerModel;
-        final String liveURL = superPlayerModel.videoURL;
+    private void playTimeShiftLiveURL(final SuperPlayerModelWrapper model) {
+        final String liveURL = model.requestModel.url;
         final String bizid = liveURL.substring(liveURL.indexOf("//") + 2, liveURL.indexOf("."));
         final String domian = SuperPlayerGlobalConfig.getInstance().playShiftDomain;
         final String streamid = liveURL.substring(liveURL.lastIndexOf("/") + 1, liveURL.lastIndexOf("."));
-        final int appid = superPlayerModel.appid;
+        final int appid = model.requestModel.appId;
         TXCLog.i(TAG, "bizid:" + bizid + ",streamid:" + streamid + ",appid:" + appid);
-
-        mTXVideoConfig = new TCVideoConfig();
-        mTXVideoConfig.isLive = true;
-        mTXVideoConfig.appid = appid;
-        mTXVideoConfig.streamid = streamid;
-        mTXVideoConfig.bizid = bizid;
-        mTXVideoConfig.videoURL = liveURL;
-        mTXVideoConfig.isNormalLive = false;
-
-        playLiveURL(liveURL);
-
-
-        try{
+        playLiveURL(liveURL, TXLivePlayer.PLAY_TYPE_LIVE_FLV);
+        try {
             int bizidNum = Integer.valueOf(bizid);
             mLivePlayer.prepareLiveSeek(domian, bizidNum);
-        }catch (NumberFormatException e) {
+        } catch (NumberFormatException e) {
             e.printStackTrace();
-            Log.e(TAG, "playTimeShiftLiveURL: bizidNum 错误 = %s " + mTXVideoConfig.bizid);
+            Log.e(TAG, "playTimeShiftLiveURL: bizidNum 错误 = %s " + bizid);
         }
     }
 
-    private void playNormalLiveURL(SuperPlayerModel superPlayerModel) {
-        mCurrentSuperPlayerModel = superPlayerModel;
-        TXCLog.i(TAG, "playNormalLiveURL videoURL:" + superPlayerModel.videoURL);
 
-        mTXVideoConfig = new TCVideoConfig();
-        mTXVideoConfig.isLive = true;
-        mTXVideoConfig.videoURL = superPlayerModel.videoURL;
-        mTXVideoConfig.isNormalLive = true;
-        playLiveURL(mTXVideoConfig.videoURL);
-    }
-
-    private void playMultiStreamLiveURL(SuperPlayerModel superPlayerModel) {
+    private void startMultiStreamLiveURL(String url) {
         mLivePlayConfig.setAutoAdjustCacheTime(false);
         mLivePlayConfig.setMaxAutoAdjustCacheTime(5);
         mLivePlayConfig.setMinAutoAdjustCacheTime(5);
         mLivePlayer.setConfig(mLivePlayConfig);
 
-        ArrayList<TCVideoQulity> videoQulities = new ArrayList<>();
-
-        TCVideoQulity quality = new TCVideoQulity();
-        if (!TextUtils.isEmpty(superPlayerModel.videoURL) && superPlayerModel.videoURL.contains("5815.liveplay.myqcloud.com")) {
-            quality.index = 0;
-            quality.name = "SD";
-            quality.title = "标清";
-            quality.url = superPlayerModel.videoURL.replace(".flv", "_550.flv");
-            videoQulities.add(quality);
-
-            quality = new TCVideoQulity();
-            quality.index = 1;
-            quality.name = "HD";
-            quality.title = "高清";
-            quality.url = superPlayerModel.videoURL.replace(".flv", "_900.flv");
-            videoQulities.add(quality);
-        }
-        quality = new TCVideoQulity();
-        quality.index = 2;
-        quality.name = "FHD";
-        quality.title = "超清";
-        quality.url = superPlayerModel.videoURL;
-        videoQulities.add(quality);
-
-        mVodControllerLarge.setVideoQualityList(videoQulities);
-        mVodControllerLarge.updateVideoQulity(quality);
         if (mWatcher == null) mWatcher = new NetWatcher(mContext);
-        mWatcher.start(superPlayerModel.videoURL, mLivePlayer);
+        mWatcher.start(url, mLivePlayer);
     }
 
+    private void playV2ModelVideo(SuperPlayerModelWrapper modelV3) {
+        if (modelV3.playInfoResponseParser == null) return;
+        TCPlayInfoStream masterPlayList = modelV3.playInfoResponseParser.getMasterPlayList();
+        modelV3.imageInfo = modelV3.playInfoResponseParser.getImageSpriteInfo();
+        modelV3.keyFrameDescInfos = modelV3.playInfoResponseParser.getKeyFrameDescInfos();
+        if (masterPlayList != null) { //有masterPlaylist
+            String videoURL = masterPlayList.getUrl();
+            playVodURL(videoURL);
+            mIsMultiBitrateStream = true;
+            mIsPlayWithFileid = true;
+            return;
+        }
 
-    /**
-     * 播放点播fileId
-     *
-     * @param superPlayerModel
-     */
-    private void playWithFileId(final SuperPlayerModel superPlayerModel) {
-        SuperVodInfoLoader loader = new SuperVodInfoLoader();
-        loader.setOnVodInfoLoadListener(new SuperVodInfoLoader.OnVodInfoLoadListener() {
-            @Override
-            public void onSuccess(PlayInfoResponseParser response) {
-                SuperPlayerModel playerModel = new SuperPlayerModel();
-                TCPlayInfoStream masterPlayList = response.getMasterPlayList();
-                playerModel.imageInfo = response.getImageSpriteInfo();
-                playerModel.keyFrameDescInfos = response.getKeyFrameDescInfos();
-                if (masterPlayList != null) { //有masterPlaylist
-                    String videoURL = masterPlayList.getUrl();
-                    playerModel.videoURL = videoURL;
-                    playWithURL(playerModel);
-                    mIsMultiBitrateStream = true;
-                    mIsPlayWithFileid = true;
-                    return;
-                }
-
-                LinkedHashMap<String, TCPlayInfoStream> transcodeList = response.getTranscodePlayList();
-                if (transcodeList != null && transcodeList.size() != 0) { //没有transcodePlaylist
-                    String defaultClassification = response.getDefaultVideoClassification();
-                    TCPlayInfoStream stream = transcodeList.get(defaultClassification);
-                    String videoURL = stream.getUrl();
-                    playerModel.videoURL = videoURL;
-                    playWithURL(playerModel);
-
-                    TCVideoQulity defaultVideoQulity = SuperPlayerUtil.convertToVideoQuality(stream);
-                    mVodControllerLarge.updateVideoQulity(defaultVideoQulity);
-
-                    ArrayList<TCVideoQulity> videoQulities = SuperPlayerUtil.convertToVideoQualityList(transcodeList);
-                    mVodControllerLarge.setVideoQualityList(videoQulities);
-                    mIsMultiBitrateStream = false;
-                    mIsPlayWithFileid = true;
-                    return;
-                }
-                TCPlayInfoStream sourceStream = response.getSource();
-                if (sourceStream != null) {
-                    String videoURL = sourceStream.getUrl();
-                    playerModel.videoURL = videoURL;
-                    playWithURL(playerModel);
-                    String defaultClassification = response.getDefaultVideoClassification();
-
-                    if (defaultClassification != null) {
-                        TCVideoQulity defaultVideoQulity = SuperPlayerUtil.convertToVideoQuality(sourceStream, defaultClassification);
-                        mVodControllerLarge.updateVideoQulity(defaultVideoQulity);
-
-                        ArrayList<TCVideoQulity> videoQulities = new ArrayList<>();
-                        videoQulities.add(defaultVideoQulity);
-                        mVodControllerLarge.setVideoQualityList(videoQulities);
-                        mIsMultiBitrateStream = false;
+        LinkedHashMap<String, TCPlayInfoStream> transcodeList = modelV3.playInfoResponseParser.getTranscodePlayList();
+        if (transcodeList != null && transcodeList.size() != 0) { //没有transcodePlaylist
+            String defaultClassification = modelV3.playInfoResponseParser.getDefaultVideoClassification();
+            TCPlayInfoStream stream = transcodeList.get(defaultClassification);
+            String videoURL = null;
+            if (stream != null) {
+                videoURL = stream.getUrl();
+            } else {
+                for (TCPlayInfoStream stream1: transcodeList.values()) {
+                    if (stream1 != null && stream1.getUrl() != null) {
+                        stream = stream1;
+                        videoURL = stream1.getUrl();
+                        break;
                     }
                 }
-
             }
+            if (videoURL != null) {
+                playVodURL(videoURL);
 
-            @Override
-            public void onFail(int errCode) {
 
+                ArrayList<TCVideoQulity> videoQulities = SuperPlayerUtil.convertToVideoQualityList(transcodeList);
+                mVodControllerLarge.setVideoQualityList(videoQulities);
+
+                TCVideoQulity defaultVideoQulity = SuperPlayerUtil.convertToVideoQuality(stream);
+                mVodControllerLarge.updateVideoQulity(defaultVideoQulity);
+
+                mIsMultiBitrateStream = false;
+                mIsPlayWithFileid = true;
+                return;
             }
-        });
-        loader.getVodByFileId(superPlayerModel);
+        }
+        TCPlayInfoStream sourceStream = modelV3.playInfoResponseParser.getSource();
+        if (sourceStream != null) {
+            String videoURL = sourceStream.getUrl();
+            playVodURL(videoURL);
+            String defaultClassification = modelV3.playInfoResponseParser.getDefaultVideoClassification();
+
+            if (defaultClassification != null) {
+                TCVideoQulity defaultVideoQulity = SuperPlayerUtil.convertToVideoQuality(sourceStream, defaultClassification);
+                mVodControllerLarge.updateVideoQulity(defaultVideoQulity);
+
+                ArrayList<TCVideoQulity> videoQulities = new ArrayList<>();
+                videoQulities.add(defaultVideoQulity);
+                mVodControllerLarge.setVideoQualityList(videoQulities);
+                mIsMultiBitrateStream = false;
+            }
+        }
+
     }
+
+//    public void setWaterMark(Bitmap bitmap, float x, float y) {
+//        mWaterMarkBmp = bitmap;
+//        mWaterMarkBmpX = x < 0 ? 0 : x;
+//        mWaterMarkBmpY = y < 0 ? 0 : y;
+//        if (mVodControllerLarge != null)
+//            mVodControllerLarge.setWaterMarkBmp(mWaterMarkBmp, mWaterMarkBmpX, mWaterMarkBmpY);
+//        if (mVodControllerSmall != null)
+//            mVodControllerSmall.setWaterMarkBmp(mWaterMarkBmp, mWaterMarkBmpX, mWaterMarkBmpY);
+//    }
 
     public void onResume() {
         if (mDanmuView != null && mDanmuView.isPrepared() && mDanmuView.isPaused()) {
@@ -617,7 +718,7 @@ public class SuperPlayerView extends RelativeLayout implements ITXVodPlayListene
         if (mReportVodStartTime != -1) {
             long reportEndTime = System.currentTimeMillis();
             long diff = (reportEndTime - mReportVodStartTime) / 1000;
-            LogReport.getInstance().uploadLogs(TCPlayerConstants.ELK_ACTION_VOD_TIME, diff, mIsPlayWithFileid?1:0);
+            LogReport.getInstance().uploadLogs(TCPlayerConstants.ELK_ACTION_VOD_TIME, diff, mIsPlayWithFileid ? 1 : 0);
             mReportVodStartTime = -1;
         }
     }
@@ -638,7 +739,7 @@ public class SuperPlayerView extends RelativeLayout implements ITXVodPlayListene
 
     private void fullScreen(boolean isFull) {//控制是否全屏显示
         if (getContext() instanceof Activity) {
-            Activity activity  = (Activity) getContext();
+            Activity activity = (Activity) getContext();
             if (isFull) {
                 //隐藏虚拟按键，并且全屏
                 View decorView = activity.getWindow().getDecorView();
@@ -663,6 +764,7 @@ public class SuperPlayerView extends RelativeLayout implements ITXVodPlayListene
 
         }
     }
+
     /**
      * 播放器控制
      */
@@ -679,7 +781,7 @@ public class SuperPlayerView extends RelativeLayout implements ITXVodPlayListene
             if (mLockScreen) //锁屏
                 return;
 
-            if (requestPlayMode ==SuperPlayerConst.PLAYMODE_FULLSCREEN) {
+            if (requestPlayMode == SuperPlayerConst.PLAYMODE_FULLSCREEN) {
                 fullScreen(true);
             } else {
                 fullScreen(false);
@@ -709,10 +811,17 @@ public class SuperPlayerView extends RelativeLayout implements ITXVodPlayListene
 
                 // 当前是悬浮窗
                 if (mPlayMode == SuperPlayerConst.PLAYMODE_FLOAT) {
-                    try{
-                        Intent intent = new Intent();
-                        // 这里要与Activity的Intent Filter对应起来，否则会crash
-                        intent.setAction("com.tencent.liteav.demo.play.action.float.click");
+                    try {
+
+                        Context viewContext = SuperPlayerView.this.getContext();
+                        Intent intent = null;
+
+                        if (viewContext instanceof Activity) {
+                            intent = new Intent(SuperPlayerView.this.getContext(), viewContext.getClass());
+                        } else {
+                            Toast.makeText(viewContext, "悬浮播放失败", Toast.LENGTH_SHORT).show();
+                            return;
+                        }
                         mContext.startActivity(intent);
 
                         pause();
@@ -726,7 +835,7 @@ public class SuperPlayerView extends RelativeLayout implements ITXVodPlayListene
                             mLivePlayer.setPlayerView(mTXCloudVideoView);
                         }
                         resume();
-                    }catch (Exception e) {
+                    } catch (Exception e) {
                         e.printStackTrace();
                     }
                 }
@@ -771,7 +880,12 @@ public class SuperPlayerView extends RelativeLayout implements ITXVodPlayListene
 
                 mWindowManager = (WindowManager) mContext.getApplicationContext().getSystemService(Context.WINDOW_SERVICE);
                 mWindowParams = new WindowManager.LayoutParams();
-                mWindowParams.type = WindowManager.LayoutParams.TYPE_SYSTEM_ALERT;
+//                mWindowParams.type = WindowManager.LayoutParams.TYPE_SYSTEM_ALERT;
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                    mWindowParams.type = WindowManager.LayoutParams.TYPE_APPLICATION_OVERLAY;
+                } else {
+                    mWindowParams.type = WindowManager.LayoutParams.TYPE_PHONE;
+                }
                 mWindowParams.flags = WindowManager.LayoutParams.FLAG_NOT_TOUCH_MODAL
                         | WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE;
                 mWindowParams.format = PixelFormat.TRANSLUCENT;
@@ -782,8 +896,12 @@ public class SuperPlayerView extends RelativeLayout implements ITXVodPlayListene
                 mWindowParams.y = rect.y;
                 mWindowParams.width = rect.width;
                 mWindowParams.height = rect.height;
-
-                mWindowManager.addView(mVodControllerFloat, mWindowParams);
+                try {
+                    mWindowManager.addView(mVodControllerFloat, mWindowParams);
+                } catch (Exception e) {
+                    Toast.makeText(SuperPlayerView.this.getContext(), "悬浮播放失败", Toast.LENGTH_SHORT).show();
+                    return;
+                }
 
                 TXCloudVideoView videoView = mVodControllerFloat.getFloatVideoView();
                 if (videoView != null) {
@@ -1028,14 +1146,15 @@ public class SuperPlayerView extends RelativeLayout implements ITXVodPlayListene
                     TXCLog.i(TAG, "save pos:" + mSeekPos);
 
                     stopPlay();
-                    playWithURL(mCurrentSuperPlayerModel);
+                    playVodURL(mCurrentPlayVideoURL);
                 }
             } else {
                 if (mLivePlayer != null) {
                     mLivePlayer.enableHardwareDecode(isAccelerate);
 
                     stopPlay();
-                    playWithMode(mCurrentSuperPlayerModel);
+                    playLiveURL(mCurrentPlayVideoURL, isRTMPPlay(mCurrentPlayVideoURL) ? TXLivePlayer.PLAY_TYPE_LIVE_RTMP : TXLivePlayer.PLAY_TYPE_LIVE_FLV);
+//                    playWithMode(mCurrentSuperPlayerModel);
                 }
             }
             // 硬件加速上报
@@ -1063,8 +1182,14 @@ public class SuperPlayerView extends RelativeLayout implements ITXVodPlayListene
          */
         @Override
         public void onReplay() {
-            if (!TextUtils.isEmpty(mCurrentSuperPlayerModel.videoURL)) {
-                playWithMode(mCurrentSuperPlayerModel);
+            if (!TextUtils.isEmpty(mCurrentPlayVideoURL)) {
+                if (isRTMPPlay(mCurrentPlayVideoURL)) {
+                    playLiveURL(mCurrentPlayVideoURL, TXLivePlayer.PLAY_TYPE_LIVE_RTMP);
+                } else if (isFLVPlay(mCurrentPlayVideoURL)) {
+                    playLiveURL(mCurrentPlayVideoURL, TXLivePlayer.PLAY_TYPE_LIVE_FLV);
+                } else {
+                    playVodURL(mCurrentPlayVideoURL);
+                }
             }
 
             if (mVodControllerLarge != null) {
@@ -1119,6 +1244,7 @@ public class SuperPlayerView extends RelativeLayout implements ITXVodPlayListene
         }, 3000);
     }
 
+    @SuppressLint("WrongThread")
     private void save2MediaStore(Bitmap image) {
 
         try {
@@ -1191,6 +1317,8 @@ public class SuperPlayerView extends RelativeLayout implements ITXVodPlayListene
         }
 
         if (event == TXLiveConstants.PLAY_EVT_VOD_PLAY_PREPARED) { //视频播放开始
+            mVodControllerSmall.dismissBackground();
+
             mVodControllerSmall.updateLiveLoadingState(false);
             mVodControllerLarge.updateLiveLoadingState(false);
 
@@ -1244,8 +1372,78 @@ public class SuperPlayerView extends RelativeLayout implements ITXVodPlayListene
             int duration = param.getInt(TXLiveConstants.EVT_PLAY_DURATION_MS);
             mVodControllerSmall.updateVideoProgress(progress / 1000, duration / 1000);
             mVodControllerLarge.updateVideoProgress(progress / 1000, duration / 1000);
+        } else if (event == TXLiveConstants.PLAY_ERR_NET_DISCONNECT) {// 播放点播文件失败
+            mVodPlayer.stopPlay(true);
+            mVodControllerSmall.updatePlayState(false);
+            mVodControllerLarge.updatePlayState(false);
+            boolean isV3Protocol = mCurrentModelWrapper != null && mCurrentModelWrapper.isV3Protocol();
+            if (isV3Protocol) {
+                // 如果当前播放的Type是WideVine的Dash流，可能是由于该设备兼容引起的，那么继续播放SampleAES的HLS流 或者其他流
+                Log.i(TAG, "onPlayEvent: play type = " + mCurrentModelWrapper.currentPlayingType + " video fail.");
+                String url = null;
+                if (mCurrentModelWrapper.currentPlayingType == SuperPlayerModelWrapper.URL_DASH_WIDE_VINE) {
+                    url = mCurrentModelWrapper.getSampleAESURL();
+                    if (url != null) {
+                        mCurrentModelWrapper.currentPlayingType = SuperPlayerModelWrapper.URL_HLS_SIMPLE_AES;
+                        Log.i(TAG, "onPlayEvent: try to play sampleaes video");
+                    } else {
+                        url = mCurrentModelWrapper.getDashURL();
+                        if (url != null) {
+                            mVodPlayer.setToken(null);// 未加密的流不需要token，清楚状态，避免播放失败
+                            mCurrentModelWrapper.currentPlayingType = SuperPlayerModelWrapper.URL_DASH;
+                            Log.i(TAG, "onPlayEvent: try to play dash video");
+                        } else {
+                            url = mCurrentModelWrapper.getHLSURL();
+                            if (url != null) {
+                                mVodPlayer.setToken(null);// 未加密的流不需要token，清楚状态，避免播放失败
+                                mCurrentModelWrapper.currentPlayingType = SuperPlayerModelWrapper.URL_HLS;
+                                Log.i(TAG, "onPlayEvent: try to play hls video");
+                            }
+                        }
+                    }
+                    if (url != null) {
+                        playVodURL(url);
+                    } else {
+                        Toast.makeText(mContext, param.getString(TXLiveConstants.EVT_DESCRIPTION), Toast.LENGTH_SHORT).show();
+                    }
+                }
+            } else {
+                Toast.makeText(mContext, param.getString(TXLiveConstants.EVT_DESCRIPTION), Toast.LENGTH_SHORT).show();
+            }
+        } else if (event == TXLiveConstants.PLAY_ERR_HLS_KEY) {
+            mVodPlayer.stopPlay(true);
+            mVodControllerSmall.updatePlayState(false);
+            mVodControllerLarge.updatePlayState(false);
+            boolean isV3Protocol = mCurrentModelWrapper != null && mCurrentModelWrapper.isV3Protocol();
+            if (isV3Protocol) {
+                // 如果当前播放的Type是WideVine的Dash流，可能是由于该设备兼容引起的，那么继续播放SampleAES的HLS流 或者其他流
+                Log.i(TAG, "onPlayEvent: play type = " + mCurrentModelWrapper.currentPlayingType + " video fail.");
+                String url = null;
+                if (mCurrentModelWrapper.currentPlayingType == SuperPlayerModelWrapper.URL_HLS_SIMPLE_AES) {
+                    url = mCurrentModelWrapper.getDashURL();
+                    if (url != null) {
+                        mVodPlayer.setToken(null);// 未加密的流不需要token，清楚状态，避免播放失败
+                        mCurrentModelWrapper.currentPlayingType = SuperPlayerModelWrapper.URL_DASH;
+                        Log.i(TAG, "onPlayEvent: try to play dash video");
+                    } else {
+                        url = mCurrentModelWrapper.getHLSURL();
+                        if (url != null) {
+                            mVodPlayer.setToken(null);// 未加密的流不需要token，清楚状态，避免播放失败
+                            mCurrentModelWrapper.currentPlayingType = SuperPlayerModelWrapper.URL_HLS;
+                            Log.i(TAG, "onPlayEvent: try to play hls video");
+                        }
+                    }
+                    if (url != null) {
+                        playVodURL(url);
+                    } else {
+                        Toast.makeText(mContext, param.getString(TXLiveConstants.EVT_DESCRIPTION), Toast.LENGTH_SHORT).show();
+                    }
+                }
+            } else {
+                Toast.makeText(mContext, param.getString(TXLiveConstants.EVT_DESCRIPTION), Toast.LENGTH_SHORT).show();
+            }
         }
-        if (event < 0) {
+        if (event < 0 && event != TXLiveConstants.PLAY_ERR_NET_DISCONNECT ) {
             mVodPlayer.stopPlay(true);
             mVodControllerSmall.updatePlayState(false);
             mVodControllerLarge.updatePlayState(false);
@@ -1430,7 +1628,15 @@ public class SuperPlayerView extends RelativeLayout implements ITXVodPlayListene
         if (mVodControllerFloat != null) {
             mVodControllerFloat.release();
         }
-        // 释放网络请求资源
-        TCHttpURLClient.getInstance().release();
+    }
+
+    @Override
+    protected void finalize() throws Throwable {
+        super.finalize();
+        try {
+            release();
+        } catch (Exception e) {
+        } catch (Error e) {
+        }
     }
 }
