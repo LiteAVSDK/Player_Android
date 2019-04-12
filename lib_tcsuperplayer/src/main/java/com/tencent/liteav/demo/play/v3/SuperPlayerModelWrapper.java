@@ -1,6 +1,7 @@
 package com.tencent.liteav.demo.play.v3;
 
 import android.text.TextUtils;
+import android.util.Pair;
 
 import com.tencent.liteav.demo.play.bean.TCPlayImageSpriteInfo;
 import com.tencent.liteav.demo.play.bean.TCPlayKeyFrameDescInfo;
@@ -72,8 +73,38 @@ public class SuperPlayerModelWrapper {
     }
 
     public String getDashURL() {
-        String url = getV3VideoURL("dash", "");
-        return url;
+//        String url = getV3VideoURL("dash", "");
+//        return url;
+        return null;// 降级忽略Dash的连接
+    }
+
+    public Pair<Integer, String> getNextURL(int currentType) {
+        int type = currentType;
+        String url = null;
+        if (currentType == URL_DASH_WIDE_VINE) {
+            url = getSampleAESURL();
+            type = URL_HLS_SIMPLE_AES;
+            if (url != null) {
+                return new Pair<>(type, url);
+            }
+        }
+
+        if (type == URL_HLS_SIMPLE_AES) {
+            url = getDashURL();
+            type = URL_DASH;
+            if (url != null) {
+                return new Pair<>(type, url);
+            }
+        }
+
+        if (type == URL_DASH) {
+            url = getHLSURL();
+            type = URL_HLS;
+            if (url != null) {
+                return new Pair<>(type, url);
+            }
+        }
+        return null;
     }
 
     private String getV3VideoURL(String videoPackage, String drmType) {

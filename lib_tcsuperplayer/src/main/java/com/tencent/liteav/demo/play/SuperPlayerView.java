@@ -24,6 +24,7 @@ import android.provider.Settings;
 import android.text.TextUtils;
 import android.util.AttributeSet;
 import android.util.Log;
+import android.util.Pair;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -37,7 +38,6 @@ import android.widget.Toast;
 import com.tencent.liteav.basic.log.TXCLog;
 import com.tencent.liteav.demo.play.bean.TCPlayInfoStream;
 import com.tencent.liteav.demo.play.v3.SuperPlayerModelWrapper;
-import com.tencent.liteav.demo.play.v3.TCAdaptiveStreamingInfo;
 import com.tencent.liteav.demo.play.common.TCPlayerConstants;
 import com.tencent.liteav.demo.play.controller.TCVodControllerBase;
 import com.tencent.liteav.demo.play.controller.TCVodControllerFloat;
@@ -45,7 +45,6 @@ import com.tencent.liteav.demo.play.controller.TCVodControllerLarge;
 import com.tencent.liteav.demo.play.controller.TCVodControllerSmall;
 import com.tencent.liteav.demo.play.net.LogReport;
 import com.tencent.liteav.demo.play.v3.SuperVodInfoLoaderV3;
-import com.tencent.liteav.demo.play.net.TCHttpURLClient;
 import com.tencent.liteav.demo.play.utils.NetWatcher;
 import com.tencent.liteav.demo.play.utils.SuperPlayerUtil;
 import com.tencent.liteav.demo.play.v3.SuperPlayerVideoId;
@@ -73,8 +72,6 @@ import java.net.URLConnection;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.LinkedHashMap;
-
-import static com.tencent.rtmp.TXLiveConstants.PLAY_ERR_HLS_KEY;
 
 /**
  * Created by liyuejiao on 2018/7/3.
@@ -106,7 +103,7 @@ public class SuperPlayerView extends RelativeLayout implements ITXVodPlayListene
     private TXLivePlayer mLivePlayer;
     private TXLivePlayConfig mLivePlayConfig;
 
-    private PlayerViewCallback mPlayerViewCallback;
+    private OnSuperPlayerViewCallback mPlayerViewCallback;
     private int mCurrentPlayState = SuperPlayerConst.PLAYSTATE_PLAY;
     private boolean mDefaultSet;
     private long mReportLiveStartTime = -1;
@@ -122,6 +119,8 @@ public class SuperPlayerView extends RelativeLayout implements ITXVodPlayListene
 
     private Bitmap mWaterMarkBmp;
     private float mWaterMarkBmpX, mWaterMarkBmpY;
+
+    private float mCurrentTimeWhenPause; // 记录onPause暂停时的时间，在播放widevine格式的时候，onResume需要Seek回去，否则需要等到下一个I帧到来才能有画面。
 
     public SuperPlayerView(Context context) {
         super(context);
@@ -266,6 +265,7 @@ public class SuperPlayerView extends RelativeLayout implements ITXVodPlayListene
     }
 
     public void playWithModel(final SuperPlayerModel modelV3) {
+        mCurrentTimeWhenPause = 0;
         SuperPlayerModelWrapper modelWrapper = new SuperPlayerModelWrapper(modelV3);
         mCurrentModelWrapper = modelWrapper;
         if (modelV3.videoId != null) { // 根据FileId播放
@@ -478,6 +478,12 @@ public class SuperPlayerView extends RelativeLayout implements ITXVodPlayListene
             }
             mVodPlayer.setConfig(mVodPlayConfig);
             playVodURL(videoURL);
+
+            TCVideoQulity defaultVideoQulity = new TCVideoQulity(0, "原画", videoURL);
+            ArrayList<TCVideoQulity> videoQulities = new ArrayList<>();
+            videoQulities.add(defaultVideoQulity);
+            mVodControllerLarge.setVideoQualityList(videoQulities);
+            mVodControllerLarge.updateVideoQulity(defaultVideoQulity);
         }
     }
 
@@ -509,7 +515,7 @@ public class SuperPlayerView extends RelativeLayout implements ITXVodPlayListene
         mCurrentPlayVideoURL = url;
         TXCLog.i(TAG, "playVodURL videoURL:" + url);
 
-        if (url.endsWith(".m3u8")) {
+        if (url.contains(".m3u8")) {
             mIsMultiBitrateStream = true;
         }
         if (mVodPlayer != null) {
@@ -654,8 +660,12 @@ public class SuperPlayerView extends RelativeLayout implements ITXVodPlayListene
         if (mCurrentPlayType == SuperPlayerConst.PLAYTYPE_VOD) {
             if (mVodPlayer != null) {
                 mVodPlayer.resume();
+                // 解决Widevine有声音画面不动问题
+                if (mCurrentModelWrapper != null && mCurrentModelWrapper.currentPlayingType == SuperPlayerModelWrapper.URL_DASH_WIDE_VINE && mCurrentTimeWhenPause != 0) {
+                    mVodPlayer.seek(mCurrentTimeWhenPause);
+                    mCurrentTimeWhenPause = 0;
+                }
             }
-
         } else {
 //            if (mLivePlayer != null) {
 //                mLivePlayer.resume();
@@ -670,9 +680,14 @@ public class SuperPlayerView extends RelativeLayout implements ITXVodPlayListene
         pause();
     }
 
+
     private void pause() {
         if (mCurrentPlayType == SuperPlayerConst.PLAYTYPE_VOD) {
             if (mVodPlayer != null) {
+                // 解决Widevine有声音画面不动问题
+                if (mCurrentModelWrapper != null && mCurrentModelWrapper.currentPlayingType == SuperPlayerModelWrapper.URL_DASH_WIDE_VINE) {
+                    mCurrentTimeWhenPause = mVodPlayer.getCurrentPlaybackTime();
+                }
                 mVodPlayer.pause();
             }
         } else {
@@ -728,7 +743,7 @@ public class SuperPlayerView extends RelativeLayout implements ITXVodPlayListene
      *
      * @param callback
      */
-    public void setPlayerViewCallback(PlayerViewCallback callback) {
+    public void setPlayerViewCallback(OnSuperPlayerViewCallback callback) {
         mPlayerViewCallback = callback;
     }
 
@@ -802,7 +817,7 @@ public class SuperPlayerView extends RelativeLayout implements ITXVodPlayListene
                 rotateScreenOrientation(SuperPlayerConst.ORIENTATION_LANDSCAPE);
 
                 if (mPlayerViewCallback != null) {
-                    mPlayerViewCallback.hideViews();
+                    mPlayerViewCallback.onStartFullScreenPlay();
                 }
             }
             // 请求窗口模式
@@ -824,6 +839,7 @@ public class SuperPlayerView extends RelativeLayout implements ITXVodPlayListene
                         }
                         mContext.startActivity(intent);
 
+                        float currentTime = mVodPlayer.getCurrentPlaybackTime();// 记录给恢复的时候使用的
                         pause();
                         if (mLayoutParamWindowMode == null)
                             return;
@@ -835,6 +851,10 @@ public class SuperPlayerView extends RelativeLayout implements ITXVodPlayListene
                             mLivePlayer.setPlayerView(mTXCloudVideoView);
                         }
                         resume();
+                        // 解决Widevine有声音画面不动问题
+                        if (mCurrentModelWrapper != null && mCurrentModelWrapper.currentPlayingType == SuperPlayerModelWrapper.URL_DASH_WIDE_VINE) {
+                            mVodPlayer.seek(currentTime);
+                        }
                     } catch (Exception e) {
                         e.printStackTrace();
                     }
@@ -850,7 +870,7 @@ public class SuperPlayerView extends RelativeLayout implements ITXVodPlayListene
                     rotateScreenOrientation(SuperPlayerConst.ORIENTATION_PORTRAIT);
 
                     if (mPlayerViewCallback != null) {
-                        mPlayerViewCallback.showViews();
+                        mPlayerViewCallback.onStopFullScreenPlay();
                     }
                 }
             }
@@ -875,7 +895,7 @@ public class SuperPlayerView extends RelativeLayout implements ITXVodPlayListene
                         return;
                     }
                 }
-
+                float currentTime = mVodPlayer.getCurrentPlaybackTime();// 记录给恢复的时候使用的
                 pause();
 
                 mWindowManager = (WindowManager) mContext.getApplicationContext().getSystemService(Context.WINDOW_SERVICE);
@@ -911,6 +931,10 @@ public class SuperPlayerView extends RelativeLayout implements ITXVodPlayListene
                         mLivePlayer.setPlayerView(videoView);
                     }
                     resume();
+                    // 解决Widevine有声音画面不动问题
+                    if (mCurrentModelWrapper != null && mCurrentModelWrapper.currentPlayingType == SuperPlayerModelWrapper.URL_DASH_WIDE_VINE) {
+                        mVodPlayer.seek(currentTime);
+                    }
                 }
                 // 悬浮窗上报
                 LogReport.getInstance().uploadLogs(TCPlayerConstants.ELK_ACTION_FLOATMOE, 0, 0);
@@ -931,7 +955,7 @@ public class SuperPlayerView extends RelativeLayout implements ITXVodPlayListene
             // 当前是窗口模式，返回退出播放器
             else if (playMode == SuperPlayerConst.PLAYMODE_WINDOW) {
                 if (mPlayerViewCallback != null) {
-                    mPlayerViewCallback.onQuit(SuperPlayerConst.PLAYMODE_WINDOW);
+                    mPlayerViewCallback.onClickSmallReturnBtn();
                 }
                 if (mCurrentPlayState == SuperPlayerConst.PLAYSTATE_PLAY) {
                     onRequestPlayMode(SuperPlayerConst.PLAYMODE_FLOAT);
@@ -941,7 +965,7 @@ public class SuperPlayerView extends RelativeLayout implements ITXVodPlayListene
             else if (playMode == SuperPlayerConst.PLAYMODE_FLOAT) {
                 mWindowManager.removeView(mVodControllerFloat);
                 if (mPlayerViewCallback != null) {
-                    mPlayerViewCallback.onQuit(SuperPlayerConst.PLAYMODE_FLOAT);
+                    mPlayerViewCallback.onClickFloatCloseBtn();
                 }
             }
         }
@@ -951,6 +975,11 @@ public class SuperPlayerView extends RelativeLayout implements ITXVodPlayListene
             if (mCurrentPlayType == SuperPlayerConst.PLAYTYPE_VOD) {
                 if (mVodPlayer != null) {
                     mVodPlayer.resume();
+                    // 解决Widevine有声音画面不动问题
+                    if (mCurrentModelWrapper != null && mCurrentModelWrapper.currentPlayingType == SuperPlayerModelWrapper.URL_DASH_WIDE_VINE && mCurrentTimeWhenPause != 0) {
+                        mVodPlayer.seek(mCurrentTimeWhenPause);
+                        mCurrentTimeWhenPause = 0;
+                    }
                 }
             } else {
                 if (mLivePlayer != null) {
@@ -1372,78 +1401,43 @@ public class SuperPlayerView extends RelativeLayout implements ITXVodPlayListene
             int duration = param.getInt(TXLiveConstants.EVT_PLAY_DURATION_MS);
             mVodControllerSmall.updateVideoProgress(progress / 1000, duration / 1000);
             mVodControllerLarge.updateVideoProgress(progress / 1000, duration / 1000);
-        } else if (event == TXLiveConstants.PLAY_ERR_NET_DISCONNECT) {// 播放点播文件失败
+        } else if (event == TXLiveConstants.PLAY_ERR_VOD_LOAD_LICENSE_FAIL
+                || event == TXLiveConstants.PLAY_ERR_VOD_UNSUPPORT_DRM
+                || event == TXLiveConstants.PLAY_ERR_HLS_KEY
+                || event == TXLiveConstants.PLAY_ERR_NET_DISCONNECT) {// 播放点播文件失败
+            Toast.makeText(getContext(), param.getString(TXLiveConstants.EVT_DESCRIPTION) + ",尝试其他链接播放", Toast.LENGTH_SHORT).show();
             mVodPlayer.stopPlay(true);
             mVodControllerSmall.updatePlayState(false);
             mVodControllerLarge.updatePlayState(false);
             boolean isV3Protocol = mCurrentModelWrapper != null && mCurrentModelWrapper.isV3Protocol();
             if (isV3Protocol) {
-                // 如果当前播放的Type是WideVine的Dash流，可能是由于该设备兼容引起的，那么继续播放SampleAES的HLS流 或者其他流
                 Log.i(TAG, "onPlayEvent: play type = " + mCurrentModelWrapper.currentPlayingType + " video fail.");
-                String url = null;
-                if (mCurrentModelWrapper.currentPlayingType == SuperPlayerModelWrapper.URL_DASH_WIDE_VINE) {
-                    url = mCurrentModelWrapper.getSampleAESURL();
-                    if (url != null) {
-                        mCurrentModelWrapper.currentPlayingType = SuperPlayerModelWrapper.URL_HLS_SIMPLE_AES;
-                        Log.i(TAG, "onPlayEvent: try to play sampleaes video");
+                Pair<Integer, String> pair = mCurrentModelWrapper.getNextURL(mCurrentModelWrapper.currentPlayingType);
+                if (pair != null) {
+                    mCurrentModelWrapper.currentPlayingType = pair.first;
+                    String url = pair.second;
+                    if (pair.first == SuperPlayerModelWrapper.URL_DASH_WIDE_VINE || pair.first == SuperPlayerModelWrapper.URL_HLS_SIMPLE_AES) {
+                        mVodPlayer.setToken(mCurrentModelWrapper.requestModel.token);
                     } else {
-                        url = mCurrentModelWrapper.getDashURL();
-                        if (url != null) {
-                            mVodPlayer.setToken(null);// 未加密的流不需要token，清楚状态，避免播放失败
-                            mCurrentModelWrapper.currentPlayingType = SuperPlayerModelWrapper.URL_DASH;
-                            Log.i(TAG, "onPlayEvent: try to play dash video");
-                        } else {
-                            url = mCurrentModelWrapper.getHLSURL();
-                            if (url != null) {
-                                mVodPlayer.setToken(null);// 未加密的流不需要token，清楚状态，避免播放失败
-                                mCurrentModelWrapper.currentPlayingType = SuperPlayerModelWrapper.URL_HLS;
-                                Log.i(TAG, "onPlayEvent: try to play hls video");
-                            }
-                        }
+                        mVodPlayer.setToken(null);
                     }
+                    Log.i(TAG, "onPlayEvent: try play type = " + mCurrentModelWrapper.currentPlayingType + " video = " + url);
                     if (url != null) {
                         playVodURL(url);
                     } else {
                         Toast.makeText(mContext, param.getString(TXLiveConstants.EVT_DESCRIPTION), Toast.LENGTH_SHORT).show();
                     }
-                }
-            } else {
-                Toast.makeText(mContext, param.getString(TXLiveConstants.EVT_DESCRIPTION), Toast.LENGTH_SHORT).show();
-            }
-        } else if (event == TXLiveConstants.PLAY_ERR_HLS_KEY) {
-            mVodPlayer.stopPlay(true);
-            mVodControllerSmall.updatePlayState(false);
-            mVodControllerLarge.updatePlayState(false);
-            boolean isV3Protocol = mCurrentModelWrapper != null && mCurrentModelWrapper.isV3Protocol();
-            if (isV3Protocol) {
-                // 如果当前播放的Type是WideVine的Dash流，可能是由于该设备兼容引起的，那么继续播放SampleAES的HLS流 或者其他流
-                Log.i(TAG, "onPlayEvent: play type = " + mCurrentModelWrapper.currentPlayingType + " video fail.");
-                String url = null;
-                if (mCurrentModelWrapper.currentPlayingType == SuperPlayerModelWrapper.URL_HLS_SIMPLE_AES) {
-                    url = mCurrentModelWrapper.getDashURL();
-                    if (url != null) {
-                        mVodPlayer.setToken(null);// 未加密的流不需要token，清楚状态，避免播放失败
-                        mCurrentModelWrapper.currentPlayingType = SuperPlayerModelWrapper.URL_DASH;
-                        Log.i(TAG, "onPlayEvent: try to play dash video");
-                    } else {
-                        url = mCurrentModelWrapper.getHLSURL();
-                        if (url != null) {
-                            mVodPlayer.setToken(null);// 未加密的流不需要token，清楚状态，避免播放失败
-                            mCurrentModelWrapper.currentPlayingType = SuperPlayerModelWrapper.URL_HLS;
-                            Log.i(TAG, "onPlayEvent: try to play hls video");
-                        }
-                    }
-                    if (url != null) {
-                        playVodURL(url);
-                    } else {
-                        Toast.makeText(mContext, param.getString(TXLiveConstants.EVT_DESCRIPTION), Toast.LENGTH_SHORT).show();
-                    }
+                } else {
+                    Toast.makeText(mContext, "无其他URL可以进行重试，播放失败。", Toast.LENGTH_SHORT).show();
                 }
             } else {
                 Toast.makeText(mContext, param.getString(TXLiveConstants.EVT_DESCRIPTION), Toast.LENGTH_SHORT).show();
             }
         }
-        if (event < 0 && event != TXLiveConstants.PLAY_ERR_NET_DISCONNECT ) {
+        if (event < 0 && event != TXLiveConstants.PLAY_ERR_VOD_LOAD_LICENSE_FAIL
+                && event != TXLiveConstants.PLAY_ERR_HLS_KEY
+                && event != TXLiveConstants.PLAY_ERR_VOD_UNSUPPORT_DRM
+                && event != TXLiveConstants.PLAY_ERR_NET_DISCONNECT) {
             mVodPlayer.stopPlay(true);
             mVodControllerSmall.updatePlayState(false);
             mVodControllerLarge.updatePlayState(false);
@@ -1558,7 +1552,7 @@ public class SuperPlayerView extends RelativeLayout implements ITXVodPlayListene
             }
         } else if (playMode == SuperPlayerConst.PLAYMODE_FLOAT) {
             if (mPlayerViewCallback != null) {
-                mPlayerViewCallback.onQuit(SuperPlayerConst.PLAYMODE_WINDOW);
+                mPlayerViewCallback.onStartFloatWindowPlay();
             }
             if (mVodController != null) {
                 mVodController.onRequestPlayMode(SuperPlayerConst.PLAYMODE_FLOAT);
@@ -1607,15 +1601,34 @@ public class SuperPlayerView extends RelativeLayout implements ITXVodPlayListene
     }
 
     /**
-     * SuperVodPlayerActivity的回调接口
+     * SuperPlayerView的回调接口
      */
-    public interface PlayerViewCallback {
+    public interface OnSuperPlayerViewCallback {
 
-        void hideViews();
+        /**
+         * 开始全屏播放
+         */
+        void onStartFullScreenPlay();
 
-        void showViews();
+        /**
+         * 结束全屏播放
+         */
+        void onStopFullScreenPlay();
 
-        void onQuit(int playMode);
+        /**
+         * 点击悬浮窗模式下的x按钮
+         */
+        void onClickFloatCloseBtn();
+
+        /**
+         * 点击小播放模式的返回按钮
+         */
+        void onClickSmallReturnBtn();
+
+        /**
+         * 开始悬浮窗播放
+         */
+        void onStartFloatWindowPlay();
     }
 
     public void release() {

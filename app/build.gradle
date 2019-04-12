@@ -38,4 +38,5 @@ dependencies {
     compile 'com.squareup.okhttp3:logging-interceptor:3.8.1'
     compile(name: 'zxing-1.8.4', ext: 'aar')
     compile(name: 'barcodescanner-core-1.8.4', ext: 'aar')
+
 }

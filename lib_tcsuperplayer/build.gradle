@@ -25,6 +25,6 @@ android {
 
 dependencies {
     compile fileTree(dir: 'libs', include: ['*.jar'])
-    compile(name: 'LiteAVSDK_Player_5.3.265', ext: 'aar')
+    compile(name: 'LiteAVSDK_Player_6.3.8030', ext: 'aar')
     compile 'com.github.ctiao:DanmakuFlameMaster:0.5.3'
 }

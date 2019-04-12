@@ -28,8 +28,8 @@ public class SuperVodInfoLoaderV3 {
     private final String BASE_URL_V2 = "http://playvideo.qcloud.com/getplayinfo/v2";
     private final String BASE_URLS_V2 = "https://playvideo.qcloud.com/getplayinfo/v2";
     private final String BASE_URL_V3 = "http://playvideo.qcloud.com/getplayinfo/v3";
-//    private final String BASE_URLS_V3 = "https://playvideo.qcloud.com/getplayinfo/v3";
-    private final String BASE_URLS_V3 = "https://adapter.vod.myqcloud.com/getplayinfo/v3";// TODO:测试地址
+    private final String BASE_URLS_V3 = "https://playvideo.qcloud.com/getplayinfo/v3";
+//    private final String BASE_URLS_V3 = "https://adapter.vod.myqcloud.com/getplayinfo/v3";// TODO:测试地址
     public SuperVodInfoLoaderV3() {
         mMainHandler = new Handler(Looper.getMainLooper());
     }
@@ -213,14 +213,14 @@ public class SuperVodInfoLoaderV3 {
     private String makeUrlString(SuperPlayerModelWrapper modelWrapper) {
         boolean isV3 = modelWrapper.requestModel.videoId.version == SuperPlayerVideoId.FILE_ID_V3;
         String urlStr = String.format(isV3 ? "%s/%d/%s/%s" : "%s/%d/%s", isV3 ? BASE_URLS_V3 : BASE_URLS_V2,  modelWrapper.requestModel.appId,  modelWrapper.requestModel.videoId.fileId,  modelWrapper.requestModel.videoId.playDefinition);
-        String query = makeQueryString( modelWrapper.requestModel.videoId.timeout,  modelWrapper.requestModel.videoId.us,  modelWrapper.requestModel.videoId.exper,  modelWrapper.requestModel.videoId.sign);
+        String query = makeQueryString(modelWrapper.requestModel.videoId.timeout,  modelWrapper.requestModel.videoId.us,  modelWrapper.requestModel.videoId.exper,  modelWrapper.requestModel.videoId.sign, modelWrapper.requestModel.videoId.rlimit);
         if (query != null) {
             urlStr = urlStr + "?" + query;
         }
         return urlStr;
     }
 
-    private String makeQueryString(String timeout, String us, int exper, String sign) {
+    private String makeQueryString(String timeout, String us, int exper, String sign, int rlimit) {
         StringBuilder str = new StringBuilder();
         if (timeout != null) {
             str.append("t=" + timeout + "&");
@@ -233,6 +233,9 @@ public class SuperVodInfoLoaderV3 {
         }
         if (exper >= 0) {
             str.append("exper=" + exper + "&");
+        }
+        if (rlimit > 0) {
+            str.append("rlimit=" + rlimit + "&");
         }
         if (str.length() > 1) {
             str.deleteCharAt(str.length() - 1);

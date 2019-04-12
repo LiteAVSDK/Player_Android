@@ -32,6 +32,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.coolapk.superplayertest.R;
+import com.coolapk.superplayertest.drm.HttpURLClient;
 import com.coolapk.superplayertest.superplayer.server.GetVideoInfoListListener;
 import com.coolapk.superplayertest.superplayer.server.VideoDataMgr;
 import com.coolapk.superplayertest.superplayer.server.VideoInfo;
@@ -39,11 +40,14 @@ import com.tencent.liteav.basic.log.TXCLog;
 import com.tencent.liteav.demo.play.SuperPlayerConst;
 import com.tencent.liteav.demo.play.SuperPlayerGlobalConfig;
 import com.tencent.liteav.demo.play.SuperPlayerModel;
+import com.tencent.liteav.demo.play.SuperPlayerSignUtils;
 import com.tencent.liteav.demo.play.SuperPlayerView;
 import com.tencent.liteav.demo.play.v3.SuperPlayerVideoId;
 import com.tencent.rtmp.TXLiveBase;
 import com.tencent.rtmp.TXLiveConstants;
 
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -56,7 +60,7 @@ import static android.view.View.VISIBLE;
  */
 
 public class SuperPlayerActivity extends Activity implements View.OnClickListener,
-        SuperVodListLoader.OnVodInfoLoadListener, SuperPlayerView.PlayerViewCallback,
+        SuperVodListLoader.OnVodInfoLoadListener, SuperPlayerView.OnSuperPlayerViewCallback,
         TCVodPlayerListAdapter.OnItemClickLitener, SwipeRefreshLayout.OnRefreshListener {
     // 新手引导的标记
     private static final String SHARE_PREFERENCE_NAME = "tx_super_player_guide_setting";
@@ -103,6 +107,8 @@ public class SuperPlayerActivity extends Activity implements View.OnClickListene
     private RelativeLayout mRlMaskOne,mRlMaskTwo;
     private TextView mTvBtnOne,mTvBtnTwo;
 
+    private VideoModel mDRMVideoModel;    // DRM宣传视频
+    private VideoModel mSecDRMVideoModel; // 开启防盗链DRM
 
     private static class ListTabItem {
         public ListTabItem(int type, TextView textView, ImageView imageView, View.OnClickListener listener) {
@@ -120,6 +126,20 @@ public class SuperPlayerActivity extends Activity implements View.OnClickListene
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_supervod_player);
+        mDRMVideoModel = new VideoModel();
+        mDRMVideoModel.appid = 1256468886;
+        mDRMVideoModel.fileid = "5285890787511552106";
+        mDRMVideoModel.duration = 90;
+        mDRMVideoModel.placeholderImage = "https://1253039488.vod2.myqcloud.com/d8c9fd32vodtransgzp1253039488/5b8182d915517827183850370616/1552641772_3900657786.100_0.jpg";
+        mDRMVideoModel.title = "DRM宣传视频";
+
+        mSecDRMVideoModel = new VideoModel();
+        mSecDRMVideoModel.appid = 1255334997;
+        mSecDRMVideoModel.fileid = "5285890787759218496";
+        mSecDRMVideoModel.duration = 90;
+        mSecDRMVideoModel.placeholderImage = "https://1253039488.vod2.myqcloud.com/d8c9fd32vodtransgzp1253039488/5b8182d915517827183850370616/1552641772_3900657786.100_0.jpg";
+        mSecDRMVideoModel.title = "DRM宣传视频-防盗链";
+
         mContext = this;
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
         checkPermission();
@@ -437,7 +457,7 @@ public class SuperPlayerActivity extends Activity implements View.OnClickListene
         // 设置播放器渲染模式
         prefs.enableHWAcceleration = true;
         prefs.renderMode = TXLiveConstants.RENDER_MODE_ADJUST_RESOLUTION;
-        prefs.playShiftDomain = "vcloudtimeshift.qcloud.com";//需要修改为自己的时移域名
+        prefs.playShiftDomain = "playtimeshift.live.myqcloud.com";//需要修改为自己的时移域名
     }
 
     @Override
@@ -480,6 +500,14 @@ public class SuperPlayerActivity extends Activity implements View.OnClickListene
             @Override
             public void run() {
                 if (mDataType != LIST_TYPE_VOD) return;
+                if (!mVodList.contains(mDRMVideoModel)) {
+                    mVodList.add(mDRMVideoModel);
+                    mVodPlayerListAdapter.addSuperPlayerModel(mDRMVideoModel);
+                }
+//                if (!mVodList.contains(mSecDRMVideoModel)) {
+//                    mVodList.add(mSecDRMVideoModel);
+//                    mVodPlayerListAdapter.addSuperPlayerModel(mSecDRMVideoModel);
+//                }
                 mVodPlayerListAdapter.addSuperPlayerModel(videoModel);
                 mVodList.add(videoModel);
             }
@@ -497,11 +525,77 @@ public class SuperPlayerActivity extends Activity implements View.OnClickListene
     }
 
     @Override
-    public void onItemClick(int position, VideoModel videoModel) {
+    public void onItemClick(int position, final VideoModel videoModel) {
         if (videoModel.appid > 0) {
             TXLiveBase.setAppID(""+videoModel.appid);
         }
-        playVideoModel(videoModel);
+        if (videoModel == mDRMVideoModel) {
+            String testTokenURL = "https://demo.vod2.myqcloud.com/drm/gettoken?fileId=" + videoModel.fileid + "&appId=" + videoModel.appid; // 替换成您业务的服务器，获取token
+            // 发起网络请求，获取Token
+            HttpURLClient.getInstance().get(testTokenURL, new HttpURLClient.OnHttpCallback() {
+                @Override
+                public void onSuccess(String token) {
+                    try {
+                        Log.i(TAG, "onSuccess: token = " + token);
+                        // Token需要进行URLEncoder
+                        String encodedToken = URLEncoder.encode(token, "UTF-8");
+                        SuperPlayerModel model = new SuperPlayerModel();
+                        model.appId = videoModel.appid;
+                        model.token = encodedToken;
+
+                        model.videoId = new SuperPlayerVideoId();
+                        model.videoId.fileId = videoModel.fileid;
+                        model.videoId.version = SuperPlayerVideoId.FILE_ID_V3;// DRM需要使用V3协议
+                        model.videoId.playDefinition = "20";
+
+                        mSuperPlayerView.playWithModel(model);
+                    } catch (UnsupportedEncodingException e) {
+                        e.printStackTrace();
+                    }
+                }
+
+                @Override
+                public void onError() {
+                    Toast.makeText(SuperPlayerActivity.this, "获取Token失败,播放失败", Toast.LENGTH_SHORT).show();
+                }
+            });
+        } else if (videoModel == mSecDRMVideoModel) {
+            String testTokenURL = "https://demo.vod2.myqcloud.com/drm/gettoken?fileId=" + videoModel.fileid + "&appId=" + videoModel.appid; // 替换成您业务的服务器，获取token
+            // 发起网络请求，获取Token
+            HttpURLClient.getInstance().get(testTokenURL, new HttpURLClient.OnHttpCallback() {
+                @Override
+                public void onSuccess(String token) {
+                    try {
+                        Log.i(TAG, "onSuccess: token = " + token);
+                        // Token需要进行URLEncoder
+                        String encodedToken = URLEncoder.encode(token, "UTF-8");
+                        SuperPlayerModel model = new SuperPlayerModel();
+                        model.appId = videoModel.appid;
+                        model.token = encodedToken;
+
+                        model.videoId = new SuperPlayerVideoId();
+                        model.videoId.fileId = videoModel.fileid;
+                        model.videoId.version = SuperPlayerVideoId.FILE_ID_V3;// DRM需要使用V3协议
+                        model.videoId.playDefinition = "20";
+                        model.videoId.timeout = Long.toHexString(System.currentTimeMillis() / 1000 + 60 * 60);// 一小时过期时间
+                        model.videoId.us = "66666";
+                        String key = "...."; // 您的AppId对应的加密key，从控制台可以找到。
+                        model.videoId.sign = SuperPlayerSignUtils.generateSign(key, model);
+
+                        mSuperPlayerView.playWithModel(model);
+                    } catch (UnsupportedEncodingException e) {
+                        e.printStackTrace();
+                    }
+                }
+
+                @Override
+                public void onError() {
+                    Toast.makeText(SuperPlayerActivity.this, "获取Token失败,播放失败", Toast.LENGTH_SHORT).show();
+                }
+            });
+        }else {
+            playVideoModel(videoModel);
+        }
     }
 
     private void playVideoModel(VideoModel videoModel) {
@@ -703,7 +797,7 @@ public class SuperPlayerActivity extends Activity implements View.OnClickListene
                 dialog.dismiss();
             }
         });
-        dialog.setPositiveButton("确认",
+        dialog.setPositiveButton("确定",
                 new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
@@ -813,7 +907,8 @@ public class SuperPlayerActivity extends Activity implements View.OnClickListene
     }
 
     @Override
-    public void hideViews() {
+    public void onStartFullScreenPlay() {
+        // 隐藏其他元素实现全屏
         mLayoutTitle.setVisibility(GONE);
         if (mIvAdd != null) {
             mIvAdd.setVisibility(GONE);
@@ -821,7 +916,8 @@ public class SuperPlayerActivity extends Activity implements View.OnClickListene
     }
 
     @Override
-    public void showViews() {
+    public void onStopFullScreenPlay() {
+        // 恢复原有元素
         mLayoutTitle.setVisibility(VISIBLE);
         if (mIvAdd != null) {
             mIvAdd.setVisibility(VISIBLE);
@@ -829,22 +925,25 @@ public class SuperPlayerActivity extends Activity implements View.OnClickListene
     }
 
     @Override
-    public void onQuit(int playMode) {
-        if (playMode == SuperPlayerConst.PLAYMODE_FLOAT) {
-            mSuperPlayerView.resetPlayer();
-            finish();
-        } else if (playMode == SuperPlayerConst.PLAYMODE_WINDOW) {
-            if (mSuperPlayerView.getPlayState() == SuperPlayerConst.PLAYSTATE_PLAY) {
-//                // 返回桌面
-                Intent intent = new Intent(Intent.ACTION_MAIN);
-                intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                intent.addCategory(Intent.CATEGORY_HOME);
-                startActivity(intent);
-            } else {
-                mSuperPlayerView.resetPlayer();
-                finish();
-            }
-        }
+    public void onClickFloatCloseBtn() {
+        // 点击悬浮窗关闭按钮，那么结束整个播放
+        mSuperPlayerView.resetPlayer();
+        finish();
+    }
+
+    @Override
+    public void onClickSmallReturnBtn() {
+        // 点击小窗模式下返回按钮，开始悬浮播放
+        showFloatWindow();
+    }
+
+    @Override
+    public void onStartFloatWindowPlay() {
+        // 开始悬浮播放后，直接返回到桌面，进行悬浮播放
+        Intent intent = new Intent(Intent.ACTION_MAIN);
+        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        intent.addCategory(Intent.CATEGORY_HOME);
+        startActivity(intent);
     }
 
     @Override

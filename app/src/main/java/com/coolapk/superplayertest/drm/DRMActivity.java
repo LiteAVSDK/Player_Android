@@ -3,7 +3,6 @@ package com.coolapk.superplayertest.drm;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.widget.Toast;
 
@@ -18,7 +17,10 @@ import com.tencent.rtmp.TXLiveConstants;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 
-public class DRMActivity extends Activity implements SuperPlayerView.PlayerViewCallback {
+import static android.view.View.GONE;
+import static android.view.View.VISIBLE;
+
+public class DRMActivity extends Activity implements SuperPlayerView.OnSuperPlayerViewCallback {
     private SuperPlayerView mSuperPlayerView;
     private static final String TAG = "DRMActivity";
 
@@ -52,8 +54,9 @@ public class DRMActivity extends Activity implements SuperPlayerView.PlayerViewC
          *
          * 以下是一个简单的demo
          */
-        final String fileId = "15517827183850370616";
-        String testTokenURL = "https://demo.vod2.myqcloud.com/drm/gettoken?fileId=" + fileId; // 替换成您业务的服务器，获取token
+        final String fileId = "5285890787511552106";
+        final int appId = 1256468886;
+        String testTokenURL = "https://demo.vod2.myqcloud.com/drm/gettoken?fileId=" + fileId + "&appId=" + appId; // 替换成您业务的服务器，获取token
         // 发起网络请求，获取Token
         HttpURLClient.getInstance().get(testTokenURL, new HttpURLClient.OnHttpCallback() {
             @Override
@@ -63,7 +66,7 @@ public class DRMActivity extends Activity implements SuperPlayerView.PlayerViewC
                     // Token需要进行URLEncoder
                     String encodedToken = URLEncoder.encode(token, "UTF-8");
                     SuperPlayerModel model = new SuperPlayerModel();
-                    model.appId = 1253039488;
+                    model.appId = appId;
                     model.token = encodedToken;
 
                     model.videoId = new SuperPlayerVideoId();
@@ -117,31 +120,44 @@ public class DRMActivity extends Activity implements SuperPlayerView.PlayerViewC
     }
 
     @Override
-    public void hideViews() {
-
+    public void onStartFullScreenPlay() {
     }
 
     @Override
-    public void showViews() {
-
+    public void onStopFullScreenPlay() {
     }
 
     @Override
-    public void onQuit(int playMode) {
-        if (playMode == SuperPlayerConst.PLAYMODE_FLOAT) {
+    public void onClickFloatCloseBtn() {
+        // 点击悬浮窗关闭按钮，那么结束整个播放
+        mSuperPlayerView.resetPlayer();
+        finish();
+    }
+
+    @Override
+    public void onClickSmallReturnBtn() {
+        // 点击小窗模式下返回按钮，开始悬浮播放
+        showFloatWindow();
+    }
+
+    @Override
+    public void onStartFloatWindowPlay() {
+        // 开始悬浮播放后，直接返回到桌面，进行悬浮播放
+        Intent intent = new Intent(Intent.ACTION_MAIN);
+        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        intent.addCategory(Intent.CATEGORY_HOME);
+        startActivity(intent);
+    }
+
+    /**
+     * 悬浮窗播放
+     */
+    private void showFloatWindow() {
+        if (mSuperPlayerView.getPlayState() == SuperPlayerConst.PLAYSTATE_PLAY) {
+            mSuperPlayerView.requestPlayMode(SuperPlayerConst.PLAYMODE_FLOAT);
+        } else {
             mSuperPlayerView.resetPlayer();
             finish();
-        } else if (playMode == SuperPlayerConst.PLAYMODE_WINDOW) {
-            if (mSuperPlayerView.getPlayState() == SuperPlayerConst.PLAYSTATE_PLAY) {
-//                // 返回桌面
-                Intent intent = new Intent(Intent.ACTION_MAIN);
-                intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                intent.addCategory(Intent.CATEGORY_HOME);
-                startActivity(intent);
-            } else {
-                mSuperPlayerView.resetPlayer();
-                finish();
-            }
         }
     }
 }
