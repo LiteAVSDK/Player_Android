@@ -1,80 +1,308 @@
 package com.coolapk.superplayertest;
 
-import android.support.v7.app.AppCompatActivity;
+import android.app.Activity;
+import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.util.Log;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.ImageView;
+import android.widget.TextView;
+import android.widget.Toast;
 
-import com.tencent.liteav.demo.play.SuperPlayerConst;
-import com.tencent.liteav.demo.play.SuperPlayerGlobalConfig;
-import com.tencent.liteav.demo.play.SuperPlayerModel;
-import com.tencent.liteav.demo.play.SuperPlayerView;
+import com.coolapk.superplayertest.drm.DRMActivity;
+import com.coolapk.superplayertest.superplayer.SuperPlayerActivity;
+import com.coolapk.superplayertest.view.BaseExpandableRecyclerViewAdapter;
 import com.tencent.rtmp.TXLiveBase;
-import com.tencent.rtmp.TXLiveConstants;
 
-public class MainActivity extends AppCompatActivity {
+import java.io.File;
+import java.util.ArrayList;
+import java.util.List;
 
-    private SuperPlayerView mSuperPlayerView;
+//import com.tencent.liteav.demo.play.TXDownloadActivity;
+//import com.tencent.liteav.demo.videocall.VideoCallActivity;
+
+public class MainActivity extends Activity {
+
+    private static final String TAG = MainActivity.class.getName();
+    private TextView mMainTitle, mTvVersion;
+    private RecyclerView mRvList;
+    private MainExpandableAdapter mAdapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        if ((getIntent().getFlags() & Intent.FLAG_ACTIVITY_BROUGHT_TO_FRONT) != 0) {
+            Log.d(TAG, "brought to front");
+            finish();
+            return;
+        }
+
         setContentView(R.layout.activity_main);
 
-        mSuperPlayerView = findViewById(R.id.main_super_player_view);
-        // 播放器配置
-        SuperPlayerGlobalConfig prefs = SuperPlayerGlobalConfig.getInstance();
-        // 开启悬浮窗播放
-        prefs.enableFloatWindow = true;
-        // 设置悬浮窗的初始位置和宽高
-        SuperPlayerGlobalConfig.TXRect rect = new SuperPlayerGlobalConfig.TXRect();
-        rect.x = 0;
-        rect.y = 0;
-        rect.width = 810;
-        rect.height = 540;
-        prefs.floatViewRect = rect;
-        // 播放器默认缓存个数
-        prefs.maxCacheItem = 5;
-        // 设置播放器渲染模式
-        prefs.enableHWAcceleration = true;
-        prefs.renderMode = TXLiveConstants.RENDER_MODE_ADJUST_RESOLUTION;
+        mTvVersion = (TextView) findViewById(R.id.main_tv_version);
+        mTvVersion.setText("视频云工具包 v" + TXLiveBase.getSDKVersionStr());
 
-        // 通过URL方式的视频信息配置
-        SuperPlayerModel model2 = new SuperPlayerModel();
-        model2.title  = "测试视频-720P";
-        model2.videoURL = "http://1252463788.vod2.myqcloud.com/95576ef5vodtransgzp1252463788/68e3febf4564972819220421305/v.f30.mp4";
-        // 开始播放
-        mSuperPlayerView.playWithMode(model2);
+        mMainTitle = (TextView) findViewById(R.id.main_title);
+        mMainTitle.setOnLongClickListener(new View.OnLongClickListener() {
+            @Override
+            public boolean onLongClick(View v) {
+                File logFile = getLastModifiedLogFile();
+                if (logFile != null) {
+                    Intent intent = new Intent(Intent.ACTION_SEND);
+                    intent.setType("application/octet-stream");
+                    //intent.setPackage("com.tencent.mobileqq");
+                    intent.putExtra(Intent.EXTRA_STREAM, Uri.fromFile(logFile));
+                    startActivity(Intent.createChooser(intent, "分享日志"));
+                } else {
+                    Toast.makeText(MainActivity.this.getApplicationContext(), "日志文件不存在！", Toast.LENGTH_SHORT);
+                }
+                return false;
+            }
+        });
+
+
+        mRvList = (RecyclerView) findViewById(R.id.main_recycler_view);
+        List<GroupBean> groupBeans = initGroupData();
+        mRvList.setLayoutManager(new LinearLayoutManager(this));
+        mAdapter = new MainExpandableAdapter(groupBeans);
+        mAdapter.setListener(new BaseExpandableRecyclerViewAdapter.ExpandableRecyclerViewOnClickListener<GroupBean, ChildBean>() {
+            @Override
+            public boolean onGroupLongClicked(GroupBean groupItem) {
+                return false;
+            }
+
+            @Override
+            public boolean onInterceptGroupExpandEvent(GroupBean groupItem, boolean isExpand) {
+                return false;
+            }
+
+            @Override
+            public void onGroupClicked(GroupBean groupItem) {
+                mAdapter.setSelectedChildBean(groupItem);
+            }
+
+            @Override
+            public void onChildClicked(GroupBean groupItem, ChildBean childItem) {
+                Intent intent = new Intent(MainActivity.this, childItem.getTargetClass());
+                intent.putExtra("TITLE", childItem.mName);
+                MainActivity.this.startActivity(intent);
+            }
+        });
+        mRvList.setAdapter(mAdapter);
+    }
+
+    private List<GroupBean> initGroupData() {
+        List<GroupBean> groupList = new ArrayList<>();
+
+        // 初始化播放器
+        List<ChildBean> playerChildList = new ArrayList<>();
+        playerChildList.add(new ChildBean("超级播放器", R.drawable.play, SuperPlayerActivity.class));
+        playerChildList.add(new ChildBean("DRM播放器", R.drawable.play, DRMActivity.class));
+
+        if (playerChildList.size() != 0) {
+            GroupBean playerGroupBean = new GroupBean("播放器", R.drawable.composite, playerChildList);
+            groupList.add(playerGroupBean);
+        }
+
+
+
+        return groupList;
     }
 
 
-    @Override
-    protected void onResume() {
-        super.onResume();
-        // 重新开始播放
-        if (mSuperPlayerView.getPlayState() == SuperPlayerConst.PLAYSTATE_PLAY) {
-            mSuperPlayerView.onResume();
-            if (mSuperPlayerView.getPlayMode() == SuperPlayerConst.PLAYMODE_FLOAT) {
-                mSuperPlayerView.requestPlayMode(SuperPlayerConst.PLAYMODE_WINDOW);
+    private static class MainExpandableAdapter extends BaseExpandableRecyclerViewAdapter<GroupBean, ChildBean, MainExpandableAdapter.GroupVH, MainExpandableAdapter.ChildVH> {
+        private List<GroupBean> mListGroupBean;
+        private GroupBean mGroupBean;
+
+        public void setSelectedChildBean(GroupBean groupBean) {
+            boolean isExpand = isExpand(groupBean);
+            if (mGroupBean != null) {
+                GroupVH lastVH = getGroupViewHolder(mGroupBean);
+                if (!isExpand)
+                    mGroupBean = groupBean;
+                else
+                    mGroupBean = null;
+                notifyItemChanged(lastVH.getAdapterPosition());
+            } else {
+                if (!isExpand)
+                    mGroupBean = groupBean;
+                else
+                    mGroupBean = null;
+            }
+            if (mGroupBean != null) {
+                GroupVH currentVH = getGroupViewHolder(mGroupBean);
+                notifyItemChanged(currentVH.getAdapterPosition());
             }
         }
-    }
 
-    @Override
-    protected void onPause() {
-        super.onPause();
-        // 停止播放
-        if (mSuperPlayerView.getPlayMode() != SuperPlayerConst.PLAYMODE_FLOAT) {
-            mSuperPlayerView.onPause();
+        public MainExpandableAdapter(List<GroupBean> list) {
+            mListGroupBean = list;
+        }
+
+        @Override
+        public int getGroupCount() {
+            return mListGroupBean.size();
+        }
+
+        @Override
+        public GroupBean getGroupItem(int groupIndex) {
+            return mListGroupBean.get(groupIndex);
+        }
+
+        @Override
+        public GroupVH onCreateGroupViewHolder(ViewGroup parent, int groupViewType) {
+            return new GroupVH(LayoutInflater.from(parent.getContext()).inflate(R.layout.module_entry_item, parent, false));
+        }
+
+        @Override
+        public void onBindGroupViewHolder(GroupVH holder, GroupBean groupBean, boolean isExpand) {
+            holder.textView.setText(groupBean.mName);
+            holder.ivLogo.setImageResource(groupBean.mIconId);
+            if (mGroupBean == groupBean) {
+                holder.itemView.setBackgroundResource(R.color.main_item_selected_color);
+            } else {
+                holder.itemView.setBackgroundResource(R.color.main_item_unselected_color);
+            }
+        }
+
+        @Override
+        public ChildVH onCreateChildViewHolder(ViewGroup parent, int childViewType) {
+            return new ChildVH(LayoutInflater.from(parent.getContext()).inflate(R.layout.module_entry_child_item, parent, false));
+        }
+
+        @Override
+        public void onBindChildViewHolder(ChildVH holder, GroupBean groupBean, ChildBean childBean) {
+            holder.textView.setText(childBean.getName());
+
+            if (groupBean.mChildList.indexOf(childBean) == groupBean.mChildList.size() - 1) {//说明是最后一个
+                holder.divideView.setVisibility(View.GONE);
+            } else {
+                holder.divideView.setVisibility(View.VISIBLE);
+            }
+
+        }
+
+        public class GroupVH extends BaseExpandableRecyclerViewAdapter.BaseGroupViewHolder {
+            ImageView ivLogo;
+            TextView textView;
+
+            GroupVH(View itemView) {
+                super(itemView);
+                textView = (TextView) itemView.findViewById(R.id.name_tv);
+                ivLogo = (ImageView) itemView.findViewById(R.id.icon_iv);
+            }
+
+            @Override
+            protected void onExpandStatusChanged(RecyclerView.Adapter relatedAdapter, boolean isExpanding) {
+            }
+
+        }
+
+        public class ChildVH extends RecyclerView.ViewHolder {
+            TextView textView;
+            View divideView;
+
+            ChildVH(View itemView) {
+                super(itemView);
+                textView = (TextView) itemView.findViewById(R.id.name_tv);
+                divideView = itemView.findViewById(R.id.item_view_divide);
+            }
+
         }
     }
 
-    @Override
-    protected void onDestroy() {
-        super.onDestroy();
-        // 释放
-        mSuperPlayerView.release();
-        if (mSuperPlayerView.getPlayMode() != SuperPlayerConst.PLAYMODE_FLOAT) {
-            mSuperPlayerView.resetPlayer();
+    private class GroupBean implements BaseExpandableRecyclerViewAdapter.BaseGroupBean<ChildBean> {
+        private String mName;
+        private List<ChildBean> mChildList;
+        private int mIconId;
+
+        public GroupBean(String name, int iconId, List<ChildBean> list) {
+            mName = name;
+            mChildList = list;
+            mIconId = iconId;
         }
+
+        @Override
+        public int getChildCount() {
+            return mChildList.size();
+        }
+
+        @Override
+        public ChildBean getChildAt(int index) {
+            return mChildList.size() <= index ? null : mChildList.get(index);
+        }
+
+        @Override
+        public boolean isExpandable() {
+            return getChildCount() > 0;
+        }
+
+        public String getName() {
+            return mName;
+        }
+
+        public List<ChildBean> getChildList() {
+            return mChildList;
+        }
+
+        public int getIconId() {
+            return mIconId;
+        }
+    }
+
+    private class ChildBean {
+        public String mName;
+        public int mIconId;
+        public Class mTargetClass;
+
+
+        public ChildBean(String name, int iconId, Class targetActivityClass) {
+            this.mName = name;
+            this.mIconId = iconId;
+            this.mTargetClass = targetActivityClass;
+        }
+
+        public String getName() {
+            return mName;
+        }
+
+
+        public int getIconId() {
+            return mIconId;
+        }
+
+
+        public Class getTargetClass() {
+            return mTargetClass;
+        }
+    }
+
+
+    private File getLastModifiedLogFile() {
+        File retFile = null;
+
+        File directory = new File("/sdcard/log/tencent/liteav");
+        if (directory != null && directory.exists() && directory.isDirectory()) {
+            long lastModify = 0;
+            File files[] = directory.listFiles();
+            if (files != null && files.length > 0) {
+                for (File file : files) {
+                    if (file.getName().endsWith("xlog")) {
+                        if (file.lastModified() > lastModify) {
+                            retFile = file;
+                            lastModify = file.lastModified();
+                        }
+                    }
+                }
+            }
+        }
+
+        return retFile;
     }
 }

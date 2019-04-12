@@ -1,5 +1,7 @@
 package com.tencent.liteav.demo.play.net;
 
+import android.os.AsyncTask;
+
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
@@ -21,8 +23,6 @@ import java.util.concurrent.Executors;
  * 推荐您修改网络模块，使用您项目中的网络请求库，如okHTTP、Volley等
  */
 public class TCHttpURLClient {
-    private ExecutorService mExecutor;
-    private boolean isRelease;
 
     private static class Holder {
         public static final TCHttpURLClient INSTANCE = new TCHttpURLClient();
@@ -34,8 +34,6 @@ public class TCHttpURLClient {
     }
 
     private TCHttpURLClient() {
-        mExecutor = Executors.newFixedThreadPool(2);
-        isRelease = false;
     }
 
 
@@ -45,8 +43,7 @@ public class TCHttpURLClient {
      * @param callback
      */
     public void get(final String urlStr, final OnHttpCallback callback) {
-        initExecutors();
-        mExecutor.execute(new Runnable() {
+        AsyncTask.execute(new Runnable() {
             @Override
             public void run() {
                 BufferedReader bufferedReader = null;
@@ -93,8 +90,7 @@ public class TCHttpURLClient {
      * @param callback
      */
     public void postJson(final String urlStr, final String json, final OnHttpCallback callback) {
-        initExecutors();
-        mExecutor.execute(new Runnable() {
+        AsyncTask.execute(new Runnable() {
             @Override
             public void run() {
                 BufferedReader bufferedReader = null;
@@ -143,27 +139,6 @@ public class TCHttpURLClient {
                 }
             }
         });
-    }
-
-
-    private void initExecutors() {
-        if (mExecutor == null || isRelease) {
-            mExecutor = Executors.newFixedThreadPool(2);
-        }
-        isRelease = false;
-    }
-
-
-    public void release() {
-        try {
-            if (mExecutor != null) {
-                mExecutor.shutdown();
-            }
-            mExecutor = null;
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        isRelease = true;
     }
 
 
