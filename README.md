@@ -48,5 +48,3 @@
 1. 下载代码
 `git clone https://github.com/tencentyun/SuperPlayer_Android.git`
 
-2. Android Stuido打开build.gradle，即可运行demo工程
-
