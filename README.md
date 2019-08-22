@@ -46,20 +46,7 @@
 ## 快速开始
 
 1. 下载代码
-`git clone https://github.com/tencentyun/TCSuperPlayer.git`
+`git clone https://github.com/tencentyun/SuperPlayer_Android.git`
 
 2. Android Stuido打开build.gradle，即可运行demo工程
 
-集成播放器到自己的项目，请参考[工程配置](https://github.com/tencentyun/TCSuperPlayer/wiki/Home)
-
-## 集成使用
-
-在[快速集成](https://github.com/tencentyun/TCSuperPlayer/wiki/Home)中介绍了主要功能使用。
-
-本项目详细文档位于
-https://github.com/tencentyun/TCSuperPlayer/wiki
-
-## 联系方式
-+ iOS: https://github.com/tencentyun/SuperPlayer
-+ Issues: https://github.com/tencentyun/TCSuperPlayer/issues
-+ 专人解答/技术交流 QQ群: 781719018 
