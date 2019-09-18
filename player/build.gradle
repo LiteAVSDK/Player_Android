@@ -1,0 +1,37 @@
+apply plugin: 'com.android.library'
+
+android {
+    compileSdkVersion rootProject.ext.compileSdkVersion
+    buildToolsVersion rootProject.ext.buildToolsVersion
+
+    defaultConfig {
+        minSdkVersion rootProject.ext.minSdkVersion
+        targetSdkVersion rootProject.ext.targetSdkVersion
+        versionCode 1
+        versionName "1.0"
+
+        testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
+
+    }
+
+    buildTypes {
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+        }
+    }
+
+}
+
+dependencies {
+    compile fileTree(dir: 'libs', include: ['*.jar'])
+    compile(name: 'LiteAVSDK_Player', ext: 'aar')
+    compile 'com.github.ctiao:DanmakuFlameMaster:0.5.3'
+    compile 'com.android.support:appcompat-v7:25.+'
+    compile 'com.android.support:recyclerview-v7:25.+'
+    compile 'me.dm7.barcodescanner:zxing:1.8.4'
+    compile 'com.squareup.okhttp3:okhttp:3.9.0'
+    compile 'com.android.support:multidex:1.0.0'
+    compile 'com.github.bumptech.glide:glide:3.7.0'
+
+}

@@ -1,1 +1,24 @@
-include ':app', ':lib_tcsuperplayer'
+include ':app'
+
+include ':player'
+include ':lvb'
+include ':trtc'
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
