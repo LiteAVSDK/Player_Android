@@ -1,20 +1,17 @@
 apply plugin: 'com.android.application'
 
 android {
-    compileSdkVersion rootProject.ext.compileSdkVersion
-    buildToolsVersion rootProject.ext.buildToolsVersion
+    compileSdkVersion 26
     defaultConfig {
-        applicationId "com.tencent.liteav.demo"
-        minSdkVersion rootProject.ext.minSdkVersion
-        targetSdkVersion rootProject.ext.targetSdkVersion
+        applicationId "com.coolapk.superplayertest"
+        minSdkVersion 18
+        targetSdkVersion 26
         versionCode 1
-        versionName "2.0"
-        multiDexEnabled true
+        versionName "1.0"
 
         ndk {
-            abiFilters "armeabi-v7a","arm64-v8a"
+            abiFilters "armeabi"
         }
-        testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
     }
     buildTypes {
         release {
@@ -22,36 +19,24 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
     }
-    dexOptions {
-        jumboMode true
-        javaMaxHeapSize "4g"
-    }
 
-//    sourceSets {
-//        main {
-//            jniLibs.srcDirs = ['libs']
-//        }
-//    }
-//
-//    configurations{
-//        all*.exclude module: 'okhttp'
-//        all*.exclude module: 'okio'
-//    }
+    sourceSets {
+        main {
+            jniLibs.srcDirs = ['libs']
+        }
+    }
 }
 
 dependencies {
-    compile fileTree(include: ['*.jar'], dir: 'libs')
+    implementation fileTree(dir: 'libs', include: ['*.jar'])
+    implementation 'com.android.support:appcompat-v7:26.1.0'
+    implementation 'com.android.support.constraint:constraint-layout:1.1.3'
+    compile 'com.android.support:recyclerview-v7:26.+'
+    compile project(':lib_tcsuperplayer')
+    compile 'com.github.ctiao:DanmakuFlameMaster:0.5.4'
+    compile 'com.github.bumptech.glide:glide:4.9.0'
+    compile 'com.squareup.okhttp3:logging-interceptor:3.8.1'
+    compile(name: 'zxing-1.8.4', ext: 'aar')
+    compile(name: 'barcodescanner-core-1.8.4', ext: 'aar')
 
-    compile(name: 'volley-1.0.0', ext: 'aar')
-    compile(name: 'LiteAVSDK_Player', ext: 'aar')
-    compile 'com.squareup.okhttp3:logging-interceptor:3.9.0'
-    compile 'com.github.ctiao:DanmakuFlameMaster:0.5.3'
-    compile 'com.android.support.constraint:constraint-layout:1.0.2'
-    androidTestCompile('com.android.support.test.espresso:espresso-core:2.2.2', {
-        exclude group: 'com.android.support', module: 'support-annotations'
-    })
-    testCompile 'junit:junit:4.12'
-
-    compile project(':lvb')
-    compile project(':player')
 }

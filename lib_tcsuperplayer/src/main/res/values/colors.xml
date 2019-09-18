@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="white">#ffffff</color>
+    <color name="black">#000000</color>
+    <color name="transparent">#00000000</color>
+
+    <color name="biz_audio_progress_bg">#00b2ff</color>
+    <color name="biz_audio_progress_first">#ffffff</color>
+    <color name="biz_audio_progress_second">#6b6666</color>
+
+    <color name="super_vod_vtt_bg">#7E000000</color>
+
+
+    <color name="default_bg">#aa000000</color>
+
+    <!-- 裁剪范围颜色 -->
+    <color name="colorTintRed">#FF4C58</color>
+
+    <!--special color-->
+    <color name="black_a10_color">#1a000000</color>
+
+    <!--gray4-->
+    <color name="colorGray4">#787878</color>
+</resources>
