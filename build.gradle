@@ -2,7 +2,8 @@
 
 buildscript {
     repositories {
-        maven { url "http://maven.oa.com/nexus/content/groups/androidbuild"}
+        google()
+        jcenter()
         maven { url "https://dl.bintray.com/tencentqcloudterminal/maven" }
     }
     dependencies {
@@ -15,8 +16,8 @@ buildscript {
 
 allprojects {
     repositories {
-        maven { url "http://maven.oa.com/nexus/content/groups/androidbuild"}
-
+        google()
+        jcenter()
         flatDir {
             dirs 'libs'
             dirs project(':app').file('libs')
