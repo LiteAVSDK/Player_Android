@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/progress_ll_head"
+    android:layout_width="160dp"
+    android:layout_height="wrap_content"
+    android:gravity="center"
+    android:layout_gravity="center_horizontal"
+    android:orientation="vertical">
+
+
+    <ImageView
+        android:id="@+id/progress_iv_thumbnail"
+        android:layout_width="160dp"
+        android:visibility="gone"
+        android:layout_height="90dp"
+         />
+
+
+    <TextView
+        android:id="@+id/progress_tv_time"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text=""
+        android:textColor="@color/white"
+        android:textSize="16sp" />
+
+    <ProgressBar
+        android:id="@+id/progress_pb_bar"
+        style="@style/AppProgressBarStyle"
+        android:layout_width="100dp"
+        android:layout_height="2dp"
+        android:layout_below="@id/progress_ll_head"
+        android:layout_marginTop="8dp"
+        android:progressDrawable="@drawable/laylist_super_vod_video_progress"
+        android:max="100"
+        android:progress="0" />
+</LinearLayout>
+
+

@@ -4,7 +4,9 @@
     <modules>
       <module fileurl="file://$PROJECT_DIR$/SuperPlayer_Android.iml" filepath="$PROJECT_DIR$/SuperPlayer_Android.iml" />
       <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" />
-      <module fileurl="file://$PROJECT_DIR$/lib_tcsuperplayer/lib_tcsuperplayer.iml" filepath="$PROJECT_DIR$/lib_tcsuperplayer/lib_tcsuperplayer.iml" />
+      <module fileurl="file://$PROJECT_DIR$/libsuperplayer/libsuperplayer.iml" filepath="$PROJECT_DIR$/libsuperplayer/libsuperplayer.iml" />
+      <module fileurl="file://$PROJECT_DIR$/lvb/lvb.iml" filepath="$PROJECT_DIR$/lvb/lvb.iml" />
+      <module fileurl="file://$PROJECT_DIR$/player/player.iml" filepath="$PROJECT_DIR$/player/player.iml" />
     </modules>
   </component>
 </project>

@@ -1,0 +1,30 @@
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    package="com.tencent.liteav.demo.player">
+
+    <application android:theme="@style/AppTheme">
+        <activity
+            android:name=".superplayer.SuperPlayerActivity"
+            android:configChanges="orientation|keyboardHidden|screenSize"
+            android:label="@string/app_name"
+            android:launchMode="singleTask"
+            android:screenOrientation="portrait"
+            android:windowSoftInputMode="stateHidden">
+            <intent-filter>
+                <action android:name="com.tencent.liteav.demo.play.action.float.click" />
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
+        </activity>
+
+        <activity
+            android:name=".VodPlayerActivity"
+            android:screenOrientation="portrait" />
+
+        <activity
+        android:name=".common.activity.QRCodeScanActivity"
+        android:screenOrientation="portrait" />
+
+    </application>
+
+</manifest>

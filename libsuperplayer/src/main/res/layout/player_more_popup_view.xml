@@ -1,0 +1,231 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/super_vod_vtt_bg"
+    android:padding="20dp">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:layout_centerVertical="true"
+        android:orientation="vertical">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="60dp"
+            android:layout_weight="1"
+            android:orientation="horizontal"
+            android:paddingRight="20dp">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:paddingRight="20dp"
+                android:text="声音"
+                android:textColor="@color/white"
+                android:textSize="14dp" />
+
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical"
+                android:src="@drawable/ic_volume_min" />
+
+            <SeekBar
+                android:id="@+id/seekBar_audio"
+                style="@android:style/Widget.Holo.SeekBar"
+                android:layout_width="0dp"
+                android:layout_weight="1"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:max="100"
+                android:progressDrawable="@drawable/biz_video_progressbar"
+                android:thumb="@drawable/ic_vod_thumb" />
+
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical"
+                android:layout_weight="0"
+                android:src="@drawable/ic_volume_max" />
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="60dp"
+            android:layout_weight="1"
+            android:orientation="horizontal"
+            android:paddingRight="20dp">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:paddingRight="20dp"
+                android:text="亮度"
+                android:textColor="@color/white"
+                android:textSize="14dp" />
+
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical"
+                android:src="@drawable/ic_light_min" />
+
+            <SeekBar
+                android:id="@+id/seekBar_light"
+                style="@android:style/Widget.Holo.SeekBar"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:layout_weight="1"
+                android:max="100"
+                android:progressDrawable="@drawable/biz_video_progressbar"
+                android:thumb="@drawable/ic_vod_thumb" />
+
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical"
+                android:layout_weight="0"
+                android:src="@drawable/ic_light_max" />
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/layout_speed"
+            android:layout_width="match_parent"
+            android:layout_height="60dp"
+            android:layout_weight="1"
+            android:orientation="horizontal">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:paddingRight="10dp"
+                android:text="多倍速播放"
+                android:textColor="@color/white"
+                android:textSize="14dp" />
+
+            <RadioGroup
+                android:id="@+id/radioGroup"
+                android:layout_width="match_parent"
+                android:layout_height="60dp"
+                android:gravity="center_vertical"
+                android:orientation="horizontal">
+
+                <RadioButton
+                    android:id="@+id/rb_speed1"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:button="@null"
+                    android:checked="true"
+                    android:gravity="center"
+                    android:text="1.0X"
+                    android:textColor="@color/vod_player_text_color" />
+
+                <RadioButton
+                    android:id="@+id/rb_speed125"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:button="@null"
+                    android:gravity="center"
+                    android:text="1.25X"
+                    android:textColor="@color/vod_player_text_color" />
+
+                <RadioButton
+                    android:id="@+id/rb_speed15"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:button="@null"
+                    android:gravity="center"
+                    android:text="1.5X"
+                    android:textColor="@color/vod_player_text_color" />
+
+                <RadioButton
+                    android:id="@+id/rb_speed2"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:button="@null"
+                    android:gravity="center"
+                    android:text="2.0X"
+                    android:textColor="@color/vod_player_text_color" />
+            </RadioGroup>
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/layout_mirror"
+            android:layout_width="match_parent"
+            android:layout_height="60dp"
+            android:layout_weight="1"
+            android:orientation="horizontal">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:paddingRight="10dp"
+                android:text="镜像"
+                android:textColor="@color/white"
+                android:textSize="14dp" />
+
+            <Switch
+                android:id="@+id/switch_mirror"
+                android:layout_width="wrap_content"
+                android:layout_height="20dp"
+                android:layout_gravity="center"
+                android:textOff="  "
+                android:textOn="  "
+                android:thumb="@drawable/thumb"
+                android:track="@drawable/track" />
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/layout_enable_accelerate"
+            android:layout_width="match_parent"
+            android:layout_height="60dp"
+            android:layout_weight="1"
+            android:orientation="horizontal">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:paddingRight="10dp"
+                android:text="硬件加速"
+                android:textColor="@color/white"
+                android:textSize="14dp" />
+
+            <!--<TextView-->
+                <!--android:layout_width="wrap_content"-->
+                <!--android:layout_height="wrap_content"-->
+                <!--android:layout_gravity="center"-->
+                <!--android:paddingRight="10dp"-->
+                <!--android:text="(黑屏/音画不同步，请关闭)"-->
+                <!--android:textColor="@color/white"-->
+                <!--android:textSize="10dp" />-->
+
+            <Switch
+                android:id="@+id/switch_accelerate"
+                android:layout_width="wrap_content"
+                android:layout_height="20dp"
+                android:layout_gravity="center"
+                android:textOff="  "
+                android:textOn="  "
+                android:thumb="@drawable/thumb"
+                android:track="@drawable/track" />
+
+        </LinearLayout>
+    </LinearLayout>
+</RelativeLayout>

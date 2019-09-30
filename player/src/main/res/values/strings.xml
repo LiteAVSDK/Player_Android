@@ -1,0 +1,9 @@
+<resources>
+    <string name="app_name">superplayer</string>
+
+    <string name="btn_cancel">取消</string>
+    <string name="btn_ok">确定</string>
+
+    <string name="vod_ffplay">ffplay</string>
+    <string name="vod_exo">exo</string>
+</resources>
