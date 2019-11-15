@@ -196,8 +196,10 @@ public class TCPointSeekBar extends RelativeLayout {
                     addThumbView();
                     mIsChangePointViews = false;
                 }
-                calProgressDis();
-                changeThumbPos();
+                if(!mIsOnDrag) {
+                    calProgressDis();
+                    changeThumbPos();
+                }
             }
         });
     }

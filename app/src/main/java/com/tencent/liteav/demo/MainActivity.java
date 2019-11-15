@@ -3,6 +3,7 @@ package com.tencent.liteav.demo;
 import android.app.Activity;
 import android.content.Intent;
 import android.net.Uri;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -22,8 +23,14 @@ import com.tencent.liteav.demo.player.superplayer.SuperPlayerActivity;
 import com.tencent.rtmp.TXLiveBase;
 
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipOutputStream;
 
 public class MainActivity extends Activity {
 
@@ -51,16 +58,19 @@ public class MainActivity extends Activity {
         mMainTitle.setOnLongClickListener(new View.OnLongClickListener() {
             @Override
             public boolean onLongClick(View v) {
-                File logFile = getLastModifiedLogFile();
-                if (logFile != null) {
-                    Intent intent = new Intent(Intent.ACTION_SEND);
-                    intent.setType("application/octet-stream");
-                    //intent.setPackage("com.tencent.mobileqq");
-                    intent.putExtra(Intent.EXTRA_STREAM, Uri.fromFile(logFile));
-                    startActivity(Intent.createChooser(intent, "分享日志"));
-                } else {
-                    Toast.makeText(MainActivity.this.getApplicationContext(), "日志文件不存在！", Toast.LENGTH_SHORT);
-                }
+                AsyncTask.execute(new Runnable() {
+                    @Override
+                    public void run() {
+                        File logFile = getLogFile();
+                        if (logFile != null) {
+                            Intent intent = new Intent(Intent.ACTION_SEND);
+                            intent.setType("application/octet-stream");
+                            //intent.setPackage("com.tencent.mobileqq");
+                            intent.putExtra(Intent.EXTRA_STREAM, Uri.fromFile(logFile));
+                            startActivity(Intent.createChooser(intent, "分享日志"));
+                        }
+                    }
+                });
                 return false;
             }
         });
@@ -113,6 +123,7 @@ public class MainActivity extends Activity {
                 } else if (childItem.mIconId == R.drawable.short_video_picture) {
                 }
 
+//                if (childItem.mTargetClass == TRTCNewActivity.class) {
                     if (childItem.mName.equals("腾讯云视频通话")) {
                         intent.putExtra("TYPE", 0); // 0 for 视频通话
                     } else {
@@ -348,25 +359,68 @@ public class MainActivity extends Activity {
     }
 
 
-    private File getLastModifiedLogFile() {
-        File retFile = null;
-
-        File directory = new File("/sdcard/log/tencent/liteav");
+    private File getLogFile() {
+        String path = getExternalFilesDir(null).getAbsolutePath() + "/log/tencent/liteav";
+        List<String> logs = new ArrayList<>();
+        File directory = new File(path);
         if (directory != null && directory.exists() && directory.isDirectory()) {
             long lastModify = 0;
             File files[] = directory.listFiles();
             if (files != null && files.length > 0) {
                 for (File file : files) {
                     if (file.getName().endsWith("xlog")) {
-                        if (file.lastModified() > lastModify) {
-                            retFile = file;
-                            lastModify = file.lastModified();
-                        }
+                        logs.add(file.getAbsolutePath());
                     }
                 }
             }
         }
 
-        return retFile;
+
+        String zipPath = path + "/liteavLog.zip";
+        return zip(logs, zipPath);
+    }
+
+    private File zip(List<String> files, String zipFileName) {
+        File zipFile = new File(zipFileName);
+        zipFile.deleteOnExit();
+        InputStream is = null;
+        ZipOutputStream zos = null;
+
+        try {
+            zos = new ZipOutputStream(new FileOutputStream(zipFile));
+            zos.setComment("LiteAV log");
+            for (String path : files) {
+                File file = new File(path);
+                try {
+                    if(file.length() == 0 || file.length() > 8 * 1024 * 1024) continue;
+
+                    is = new FileInputStream(file);
+                    zos.putNextEntry(new ZipEntry(file.getName()));
+                    byte[] buffer = new byte[8 * 1024];
+                    int length = 0;
+                    while ((length = is.read(buffer)) != -1) {
+                        zos.write(buffer, 0, length);
+                    }
+                } catch (Exception e) {
+                    e.printStackTrace();
+                } finally {
+                    try {
+                        is.close();
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                }
+            }
+        } catch (FileNotFoundException e) {
+            Log.w(TAG, "zip log error");
+            zipFile = null;
+        } finally {
+            try {
+                zos.close();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+        return zipFile;
     }
 }

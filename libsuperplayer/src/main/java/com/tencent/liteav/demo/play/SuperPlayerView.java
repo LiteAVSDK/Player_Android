@@ -119,6 +119,7 @@ public class SuperPlayerView extends RelativeLayout implements ITXVodPlayListene
 
     private Bitmap mWaterMarkBmp;
     private float mWaterMarkBmpX, mWaterMarkBmpY;
+    private long mMaxLiveProgressTime;
 
     private float mCurrentTimeWhenPause; // 记录onPause暂停时的时间，在播放widevine格式的时候，onResume需要Seek回去，否则需要等到下一个I帧到来才能有画面。
 
@@ -1519,9 +1520,11 @@ public class SuperPlayerView extends RelativeLayout implements ITXVodPlayListene
             return;
         } else if (event == TXLiveConstants.PLAY_EVT_PLAY_PROGRESS) {
             int progress = param.getInt(TXLiveConstants.EVT_PLAY_PROGRESS_MS);
-            int duration = param.getInt(TXLiveConstants.EVT_PLAY_DURATION_MS);
-            mVodControllerSmall.updateVideoProgress(progress / 1000, duration / 1000);
-            mVodControllerLarge.updateVideoProgress(progress / 1000, duration / 1000);
+            if (progress > mMaxLiveProgressTime) {
+                mMaxLiveProgressTime = progress;
+            }
+            mVodControllerSmall.updateVideoProgress(progress / 1000, mMaxLiveProgressTime / 1000);
+            mVodControllerLarge.updateVideoProgress(progress / 1000, mMaxLiveProgressTime / 1000);
         }
 //        if (event < 0) {
 //            mVodControllerSmall.updateReplay(false);

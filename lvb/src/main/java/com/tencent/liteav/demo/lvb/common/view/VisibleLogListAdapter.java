@@ -40,7 +40,6 @@ public class VisibleLogListAdapter extends RecyclerView.Adapter<VisibleLogListAd
         } else {
                 string = String.format("丢帧警告:网络状况不佳[%s]", date);
         }
-        Log.i("lyj", "string:" + string);
         holder.warning.setText(string);
     }
 

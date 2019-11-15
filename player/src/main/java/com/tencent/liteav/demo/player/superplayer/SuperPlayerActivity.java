@@ -438,7 +438,8 @@ public class SuperPlayerActivity extends Activity implements View.OnClickListene
         // 设置播放器渲染模式
         prefs.enableHWAcceleration = true;
         prefs.renderMode = TXLiveConstants.RENDER_MODE_ADJUST_RESOLUTION;
-        prefs.playShiftDomain = "playtimeshift.live.myqcloud.com";//需要修改为自己的时移域名
+        //需要修改为自己的时移域名
+        prefs.playShiftDomain = "vcloudtimeshift.qcloud.com";
     }
 
     @Override
