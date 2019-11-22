@@ -17,7 +17,6 @@ import android.widget.Toast;
 
 import com.tencent.liteav.demo.common.widget.expandableadapter.BaseExpandableRecyclerViewAdapter;
 import com.tencent.liteav.demo.lvb.liveplayer.LivePlayerActivity;
-import com.tencent.liteav.demo.lvb.liveplayer.LivePlayerSurfaceActivity;
 import com.tencent.liteav.demo.player.VodPlayerActivity;
 import com.tencent.liteav.demo.player.superplayer.SuperPlayerActivity;
 import com.tencent.rtmp.TXLiveBase;
@@ -178,7 +177,6 @@ public class MainActivity extends Activity {
 
         // 调试工具
         List<ChildBean> debugChildList = new ArrayList<>();
-        debugChildList.add(new ChildBean("直播播放器 (Surface)", R.drawable.live, LivePlayerSurfaceActivity.class));
         debugChildList.add(new ChildBean("点播播放器", R.drawable.play, VodPlayerActivity.class));
 //        debugChildList.add(new ChildBean("在线答题室", R.drawable.room_qa, AnswerRoomActivity.class));
 //        debugChildList.add(new ChildBean("答题播放器", R.drawable.room_qa, AnswerPlayerActivity.class));
