@@ -155,7 +155,9 @@ public class TCVodMoreView extends RelativeLayout implements RadioGroup.OnChecke
     private SeekBar.OnSeekBarChangeListener mLightChangeListener = new SeekBar.OnSeekBarChangeListener() {
         @Override
         public void onProgressChanged(SeekBar seekBar, int progress, boolean b) {
-            updateBrightProgress(progress);
+            if(b){
+                updateBrightProgress(progress);
+            }
         }
 
         @Override
