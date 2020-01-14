@@ -57,6 +57,7 @@
     </FrameLayout>
 
     <LinearLayout
+        android:id="@+id/pusher_address_viewer"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginLeft="12dp"
@@ -138,7 +139,7 @@
             android:id="@+id/pusher_btn_beauty"
             android:layout_width="@dimen/icon_width"
             android:layout_height="@dimen/icon_height"
-            android:background="@drawable/beauty" />
+            android:background="@drawable/lvb_beauty" />
 
         <TextView
             android:layout_width="wrap_content"
@@ -202,7 +203,7 @@
             android:layout_weight="1" />
     </LinearLayout>
 
-    <com.tencent.liteav.demo.lvb.common.view.BeautySettingPannel
+    <com.tencent.liteav.demo.beauty.BeautyPanel
         android:id="@+id/pusher_beauty_pannel"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -226,7 +227,9 @@
     <LinearLayout
         android:id="@+id/pusher_ll_code_viewer"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_height="match_parent"
+        android:layout_below="@id/pusher_address_viewer"
+        android:layout_above="@id/pusher_ll_bottom_bar"
         android:layout_centerInParent="true"
         android:gravity="center_horizontal"
         android:orientation="vertical"
@@ -241,7 +244,8 @@
         <ImageView
             android:id="@+id/pusher_iv_rtmp_url"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content" />
+            android:layout_height="wrap_content"
+            android:layout_weight="1" />
 
         <TextView
             android:layout_width="wrap_content"
@@ -252,7 +256,8 @@
         <ImageView
             android:id="@+id/pusher_iv_flv_url"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content" />
+            android:layout_height="wrap_content"
+            android:layout_weight="1" />
 
         <TextView
             android:layout_width="wrap_content"
@@ -263,7 +268,8 @@
         <ImageView
             android:id="@+id/pusher_iv_hls_url"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content" />
+            android:layout_height="wrap_content"
+            android:layout_weight="1" />
 
         <TextView
             android:layout_width="wrap_content"
@@ -274,6 +280,7 @@
         <ImageView
             android:id="@+id/pusher_iv_rtmp_acc_url"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content" />
+            android:layout_height="wrap_content"
+            android:layout_weight="1" />
     </LinearLayout>
 </RelativeLayout>

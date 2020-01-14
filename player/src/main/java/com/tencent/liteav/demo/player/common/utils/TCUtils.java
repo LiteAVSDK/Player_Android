@@ -101,7 +101,7 @@ public class TCUtils {
                 final String type = split[0];
 
                 if ("primary".equalsIgnoreCase(type)) {
-                    return Environment.getExternalStorageDirectory() + "/" + split[1];
+                    return context.getExternalFilesDir(null) + "/" + split[1];
                 }
 
                 // TODO handle non-primary volumes

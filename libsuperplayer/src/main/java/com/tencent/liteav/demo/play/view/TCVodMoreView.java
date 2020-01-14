@@ -22,25 +22,34 @@ import com.tencent.liteav.demo.play.SuperPlayerGlobalConfig;
 
 /**
  * Created by yuejiaoli on 2018/7/4.
+ *
  * 更多选项弹框
+ *
+ * 1、声音调节seekBar回调{@link #mVolumeChangeListener}
+ *
+ * 2、亮度调节seekBar回调{@link #mLightChangeListener}
+ *
+ * 3、倍速选择回调{@link #onCheckedChanged(RadioGroup, int)}
+ *
+ * 4、镜像、硬件加速开关回调{@link #onCheckedChanged(CompoundButton, boolean)}
  */
 
 public class TCVodMoreView extends RelativeLayout implements RadioGroup.OnCheckedChangeListener, CompoundButton.OnCheckedChangeListener {
     private Context mContext;
 
-    private SeekBar mSeekBarVolume;
-    private SeekBar mSeekBarLight;
-    private Switch mSwitchMirror;
-    private Switch mSwitchAccelerate;
-    private Callback mCallback;
-    private AudioManager mAudioManager;
-    private RadioGroup mRadioGroup;
-    private RadioButton mRbSpeed1;
-    private RadioButton mRbSpeed125;
-    private RadioButton mRbSpeed15;
-    private RadioButton mRbSpeed2;
-    private LinearLayout mLayoutSpeed;
-    private LinearLayout mLayoutMirror;
+    private SeekBar         mSeekBarVolume;     // 音量seekBar
+    private SeekBar         mSeekBarLight;      // 亮度seekBar
+    private Switch          mSwitchMirror;      // 镜像开关
+    private Switch          mSwitchAccelerate;  // 硬解开关
+    private Callback        mCallback;          // 回调
+    private AudioManager    mAudioManager;      // 音频管理器
+    private RadioGroup      mRadioGroup;        // 倍速选择radioGroup
+    private RadioButton     mRbSpeed1;          // 1.0倍速按钮
+    private RadioButton     mRbSpeed125;        // 1.25倍速按钮
+    private RadioButton     mRbSpeed15;         // 1.5倍速按钮
+    private RadioButton     mRbSpeed2;          // 2.0倍速按钮
+    private LinearLayout    mLayoutSpeed;       // 倍速按钮所在布局
+    private LinearLayout    mLayoutMirror;      // 镜像按钮所在布局
 
     public TCVodMoreView(Context context) {
         super(context);
@@ -116,6 +125,12 @@ public class TCVodMoreView extends RelativeLayout implements RadioGroup.OnChecke
         }
     }
 
+    /**
+     * 获取当前亮度
+     *
+     * @param activity
+     * @return
+     */
     public static float getActivityBrightness(Activity activity) {
         Window localWindow = activity.getWindow();
         WindowManager.LayoutParams params = localWindow.getAttributes();
@@ -185,6 +200,12 @@ public class TCVodMoreView extends RelativeLayout implements RadioGroup.OnChecke
         mSeekBarLight.setProgress(progress);
     }
 
+    /**
+     * 镜像、硬解开关监听
+     *
+     * @param compoundButton
+     * @param isChecked
+     */
     @Override
     public void onCheckedChanged(CompoundButton compoundButton, boolean isChecked) {
         if (compoundButton.getId() == R.id.switch_mirror) {
@@ -201,10 +222,21 @@ public class TCVodMoreView extends RelativeLayout implements RadioGroup.OnChecke
         }
     }
 
+    /**
+     * 设置回调
+     *
+     * @param callback
+     */
     public void setCallback(Callback callback) {
         mCallback = callback;
     }
 
+    /**
+     * 倍速选择监听
+     *
+     * @param radioGroup
+     * @param checkedId
+     */
     @Override
     public void onCheckedChanged(RadioGroup radioGroup, int checkedId) {
         if (checkedId == R.id.rb_speed1) {
@@ -234,6 +266,11 @@ public class TCVodMoreView extends RelativeLayout implements RadioGroup.OnChecke
         }
     }
 
+    /**
+     * 更新播放视频类型
+     *
+     * @param playType
+     */
     public void updatePlayType(int playType) {
         if (playType == SuperPlayerConst.PLAYTYPE_VOD) {
             mLayoutSpeed.setVisibility(View.VISIBLE);
@@ -244,11 +281,29 @@ public class TCVodMoreView extends RelativeLayout implements RadioGroup.OnChecke
         }
     }
 
+    /**
+     * 回调
+     */
     public interface Callback {
+        /**
+         * 播放速度更新回调
+         *
+         * @param speedLevel
+         */
         void onSpeedChange(float speedLevel);
 
+        /**
+         * 镜像开关回调
+         *
+         * @param isMirror
+         */
         void onMirrorChange(boolean isMirror);
 
+        /**
+         * 硬解开关回调
+         *
+         * @param isAccelerate
+         */
         void onHWAcceleration(boolean isAccelerate);
     }
 

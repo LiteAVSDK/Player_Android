@@ -41,7 +41,7 @@ import com.tencent.liteav.demo.play.SuperPlayerConst;
 import com.tencent.liteav.demo.play.SuperPlayerGlobalConfig;
 import com.tencent.liteav.demo.play.SuperPlayerModel;
 import com.tencent.liteav.demo.play.SuperPlayerView;
-import com.tencent.liteav.demo.play.v3.SuperPlayerVideoId;
+import com.tencent.liteav.demo.play.SuperPlayerVideoId;
 import com.tencent.rtmp.TXLiveBase;
 import com.tencent.rtmp.TXLiveConstants;
 
@@ -445,11 +445,23 @@ public class SuperPlayerActivity extends Activity implements View.OnClickListene
     @Override
     protected void onResume() {
         super.onResume();
-        if (mSuperPlayerView.getPlayState() == SuperPlayerConst.PLAYSTATE_PLAY) {
+        if (mSuperPlayerView.getPlayState() == SuperPlayerConst.PLAYSTATE_PLAYING) {
             Log.i(TAG, "onResume state :" + mSuperPlayerView.getPlayState());
             mSuperPlayerView.onResume();
             if (mSuperPlayerView.getPlayMode() == SuperPlayerConst.PLAYMODE_FLOAT) {
                 mSuperPlayerView.requestPlayMode(SuperPlayerConst.PLAYMODE_WINDOW);
+            }
+        }
+        if (mSuperPlayerView.getPlayMode() == SuperPlayerConst.PLAYMODE_FULLSCREEN) {
+            //隐藏虚拟按键，并且全屏
+            View decorView = getWindow().getDecorView();
+            if (decorView == null) return;
+            if (Build.VERSION.SDK_INT > 11 && Build.VERSION.SDK_INT < 19) { // lower api
+                decorView.setSystemUiVisibility(View.GONE);
+            } else if (Build.VERSION.SDK_INT >= 19) {
+                int uiOptions = View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
+                        | View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY | View.SYSTEM_UI_FLAG_FULLSCREEN;
+                decorView.setSystemUiVisibility(uiOptions);
             }
         }
     }
@@ -628,7 +640,7 @@ public class SuperPlayerActivity extends Activity implements View.OnClickListene
      * 悬浮窗播放
      */
     private void showFloatWindow() {
-        if (mSuperPlayerView.getPlayState() == SuperPlayerConst.PLAYSTATE_PLAY) {
+        if (mSuperPlayerView.getPlayState() == SuperPlayerConst.PLAYSTATE_PLAYING) {
             mSuperPlayerView.requestPlayMode(SuperPlayerConst.PLAYMODE_FLOAT);
         } else {
             mSuperPlayerView.resetPlayer();

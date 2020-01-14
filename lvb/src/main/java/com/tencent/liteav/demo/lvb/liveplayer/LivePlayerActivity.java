@@ -131,7 +131,7 @@ public class LivePlayerActivity extends Activity implements ITXLivePlayListener,
         mCurrentRenderMode     = TXLiveConstants.RENDER_MODE_ADJUST_RESOLUTION;
         mCurrentRenderRotation = TXLiveConstants.RENDER_ROTATION_PORTRAIT;
 
-        mActivityType = getIntent().getIntExtra("PLAY_TYPE", ACTIVITY_TYPE_LIVE_PLAY);
+        mActivityType = getIntent().getIntExtra("TYPE", ACTIVITY_TYPE_LIVE_PLAY);
 
         mPlayConfig = new TXLivePlayConfig();
 
@@ -505,6 +505,7 @@ public class LivePlayerActivity extends Activity implements ITXLivePlayListener,
         // HashMap<String, String> headers = new HashMap<>();
         // headers.put("Referer", "qcloud.com");
         // mPlayConfig.setHeaders(headers);
+        mPlayConfig.setEnableMessage(true);
         mLivePlayer.setConfig(mPlayConfig);
         int result = mLivePlayer.startPlay(playUrl,mPlayType); // result返回值：0 success;  -1 empty url; -2 invalid url; -3 invalid playType;
         if (result != 0) {
@@ -557,6 +558,19 @@ public class LivePlayerActivity extends Activity implements ITXLivePlayListener,
             Log.d(TAG, "size "+param.getInt(TXLiveConstants.EVT_PARAM1) + "x" + param.getInt(TXLiveConstants.EVT_PARAM2));
         } else if (event == TXLiveConstants.PLAY_EVT_CHANGE_ROTATION) {
             return;
+        } else if (event == TXLiveConstants.PLAY_EVT_GET_MESSAGE) {
+            if (param != null) {
+                byte data[] = param.getByteArray(TXLiveConstants.EVT_GET_MSG);
+                String seiMessage = "";
+                if (data != null && data.length > 0) {
+                    try {
+                        seiMessage = new String(data, "UTF-8");
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                }
+                Toast.makeText(getApplicationContext(), seiMessage, Toast.LENGTH_SHORT).show();
+            }
         }
 
         if (event < 0) {

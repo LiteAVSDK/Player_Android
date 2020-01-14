@@ -9,7 +9,7 @@ import android.os.Message;
 import android.util.AttributeSet;
 
 import com.tencent.liteav.basic.log.TXCLog;
-import com.tencent.liteav.demo.play.utils.DensityUtil;
+import com.tencent.liteav.demo.play.utils.TCDensityUtil;
 
 import java.util.Random;
 
@@ -24,14 +24,19 @@ import master.flame.danmaku.ui.widget.DanmakuView;
 
 /**
  * Created by liyuejiao on 2018/1/29.
+ *
  * 全功能播放器中的弹幕View
+ *
+ * 1、随机发送弹幕{@link #addDanmaku(String, boolean)}
+ *
+ * 2、弹幕操作所在线程的Handler{@link DanmuHandler}
  */
 public class TCDanmuView extends DanmakuView {
-    private Context mContext;
-    private DanmakuContext mDanmakuContext;
-    private boolean mShowDanmu;
-    private HandlerThread mHandlerThread;
-    private DanmuHandler mDanmuHandler;
+    private Context         mContext;
+    private DanmakuContext  mDanmakuContext;
+    private boolean         mShowDanmu;         // 弹幕是否开启
+    private HandlerThread   mHandlerThread;     // 发送弹幕的线程
+    private DanmuHandler    mDanmuHandler;      // 弹幕线程handler
 
     public TCDanmuView(Context context) {
         super(context);
@@ -120,7 +125,7 @@ public class TCDanmuView extends DanmakuView {
         if (danmaku != null) {
             danmaku.text = content;
             danmaku.padding = 5;
-            danmaku.textSize = DensityUtil.sp2px(mContext, 20.0f);
+            danmaku.textSize = TCDensityUtil.sp2px(mContext, 20.0f);
             danmaku.textColor = Color.WHITE;
             danmaku.setTime(getCurrentTime());
             if (withBorder) {

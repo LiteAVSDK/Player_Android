@@ -44,10 +44,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-/**
- * Created by annidy on 2017/9/22.
- */
-
 public class VodPlayerActivity extends Activity implements ITXVodPlayListener {
     private static final String TAG = VodPlayerActivity.class.getSimpleName();
 
@@ -395,7 +391,7 @@ public class VodPlayerActivity extends Activity implements ITXVodPlayListener {
      * @return
      */
     public String getInnerSDCardPath() {
-        return Environment.getExternalStorageDirectory().getPath();
+        return getExternalFilesDir(null).getAbsolutePath();
     }
 
 
@@ -613,7 +609,7 @@ public class VodPlayerActivity extends Activity implements ITXVodPlayListener {
                 mVodPlayer.pause();
             }
         } else if (event == TXLiveConstants.PLAY_EVT_CHANGE_RESOLUTION) {
-        } else if (event == TXLiveConstants.PLAY_ERR_HLS_KEY) {
+        } else if (event == TXLiveConstants.PLAY_ERR_HLS_KEY) {//HLS 解密 key 获取失败
             stopPlayVod();
         } else if (event == TXLiveConstants.PLAY_WARNING_RECONNECT) {
             startLoadingAnimation();

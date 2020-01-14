@@ -6,7 +6,6 @@ import android.text.TextUtils;
 
 import com.tencent.liteav.basic.log.TXCLog;
 import com.tencent.liteav.demo.play.bean.TCPlayInfoStream;
-import com.tencent.liteav.demo.play.utils.PlayInfoResponseParser;
 
 import org.json.JSONArray;
 import org.json.JSONException;

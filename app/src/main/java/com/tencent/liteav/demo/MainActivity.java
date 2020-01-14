@@ -13,7 +13,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.tencent.liteav.demo.common.widget.expandableadapter.BaseExpandableRecyclerViewAdapter;
 import com.tencent.liteav.demo.lvb.liveplayer.LivePlayerActivity;
@@ -110,25 +109,7 @@ public class MainActivity extends Activity {
                 }
                 Intent intent = new Intent(MainActivity.this, childItem.getTargetClass());
                 intent.putExtra("TITLE", childItem.mName);
-                if (childItem.mIconId == R.drawable.play) {
-                    intent.putExtra("PLAY_TYPE", LivePlayerActivity.ACTIVITY_TYPE_VOD_PLAY);
-                } else if (childItem.mIconId == R.drawable.live) {
-                    intent.putExtra("PLAY_TYPE", LivePlayerActivity.ACTIVITY_TYPE_LIVE_PLAY);
-                } else if (childItem.mIconId == R.drawable.mic) {
-                    intent.putExtra("PLAY_TYPE", LivePlayerActivity.ACTIVITY_TYPE_LINK_MIC);
-                } else if (childItem.mIconId == R.drawable.cut) {
-                } else if (childItem.mIconId == R.drawable.composite) {
-                } else if (childItem.mIconId == R.drawable.update) {
-                } else if (childItem.mIconId == R.drawable.short_video_picture) {
-                }
-
-//                if (childItem.mTargetClass == TRTCNewActivity.class) {
-                    if (childItem.mName.equals("腾讯云视频通话")) {
-                        intent.putExtra("TYPE", 0); // 0 for 视频通话
-                    } else {
-                        intent.putExtra("TYPE", 1); // 1 for 直播
-                    }
-//                }
+                intent.putExtra("TYPE", childItem.mType);
                 MainActivity.this.startActivity(intent);
             }
         });
@@ -141,17 +122,17 @@ public class MainActivity extends Activity {
 
         // 直播
         List<ChildBean> pusherChildList = new ArrayList<>();
-        pusherChildList.add(new ChildBean("直播拉流", R.drawable.live, LivePlayerActivity.class));
+        pusherChildList.add(new ChildBean("直播拉流", R.drawable.live, LivePlayerActivity.ACTIVITY_TYPE_LIVE_PLAY, LivePlayerActivity.class));
         if (pusherChildList.size() != 0) {
             // 这个是网页链接，配合build.sh避免在如ugc_smart版中出现
-            pusherChildList.add(new ChildBean("小直播", R.drawable.xiaozhibo, null));
+            pusherChildList.add(new ChildBean("小直播", R.drawable.xiaozhibo, 0, null));
             GroupBean pusherGroupBean = new GroupBean("移动直播", R.drawable.room_live, pusherChildList);
             groupList.add(pusherGroupBean);
         }
 
         // 初始化播放器
         List<ChildBean> playerChildList = new ArrayList<>();
-        playerChildList.add(new ChildBean("超级播放器", R.drawable.play, SuperPlayerActivity.class));
+        playerChildList.add(new ChildBean("超级播放器", R.drawable.play, LivePlayerActivity.ACTIVITY_TYPE_VOD_PLAY, SuperPlayerActivity.class));
         if (playerChildList.size() != 0) {
             GroupBean playerGroupBean = new GroupBean("播放器", R.drawable.composite, playerChildList);
             groupList.add(playerGroupBean);
@@ -162,7 +143,7 @@ public class MainActivity extends Activity {
 
         if (shortVideoChildList.size() != 0) {
             // 这个是网页链接，配合build.sh避免在其他版本中出现
-            shortVideoChildList.add(new ChildBean("小视频", R.drawable.xiaoshipin, null));
+            shortVideoChildList.add(new ChildBean("小视频", R.drawable.xiaoshipin, 0, null));
             GroupBean shortVideoGroupBean = new GroupBean("短视频", R.drawable.video, shortVideoChildList);
             groupList.add(shortVideoGroupBean);
         }
@@ -177,9 +158,8 @@ public class MainActivity extends Activity {
 
         // 调试工具
         List<ChildBean> debugChildList = new ArrayList<>();
-        debugChildList.add(new ChildBean("点播播放器", R.drawable.play, VodPlayerActivity.class));
-//        debugChildList.add(new ChildBean("在线答题室", R.drawable.room_qa, AnswerRoomActivity.class));
-//        debugChildList.add(new ChildBean("答题播放器", R.drawable.room_qa, AnswerPlayerActivity.class));
+        debugChildList.add(new ChildBean("点播播放器", R.drawable.play, LivePlayerActivity.ACTIVITY_TYPE_VOD_PLAY, VodPlayerActivity.class));
+
         if (debugChildList.size() != 0) {
             GroupBean debugGroupBean = new GroupBean("调试工具", R.drawable.debug, debugChildList);
             groupList.add(debugGroupBean);
@@ -333,12 +313,13 @@ public class MainActivity extends Activity {
         public String mName;
         public int mIconId;
         public Class mTargetClass;
+        public int mType;
 
-
-        public ChildBean(String name, int iconId, Class targetActivityClass) {
+        public ChildBean(String name, int iconId, int type, Class targetActivityClass) {
             this.mName = name;
             this.mIconId = iconId;
             this.mTargetClass = targetActivityClass;
+            this.mType = type;
         }
 
         public String getName() {
@@ -358,7 +339,12 @@ public class MainActivity extends Activity {
 
 
     private File getLogFile() {
-        String path = getExternalFilesDir(null).getAbsolutePath() + "/log/tencent/liteav";
+        File sdcardDir = getExternalFilesDir(null);
+        if (sdcardDir == null) {
+            return null;
+        }
+
+        String path = sdcardDir.getAbsolutePath() + "/log/tencent/liteav";
         List<String> logs = new ArrayList<>();
         File directory = new File(path);
         if (directory != null && directory.exists() && directory.isDirectory()) {

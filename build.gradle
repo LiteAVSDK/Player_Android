@@ -44,7 +44,5 @@ ext {
     noffmpeg = false
     noijkplay = false
     useASAN = true
-    aekit_version = '1.0.16-cloud'
-
-    //kotlin_version = "1.3.21"
+    aekit_version = '1.0.19-cloud'
 }

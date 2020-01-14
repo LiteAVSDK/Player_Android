@@ -12,21 +12,28 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.tencent.liteav.demo.play.R;
+import com.tencent.liteav.demo.play.bean.TCVideoQuality;
 
 import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Created by yuejiaoli on 2018/7/4.
- * 清晰度弹框
+ *
+ * 视频画质选择弹框
+ *
+ * 1、设置画质列表{@link #setVideoQualityList(List)}
+ *
+ * 2、设置默认选中的画质{@link #setDefaultSelectedQuality(int)}
  */
 
 public class TCVodQualityView extends RelativeLayout {
-    private Context mContext;
-    private Callback mCallback;
-    private ListView mListView;
-    private QualityAdapter mAdapter;
-    private ArrayList<TCVideoQulity> mList;
-    private int mClickPos = -1;
+    private Context                 mContext;
+    private Callback                mCallback;      // 回调
+    private ListView                mListView;      // 画质listView
+    private QualityAdapter          mAdapter;       // 画质列表适配器
+    private List<TCVideoQuality>    mList;          // 画质列表
+    private int                     mClickPos = -1; // 当前的画质下表
 
     public TCVodQualityView(Context context) {
         super(context);
@@ -45,7 +52,7 @@ public class TCVodQualityView extends RelativeLayout {
 
     private void init(Context context) {
         mContext = context;
-        mList = new ArrayList<TCVideoQulity>();
+        mList = new ArrayList<TCVideoQuality>();
         LayoutInflater.from(mContext).inflate(R.layout.player_quality_popup_view, this);
         mListView = (ListView) findViewById(R.id.lv_quality);
         mListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
@@ -54,8 +61,8 @@ public class TCVodQualityView extends RelativeLayout {
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 if (mCallback != null) {
                     if (mList != null && mList.size() > 0) {
-                        TCVideoQulity quality = mList.get(position);
-                        if (quality != null) {
+                        TCVideoQuality quality = mList.get(position);
+                        if (quality != null && position != mClickPos) {
                             mCallback.onQualitySelect(quality);
                         }
                     }
@@ -68,11 +75,21 @@ public class TCVodQualityView extends RelativeLayout {
         mListView.setAdapter(mAdapter);
     }
 
+    /**
+     * 设置回调
+     *
+     * @param callback
+     */
     public void setCallback(Callback callback) {
         mCallback = callback;
     }
 
-    public void setVideoQualityList(ArrayList<TCVideoQulity> list) {
+    /**
+     * 设置画质列表
+     *
+     * @param list
+     */
+    public void setVideoQualityList(List<TCVideoQuality> list) {
         mList.clear();
         mList.addAll(list);
 
@@ -116,7 +133,7 @@ public class TCVodQualityView extends RelativeLayout {
             }
             QualityItemView itemView = (QualityItemView) convertView;
             itemView.setSelected(false);
-            TCVideoQulity quality = mList.get(position);
+            TCVideoQuality quality = mList.get(position);
             itemView.setQualityName(quality.title);
             if (mClickPos == position) {
                 itemView.setSelected(true);
@@ -125,6 +142,9 @@ public class TCVodQualityView extends RelativeLayout {
         }
     }
 
+    /**
+     * 画质item view
+     */
     class QualityItemView extends RelativeLayout {
 
         private TextView mTvQuality;
@@ -149,16 +169,34 @@ public class TCVodQualityView extends RelativeLayout {
             mTvQuality = (TextView) findViewById(R.id.tv_quality);
         }
 
+        /**
+         * 设置画质名称
+         *
+         * @param qualityName
+         */
         public void setQualityName(String qualityName) {
             mTvQuality.setText(qualityName);
         }
 
+        /**
+         * 设置画质item是否为选择状态
+         *
+         * @param isChecked
+         */
         public void setSelected(boolean isChecked) {
             mTvQuality.setSelected(isChecked);
         }
     }
 
+    /**
+     * 回调
+     */
     public interface Callback {
-        void onQualitySelect(TCVideoQulity quality);
+        /**
+         * 画质选择回调
+         *
+         * @param quality
+         */
+        void onQualitySelect(TCVideoQuality quality);
     }
 }

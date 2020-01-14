@@ -9,12 +9,12 @@
         android:layout_height="match_parent"
         android:layout_centerInParent="true" />
 
-    <com.tencent.liteav.demo.play.controller.TCVodControllerSmall
+    <com.tencent.liteav.demo.play.controller.TCControllerWindow
         android:id="@+id/controller_small"
         android:layout_width="match_parent"
         android:layout_height="match_parent" />
 
-    <com.tencent.liteav.demo.play.controller.TCVodControllerLarge
+    <com.tencent.liteav.demo.play.controller.TCControllerFullScreen
         android:id="@+id/controller_large"
         android:layout_width="match_parent"
         android:layout_height="match_parent" />
@@ -24,7 +24,7 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent" />
 
-    <com.tencent.liteav.demo.play.controller.TCVodControllerFloat
+    <com.tencent.liteav.demo.play.controller.TCControllerFloat
         android:id="@+id/controller_float"
         android:layout_width="match_parent"
         android:layout_height="match_parent" />

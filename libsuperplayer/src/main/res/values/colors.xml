@@ -21,4 +21,7 @@
 
     <!--gray4-->
     <color name="colorGray4">#787878</color>
+
+    <color name="default_progress_color">#FF4081</color>
+    <color name="default_progress_background_color">#BBBBBB</color>
 </resources>

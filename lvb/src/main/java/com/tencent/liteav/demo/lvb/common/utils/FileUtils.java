@@ -2,6 +2,9 @@ package com.tencent.liteav.demo.lvb.common.utils;
 
 import android.content.Context;
 import android.content.res.AssetManager;
+import android.net.Uri;
+import android.os.Build;
+import android.support.v4.content.FileProvider;
 import android.text.TextUtils;
 import android.util.Log;
 
@@ -1144,6 +1147,18 @@ public class FileUtils {
             }
         }
         return configJsonStr;
+    }
+
+    public static Uri getUri(Context context, String authorites, File file) {
+        Uri uri;
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+            //设置7.0以上共享文件，分享路径定义在xml/file_paths.xml
+            uri = FileProvider.getUriForFile(context, authorites, file);
+        } else {
+            // 7.0以下,共享文件
+            uri = Uri.fromFile(file);
+        }
+        return uri;
     }
 
 }

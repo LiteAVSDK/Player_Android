@@ -1,16 +1,18 @@
 package com.tencent.liteav.demo.play.bean;
 
-import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Created by yuejiaoli on 2018/7/6.
+ *
+ * 视频画质信息
  */
 
 public class TCVideoClassification {
 
     private String id;
     private String name;
-    private ArrayList<Integer> definitionList;
+    private List<Integer> definitionList;
 
     public String getId() {
         return id;
@@ -28,11 +30,11 @@ public class TCVideoClassification {
         this.name = name;
     }
 
-    public ArrayList<Integer> getDefinitionList() {
+    public List<Integer> getDefinitionList() {
         return definitionList;
     }
 
-    public void setDefinitionList(ArrayList<Integer> definitionList) {
+    public void setDefinitionList(List<Integer> definitionList) {
         this.definitionList = definitionList;
     }
 }

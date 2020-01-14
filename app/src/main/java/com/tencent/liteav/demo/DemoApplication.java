@@ -36,6 +36,8 @@ public class DemoApplication extends MultiDexApplication {
 
         TXLiveBase.getInstance().setLicence(instance, licenceUrl, licenseKey);
 
+        // 短视频licence设置
+
         closeAndroidPDialog();
 //        File file = getFilesDir();
 //        Log.w("DemoApplication", "load:" + file.getAbsolutePath());

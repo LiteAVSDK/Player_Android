@@ -1,9 +1,5 @@
 package com.tencent.liteav.demo.play;
 
-import android.util.Log;
-
-import com.tencent.liteav.demo.play.v3.SuperPlayerVideoId;
-
 import java.math.BigInteger;
 import java.security.MessageDigest;
 
@@ -32,39 +28,15 @@ public class SuperPlayerSignUtils {
 
             StringBuilder sb = new StringBuilder();
 
-//            if (model.videoId.version == SuperPlayerVideoId.FILE_ID_V2) {
-                sb.append(key);
-                sb.append(model.appId);
-                sb.append(model.videoId.fileId);
-                if (model.videoId.timeout != null)
-                    sb.append(model.videoId.timeout);
-                if (model.videoId.exper != -1)
-                    sb.append(model.videoId.exper);
-                if (model.videoId.us != null)
-                    sb.append(model.videoId.us);
-//            }
-
-//            V3:https://cloud.tencent.com/document/product/266/34101
-//            普通防盗链签名：
-//
-//            sign = md5(KEY+appId+fileId+playDefinition+t+us)
-//            带有播放 IP 数限制的防盗链
-//
-//            sign = md5(KEY+appId+fileId+playDefinition+t+rlimit+us)
-
-//            if (model.videoId.version == SuperPlayerVideoId.FILE_ID_V3) {
-//                sb.append(key);
-//                sb.append(model.appId);
-//                sb.append(model.videoId.fileId);
-//                if (model.videoId.playDefinition != null)
-//                    sb.append(model.videoId.playDefinition);
-//                if (model.videoId.timeout != null)
-//                    sb.append(model.videoId.timeout);
-//                if (model.videoId.rlimit != -1)
-//                    sb.append(model.videoId.rlimit);
-//                if (model.videoId.us != null)
-//                    sb.append(model.videoId.us);
-//            }
+            sb.append(key);
+            sb.append(model.appId);
+            sb.append(model.videoId.fileId);
+            if (model.videoId.timeout != null)
+                sb.append(model.videoId.timeout);
+            if (model.videoId.exper != -1)
+                sb.append(model.videoId.exper);
+            if (model.videoId.us != null)
+                sb.append(model.videoId.us);
 
             String sign = sb.toString();
 

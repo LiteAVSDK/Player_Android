@@ -39,7 +39,6 @@ public class SuperPlayerGlobalConfig {
      * 播放器最大缓存个数 （ 默认缓存 5 ）
      */
     public int maxCacheItem = 5;
-
     /**
      * 时移域名 （修改为自己app的时移域名）
      */

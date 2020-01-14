@@ -1,8 +1,6 @@
 package com.tencent.liteav.demo.play;
 
 
-import com.tencent.liteav.demo.play.v3.SuperPlayerVideoId;
-
 import java.util.List;
 
 
@@ -22,10 +20,6 @@ public class SuperPlayerModel {
      *  ------------------------------------------------------------------
      */
     public int              appId;              // 【腾讯云服务专用】appid 播放方式1必填；播放方式2、3只有需要使用腾讯云直播时移功能时候填写
-
-//    public String           token;              // 【腾讯云服务专用】加密视频的Token.需要保证是经过URLEncode的
-//                                                // 1.使用VideoId(FileId)模式播放加密视频时，需要指定
-//                                                // 2.使用URL【腾讯云URL】播放SampleAES加密的HLS流或WideVine加密DASH流时需要指定
 
     public String title       = "";             // 视频文件名 （用于显示在UI层）
                                                 // 播放方式1：若未指定title，则使用FileId返回的Title

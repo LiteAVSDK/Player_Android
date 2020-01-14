@@ -5,7 +5,6 @@ import android.content.Context;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.opengl.GLES20;
-import android.os.Environment;
 import android.os.StatFs;
 
 import java.io.File;
@@ -34,19 +33,6 @@ public class VideoDeviceUtil {
         }
     }
 
-    public static boolean isExternalStorageAvailable() {
-        if(!"mounted".equals(Environment.getExternalStorageState()) && Environment.isExternalStorageRemovable()) {
-            return false;
-        } else {
-            try {
-                new StatFs(Environment.getExternalStorageDirectory().getAbsolutePath());
-                return true;
-            } catch (Exception var1) {
-                return false;
-            }
-        }
-    }
-
     @TargetApi(18)
     public static long getAvailableSize(StatFs statFs) {
         long availableBytes;
@@ -60,27 +46,19 @@ public class VideoDeviceUtil {
     }
 
     public static boolean isExternalStorageSpaceEnough(long fileSize) {
-        File sdcard = Environment.getExternalStorageDirectory();
-        StatFs statFs = new StatFs(sdcard.getAbsolutePath());
-        return getAvailableSize(statFs) > fileSize;
-    }
-
-    private static File getExternalFilesDir(Context context) {
-        File file = null;
-        file = context.getExternalFilesDir((String)null);
-        if(file == null) {
-            String filesDir = "/Android/data/" + context.getPackageName() + "/files/";
-            file = new File(Environment.getExternalStorageDirectory().getPath() + filesDir);
-        }
-
-        return file;
+        return true;
     }
 
     public static File getExternalFilesDir(Context context, String folder) {
-        String path = null;
-        if(isExternalStorageAvailable() && isExternalStorageSpaceEnough(52428800L)) {
-            path = getExternalFilesDir(context).getPath();
+        if (context == null)
+            return null;
+
+        File dir = context.getExternalFilesDir("");
+
+        if (dir == null) {
+            return null;
         }
+        String path = dir.getAbsolutePath();
 
         File file = new File(path + File.separator + folder);
 

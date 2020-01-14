@@ -101,7 +101,7 @@
                 android:layout_gravity="center"
                 android:layout_width="51dp"
                 android:layout_height="51dp"
-                android:background="@drawable/camera_change" />
+                android:background="@drawable/lvb_camera_change" />
         </FrameLayout>
 
         <FrameLayout
@@ -114,7 +114,7 @@
                 android:layout_gravity="center"
                 android:layout_width="51dp"
                 android:layout_height="51dp"
-                android:background="@drawable/beauty" />
+                android:background="@drawable/lvb_beauty" />
         </FrameLayout>
 
         <FrameLayout
@@ -347,7 +347,7 @@
         android:background="@drawable/btn_kick_out"
         android:visibility="invisible"/>
 
-    <com.tencent.liteav.demo.lvb.common.view.BeautySettingPannel
+    <com.tencent.liteav.demo.beauty.BeautyPanel
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:id="@+id/layoutFaceBeauty"

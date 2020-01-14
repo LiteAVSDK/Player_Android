@@ -2,6 +2,8 @@ package com.tencent.liteav.demo.play.bean;
 
 /**
  * Created by annidy on 2017/12/20.
+ *
+ * 视频播放信息
  */
 
 public class TCPlayInfoStream {

@@ -118,7 +118,7 @@ public class TCSeekbarWithText extends android.support.v7.widget.AppCompatSeekBa
         setTextLocation();
         //定位文字背景图片的位置
         float bm_x = rect_seek.width() * getProgress() / getMax();
-        float bm_y = rect_seek.height() + 20;
+        float bm_y = rect_seek.height() - 10;
         //计算文字的中心位置在bitmap
         float text_x = rect_seek.width() * getProgress() / getMax() + (img_width - numTextWidth) / 2;
         //画背景图

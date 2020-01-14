@@ -1,7 +1,7 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.tencent.liteav.demo.lvb">
 
-    <application android:theme="@style/AppTheme" >
+    <application android:theme="@style/AppTheme">
 
         <activity
             android:name=".common.activity.QRCodeScanActivity"
@@ -26,6 +26,16 @@
             android:screenOrientation="portrait"
             android:theme="@style/RtmproomActivityTheme"
             android:windowSoftInputMode="adjustNothing" />
+
+        <provider
+            android:name="android.support.v4.content.FileProvider"
+            android:authorities="com.tencent.liteav.demo"
+            android:exported="false"
+            android:grantUriPermissions="true">
+            <meta-data
+                android:name="android.support.FILE_PROVIDER_PATHS"
+                android:resource="@xml/file_paths" />
+        </provider>
     </application>
     <uses-feature android:name="android.hardware.camera" />
     <uses-feature android:name="android.hardware.camera.autofocus" />

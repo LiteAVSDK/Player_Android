@@ -112,7 +112,7 @@ public class LivePlayerSurfaceActivity extends Activity implements ITXLivePlayLi
         mCurrentRenderMode     = TXLiveConstants.RENDER_MODE_ADJUST_RESOLUTION;
         mCurrentRenderRotation = TXLiveConstants.RENDER_ROTATION_PORTRAIT;
 
-        mActivityType = getIntent().getIntExtra("PLAY_TYPE", ACTIVITY_TYPE_LIVE_PLAY);
+        mActivityType = getIntent().getIntExtra("TYPE", ACTIVITY_TYPE_LIVE_PLAY);
 
         mPlayConfig = new TXLivePlayConfig();
 

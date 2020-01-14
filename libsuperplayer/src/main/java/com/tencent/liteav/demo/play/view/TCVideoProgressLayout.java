@@ -11,14 +11,16 @@ import android.widget.TextView;
 
 import com.tencent.liteav.demo.play.R;
 
+/**
+ * 滑动手势控制播放进度时显示的进度提示view
+ */
 
 public class TCVideoProgressLayout extends RelativeLayout {
-    private static final String TAG = "SuperPlayerProgressLayout";
-    private ImageView mIvThumbnail;
-    private TextView mTvTime;
-    private ProgressBar mProgressBar;
-    private HideRunnable mHideRunnable;
-    private int duration = 1000;
+    private ImageView       mIvThumbnail;       // 视频略缩图
+    private TextView        mTvTime;            // 视频进度文本
+    private ProgressBar     mProgressBar;       // 进度条
+    private HideRunnable    mHideRunnable;      // 隐藏自身的线程
+    private int             duration = 1000;    // 自身消失的延迟事件ms
 
     public TCVideoProgressLayout(Context context) {
         super(context);
@@ -39,38 +41,64 @@ public class TCVideoProgressLayout extends RelativeLayout {
         mHideRunnable = new HideRunnable();
     }
 
-    //显示
+    /**
+     * 显示view
+     */
     public void show() {
         setVisibility(VISIBLE);
         removeCallbacks(mHideRunnable);
         postDelayed(mHideRunnable, duration);
     }
 
+    /**
+     * 设置视频进度事件文本
+     *
+     * @param text
+     */
     public void setTimeText(String text) {
         mTvTime.setText(text);
     }
 
-    //设置进度
+    /**
+     * 设置progressbar的进度值
+     *
+     * @param progress
+     */
     public void setProgress(int progress) {
         mProgressBar.setProgress(progress);
     }
 
-    //设置持续时间
+    /**
+     * 设置view消失延迟的时间
+     *
+     * @param duration
+     */
     public void setDuration(int duration) {
         this.duration = duration;
     }
 
-    //设置显示图片
+    /**
+     * 设置略缩图图片
+     *
+     * @param bitmap
+     */
     public void setThumbnail(Bitmap bitmap) {
         mIvThumbnail.setVisibility(VISIBLE);
         mIvThumbnail.setImageBitmap(bitmap);
     }
 
+    /**
+     * 设置progressbar的可见性
+     *
+     * @param enable
+     */
     public void setProgressVisibility(boolean enable) {
         mProgressBar.setVisibility(enable ? VISIBLE : GONE);
     }
 
-    //隐藏自己的Runnable
+    /**
+     * 隐藏view的线程
+     */
     private class HideRunnable implements Runnable {
         @Override
         public void run() {
