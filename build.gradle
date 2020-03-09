@@ -4,6 +4,10 @@ buildscript {
     repositories {
         jcenter()
         maven { url "https://dl.bintray.com/tencentqcloudterminal/maven" }
+        maven {
+            url 'https://maven.google.com/'
+            name 'Google'
+        }
     }
     dependencies {
         classpath 'com.android.tools.build:gradle:2.2.3'
@@ -22,6 +26,10 @@ allprojects {
         }
         jcenter()
         maven { url "https://dl.bintray.com/tencentqcloudterminal/maven" }
+        maven {
+            url 'https://maven.google.com/'
+            name 'Google'
+        }
     }
 }
 
@@ -44,5 +52,5 @@ ext {
     noffmpeg = false
     noijkplay = false
     useASAN = true
-    aekit_version = '1.0.19-cloud'
+    aekit_version = '1.0.20-cloud'
 }
