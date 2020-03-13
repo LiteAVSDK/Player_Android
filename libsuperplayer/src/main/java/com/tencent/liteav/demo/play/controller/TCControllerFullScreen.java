@@ -3,6 +3,7 @@ package com.tencent.liteav.demo.play.controller;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.Color;
+import android.text.TextUtils;
 import android.util.AttributeSet;
 import android.view.GestureDetector;
 import android.view.LayoutInflater;
@@ -36,7 +37,7 @@ import java.util.List;
 /**
  * 全屏模式播放控件
  *
- * 除{@link TCControllerWindow}基本功能外，还包括进度条关键帧打点信息显示与跳转、快进快退时略缩图的显示、切换画质
+ * 除{@link TCControllerWindow}基本功能外，还包括进度条关键帧打点信息显示与跳转、快进快退时缩略图的显示、切换画质
  * 镜像播放、硬件加速、倍速播放、弹幕、截图等功能
  *
  * 1、点击事件监听{@link #onClick(View)}
@@ -105,7 +106,7 @@ public class TCControllerFullScreen extends RelativeLayout implements IControlle
     private float                               mWaterMarkBmpY;                         // 水印y坐标
 
     private boolean                             mDanmuOn;                               // 弹幕是否开启
-    private TXImageSprite                       mTXImageSprite;                         // 略缩图信息
+    private TXImageSprite                       mTXImageSprite;                         // 雪碧图信息
     private List<TCPlayKeyFrameDescInfo>        mTXPlayKeyFrameDescInfoList;            // 关键帧信息
     private int                                 mSelectedPos = -1;                      // 点击的关键帧时间点
     private boolean                             mLockScreen;                            // 是否锁屏
@@ -571,6 +572,10 @@ public class TCControllerFullScreen extends RelativeLayout implements IControlle
      */
     @Override
     public void updateVideoQuality(TCVideoQuality videoQuality) {
+        if(videoQuality==null){
+            mTvQuality.setText("");
+            return;
+        }
         mDefaultVideoQuality = videoQuality;
         if (mTvQuality != null) {
             mTvQuality.setText(videoQuality.title);
@@ -587,9 +592,9 @@ public class TCControllerFullScreen extends RelativeLayout implements IControlle
     }
 
     /**
-     * 更新略缩图信息
+     * 更新雪碧图信息
      *
-     * @param info 略缩图信息
+     * @param info 雪碧图信息
      */
     @Override
     public void updateImageSpriteInfo(TCPlayImageSpriteInfo info) {
@@ -743,6 +748,9 @@ public class TCControllerFullScreen extends RelativeLayout implements IControlle
         if (mVideoQualityList == null || mVideoQualityList.size() == 0) {
             return;
         }
+        if(mVideoQualityList.size()==1 && (mVideoQualityList.get(0)==null || TextUtils.isEmpty(mVideoQualityList.get(0).title))){
+            return;
+        }
         // 设置默认显示分辨率文字
         mVodQualityView.setVisibility(View.VISIBLE);
         if (!mFirstShowQuality && mDefaultVideoQuality != null) {
@@ -892,7 +900,7 @@ public class TCControllerFullScreen extends RelativeLayout implements IControlle
     }
 
     /**
-     * 设置播放进度所对应的略缩图
+     * 设置播放进度所对应的缩略图
      *
      * @param progress 播放进度
      */

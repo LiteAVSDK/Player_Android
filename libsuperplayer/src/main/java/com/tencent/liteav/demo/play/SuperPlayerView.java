@@ -25,7 +25,9 @@ import android.widget.ImageView;
 import android.widget.PopupWindow;
 import android.widget.RelativeLayout;
 import android.widget.Toast;
+
 import com.tencent.liteav.basic.log.TXCLog;
+import com.tencent.liteav.demo.play.bean.TCResolutionName;
 import com.tencent.liteav.demo.play.controller.IControllerCallback;
 import com.tencent.liteav.demo.play.controller.TCControllerFloat;
 import com.tencent.liteav.demo.play.controller.TCControllerFullScreen;
@@ -35,6 +37,7 @@ import com.tencent.liteav.demo.play.protocol.IPlayInfoProtocol;
 import com.tencent.liteav.demo.play.protocol.IPlayInfoRequestCallback;
 import com.tencent.liteav.demo.play.protocol.TCPlayInfoParams;
 import com.tencent.liteav.demo.play.protocol.TCPlayInfoProtocolV2;
+import com.tencent.liteav.demo.play.protocol.TCPlayInfoProtocolV4;
 import com.tencent.liteav.demo.play.utils.TCImageUtil;
 import com.tencent.liteav.demo.play.utils.TCNetWatcher;
 import com.tencent.liteav.demo.play.utils.TCUrlUtil;
@@ -60,25 +63,25 @@ import java.util.List;
 
 /**
  * Created by liyuejiao on 2018/7/3.
- *
+ * <p>
  * 超级播放器view
- *
+ * <p>
  * 具备播放器基本功能，此外还包括横竖屏切换、悬浮窗播放、画质切换、硬件加速、倍速播放、镜像播放、手势控制等功能，同时支持直播与点播
- *
+ * <p>
  * 使用方式极为简单，只需要在布局文件中引入并获取到该控件，通过{@link #playWithModel(SuperPlayerModel)}传入{@link SuperPlayerModel}即可实现视频播放
- *
+ * <p>
  * 1、播放视频{@link #playWithModel(SuperPlayerModel)}
- *
+ * <p>
  * 2、设置回调{@link #setPlayerViewCallback(OnSuperPlayerViewCallback)}
- *
+ * <p>
  * 3、点播相关：初始化播放器{@link #initVodPlayer(Context)}，播放事件监听{@link #onPlayEvent(TXVodPlayer, int, Bundle)}，
  * 网络事件监听{@link #onNetStatus(TXVodPlayer, Bundle)}
- *
+ * <p>
  * 4、直播相关：初始化播放器{@link #initLivePlayer(Context)}，播放事件监听{@link #onPlayEvent(int, Bundle)}，
  * 网络事件监听{@link #onNetStatus(Bundle)}
- *
+ * <p>
  * 5、controller回调实现{@link #mControllerCallback}
- *
+ * <p>
  * 5、退出播放释放内存{@link #resetPlayer()}
  */
 
@@ -93,46 +96,46 @@ public class SuperPlayerView extends RelativeLayout implements ITXVodPlayListene
 
     private Context mContext;
     // UI
-    private ViewGroup                   mRootView;                      // SuperPlayerView的根view
-    private TXCloudVideoView            mTXCloudVideoView;              // 腾讯云视频播放view
-    private TCControllerFullScreen      mControllerFullScreen;          // 全屏模式控制view
-    private TCControllerWindow          mControllerWindow;              // 窗口模式控制view
-    private TCControllerFloat           mControllerFloat;               // 悬浮窗模式控制view
-    private TCDanmuView                 mDanmuView;                     // 弹幕
-    private ViewGroup.LayoutParams      mLayoutParamWindowMode;         // 窗口播放时SuperPlayerView的布局参数
-    private ViewGroup.LayoutParams      mLayoutParamFullScreenMode;     // 全屏播放时SuperPlayerView的布局参数
-    private LayoutParams                mVodControllerWindowParams;     // 窗口controller的布局参数
-    private LayoutParams                mVodControllerFullScreenParams; // 全屏controller的布局参数
+    private ViewGroup mRootView;                      // SuperPlayerView的根view
+    private TXCloudVideoView mTXCloudVideoView;              // 腾讯云视频播放view
+    private TCControllerFullScreen mControllerFullScreen;          // 全屏模式控制view
+    private TCControllerWindow mControllerWindow;              // 窗口模式控制view
+    private TCControllerFloat mControllerFloat;               // 悬浮窗模式控制view
+    private TCDanmuView mDanmuView;                     // 弹幕
+    private ViewGroup.LayoutParams mLayoutParamWindowMode;         // 窗口播放时SuperPlayerView的布局参数
+    private ViewGroup.LayoutParams mLayoutParamFullScreenMode;     // 全屏播放时SuperPlayerView的布局参数
+    private LayoutParams mVodControllerWindowParams;     // 窗口controller的布局参数
+    private LayoutParams mVodControllerFullScreenParams; // 全屏controller的布局参数
 
-    private WindowManager               mWindowManager;                 // 悬浮窗窗口管理器
-    private WindowManager.LayoutParams  mWindowParams;                  // 悬浮窗布局参数
+    private WindowManager mWindowManager;                 // 悬浮窗窗口管理器
+    private WindowManager.LayoutParams mWindowParams;                  // 悬浮窗布局参数
 
-    private SuperPlayerModel            mCurrentModel;                  // 当前播放的model
-    private IPlayInfoProtocol           mCurrentProtocol;               // 当前视频信息协议类
+    private SuperPlayerModel mCurrentModel;                  // 当前播放的model
+    private IPlayInfoProtocol mCurrentProtocol;               // 当前视频信息协议类
 
-    private TXVodPlayer                 mVodPlayer;                     // 点播播放器
-    private TXVodPlayConfig             mVodPlayConfig;                 // 点播播放器配置
-    private TXLivePlayer                mLivePlayer;                    // 直播播放器
-    private TXLivePlayConfig            mLivePlayConfig;                // 直播播放器配置
+    private TXVodPlayer mVodPlayer;                     // 点播播放器
+    private TXVodPlayConfig mVodPlayConfig;                 // 点播播放器配置
+    private TXLivePlayer mLivePlayer;                    // 直播播放器
+    private TXLivePlayConfig mLivePlayConfig;                // 直播播放器配置
 
-    private OnSuperPlayerViewCallback   mPlayerViewCallback;            // SuperPlayerView回调
-    private TCNetWatcher                mWatcher;                       // 网络质量监视器
-    private String                      mCurrentPlayVideoURL;           // 当前播放的url
-    private int                         mCurrentPlayType;               // 当前播放类型
-    private int                         mCurrentPlayMode = SuperPlayerConst.PLAYMODE_WINDOW;    // 当前播放模式
-    private int                         mCurrentPlayState = SuperPlayerConst.PLAYSTATE_PLAYING; // 当前播放状态
-    private boolean                     mIsMultiBitrateStream;          // 是否是多码流url播放
-    private boolean                     mIsPlayWithFileId;              // 是否是腾讯云fileId播放
-    private long                        mReportLiveStartTime = -1;      // 直播开始时间，用于上报使用时长
-    private long                        mReportVodStartTime = -1;       // 点播开始时间，用于上报使用时长
-    private boolean                     mDefaultQualitySet;             // 标记播放多码流url时是否设置过默认画质
-    private boolean                     mLockScreen = false;            // 是否锁定屏幕
-    private boolean                     mChangeHWAcceleration;          // 切换硬解后接收到第一个关键帧前的标记位
-    private int                         mSeekPos;                       // 记录切换硬解时的播放时间
-    private long                        mMaxLiveProgressTime;           // 观看直播的最大时长
-    private PLAYER_TYPE                 mCurPlayType=PLAYER_TYPE.PLAYER_TYPE_NULL;    //当前播放类型
+    private OnSuperPlayerViewCallback mPlayerViewCallback;            // SuperPlayerView回调
+    private TCNetWatcher mWatcher;                       // 网络质量监视器
+    private String mCurrentPlayVideoURL;           // 当前播放的url
+    private int mCurrentPlayType;               // 当前播放类型
+    private int mCurrentPlayMode = SuperPlayerConst.PLAYMODE_WINDOW;    // 当前播放模式
+    private int mCurrentPlayState = SuperPlayerConst.PLAYSTATE_PLAYING; // 当前播放状态
+    private boolean mIsMultiBitrateStream;          // 是否是多码流url播放
+    private boolean mIsPlayWithFileId;              // 是否是腾讯云fileId播放
+    private long mReportLiveStartTime = -1;      // 直播开始时间，用于上报使用时长
+    private long mReportVodStartTime = -1;       // 点播开始时间，用于上报使用时长
+    private boolean mDefaultQualitySet;             // 标记播放多码流url时是否设置过默认画质
+    private boolean mLockScreen = false;            // 是否锁定屏幕
+    private boolean mChangeHWAcceleration;          // 切换硬解后接收到第一个关键帧前的标记位
+    private int mSeekPos;                       // 记录切换硬解时的播放时间
+    private long mMaxLiveProgressTime;           // 观看直播的最大时长
+    private PLAYER_TYPE mCurPlayType = PLAYER_TYPE.PLAYER_TYPE_NULL;    //当前播放类型
 
-    private final int                   OP_SYSTEM_ALERT_WINDOW = 24;    // 支持TYPE_TOAST悬浮窗的最高API版本
+    private final int OP_SYSTEM_ALERT_WINDOW = 24;    // 支持TYPE_TOAST悬浮窗的最高API版本
 
     public SuperPlayerView(Context context) {
         super(context);
@@ -266,13 +269,14 @@ public class SuperPlayerView extends RelativeLayout implements ITXVodPlayListene
         params.appId = model.appId;
         if (model.videoId != null) {
             params.fileId = model.videoId.fileId;
-            params.timeout = model.videoId.timeout;
-            params.us = model.videoId.us;
-            params.exper = model.videoId.exper;
-            params.sign = model.videoId.sign;
+            params.videoId = model.videoId;
+            mCurrentProtocol = new TCPlayInfoProtocolV4(params);
+        } else if (model.videoIdV2 != null) {
+            params.fileId = model.videoIdV2.fileId;
+            params.videoIdV2 = model.videoIdV2;
+            mCurrentProtocol = new TCPlayInfoProtocolV2(params);
         }
-        mCurrentProtocol = new TCPlayInfoProtocolV2(params);
-        if (model.videoId != null) { // 根据FileId播放
+        if (model.videoId != null || model.videoIdV2 != null) { // 根据FileId播放
             mCurrentProtocol.sendRequest(new IPlayInfoRequestCallback() {
                 @Override
                 public void onSuccess(IPlayInfoProtocol protocol, TCPlayInfoParams param) {
@@ -309,8 +313,8 @@ public class SuperPlayerView extends RelativeLayout implements ITXVodPlayListene
                 }
                 defaultVideoQuality = videoQualities.get(model.playDefaultIndex);
             } else if (!TextUtils.isEmpty(model.url)) { // 传统URL模式播放
-                videoQualities.add(new TCVideoQuality(0, model.qualityName, model.url));
-                defaultVideoQuality = videoQualities.get(0);
+//                videoQualities.add(new TCVideoQuality(0, "", model.url));
+//                defaultVideoQuality = videoQualities.get(0);
                 videoURL = model.url;
             }
 
@@ -351,8 +355,12 @@ public class SuperPlayerView extends RelativeLayout implements ITXVodPlayListene
     private void playModeVideo(IPlayInfoProtocol protocol) {
         playVodURL(protocol.getUrl());
         List<TCVideoQuality> videoQualityArrayList = protocol.getVideoQualityList();
-        if (videoQualityArrayList != null)
+        if (videoQualityArrayList != null) {
             mControllerFullScreen.setVideoQualityList(videoQualityArrayList);
+            mIsMultiBitrateStream = false;
+        } else {
+            mIsMultiBitrateStream = true;
+        }
         TCVideoQuality defaultVideoQuality = protocol.getDefaultVideoQuality();
         if (defaultVideoQuality != null)
             mControllerFullScreen.updateVideoQuality(defaultVideoQuality);
@@ -387,12 +395,16 @@ public class SuperPlayerView extends RelativeLayout implements ITXVodPlayListene
         }
         if (mVodPlayer != null) {
             mDefaultQualitySet = false;
+            mVodPlayer.setStartTime(0);
             mVodPlayer.setAutoPlay(true);
             mVodPlayer.setVodListener(this);
             int ret = mVodPlayer.startPlay(url);
             if (ret == 0) {
                 mCurrentPlayState = SuperPlayerConst.PLAYSTATE_PLAYING;
                 mCurPlayType = PLAYER_TYPE.PLAYER_TYPE_VOD;
+                if (mDanmuView != null && mDanmuView.isPrepared() && mDanmuView.isPaused()) {
+                    mDanmuView.resume();
+                }
                 TXCLog.e(TAG, "playVodURL mCurrentPlayState:" + mCurrentPlayState);
             }
         }
@@ -780,7 +792,7 @@ public class SuperPlayerView extends RelativeLayout implements ITXVodPlayListene
         @Override
         public void onResume() {
             if (mCurrentPlayState == SuperPlayerConst.PLAYSTATE_END) { //重播
-                if(mCurPlayType == PLAYER_TYPE.PLAYER_TYPE_LIVE){
+                if (mCurPlayType == PLAYER_TYPE.PLAYER_TYPE_LIVE) {
                     if (TCUrlUtil.isRTMPPlay(mCurrentPlayVideoURL)) {
                         playLiveURL(mCurrentPlayVideoURL, TXLivePlayer.PLAY_TYPE_LIVE_RTMP);
                     } else if (TCUrlUtil.isFLVPlay(mCurrentPlayVideoURL)) {
@@ -789,8 +801,7 @@ public class SuperPlayerView extends RelativeLayout implements ITXVodPlayListene
                             startMultiStreamLiveURL(mCurrentPlayVideoURL);
                         }
                     }
-                }
-                else {
+                } else {
                     playVodURL(mCurrentPlayVideoURL);
                 }
             } else if (mCurrentPlayState == SuperPlayerConst.PLAYSTATE_PAUSE) { //继续播放
@@ -870,14 +881,14 @@ public class SuperPlayerView extends RelativeLayout implements ITXVodPlayListene
             mControllerFullScreen.updateVideoQuality(quality);
             if (mCurrentPlayType == SuperPlayerConst.PLAYTYPE_VOD) {
                 if (mVodPlayer != null) {
-                    if (quality.index == -1) {
+                    if (quality.url != null) { // br!=0;index=-1;url!=null   //br=0;index!=-1;url!=null
                         // 说明是非多bitrate的m3u8子流，需要手动seek
                         float currentTime = mVodPlayer.getCurrentPlaybackTime();
                         mVodPlayer.stopPlay(true);
                         TXCLog.i(TAG, "onQualitySelect quality.url:" + quality.url);
                         mVodPlayer.setStartTime(currentTime);
                         mVodPlayer.startPlay(quality.url);
-                    } else {
+                    } else { //br!=0;index!=-1;url=null
                         TXCLog.i(TAG, "setBitrateIndex quality.index:" + quality.index);
                         // 说明是多bitrate的m3u8子流，会自动无缝seek
                         mVodPlayer.setBitrateIndex(quality.index);
@@ -1001,7 +1012,7 @@ public class SuperPlayerView extends RelativeLayout implements ITXVodPlayListene
      */
     /**
      * 点播播放器回调
-     *
+     * <p>
      * 具体可参考官网文档：https://cloud.tencent.com/document/product/881/20216
      *
      * @param player
@@ -1025,17 +1036,20 @@ public class SuperPlayerView extends RelativeLayout implements ITXVodPlayListene
                     Collections.sort(bitrateItems); //masterPlaylist多清晰度，按照码率排序，从低到高
                     List<TCVideoQuality> videoQualities = new ArrayList<>();
                     int size = bitrateItems.size();
+                    List<TCResolutionName> resolutionNames = mCurrentProtocol.getResolutionNameList();
                     for (int i = 0; i < size; i++) {
                         TXBitrateItem bitrateItem = bitrateItems.get(i);
-                        TCVideoQuality quality = TCVideoQualityUtil.convertToVideoQuality(bitrateItem, i);
+                        TCVideoQuality quality;
+                        if (resolutionNames != null) {
+                            quality = TCVideoQualityUtil.convertToVideoQuality(bitrateItem, mCurrentProtocol.getResolutionNameList());
+                        } else {
+                            quality = TCVideoQualityUtil.convertToVideoQuality(bitrateItem, i);
+                        }
                         videoQualities.add(quality);
                     }
                     if (!mDefaultQualitySet) {
-                        TXBitrateItem defaultItem = bitrateItems.get(bitrateItems.size() - 1);
-                        mVodPlayer.setBitrateIndex(defaultItem.index); //默认播放码率最高的
-                        TXBitrateItem bitrateItem = bitrateItems.get(bitrateItems.size() - 1);
-                        TCVideoQuality defaultVideoQuality = TCVideoQualityUtil.convertToVideoQuality(bitrateItem, bitrateItems.size() - 1);
-                        mControllerFullScreen.updateVideoQuality(defaultVideoQuality);
+                        mVodPlayer.setBitrateIndex(bitrateItems.get(bitrateItems.size() - 1).index); //默认播放码率最高的
+                        mControllerFullScreen.updateVideoQuality(videoQualities.get(videoQualities.size() - 1));
                         mDefaultQualitySet = true;
                     }
                     mControllerFullScreen.setVideoQualityList(videoQualities);
@@ -1056,10 +1070,10 @@ public class SuperPlayerView extends RelativeLayout implements ITXVodPlayListene
                 int duration = param.getInt(TXLiveConstants.EVT_PLAY_DURATION_MS);
                 updateVideoProgress(progress / 1000, duration / 1000);
                 break;
-             case TXLiveConstants.PLAY_EVT_PLAY_BEGIN:{
-                 updatePlayState(SuperPlayerConst.PLAYSTATE_PLAYING);
-                 break;
-             }
+            case TXLiveConstants.PLAY_EVT_PLAY_BEGIN: {
+                updatePlayState(SuperPlayerConst.PLAYSTATE_PLAYING);
+                break;
+            }
             default:
                 break;
         }
@@ -1079,7 +1093,7 @@ public class SuperPlayerView extends RelativeLayout implements ITXVodPlayListene
 
     /**
      * 直播播放器回调
-     *
+     * <p>
      * 具体可参考官网文档：https://cloud.tencent.com/document/product/881/20217
      *
      * @param event 事件id.id类型请参考 {@linkplain TXLiveConstants#PUSH_EVT_CONNECT_SUCC 播放事件列表}.
@@ -1166,7 +1180,7 @@ public class SuperPlayerView extends RelativeLayout implements ITXVodPlayListene
 
     /**
      * 检查悬浮窗权限
-     *
+     * <p>
      * API <18，默认有悬浮窗权限，不需要处理。无法接收无法接收触摸和按键事件，不需要权限和无法接受触摸事件的源码分析
      * API >= 19 ，可以接收触摸和按键事件
      * API >=23，需要在manifest中申请权限，并在每次需要用到权限的时候检查是否已有该权限，因为用户随时可以取消掉。

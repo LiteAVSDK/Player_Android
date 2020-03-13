@@ -292,9 +292,9 @@ public class TCControllerFloat extends RelativeLayout implements IController, Vi
     }
 
     /**
-     * 更新略缩图信息
+     * 更新雪碧图信息
      *
-     * @param info 略缩图信息
+     * @param info 雪碧图信息
      */
     @Override
     public void updateImageSpriteInfo(TCPlayImageSpriteInfo info) {

@@ -7,8 +7,9 @@ import android.text.TextUtils;
 import com.tencent.liteav.basic.log.TXCLog;
 import com.tencent.liteav.demo.play.bean.TCPlayImageSpriteInfo;
 import com.tencent.liteav.demo.play.bean.TCPlayKeyFrameDescInfo;
-import com.tencent.liteav.demo.play.net.TCHttpURLClient;
+import com.tencent.liteav.demo.play.bean.TCResolutionName;
 import com.tencent.liteav.demo.play.bean.TCVideoQuality;
+import com.tencent.liteav.demo.play.net.TCHttpURLClient;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -23,15 +24,13 @@ import java.util.List;
 public class TCPlayInfoProtocolV4 implements IPlayInfoProtocol {
     private static final String TAG = "TCPlayInfoProtocolV4";
 
-    private final String BASE_URLS_V4 = "https://adapter.vod.myqcloud.com/getplayinfo/v4";  // V4协议请求地址
-    //mock json api测试地址
-//    private final String MOCK_URL = "http://www.mocky.io/v2/5dc91faa2f0000560073e9c0";
-//    private final String MOCK_URL_HLS = "http://www.mocky.io/v2/5dc93c1b2f0000560073eae7";
+    private final String BASE_URLS_V4 = "https://playvideo.qcloud.com/getplayinfo/v4";  // V4协议请求地址
 
     private Handler             mMainHandler;   // 用于切换线程
 
     private TCPlayInfoParams    mParams;        // 协议请求输入的参数
     private IPlayInfoParser     mParser;        // 协议请求返回Json的解析对象
+    private String              mRequestContext;       //透传字段
 
     public TCPlayInfoProtocolV4(TCPlayInfoParams params) {
         mParams = params;
@@ -49,8 +48,6 @@ public class TCPlayInfoProtocolV4 implements IPlayInfoProtocol {
             return;
         }
         String urlString = makeUrlString();
-//        String urlString = MOCK_URL;
-//        String urlString = MOCK_URL_HLS;
         TCHttpURLClient.getInstance().get(urlString, new TCHttpURLClient.OnHttpCallback() {
             @Override
             public void onSuccess(String result) {
@@ -92,7 +89,11 @@ public class TCPlayInfoProtocolV4 implements IPlayInfoProtocol {
             JSONObject jsonObject = new JSONObject(content);
             final int code = jsonObject.getInt("code");
             final String message = jsonObject.optString("message");
-            TXCLog.e(TAG, message);
+            final String warning = jsonObject.optString("warning");
+            mRequestContext = jsonObject.optString("context");
+            TXCLog.i(TAG,"context : "+mRequestContext);
+            TXCLog.i(TAG,"message: "+message);
+            TXCLog.i(TAG,"warning: "+warning);
             if (code == 0) {
                 int version = jsonObject.getInt("version");
                 if (version == 2) {
@@ -121,31 +122,47 @@ public class TCPlayInfoProtocolV4 implements IPlayInfoProtocol {
      */
     private String makeUrlString() {
         String urlStr = String.format("%s/%d/%s", BASE_URLS_V4, mParams.appId, mParams.fileId);
-        String query = makeQueryString(mParams.timeout, mParams.us, mParams.exper, mParams.sign);
-        if (query != null) {
+        String psign = makeJWTSignature(mParams);
+        String query = null;
+        if(mParams.videoId!=null){
+            query = makeQueryString(null, psign, null);
+        }
+
+        if (!TextUtils.isEmpty(query)) {
             urlStr = urlStr + "?" + query;
         }
+        TXCLog.d(TAG,"request url: "+urlStr);
         return urlStr;
     }
+
+    public static String makeJWTSignature(TCPlayInfoParams params){
+        if(params.videoId !=null && !TextUtils.isEmpty(params.videoId.pSign)){
+            return params.videoId.pSign;
+        }
+        return null;
+    }
+
 
     /**
      * 拼装协议请求url中的query字段
      *
      * @return query字段字符串
      */
-    private String makeQueryString(String timeout, String us, int exper, String sign) {
+    private String makeQueryString(String pcfg, String psign, String content) {
         StringBuilder str = new StringBuilder();
-        if (timeout != null) {
-            str.append("t=" + timeout + "&");
+        if (!TextUtils.isEmpty(pcfg)) {
+            str.append("pcfg=" + pcfg + "&");
         }
-        if (us != null) {
-            str.append("us=" + us + "&");
+
+        if (!TextUtils.isEmpty(psign)) {
+            str.append("psign=" + psign + "&");
         }
-        if (sign != null) {
-            str.append("sign=" + sign + "&");
+
+        if(!TextUtils.isEmpty(content)){
+            str.append("context=" + content + "&");
         }
-        if (exper >= 0) {
-            str.append("exper=" + exper);
+        if (str.length() > 1) {
+            str.deleteCharAt(str.length() - 1);
         }
         return str.toString();
     }
@@ -179,9 +196,9 @@ public class TCPlayInfoProtocolV4 implements IPlayInfoProtocol {
     }
 
     /**
-     * 获取略缩图信息
+     * 获取雪碧图信息
      *
-     * @return 略缩图信息对象
+     * @return 雪碧图信息对象
      */
     @Override
     public TCPlayImageSpriteInfo getImageSpriteInfo() {
@@ -231,5 +248,20 @@ public class TCPlayInfoProtocolV4 implements IPlayInfoProtocol {
         } else {
             mMainHandler.post(r);
         }
+    }
+
+    /**
+     * 获取视频画质别名列表
+     *
+     * @return 画质别名数组
+     */
+    @Override
+    public List<TCResolutionName> getResolutionNameList() {
+        return mParser == null ? null : mParser.getResolutionNameList();
+    }
+
+    @Override
+    public String getPenetrateContext() {
+        return mRequestContext;
     }
 }

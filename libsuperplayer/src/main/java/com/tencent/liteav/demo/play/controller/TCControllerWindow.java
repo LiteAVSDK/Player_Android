@@ -568,9 +568,9 @@ public class TCControllerWindow extends RelativeLayout implements IController, V
     }
 
     /**
-     * 更新略缩图信息
+     * 更新雪碧图信息
      *
-     * @param info 略缩图信息
+     * @param info 雪碧图信息
      */
     @Override
     public void updateImageSpriteInfo(TCPlayImageSpriteInfo info) {

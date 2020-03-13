@@ -3,7 +3,7 @@ package com.tencent.liteav.demo.play.bean;
 import java.util.List;
 
 /**
- * 视频略缩图信息
+ * 视频雪碧图信息
  */
 public class TCPlayImageSpriteInfo {
     public List<String> imageUrls; // 图片链接URL

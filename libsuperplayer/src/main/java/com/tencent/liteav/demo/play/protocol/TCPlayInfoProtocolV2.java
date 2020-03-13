@@ -7,6 +7,7 @@ import android.text.TextUtils;
 import com.tencent.liteav.basic.log.TXCLog;
 import com.tencent.liteav.demo.play.bean.TCPlayImageSpriteInfo;
 import com.tencent.liteav.demo.play.bean.TCPlayKeyFrameDescInfo;
+import com.tencent.liteav.demo.play.bean.TCResolutionName;
 import com.tencent.liteav.demo.play.net.TCHttpURLClient;
 import com.tencent.liteav.demo.play.bean.TCVideoQuality;
 
@@ -17,7 +18,7 @@ import java.util.List;
 
 /**
  * V2视频信息协议实现类
- *
+ * <p>
  * 负责V2视频信息协议的请求控制与数据获取
  */
 public class TCPlayInfoProtocolV2 implements IPlayInfoProtocol {
@@ -25,10 +26,10 @@ public class TCPlayInfoProtocolV2 implements IPlayInfoProtocol {
 
     private final String BASE_URLS_V2 = "https://playvideo.qcloud.com/getplayinfo/v2";  // V2协议请求地址
 
-    private Handler             mMainHandler;   // 用于切换线程
+    private Handler mMainHandler;   // 用于切换线程
 
-    private TCPlayInfoParams    mParams;        // 协议请求输入的参数
-    private IPlayInfoParser     mParser;        // 协议请求返回Json的解析对象
+    private TCPlayInfoParams mParams;        // 协议请求输入的参数
+    private IPlayInfoParser mParser;        // 协议请求返回Json的解析对象
 
     public TCPlayInfoProtocolV2(TCPlayInfoParams params) {
         mParams = params;
@@ -81,9 +82,11 @@ public class TCPlayInfoProtocolV2 implements IPlayInfoProtocol {
      */
     private String makeUrlString() {
         String urlStr = String.format("%s/%d/%s", BASE_URLS_V2, mParams.appId, mParams.fileId);
-        String query = makeQueryString(mParams.timeout, mParams.us, mParams.exper, mParams.sign);
-        if (query != null) {
-            urlStr = urlStr + "?" + query;
+        if (mParams.videoIdV2 != null) {
+            String query = makeQueryString(mParams.videoIdV2.timeout, mParams.videoIdV2.us, mParams.videoIdV2.exper, mParams.videoIdV2.sign);
+            if (query != null) {
+                urlStr = urlStr + "?" + query;
+            }
         }
         return urlStr;
     }
@@ -109,7 +112,10 @@ public class TCPlayInfoProtocolV2 implements IPlayInfoProtocol {
             str.append("sign=" + sign + "&");
         }
         if (exper >= 0) {
-            str.append("exper=" + exper);
+            str.append("exper=" + exper + "&");
+        }
+        if (str.length() > 1) {
+            str.deleteCharAt(str.length() - 1);
         }
         return str.toString();
     }
@@ -143,9 +149,9 @@ public class TCPlayInfoProtocolV2 implements IPlayInfoProtocol {
     }
 
     /**
-     * 获取略缩图信息
+     * 获取雪碧图信息
      *
-     * @return 略缩图信息对象
+     * @return 雪碧图信息对象
      */
     @Override
     public TCPlayImageSpriteInfo getImageSpriteInfo() {
@@ -216,7 +222,7 @@ public class TCPlayInfoProtocolV2 implements IPlayInfoProtocol {
 
     /**
      * 切换到主线程
-     *
+     * <p>
      * 从视频协议请求回调的子线程切换回主线程
      *
      * @param r 需要在主线程中执行的任务
@@ -227,5 +233,20 @@ public class TCPlayInfoProtocolV2 implements IPlayInfoProtocol {
         } else {
             mMainHandler.post(r);
         }
+    }
+
+    /**
+     * 获取视频画质别名列表
+     *
+     * @return 画质别名数组
+     */
+    @Override
+    public List<TCResolutionName> getResolutionNameList() {
+        return mParser == null ? null : mParser.getResolutionNameList();
+    }
+
+    @Override
+    public String getPenetrateContext() {
+        return null;
     }
 }

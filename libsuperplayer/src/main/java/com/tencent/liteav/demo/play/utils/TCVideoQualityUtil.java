@@ -1,6 +1,7 @@
 package com.tencent.liteav.demo.play.utils;
 
 import com.tencent.liteav.demo.play.bean.TCPlayInfoStream;
+import com.tencent.liteav.demo.play.bean.TCResolutionName;
 import com.tencent.liteav.demo.play.bean.TCVideoQuality;
 import com.tencent.rtmp.TXBitrateItem;
 
@@ -29,16 +30,32 @@ public class TCVideoQualityUtil {
 
         switch (index) {
             case 0:
+                quality.name = "FLU";
+                quality.title = "流畅";
+                break;
+            case 1:
                 quality.name = "SD";
                 quality.title = "标清";
                 break;
-            case 1:
+            case 2:
                 quality.name = "HD";
                 quality.title = "高清";
                 break;
-            case 2:
+            case 3:
                 quality.name = "FHD";
                 quality.title = "超清";
+                break;
+            case 4:
+                quality.name = "2K";
+                quality.title = "2K";
+                break;
+            case 5:
+                quality.name = "4K";
+                quality.title = "4K";
+                break;
+            case 6:
+                quality.name = "8K";
+                quality.title = "8K";
                 break;
         }
         return quality;
@@ -108,5 +125,26 @@ public class TCVideoQualityUtil {
             videoQulities.add(videoQulity);
         }
         return videoQulities;
+    }
+
+    /**
+     * 根据视频清晰度别名表从码率信息转换为视频清晰度
+     *
+     * @param bitrateItem       码率
+     * @param resolutionNames   清晰度别名表
+     * @return
+     */
+    public static TCVideoQuality convertToVideoQuality(TXBitrateItem bitrateItem, List<TCResolutionName> resolutionNames) {
+        TCVideoQuality quality = new TCVideoQuality();
+        quality.bitrate = bitrateItem.bitrate;
+        quality.index = bitrateItem.index;
+        int minEdge = bitrateItem.width < bitrateItem.height ? bitrateItem.width : bitrateItem.height;
+        for (TCResolutionName resolutionName : resolutionNames) {
+            if (resolutionName.minEdgeLength >= minEdge) {
+                quality.title = resolutionName.name;
+                break;
+            }
+        }
+        return quality;
     }
 }

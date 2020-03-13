@@ -2,6 +2,7 @@ package com.tencent.liteav.demo.play.protocol;
 
 import com.tencent.liteav.demo.play.bean.TCPlayImageSpriteInfo;
 import com.tencent.liteav.demo.play.bean.TCPlayKeyFrameDescInfo;
+import com.tencent.liteav.demo.play.bean.TCResolutionName;
 import com.tencent.liteav.demo.play.bean.TCVideoQuality;
 
 import java.util.List;
@@ -37,9 +38,9 @@ public interface IPlayInfoProtocol {
     String getName();
 
     /**
-     * 获取略缩图信息
+     * 获取雪碧图信息
      *
-     * @return 略缩图信息对象
+     * @return 雪碧图信息对象
      */
     TCPlayImageSpriteInfo getImageSpriteInfo();
 
@@ -63,4 +64,18 @@ public interface IPlayInfoProtocol {
      * @return 默认画质信息对象
      */
     TCVideoQuality getDefaultVideoQuality();
+
+    /**
+     * 获取视频画质别名列表
+     *
+     * @return 画质别名数组
+     */
+    List<TCResolutionName> getResolutionNameList();
+
+    /**
+     * 透传内容
+     *
+     * @return 透传内容
+     */
+    String getPenetrateContext();
 }

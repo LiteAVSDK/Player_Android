@@ -34,8 +34,8 @@ public class SuperVodListLoader {
     private HandlerThread mHandlerThread;
 
     private boolean mIsHttps = true;
-    private final String BASE_URL = "http://playvideo.qcloud.com/getplayinfo/v2";
-    private final String BASE_URLS = "https://playvideo.qcloud.com/getplayinfo/v2";
+    private final String BASE_URL = "http://playvideo.qcloud.com/getplayinfo/v4";
+    private final String BASE_URLS = "https://playvideo.qcloud.com/getplayinfo/v4";
     private OnVodInfoLoadListener mOnVodInfoLoadListener;
 
     private OkHttpClient mHttpClient;

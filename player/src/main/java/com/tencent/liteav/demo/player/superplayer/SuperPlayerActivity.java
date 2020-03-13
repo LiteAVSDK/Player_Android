@@ -30,6 +30,7 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.tencent.liteav.demo.play.SuperPlayerVideoIdV2;
 import com.tencent.liteav.demo.player.R;
 import com.tencent.liteav.demo.player.common.activity.QRCodeScanActivity;
 import com.tencent.liteav.demo.player.common.utils.TCConstants;
@@ -44,7 +45,6 @@ import com.tencent.liteav.demo.play.SuperPlayerView;
 import com.tencent.liteav.demo.play.SuperPlayerVideoId;
 import com.tencent.rtmp.TXLiveBase;
 import com.tencent.rtmp.TXLiveConstants;
-
 import java.util.ArrayList;
 import java.util.List;
 
@@ -63,6 +63,8 @@ public class SuperPlayerActivity extends Activity implements View.OnClickListene
     private static final String SHARE_PREFERENCE_NAME = "tx_super_player_guide_setting";
     private static final String KEY_GUIDE_ONE = "is_guide_one_finish";
     private static final String KEY_GUIDE_TWO = "is_guide_two_finish";
+
+    private final String DEFAULT_IMAGHOLDER = "http://xiaozhibo-10055601.file.myqcloud.com/coverImg.jpg";
 
     private static final String TAG = "SuperPlayerActivity";
     private static final int LIST_TYPE_LIVE = 0;
@@ -357,7 +359,7 @@ public class SuperPlayerActivity extends Activity implements View.OnClickListene
 
     private void updateVodList() {
         if (mDefaultVideo) {
-            mVodList.clear();
+//            mVodList.clear();
             ArrayList<VideoModel> superPlayerModels = mSuperVodListLoader.loadDefaultVodList();
             mSuperVodListLoader.getVodInfoOneByOne(superPlayerModels);
 
@@ -400,7 +402,7 @@ public class SuperPlayerActivity extends Activity implements View.OnClickListene
                 }
             };
 
-            mVodList.clear();
+//            mVodList.clear();
             VideoDataMgr.getInstance().setGetVideoInfoListListener(mGetVideoInfoListListener);
             VideoDataMgr.getInstance().getVideoList();
 
@@ -527,22 +529,40 @@ public class SuperPlayerActivity extends Activity implements View.OnClickListene
         superPlayerModelV3.appId = videoModel.appid;
 
         if (!TextUtils.isEmpty(videoModel.videoURL)) {
-            superPlayerModelV3.title = videoModel.title;
-            superPlayerModelV3.url = videoModel.videoURL;
-            superPlayerModelV3.qualityName = "原画";
+            if(isSuperPlayerVideo(videoModel)){
+                playSuperPlayerVideo(videoModel);
+                return;
+            }
+            else {
+                superPlayerModelV3.title = videoModel.title;
+                superPlayerModelV3.url = videoModel.videoURL;
 
-            superPlayerModelV3.multiURLs = new ArrayList<>();
-            if (videoModel.multiVideoURLs != null) {
-                for (VideoModel.VideoPlayerURL modelURL : videoModel.multiVideoURLs) {
-                    superPlayerModelV3.multiURLs.add(new SuperPlayerModel.SuperPlayerURL(modelURL.url, modelURL.title));
+                superPlayerModelV3.multiURLs = new ArrayList<>();
+                if (videoModel.multiVideoURLs != null) {
+                    for (VideoModel.VideoPlayerURL modelURL : videoModel.multiVideoURLs) {
+                        superPlayerModelV3.multiURLs.add(new SuperPlayerModel.SuperPlayerURL(modelURL.url, modelURL.title));
+                    }
                 }
             }
         } else if (!TextUtils.isEmpty(videoModel.fileid)) {
             superPlayerModelV3.videoId = new SuperPlayerVideoId();
             superPlayerModelV3.videoId.fileId = videoModel.fileid;
+//            superPlayerModelV3.videoIdV2 = new SuperPlayerVideoIdV2();
+//            superPlayerModelV3.videoIdV2.fileId = videoModel.fileid;
         }
         mSuperPlayerView.playWithModel(superPlayerModelV3);
 
+//        SuperPlayerModel model = new SuperPlayerModel();
+//        model.appId = 1251783440;// 配置AppId
+//        model.videoId = new SuperPlayerVideoId();
+//        model.videoId.fileId = "5285890796405704927"; // 配置FileId
+//        model.videoId.pcfg = "MyCfg"; // 配置播放配置名称
+//        model.videoId.timeout = "5df1be1c"; // 16进制字符串，表示链接的过期时间(必填)
+//        model.videoId.exper = 15; // 设置试看时长
+//        model.videoId.rlimit = 3; // 设置允许不同 IP 的播放次数
+//        model.videoId.us = "testus"; // 设置唯一标识请求，增加链接唯一性
+//        model.videoId.pKey = SuperPlayerSignUtils.generateSign("ILqI2M9U8OuoLgNGLoM8", model); // 防盗链签名，使用防盗链KEY对其他参数做签名(必填)
+//        mSuperPlayerView.playWithModel(model);
 
 //        superPlayerModelV3.appId = 1253039488;
 //        superPlayerModelV3.videoId = new SuperPlayerVideoId();
@@ -571,6 +591,26 @@ public class SuperPlayerActivity extends Activity implements View.OnClickListene
 //
 //            }
 //        });
+    }
+
+    private boolean playSuperPlayerVideo(VideoModel videoModel) {
+        final SuperPlayerModel model = new SuperPlayerModel();
+        String videoUrl = videoModel.videoURL;
+        String appIdStr = getValueByName(videoUrl, "appId");
+        boolean rst = true;
+        try {
+            model.appId = appIdStr.equals("") ? 0 :Integer.valueOf(appIdStr) ;
+            SuperPlayerVideoId videoId = new SuperPlayerVideoId();
+            videoId.fileId = getValueByName(videoUrl, "fileId");
+            videoId.pSign = getValueByName(videoUrl, "psign");
+            model.videoId = videoId;
+            mSuperPlayerView.playWithModel(model);
+        }
+        catch (Exception e){
+            Toast.makeText(getApplicationContext(),R.string.scancode_tip,Toast.LENGTH_SHORT).show();
+            rst = false;
+        }
+        return rst;
     }
 
     @Override
@@ -623,11 +663,15 @@ public class SuperPlayerActivity extends Activity implements View.OnClickListene
                 }
                 break;
             case LIST_TYPE_VOD:
-                if (mVodList.isEmpty()) {
+                if (isNeedUpdateVodList()) {
+                    if(mVodList!=null && !mVodList.isEmpty()){
+                        for (VideoModel videoModel: mVodList) {
+                            mVodPlayerListAdapter.addSuperPlayerModel(videoModel);
+                        }
+                    }
                     updateVodList();
                 } else {
-                    for (VideoModel videoModel:
-                            mVodList) {
+                    for (VideoModel videoModel: mVodList) {
                         mVodPlayerListAdapter.addSuperPlayerModel(videoModel);
                     }
                 }
@@ -636,6 +680,19 @@ public class SuperPlayerActivity extends Activity implements View.OnClickListene
 
         mVodPlayerListAdapter.notifyDataSetChanged();
     }
+
+    private boolean  isNeedUpdateVodList(){
+        if(mVodList==null || mVodList.isEmpty()){
+            return true;
+        }
+        for (VideoModel videoModel : mVodList){
+            if(DEFAULT_IMAGHOLDER!=videoModel.placeholderImage){
+                return false;
+            }
+        }
+        return true;
+    }
+
     /**
      * 悬浮窗播放
      */
@@ -683,8 +740,27 @@ public class SuperPlayerActivity extends Activity implements View.OnClickListene
         } else if ((videoURL.startsWith("http://") || videoURL.startsWith("https://")) && videoURL.contains(".flv")) {
             return true;
         } else {
+//            Toast.makeText(getApplicationContext(), "播放地址不合法，直播目前仅支持rtmp,flv播放方式!", Toast.LENGTH_SHORT).show();
             return false;
         }
+    }
+
+    private boolean isSuperPlayerVideo(VideoModel videoModel) {
+        return videoModel.videoURL.startsWith("txsuperplayer://play_vod");
+    }
+
+    private String getValueByName(String url, String name) { //txsuperplayer://play_vod?v=4&appId=1400295357&fileId=5285890796599775084&pcfg=Default
+        String result = "";
+        int index = url.indexOf("?");
+        String temp = url.substring(index + 1);
+        String[] keyValue = temp.split("&");
+        for (String str : keyValue) {
+            if (str.startsWith(name + "=")) {
+                result = str.replace(name + "=", "");
+                break;
+            }
+        }
+        return result;
     }
 
     /**
@@ -792,7 +868,7 @@ public class SuperPlayerActivity extends Activity implements View.OnClickListene
         VideoModel videoModel = new VideoModel();
         videoModel.title = "测试视频"+mVideoCount;
         videoModel.videoURL = result;
-        videoModel.placeholderImage = "http://xiaozhibo-10055601.file.myqcloud.com/coverImg.jpg";
+        videoModel.placeholderImage = DEFAULT_IMAGHOLDER;
         videoModel.appid = DEFAULT_APPID;
         if (!TextUtils.isEmpty(videoModel.videoURL) && videoModel.videoURL.contains("5815.liveplay.myqcloud.com")) {
             videoModel.appid = 1253131631;
@@ -806,16 +882,22 @@ public class SuperPlayerActivity extends Activity implements View.OnClickListene
             videoModel.appid = 1252463788;
             TXLiveBase.setAppID("1252463788");
         }
-//        mSuperPlayerView.playWithMode(videoModel);
-        playVideoModel(videoModel);
 
         boolean needRefreshList = false;
-        if (isLivePlay(videoModel)) {
+        if (isSuperPlayerVideo(videoModel)) {
+            boolean rst =playSuperPlayerVideo(videoModel);
+            if(rst) {
+                mVodList.add(videoModel);
+                needRefreshList = mDataType == LIST_TYPE_VOD;
+            }
+        } else if (isLivePlay(videoModel)) {
             mLiveList.add(videoModel);
             needRefreshList = mDataType == LIST_TYPE_LIVE;
+            playVideoModel(videoModel);
         } else {
             mVodList.add(videoModel);
             needRefreshList = mDataType == LIST_TYPE_VOD;
+            playVideoModel(videoModel);
         }
         if (needRefreshList) {
             mVodPlayerListAdapter.addSuperPlayerModel(videoModel);

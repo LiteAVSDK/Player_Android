@@ -16,7 +16,7 @@ import com.tencent.liteav.demo.play.R;
  */
 
 public class TCVideoProgressLayout extends RelativeLayout {
-    private ImageView       mIvThumbnail;       // 视频略缩图
+    private ImageView       mIvThumbnail;       // 视频缩略图
     private TextView        mTvTime;            // 视频进度文本
     private ProgressBar     mProgressBar;       // 进度条
     private HideRunnable    mHideRunnable;      // 隐藏自身的线程
@@ -78,7 +78,7 @@ public class TCVideoProgressLayout extends RelativeLayout {
     }
 
     /**
-     * 设置略缩图图片
+     * 设置缩略图图片
      *
      * @param bitmap
      */

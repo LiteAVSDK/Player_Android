@@ -111,9 +111,9 @@ public interface IController {
     void updateVideoQuality(TCVideoQuality videoQuality);
 
     /**
-     * 更新略缩图信息
+     * 更新雪碧图信息
      *
-     * @param info 略缩图信息
+     * @param info 雪碧图信息
      */
     void updateImageSpriteInfo(TCPlayImageSpriteInfo info);
 

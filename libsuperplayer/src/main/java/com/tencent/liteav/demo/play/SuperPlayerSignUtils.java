@@ -1,5 +1,7 @@
 package com.tencent.liteav.demo.play;
 
+import android.view.View;
+
 import java.math.BigInteger;
 import java.security.MessageDigest;
 
@@ -14,38 +16,9 @@ import java.security.MessageDigest;
  *
  * 2. v2需要参数 KEY+appId+fileId+t+exper+us （exper是可选的）
  * 3. v3需要参数 KEY+appId+fileId+playDefinition+t+rlimit+us （rlimit是可选的）
+ * 3. v4需要参数 KEY+appId+fileId+pcfg+t+exper+rlimit+us （pcfg、exper、rlimit、us是可选的)
  */
 public class SuperPlayerSignUtils {
-
-
-    public static String generateSign(String key, SuperPlayerModel model) {
-        if (key != null && model != null && model.videoId != null) {
-//            V2:  https://cloud.tencent.com/document/product/266/14424#key-.E9.98.B2.E7.9B.97.E9.93.BE
-//            普通防盗链签名：
-//            sign = md5(KEY+appId+fileId+t+us)
-//            带试看的防盗链签名：
-//            sign = md5(KEY+appId+fileId+t+exper+us)
-
-            StringBuilder sb = new StringBuilder();
-
-            sb.append(key);
-            sb.append(model.appId);
-            sb.append(model.videoId.fileId);
-            if (model.videoId.timeout != null)
-                sb.append(model.videoId.timeout);
-            if (model.videoId.exper != -1)
-                sb.append(model.videoId.exper);
-            if (model.videoId.us != null)
-                sb.append(model.videoId.us);
-
-            String sign = sb.toString();
-
-            sign = getMD5(sign);
-
-            return sign;
-        }
-        return null;
-    }
 
     private static String getMD5(String str) {
         try {

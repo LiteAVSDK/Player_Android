@@ -6,6 +6,7 @@ import com.tencent.liteav.basic.log.TXCLog;
 import com.tencent.liteav.demo.play.bean.TCPlayImageSpriteInfo;
 import com.tencent.liteav.demo.play.bean.TCPlayInfoStream;
 import com.tencent.liteav.demo.play.bean.TCPlayKeyFrameDescInfo;
+import com.tencent.liteav.demo.play.bean.TCResolutionName;
 import com.tencent.liteav.demo.play.bean.TCVideoClassification;
 import com.tencent.liteav.demo.play.utils.TCVideoQualityUtil;
 import com.tencent.liteav.demo.play.bean.TCVideoQuality;
@@ -34,7 +35,7 @@ public class TCPlayInfoParserV2 implements IPlayInfoParser{
     private String                                      mDefaultVideoClassification;    // 默认视频清晰度名称
     private List<TCVideoClassification>                 mVideoClassificationList;       // 视频清晰度信息列表
 
-    private TCPlayImageSpriteInfo                       mImageSpriteInfo;               // 略缩图信息
+    private TCPlayImageSpriteInfo                       mImageSpriteInfo;               // 雪碧图信息
     private List<TCPlayKeyFrameDescInfo>                mKeyFrameDescInfo;              // 关键帧打点信息
     //视频信息
     private String                                      mName;                          // 视频名称
@@ -58,7 +59,7 @@ public class TCPlayInfoParserV2 implements IPlayInfoParser{
      *
      * 1、解析播放器信息(playerInfo)字段，获取视频清晰度列表{@link #mVideoClassificationList}以及默认清晰度{@link #mDefaultVideoClassification}
      *
-     * 2、解析略缩图信息(imageSpriteInfo)字段，获取略缩图信息{@link #mImageSpriteInfo}
+     * 2、解析雪碧图信息(imageSpriteInfo)字段，获取雪碧图信息{@link #mImageSpriteInfo}
      *
      * 3、解析关键帧信息(keyFrameDescInfo)字段，获取关键帧信息{@link #mKeyFrameDescInfo}
      *
@@ -139,10 +140,10 @@ public class TCPlayInfoParserV2 implements IPlayInfoParser{
     }
 
     /**
-     * 解析略缩图信息
+     * 解析雪碧图信息
      *
-     * @param imageSpriteInfo 包含略缩图信息的Json对象
-     * @return 略缩图信息对象
+     * @param imageSpriteInfo 包含雪碧图信息的Json对象
+     * @return 雪碧图信息对象
      */
     private TCPlayImageSpriteInfo parseImageSpriteInfo(JSONObject imageSpriteInfo) throws JSONException {
         JSONArray imageSpriteList = imageSpriteInfo.getJSONArray("imageSpriteList");
@@ -385,9 +386,9 @@ public class TCPlayInfoParserV2 implements IPlayInfoParser{
     }
 
     /**
-     * 获取略缩图信息
+     * 获取雪碧图信息
      *
-     * @return 略缩图信息对象
+     * @return 雪碧图信息对象
      */
     @Override
     public TCPlayImageSpriteInfo getImageSpriteInfo() {
@@ -422,5 +423,15 @@ public class TCPlayInfoParserV2 implements IPlayInfoParser{
     @Override
     public TCVideoQuality getDefaultVideoQuality() {
         return mDefaultVideoQuality;
+    }
+
+    /**
+     * 获取视频画质别名列表
+     *
+     * @return 画质别名数组
+     */
+    @Override
+    public List<TCResolutionName> getResolutionNameList() {
+        return null;
     }
 }

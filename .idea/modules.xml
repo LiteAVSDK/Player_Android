@@ -16,6 +16,11 @@
       <module fileurl="file://$PROJECT_DIR$/lvb/majorwang-SuperPlayer_Android-lvb.iml" filepath="$PROJECT_DIR$/lvb/majorwang-SuperPlayer_Android-lvb.iml" />
       <module fileurl="file://$PROJECT_DIR$/player/majorwang-SuperPlayer_Android-player.iml" filepath="$PROJECT_DIR$/player/majorwang-SuperPlayer_Android-player.iml" />
       <module fileurl="file://$PROJECT_DIR$/player/player.iml" filepath="$PROJECT_DIR$/player/player.iml" />
+      <module fileurl="file://$PROJECT_DIR$/work7-xiaoship-SuperPlayer_Android.iml" filepath="$PROJECT_DIR$/work7-xiaoship-SuperPlayer_Android.iml" />
+      <module fileurl="file://$PROJECT_DIR$/app/work7-xiaoship-SuperPlayer_Android-app.iml" filepath="$PROJECT_DIR$/app/work7-xiaoship-SuperPlayer_Android-app.iml" />
+      <module fileurl="file://$PROJECT_DIR$/libsuperplayer/work7-xiaoship-SuperPlayer_Android-libsuperplayer.iml" filepath="$PROJECT_DIR$/libsuperplayer/work7-xiaoship-SuperPlayer_Android-libsuperplayer.iml" />
+      <module fileurl="file://$PROJECT_DIR$/lvb/work7-xiaoship-SuperPlayer_Android-lvb.iml" filepath="$PROJECT_DIR$/lvb/work7-xiaoship-SuperPlayer_Android-lvb.iml" />
+      <module fileurl="file://$PROJECT_DIR$/player/work7-xiaoship-SuperPlayer_Android-player.iml" filepath="$PROJECT_DIR$/player/work7-xiaoship-SuperPlayer_Android-player.iml" />
     </modules>
   </component>
 </project>
