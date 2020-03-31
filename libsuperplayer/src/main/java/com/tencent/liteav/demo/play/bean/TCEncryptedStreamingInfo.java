@@ -6,18 +6,14 @@ package com.tencent.liteav.demo.play.bean;
  * 自适应码流信息
  */
 
-public class TCAdaptiveStreamingInfo {
-    public int    definition;
-    public String videoPackage;
+public class TCEncryptedStreamingInfo {
     public String drmType;
     public String url;
 
 
     @Override
     public String toString() {
-        return "TCAdaptiveStreamingInfo{" +
-                "definition=" + definition +
-                ", videoPackage='" + videoPackage + '\'' +
+        return "TCEncryptedStreamingInfo{" +
                 ", drmType='" + drmType + '\'' +
                 ", url='" + url + '\'' +
                 '}';

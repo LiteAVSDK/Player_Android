@@ -547,50 +547,9 @@ public class SuperPlayerActivity extends Activity implements View.OnClickListene
         } else if (!TextUtils.isEmpty(videoModel.fileid)) {
             superPlayerModelV3.videoId = new SuperPlayerVideoId();
             superPlayerModelV3.videoId.fileId = videoModel.fileid;
-//            superPlayerModelV3.videoIdV2 = new SuperPlayerVideoIdV2();
-//            superPlayerModelV3.videoIdV2.fileId = videoModel.fileid;
+            //test tag
         }
         mSuperPlayerView.playWithModel(superPlayerModelV3);
-
-//        SuperPlayerModel model = new SuperPlayerModel();
-//        model.appId = 1251783440;// 配置AppId
-//        model.videoId = new SuperPlayerVideoId();
-//        model.videoId.fileId = "5285890796405704927"; // 配置FileId
-//        model.videoId.pcfg = "MyCfg"; // 配置播放配置名称
-//        model.videoId.timeout = "5df1be1c"; // 16进制字符串，表示链接的过期时间(必填)
-//        model.videoId.exper = 15; // 设置试看时长
-//        model.videoId.rlimit = 3; // 设置允许不同 IP 的播放次数
-//        model.videoId.us = "testus"; // 设置唯一标识请求，增加链接唯一性
-//        model.videoId.pKey = SuperPlayerSignUtils.generateSign("ILqI2M9U8OuoLgNGLoM8", model); // 防盗链签名，使用防盗链KEY对其他参数做签名(必填)
-//        mSuperPlayerView.playWithModel(model);
-
-//        superPlayerModelV3.appId = 1253039488;
-//        superPlayerModelV3.videoId = new SuperPlayerVideoId();
-//        superPlayerModelV3.videoId.fileId = "15517827183920333646";
-//        superPlayerModelV3.videoId.playDefinition = "10";
-//        superPlayerModelV3.videoId.version = SuperPlayerVideoId.FILE_ID_V3;
-//        String fileId = "15517827183920333646";
-//        String testTokenURL = "http://129.204.177.142/gettoken?fileId=" + fileId;
-//        // 发起网络请求，获取Token
-//        TCHttpURLClient.getInstance().get(testTokenURL, new TCHttpURLClient.OnHttpCallback() {
-//            @Override
-//            public void onSuccess(String token) {
-//                try {
-//                    Log.i(TAG, "onSuccess: token = " + token);
-//                    // Token需要进行URLEncoder
-//                    String encodedToken = URLEncoder.encode(token, "UTF-8");
-//                    superPlayerModelV3.videoId.token = encodedToken;
-//                } catch (UnsupportedEncodingException e) {
-//                    e.printStackTrace();
-//                }
-//                mSuperPlayerView.playWithModel(superPlayerModelV3);
-//            }
-//
-//            @Override
-//            public void onError() {
-//
-//            }
-//        });
     }
 
     private boolean playSuperPlayerVideo(VideoModel videoModel) {

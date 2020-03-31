@@ -1,11 +1,12 @@
 package com.tencent.liteav.demo.play.protocol;
 
+import android.text.TextUtils;
 import android.util.Log;
 
 import com.tencent.liteav.basic.log.TXCLog;
 import com.tencent.liteav.demo.play.bean.TCPlayImageSpriteInfo;
 import com.tencent.liteav.demo.play.bean.TCPlayKeyFrameDescInfo;
-import com.tencent.liteav.demo.play.bean.TCAdaptiveStreamingInfo;
+import com.tencent.liteav.demo.play.bean.TCEncryptedStreamingInfo;
 import com.tencent.liteav.demo.play.bean.TCResolutionName;
 import com.tencent.liteav.demo.play.bean.TCVideoQuality;
 
@@ -27,11 +28,12 @@ public class TCPlayInfoParserV4 implements IPlayInfoParser {
     private JSONObject                          mResponse;                  // 协议请求返回的Json数据
 
     private String                              mName;                      // 视频名称
-    private String                              mUrl;                       // 视频播放url
-    private List<TCAdaptiveStreamingInfo>       mAdaptiveStreamingInfoList; // 多码率视频信息
+    private String                              mUrl;                       // 未加密视频播放url
+    private List<TCEncryptedStreamingInfo>       mEncryptedStreamingInfoList;// 加密视频播放url 数组
     private TCPlayImageSpriteInfo               mImageSpriteInfo;           // 雪碧图信息
     private List<TCPlayKeyFrameDescInfo>        mKeyFrameDescInfo;          // 关键帧信息
     private List<TCResolutionName>              mResolutionNameList;        // 自适应码流画质名称匹配信息
+    private String                              mToken;                     // DRM token
 
     public TCPlayInfoParserV4(JSONObject response) {
         mResponse = response;
@@ -46,8 +48,10 @@ public class TCPlayInfoParserV4 implements IPlayInfoParser {
                 TCResolutionName resolutionName = new TCResolutionName();
                 int width = jsonObject.optInt("width");
                 int height = jsonObject.optInt("height");
-                resolutionName.minEdgeLength = width<height?width:height;
+                resolutionName.width = width;
+                resolutionName.height = height;
                 resolutionName.name = jsonObject.optString("resolutionName");
+                resolutionName.type = jsonObject.optString("type");
                 mResolutionNameList.add(resolutionName);
             }
         }
@@ -89,18 +93,19 @@ public class TCPlayInfoParserV4 implements IPlayInfoParser {
                     }
                     JSONArray drmoutputobj = streamingInfo.optJSONArray("drmOutput");//加密输出
                     if(drmoutputobj!=null && drmoutputobj.length() > 0){
-                        mAdaptiveStreamingInfoList = new ArrayList<>();
+                        mEncryptedStreamingInfoList = new ArrayList<>();
                         for (int i = 0; i < drmoutputobj.length(); i++) {
                             JSONObject jsonObject = drmoutputobj.optJSONObject(i);
                             String drmType = jsonObject.optString("type");
                             String url = jsonObject.optString("url");
-                            TCAdaptiveStreamingInfo info = new TCAdaptiveStreamingInfo();
+                            TCEncryptedStreamingInfo info = new TCEncryptedStreamingInfo();
                             info.drmType = drmType;
                             info.url = url;
-                            mAdaptiveStreamingInfoList.add(info);
+                            mEncryptedStreamingInfoList.add(info);
                             parseSubStreams(jsonObject.optJSONArray("subStreams"));
                         }
                     }
+                    mToken = streamingInfo.optString("drmToken");
                 }
                 //解析雪碧图信息
                 JSONObject imageSpriteInfo = media.optJSONObject("imageSpriteInfo");
@@ -145,7 +150,26 @@ public class TCPlayInfoParserV4 implements IPlayInfoParser {
      */
     @Override
     public String getUrl() {
-        return mUrl != null ? mUrl : mAdaptiveStreamingInfoList.get(0).url;
+        String url = mUrl;
+        if(!TextUtils.isEmpty(mToken)){
+            url = getEncyptedUrl(PlayInfoConstant.EncyptedUrlType.SIMPLEAES);
+        }
+        return url ;
+    }
+
+    @Override
+    public String getEncyptedUrl(PlayInfoConstant.EncyptedUrlType type) {
+        for (TCEncryptedStreamingInfo info : mEncryptedStreamingInfoList){
+            if(info.drmType!=null && info.drmType.equalsIgnoreCase(type.getValue())){
+                return info.url;
+            }
+        }
+        return null;
+    }
+
+    @Override
+    public String getToken() {
+        return TextUtils.isEmpty(mToken)? null : mToken;
     }
 
     /**

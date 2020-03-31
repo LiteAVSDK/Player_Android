@@ -398,6 +398,13 @@ public class SuperPlayerView extends RelativeLayout implements ITXVodPlayListene
             mVodPlayer.setStartTime(0);
             mVodPlayer.setAutoPlay(true);
             mVodPlayer.setVodListener(this);
+            if(mCurrentProtocol!=null && mCurrentProtocol.getToken()!=null){
+                TXCLog.d(TAG,"TOKEN: "+mCurrentProtocol.getToken());
+                mVodPlayer.setToken(mCurrentProtocol.getToken());
+            }
+            else {
+                mVodPlayer.setToken(null);
+            }
             int ret = mVodPlayer.startPlay(url);
             if (ret == 0) {
                 mCurrentPlayState = SuperPlayerConst.PLAYSTATE_PLAYING;
@@ -1036,7 +1043,8 @@ public class SuperPlayerView extends RelativeLayout implements ITXVodPlayListene
                     Collections.sort(bitrateItems); //masterPlaylist多清晰度，按照码率排序，从低到高
                     List<TCVideoQuality> videoQualities = new ArrayList<>();
                     int size = bitrateItems.size();
-                    List<TCResolutionName> resolutionNames = mCurrentProtocol.getResolutionNameList();
+
+                    List<TCResolutionName> resolutionNames = (mCurrentProtocol!=null) ? mCurrentProtocol.getResolutionNameList() : null;
                     for (int i = 0; i < size; i++) {
                         TXBitrateItem bitrateItem = bitrateItems.get(i);
                         TCVideoQuality quality;

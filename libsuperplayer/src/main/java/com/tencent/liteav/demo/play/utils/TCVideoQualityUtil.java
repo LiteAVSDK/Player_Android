@@ -1,5 +1,6 @@
 package com.tencent.liteav.demo.play.utils;
 
+import com.tencent.liteav.basic.log.TXCLog;
 import com.tencent.liteav.demo.play.bean.TCPlayInfoStream;
 import com.tencent.liteav.demo.play.bean.TCResolutionName;
 import com.tencent.liteav.demo.play.bean.TCVideoQuality;
@@ -16,6 +17,7 @@ import java.util.List;
  */
 
 public class TCVideoQualityUtil {
+    private static final String TAG = "TCVideoQualityUtil";
 
     /**
      * 从比特流信息转换为清晰度信息
@@ -138,12 +140,17 @@ public class TCVideoQualityUtil {
         TCVideoQuality quality = new TCVideoQuality();
         quality.bitrate = bitrateItem.bitrate;
         quality.index = bitrateItem.index;
-        int minEdge = bitrateItem.width < bitrateItem.height ? bitrateItem.width : bitrateItem.height;
+        boolean getName = false;
         for (TCResolutionName resolutionName : resolutionNames) {
-            if (resolutionName.minEdgeLength >= minEdge) {
+            if (((resolutionName.width == bitrateItem.width && resolutionName.height== bitrateItem.height) || (resolutionName.width == bitrateItem.height && resolutionName.height== bitrateItem.width) )
+                    && "video".equalsIgnoreCase(resolutionName.type)) {
                 quality.title = resolutionName.name;
+                getName = true;
                 break;
             }
+        }
+        if(!getName){
+            TXCLog.i(TAG,"error: could not get quality name!");
         }
         return quality;
     }

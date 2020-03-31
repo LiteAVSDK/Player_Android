@@ -375,6 +375,16 @@ public class TCPlayInfoParserV2 implements IPlayInfoParser{
         return mUrl;
     }
 
+    @Override
+    public String getEncyptedUrl(PlayInfoConstant.EncyptedUrlType type) {
+        return null;
+    }
+
+    @Override
+    public String getToken() {
+        return null;
+    }
+
     /**
      * 获取视频名称
      *

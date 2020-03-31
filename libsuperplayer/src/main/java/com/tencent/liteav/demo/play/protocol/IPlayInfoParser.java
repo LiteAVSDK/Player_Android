@@ -12,11 +12,25 @@ import java.util.List;
  */
 public interface IPlayInfoParser {
     /**
-     * 获取视频播放url
+     * 获取未加密视频播放url,若没有获取sampleaes url
      *
      * @return url字符串
      */
     String getUrl();
+
+    /**
+     * 获取加密视频播放url
+     *
+     * @return url字符串
+     */
+    String getEncyptedUrl(PlayInfoConstant.EncyptedUrlType type);
+
+    /**
+     * 获取加密token
+     *
+     * @return token字符串
+     */
+    String getToken();
 
     /**
      * 获取视频名称

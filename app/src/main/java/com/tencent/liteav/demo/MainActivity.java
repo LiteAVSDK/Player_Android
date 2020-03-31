@@ -16,7 +16,6 @@ import android.widget.TextView;
 
 import com.tencent.liteav.demo.common.widget.expandableadapter.BaseExpandableRecyclerViewAdapter;
 import com.tencent.liteav.demo.lvb.liveplayer.LivePlayerActivity;
-import com.tencent.liteav.demo.lvb.liveplayer.LivePlayerSurfaceActivity;
 import com.tencent.liteav.demo.player.VodPlayerActivity;
 import com.tencent.liteav.demo.player.superplayer.SuperPlayerActivity;
 import com.tencent.rtmp.TXLiveBase;
@@ -159,7 +158,6 @@ public class MainActivity extends Activity {
 
         // 调试工具
         List<ChildBean> debugChildList = new ArrayList<>();
-        debugChildList.add(new ChildBean("直播播放器 (Surface)", R.drawable.live, LivePlayerActivity.ACTIVITY_TYPE_LIVE_PLAY, LivePlayerSurfaceActivity.class));
         debugChildList.add(new ChildBean("点播播放器", R.drawable.play, LivePlayerActivity.ACTIVITY_TYPE_VOD_PLAY, VodPlayerActivity.class));
 
         if (debugChildList.size() != 0) {

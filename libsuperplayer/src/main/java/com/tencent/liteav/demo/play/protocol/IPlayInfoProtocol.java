@@ -31,6 +31,20 @@ public interface IPlayInfoProtocol {
     String getUrl();
 
     /**
+     * 获取加密视频播放url
+     *
+     * @return url字符串
+     */
+    String getEncyptedUrl(PlayInfoConstant.EncyptedUrlType type);
+
+    /**
+     * 获取加密token
+     *
+     * @return token字符串
+     */
+    String getToken();
+
+    /**
      * 获取视频名称
      *
      * @return 视频名称字符串

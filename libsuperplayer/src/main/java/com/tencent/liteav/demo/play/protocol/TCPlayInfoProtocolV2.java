@@ -138,6 +138,16 @@ public class TCPlayInfoProtocolV2 implements IPlayInfoProtocol {
         return mParser == null ? null : mParser.getUrl();
     }
 
+    @Override
+    public String getEncyptedUrl(PlayInfoConstant.EncyptedUrlType type) {
+        return mParser.getEncyptedUrl(type);
+    }
+
+    @Override
+    public String getToken() {
+        return mParser.getToken();
+    }
+
     /**
      * 获取视频名称
      *
@@ -194,10 +204,16 @@ public class TCPlayInfoProtocolV2 implements IPlayInfoProtocol {
      * @param content  响应Json字符串
      * @param callback 协议请求回调
      */
-    private void parseJson(String content, final IPlayInfoRequestCallback callback) {
+    private boolean parseJson(String content, final IPlayInfoRequestCallback callback) {
         if (TextUtils.isEmpty(content)) {
             TXCLog.e(TAG, "parseJsonV2 err, content is empty!");
-            return;
+            runOnMainThread(new Runnable() {
+                @Override
+                public void run() {
+                    callback.onError(-1, "request return error!");
+                }
+            });
+            return false;
         }
         try {
             JSONObject jsonObject = new JSONObject(content);
@@ -213,11 +229,13 @@ public class TCPlayInfoProtocolV2 implements IPlayInfoProtocol {
                         callback.onError(code, message);
                     }
                 });
+                return false;
             }
         } catch (JSONException e) {
             e.printStackTrace();
             TXCLog.e(TAG, "parseJson err");
         }
+        return true;
     }
 
     /**
