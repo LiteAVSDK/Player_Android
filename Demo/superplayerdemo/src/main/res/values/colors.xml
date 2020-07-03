@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="superplayer_white">#ffffff</color>
+    <color name="superplayer_black">#000000</color>
+    <color name="superplayer_transparent">#00000000</color>
+    <color name="superplayer_color_gray">#787878</color>
+</resources>

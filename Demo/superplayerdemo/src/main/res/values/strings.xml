@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="superplayer_app_name">超级播放器</string>
+
+    <string name="superplayer_cancel">取消</string>
+    <string name="superplayer_ok">确定</string>
+
+    <string name="superplayer_vod_ffplay">ffplay</string>
+    <string name="superplayer_vod_exo">exo</string>
+    <string name="superplayer_scancode_tip">二维码播放地址错误，请检查！</string>
+    <string name="superplayer_input_qr_code_url"> 请输入或扫二维码获取播放地址</string>
+    <string name="superplayer_hardware_decoding_on_hint">已开启硬件解码加速，切换会重启播放流程!</string>
+    <string name="superplayer_hardware_decoding_off_hint">已关闭硬件解码加速，切换会重启播放流程!</string>
+    <string name="superplayer_no_player_url">无播放地址</string>
+    <string name="superplayer_small_video_special_effects_editing">小视频-特效剪辑</string>
+    <string name="superplayer_set_appid_fileid">请设置AppID和FileID</string>
+    <string name="superplayer_set_play_url">请设置播放地址</string>
+    <string name="superplayer_input_correct_appid">请输入正确的AppId</string>
+    <string name="superplayer_input_correct_fileid">请输入正确的FileId</string>
+    <string name="superplayer_input_correct_play_url">请输入正确的播放地址</string>
+    <string name="superplayer_request_fail">fileid请求失败</string>
+    <string name="superplayer_definition_super">超清</string>
+    <string name="superplayer_definition_high">高清</string>
+    <string name="superplayer_definition_standard">标清</string>
+    <string name="superplayer_test_video">测试视频</string>
+    <string name="superplayer_fetch_upload_list_video_fail">获取已上传的视频列表失败</string>
+</resources>

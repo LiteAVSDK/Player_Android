@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <com.tencent.rtmp.ui.TXCloudVideoView
+        android:id="@+id/superplayer_cloud_video_view"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_centerInParent="true" />
+
+    <com.tencent.liteav.demo.play.controller.TCControllerWindow
+        android:id="@+id/superplayer_controller_small"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" />
+
+    <com.tencent.liteav.demo.play.controller.TCControllerFullScreen
+        android:id="@+id/superplayer_controller_large"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" />
+
+    <com.tencent.liteav.demo.play.view.TCDanmuView
+        android:id="@+id/superplayer_danmuku_view"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" />
+
+    <com.tencent.liteav.demo.play.controller.TCControllerFloat
+        android:id="@+id/superplayer_controller_float"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" />
+
+</RelativeLayout>

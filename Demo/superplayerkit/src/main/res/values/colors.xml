@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="superplayer_white">#ffffff</color>
+    <color name="superplayer_black">#000000</color>
+    <color name="superplayer_transparent">#00000000</color>
+
+    <color name="superplayer_biz_audio_progress_bg">#00b2ff</color>
+    <color name="superplayer_biz_audio_progress_first">#ffffff</color>
+    <color name="superplayer_biz_audio_progress_second">#6b6666</color>
+
+    <color name="superplayer_super_vod_vtt_bg">#7E000000</color>
+
+
+    <color name="superplayer_default_bg">#aa000000</color>
+
+    <!-- 裁剪范围颜色 -->
+    <color name="superplayer_color_tint_red">#FF4C58</color>
+
+    <!--special color-->
+    <color name="superplayer_black_a10_color">#1a000000</color>
+
+    <!--gray4-->
+    <color name="superplayer_color_gray">#787878</color>
+
+    <color name="superplayer_default_progress_color">#FF4081</color>
+    <color name="superplayer_default_progress_background_color">#BBBBBB</color>
+</resources>

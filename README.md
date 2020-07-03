@@ -1,116 +1,27 @@
-# 超级播放器
+## 目录结构说明
 
-超级播放器是基于[腾讯云播放器SDK](https://cloud.tencent.com/document/product/881/20191)的播放器，能快速的集成视频信息拉取、横竖屏切换、清晰度选择、弹幕、直播时移等功能。灵活易用，可高度定制和二次开发。
+本目录包含 Android 版 超级播放器(SuperPlayer) SDK 的Demo 源代码，主要演示接口如何调用以及最基本的功能。
 
-## 功能截图
-+ 手势操作
+```
+├─ Demo // 超级播放器Demo，包括音视频播放，后台播放，变速播放，直播、点播秒开，清晰度无缝切换
+|  ├─ app                   // 程序入口界面
+|  ├─ superplayerkit        // 超级播放器组件
+|  ├─ superplayerdemo       // 超级播放器 Demo
+|  
+├─ SDK 
+│  ├─ LiteAVSDK_Player_x.y.zzzz.aar        // 如果您下载的是 Player 专用 zip 包，解压后将出现此文件夹，其中 x.y.zzzz 表示 SDK 版本号 
+```
 
-![gues](https://main.qcloudimg.com/raw/0e9b27aeb27f8042ccd8842ea6534432.gif)
+## SDK 分类和下载
 
-+ 清晰度切换
+腾讯云 Player SDK 基于 LiteAVSDK 统一框架设计和实现，该框架包含直播、点播、短视频、RTC、AI美颜在内的多项功能：
 
-![hd](https://main.qcloudimg.com/raw/bd65daadf000adcbd26c0ebd6676330c.gif)
+- 如果您追求最小化体积增量，可以下载 Player 版：[TXLiteAVSDK_Player.zip](https://cloud.tencent.com/document/product/881/20205)
+- 如果您需要使用多个功能而不希望打包多个 SDK，可以下载专业版：[TXLiteAVSDK_Professional.zip](https://cloud.tencent.com/document/product/647/32689#Professional)
+- 如果您已经通过腾讯云商务购买了 AI 美颜 License，可以下载企业版：[TXLiteAVSDK_Enterprise.zip](https://cloud.tencent.com/document/product/647/32689#Enterprise)
 
+## 相关文档链接
 
-+ 打点、缩略图
-
-![p](https://main.qcloudimg.com/raw/881148817fa0d5e267fe41c2aa71f3f6.gif)
-
-+ 列表播放
-
-![list](https://main.qcloudimg.com/raw/3ece479b33cdc7a458483d3eb1e78b1b.gif) ![fu](https://main.qcloudimg.com/raw/3af5501454ca107882b618dbb2c0d8ef.gif)
-
-
-
-
-## 概述
-
-开发一个全功能播放器不止简单的能播放视频，还有要处理旋转、前后台切换、界面显示等一系列问题。SuperPlayer作为一个集成方案，几乎囊括了所有播放器应该具备的特性，大大减少界面开发工作量。SuperPlayer内部使用腾讯云自研的 TXLivePlayer 和 TXVodPlayer，比系统自带的MediaPlayer支持更多格式和功能，打开速度更快，兼容性更好。
-
-本播放器所有功能免费，无任何限制，可放心使用。
-
-## 功能特性
-
-- [x] 多种视频格式（RTMP、FLV、HLS、MP4）
-- [x] 直播、点播首屏秒开
-- [x] 码率自适应
-- [x] 清晰度无缝切换
-- [x] 无缝循环播放
-- [x] 小窗播放
-- [x] 变速播放，变速不变调
-- [x] 边播边下
-- [x] 自定义播放起始时间
-- [x] 直播录制
-- [x] 后台播放
-- [x] 自定义视频渲染
-- [x] 弹幕
-- [x] 直播时移
-- [x] 视频截图
-- [x] 视频旋转
-- [x] 视频镜像
-- [x] 视频适应、填充模式
-- [x] H.265硬解
-- [x] 支持HTTPS
-- [x] 支持视频自动旋转
-- [x] 播放器预加载
-- [x] 多码率HLS（Master Playlist）
-- [x] 软硬解自动切换
-- [x] 静音
-- [x] 自定义HTTP Headers
-- [x] 快速seek
-- [x] 手势操作（调整亮度、声音、进度）
-- [x] 重力感应
-- [x] 设置封面图
-- [x] 自定义进度回调间隔
-- [x] 视频缩略图预览
-- [x] 进度条打点
-- [x] 根据网络自动选择清晰度
-
-## 快速开始
-
-aar集成
-
-1. 下载 SDK + Demo 开发包，下载地址为 （[Android](https://cloud.tencent.com/document/product/881/20205)）。
-
-2. 导入 `SDK/LiteAVSDK_XXX.aar` 以及 `Demo/app/libs/lib_tcsuperplayer.aar`到工程中去。
-
-3. 在 `app/build.gralde` 中添加依赖：
-
-   ```gradle
-   compile(name: 'LiteAVSDK_Professional', ext: 'aar')
-   compile(name: 'lib_tcsuperplayer', ext: 'aar')
-   // 超级播放器弹幕集成的第三方库
-   compile 'com.github.ctiao:DanmakuFlameMaster:0.5.3'
-   ```
-
-4. 在项目`build.gralde`中添加：
-
-   ```
-   ...
-   allprojects {
-       repositories {
-           flatDir {
-               dirs 'libs'
-           }
-           ...
-       }
-   }
-   ...
-   ```
-
-   
-
-
-
-## 集成使用
-
-在[快速集成](https://github.com/tencentyun/SuperPlayer_Android/wiki)中介绍了主要功能使用。
-
-本项目详细文档位于
-https://github.com/tencentyun/SuperPlayer_Android/wiki
-
-## 联系方式
-+ Android: https://github.com/tencentyun/SuperPlayer_Android
-+ Issues: https://github.com/tencentyun/SuperPlayer_Android/issues
-+ 专人解答/技术交流 QQ群: 781719018 
-+ SDK常见问题: http://faq.qcloudtrtc.com/
+- [SDK 的版本更新历史](https://github.com/tencentyun/SuperPlayer_Android/releases)
+- [SDK 的 API 文档](https://github.com/tencentyun/SuperPlayer_Android/wiki)
+- [SDK 的官方体验 App](https://cloud.tencent.com/document/product/881/20204)

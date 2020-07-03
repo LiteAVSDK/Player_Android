@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="superplayer_hardware_Acceleration">硬件加速</string>
+    <string name="superplayer_mirror">镜像</string>
+    <string name="superplayer_multi_speed_playback">多倍速播放</string>
+    <string name="superplayer_brightness">亮度</string>
+    <string name="superplayer_sound">声音</string>
+    <string name="superplayer_sharpness">清晰度</string>
+    <string name="superplayer_back_live">返回直播</string>
+    <string name="superplayer_small_video_special_effects_editing">小视频-特效剪辑</string>
+    <string name="superplayer_original_picture">原画</string>
+    <string name="superplayer_test_video">测试视频</string>
+</resources>

@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <style name="SuperPlayerAppProgressBarStyle">
+        <item name="android:indeterminateOnly">false</item>
+        <item name="android:progressDrawable">@drawable/superplayer_layer_list_progress_bar</item>
+    </style>
+
+    <declare-styleable name="SuperPlayerTCPointSeekBar">
+        <attr name="psb_thumbBackground" format="reference" />
+        <attr name="psb_backgroundColor" format="color" />
+        <attr name="psb_progressColor" format="color" />
+        <attr name="psb_progress" format="integer" />
+        <attr name="psb_max" format="integer" />
+        <attr name="psb_progressHeight" format="dimension" />
+    </declare-styleable>
+
+</resources>

@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/superplayer_ll_progress_head"
+    android:layout_width="100dp"
+    android:layout_height="wrap_content"
+    android:layout_gravity="center_horizontal"
+    android:gravity="center"
+    android:orientation="vertical">
+
+    <ImageView
+        android:id="@+id/superplayer_iv_center"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true" />
+
+    <ProgressBar
+        android:id="@+id/superplayer_pb_progress_bar"
+        style="@style/SuperPlayerAppProgressBarStyle"
+        android:layout_width="100dp"
+        android:layout_height="2dp"
+        android:layout_below="@id/superplayer_ll_progress_head"
+        android:layout_marginTop="8dp"
+        android:max="100"
+        android:progress="0"
+        android:progressDrawable="@drawable/superplayer_laylist_vod_video_progress" />
+</LinearLayout>
+
+

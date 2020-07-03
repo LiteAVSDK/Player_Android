@@ -1,0 +1,7 @@
+include ':app'
+//project(':beauty').projectDir = new File(settingsDir, '../../../../project/android/demo/liteav/beauty')
+
+
+include ':superplayerkit'
+include ':superplayerdemo'
+

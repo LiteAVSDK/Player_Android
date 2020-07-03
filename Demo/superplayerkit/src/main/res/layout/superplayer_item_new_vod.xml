@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+
+    <ImageView
+        android:id="@+id/superplayer_iv"
+        android:layout_width="120dp"
+        android:layout_height="68dp"
+        android:layout_marginBottom="10dp"
+        android:scaleType="centerCrop" />
+
+    <TextView
+        android:id="@+id/superplayer_tv_duration"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignRight="@+id/superplayer_iv"
+        android:layout_alignBottom="@+id/superplayer_iv"
+        android:layout_marginRight="5dp"
+        android:layout_marginBottom="5dp"
+        android:text="00:00"
+        android:textColor="@color/superplayer_white"
+        android:textSize="12dp" />
+
+    <TextView
+        android:id="@+id/superplayer_tv"
+        android:layout_width="match_parent"
+        android:layout_height="68dp"
+        android:layout_marginLeft="10dp"
+        android:layout_marginBottom="10dp"
+        android:layout_toRightOf="@+id/superplayer_iv"
+        android:gravity="center_vertical"
+        android:text="@string/superplayer_test_video"
+        android:textColor="@color/superplayer_white"
+        android:textSize="14dp" />
+</RelativeLayout>
