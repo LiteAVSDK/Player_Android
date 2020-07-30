@@ -1,14 +1,18 @@
 package com.tencent.liteav.demo.player.activity;
 
+import android.Manifest;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Rect;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
+import android.support.v4.app.ActivityCompat;
 import android.text.TextUtils;
 import android.util.AttributeSet;
 import android.util.TypedValue;
@@ -16,6 +20,9 @@ import android.view.ViewGroup;
 
 import com.google.zxing.Result;
 import com.tencent.liteav.demo.player.R;
+
+import java.util.ArrayList;
+import java.util.List;
 
 import me.dm7.barcodescanner.core.IViewFinder;
 import me.dm7.barcodescanner.core.ViewFinderView;
@@ -38,6 +45,9 @@ public class QRCodeScanActivity extends Activity implements ZXingScannerView.Res
             }
         };
         content.addView(mScannerView);
+
+        // 检查权限
+        checkPublishPermission();
     }
 
     @Override
@@ -71,6 +81,20 @@ public class QRCodeScanActivity extends Activity implements ZXingScannerView.Res
                 mScannerView.resumeCameraPreview(QRCodeScanActivity.this);
             }
         }, 2000);
+    }
+
+    private boolean checkPublishPermission() {
+        if (Build.VERSION.SDK_INT >= 23) {
+            List<String> permissions = new ArrayList<>();
+            if (PackageManager.PERMISSION_GRANTED != ActivityCompat.checkSelfPermission(this, Manifest.permission.CAMERA)) {
+                permissions.add(Manifest.permission.CAMERA);
+            }
+            if (permissions.size() != 0) {
+                ActivityCompat.requestPermissions(this, permissions.toArray(new String[0]), 100);
+                return false;
+            }
+        }
+        return true;
     }
 
     private static class CustomViewFinderView extends ViewFinderView {

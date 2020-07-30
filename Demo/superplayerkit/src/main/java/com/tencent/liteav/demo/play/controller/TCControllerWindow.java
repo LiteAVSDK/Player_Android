@@ -109,8 +109,8 @@ public class TCControllerWindow extends RelativeLayout implements IController, V
                 togglePlayState();
                 show();
                 if (mHideViewRunnable != null) {
-                    TCControllerWindow.this.getHandler().removeCallbacks(mHideViewRunnable);
-                    TCControllerWindow.this.getHandler().postDelayed(mHideViewRunnable, 7000);
+                    removeCallbacks(mHideViewRunnable);
+                    postDelayed(mHideViewRunnable, 7000);
                 }
                 return true;
             }
@@ -270,8 +270,8 @@ public class TCControllerWindow extends RelativeLayout implements IController, V
         } else {
             show();
             if (mHideViewRunnable != null) {
-                getHandler().removeCallbacks(mHideViewRunnable);
-                getHandler().postDelayed(mHideViewRunnable, 7000);
+                removeCallbacks(mHideViewRunnable);
+                postDelayed(mHideViewRunnable, 7000);
             }
         }
     }
@@ -623,9 +623,9 @@ public class TCControllerWindow extends RelativeLayout implements IController, V
         }
 
         if(event.getAction() == MotionEvent.ACTION_DOWN) {
-            this.getHandler().removeCallbacks(mHideViewRunnable);
+            removeCallbacks(mHideViewRunnable);
         } else if(event.getAction() == MotionEvent.ACTION_UP) {
-            this.getHandler().postDelayed(mHideViewRunnable, 7000);
+            postDelayed(mHideViewRunnable, 7000);
         }
         return true;
     }
@@ -683,7 +683,7 @@ public class TCControllerWindow extends RelativeLayout implements IController, V
 
     @Override
     public void onStartTrackingTouch(TCPointSeekBar seekBar) {
-        this.getHandler().removeCallbacks(mHideViewRunnable);
+        removeCallbacks(mHideViewRunnable);
     }
 
     @Override
@@ -716,7 +716,7 @@ public class TCControllerWindow extends RelativeLayout implements IController, V
                 }
                 break;
         }
-        this.getHandler().postDelayed(mHideViewRunnable, 7000);
+        postDelayed(mHideViewRunnable, 7000);
     }
 
     /**

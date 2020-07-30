@@ -7,14 +7,12 @@
 
     <application
         android:name=".DemoApplication"
-        android:allowBackup="true"
+        android:allowBackup="false"
         android:icon="@drawable/ic_launcher"
         android:label="@string/app_name"
         android:largeHeap="true"
-        android:theme="@style/AppTheme">
-
-
-        <!-- 【必须】消息收发service -->
+        android:theme="@style/AppTheme"
+        tools:replace="android:allowBackup">
 
         <activity android:name=".SplashActivity" android:launchMode="singleTop"
             android:theme="@android:style/Theme.Translucent.NoTitleBar.Fullscreen">
@@ -49,6 +47,11 @@
             android:label="@string/app_name"
             android:launchMode="singleTop"
             android:screenOrientation="portrait">
+            <intent-filter>
+                <action android:name="com.tencent.liteav.action.liteavapp" />
+
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
         </activity>
 
         <activity
@@ -58,18 +61,9 @@
         <!-- 配置bugly组件的APP ID，bugly组件为腾讯提供的用于crash上报和分析的开放组件，如果您不需要该组件，可以自行移除 -->
 
         <!-- 配置bugly组件的APP渠道号 -->
-        <meta-data
-            android:name="BUGLY_APPID"
-            android:value="928c8ef035" />
 
         <!-- 配置bugly组件的调试模式（true或者false） -->
-        <meta-data
-            android:name="BUGLY_APP_CHANNEL"
-            android:value="RDM版本" />
 
-        <meta-data
-            android:name="BUGLY_ENABLE_DEBUG"
-            android:value="true" />
     </application>
     <uses-feature android:name="android.hardware.camera" />
     <uses-feature android:name="android.hardware.camera.autofocus" />

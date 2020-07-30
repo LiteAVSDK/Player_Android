@@ -143,8 +143,8 @@ public class TCControllerFullScreen extends RelativeLayout implements IControlle
                 togglePlayState();
                 show();
                 if (mHideViewRunnable != null) {
-                    TCControllerFullScreen.this.getHandler().removeCallbacks(mHideViewRunnable);
-                    TCControllerFullScreen.this.getHandler().postDelayed(mHideViewRunnable, 7000);
+                    removeCallbacks(mHideViewRunnable);
+                    postDelayed(mHideViewRunnable, 7000);
                 }
                 return true;
             }
@@ -333,15 +333,15 @@ public class TCControllerFullScreen extends RelativeLayout implements IControlle
             } else {
                 show();
                 if (mHideViewRunnable != null) {
-                    getHandler().removeCallbacks(mHideViewRunnable);
-                    getHandler().postDelayed(mHideViewRunnable, 7000);
+                    removeCallbacks(mHideViewRunnable);
+                    postDelayed(mHideViewRunnable, 7000);
                 }
             }
         } else {
             mIvLock.setVisibility(VISIBLE);
             if (mHideLockViewRunnable!=null) {
-                getHandler().removeCallbacks(mHideLockViewRunnable);
-                getHandler().postDelayed(mHideLockViewRunnable, 7000);
+                removeCallbacks(mHideLockViewRunnable);
+                postDelayed(mHideLockViewRunnable, 7000);
             }
         }
         if (mVodMoreView.getVisibility() == VISIBLE) {
@@ -382,7 +382,7 @@ public class TCControllerFullScreen extends RelativeLayout implements IControlle
         mLayoutTop.setVisibility(View.VISIBLE);
         mLayoutBottom.setVisibility(View.VISIBLE);
         if (mHideLockViewRunnable!=null) {
-            this.getHandler().removeCallbacks(mHideLockViewRunnable);
+            removeCallbacks(mHideLockViewRunnable);
         }
         mIvLock.setVisibility(VISIBLE);
         if (mPlayType == SuperPlayerConst.PLAYTYPE_LIVE_SHIFT) {
@@ -668,9 +668,9 @@ public class TCControllerFullScreen extends RelativeLayout implements IControlle
         }
 
         if(event.getAction() == MotionEvent.ACTION_DOWN) {
-            this.getHandler().removeCallbacks(mHideViewRunnable);
+            removeCallbacks(mHideViewRunnable);
         } else if(event.getAction() == MotionEvent.ACTION_UP) {
-            this.getHandler().postDelayed(mHideViewRunnable, 7000);
+            postDelayed(mHideViewRunnable, 7000);
         }
         return true;
     }
@@ -765,8 +765,8 @@ public class TCControllerFullScreen extends RelativeLayout implements IControlle
         mLockScreen = !mLockScreen;
         mIvLock.setVisibility(VISIBLE);
         if (mHideLockViewRunnable!=null) {
-            this.getHandler().removeCallbacks(mHideLockViewRunnable);
-            this.getHandler().postDelayed(mHideLockViewRunnable, 7000);
+            removeCallbacks(mHideLockViewRunnable);
+            postDelayed(mHideLockViewRunnable, 7000);
         }
         if (mLockScreen) {
             mIvLock.setImageResource(R.drawable.superplayer_ic_player_lock);
@@ -827,7 +827,7 @@ public class TCControllerFullScreen extends RelativeLayout implements IControlle
 
     @Override
     public void onStartTrackingTouch(TCPointSeekBar seekBar) {
-        this.getHandler().removeCallbacks(mHideViewRunnable);
+        removeCallbacks(mHideViewRunnable);
     }
 
     @Override
@@ -860,14 +860,14 @@ public class TCControllerFullScreen extends RelativeLayout implements IControlle
                 }
                 break;
         }
-        this.getHandler().postDelayed(mHideViewRunnable, 7000);
+        postDelayed(mHideViewRunnable, 7000);
     }
 
     @Override
     public void onSeekBarPointClick(final View view, final int pos) {
         if (mHideLockViewRunnable!=null) {
-            this.getHandler().removeCallbacks(mHideViewRunnable);
-            this.getHandler().postDelayed(mHideViewRunnable, 7000);
+            removeCallbacks(mHideViewRunnable);
+            postDelayed(mHideViewRunnable, 7000);
         }
         if (mTXPlayKeyFrameDescInfoList != null) {
             //ELK点击上报
