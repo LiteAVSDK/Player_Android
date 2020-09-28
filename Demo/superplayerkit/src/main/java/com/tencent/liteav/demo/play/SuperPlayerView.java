@@ -1170,7 +1170,7 @@ public class SuperPlayerView extends RelativeLayout implements ITXVodPlayListene
                 }
                 break;
             case TXLiveConstants.PLAY_EVT_PLAY_LOADING:
-            case TXLiveConstants.PLAY_WARNING_RECONNECT:
+//            case TXLiveConstants.PLAY_WARNING_RECONNECT:          // 暂时去掉，回调该状态时，播放画面可能是正常的，loading 状态只在 TXLiveConstants.PLAY_EVT_PLAY_LOADING 处理
                 updatePlayState(SuperPlayerConst.PLAYSTATE_LOADING);
                 if (mWatcher != null) {
                     mWatcher.enterLoading();
