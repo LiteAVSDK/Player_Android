@@ -185,6 +185,7 @@ public class TCControllerFullScreen extends RelativeLayout implements IControlle
             public void onBrightnessGesture(float newBrightness) {
                 if (mGestureVolumeBrightnessProgressLayout != null) {
                     mGestureVolumeBrightnessProgressLayout.setProgress((int) (newBrightness * 100));
+                    mVodMoreView.setBrightProgress((int) (newBrightness * 100));
                     mGestureVolumeBrightnessProgressLayout.setImageResource(R.drawable.superplayer_ic_light_max);
                     mGestureVolumeBrightnessProgressLayout.show();
                 }
