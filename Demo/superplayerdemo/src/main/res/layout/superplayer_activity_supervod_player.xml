@@ -2,7 +2,7 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@drawable/superplayer_ic_new_vod_bg">
+    android:background="@drawable/superplayer_content_bg">
 
     <!--标题-->
     <RelativeLayout
@@ -70,7 +70,7 @@
         android:layout_below="@+id/superplayer_rl_title"
         android:background="@color/superplayer_black">
 
-        <com.tencent.liteav.demo.play.SuperPlayerView
+        <com.tencent.liteav.demo.superplayer.SuperPlayerView
             android:id="@+id/superVodPlayerView"
             android:layout_width="match_parent"
             android:layout_height="200dp" />
