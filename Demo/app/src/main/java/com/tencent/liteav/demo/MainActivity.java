@@ -18,7 +18,7 @@ import android.widget.TextView;
 
 
 import com.tencent.liteav.demo.common.widget.expandableadapter.BaseExpandableRecyclerViewAdapter;
-import com.tencent.liteav.demo.player.activity.SuperPlayerActivity;
+import com.tencent.liteav.demo.player.demo.SuperPlayerActivity;
 import com.tencent.rtmp.TXLiveBase;
 
 import java.io.File;
@@ -52,7 +52,7 @@ public class MainActivity extends Activity {
         setContentView(R.layout.activity_main);
 
         mTvVersion = (TextView) findViewById(R.id.main_tv_version);
-        mTvVersion.setText("超级播放器版本 v" + TXLiveBase.getSDKVersionStr()+"(7.9.607)");
+        mTvVersion.setText("超级播放器版本 v" + TXLiveBase.getSDKVersionStr()+"(8.0.617)");
 
         mMainTitle = (TextView) findViewById(R.id.main_title);
         mMainTitle.setOnLongClickListener(new View.OnLongClickListener() {

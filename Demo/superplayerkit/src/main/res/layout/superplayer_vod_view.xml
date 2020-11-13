@@ -9,22 +9,22 @@
         android:layout_height="match_parent"
         android:layout_centerInParent="true" />
 
-    <com.tencent.liteav.demo.play.controller.TCControllerWindow
+    <com.tencent.liteav.demo.superplayer.ui.player.WindowPlayer
         android:id="@+id/superplayer_controller_small"
         android:layout_width="match_parent"
         android:layout_height="match_parent" />
 
-    <com.tencent.liteav.demo.play.controller.TCControllerFullScreen
+    <com.tencent.liteav.demo.superplayer.ui.player.FullScreenPlayer
         android:id="@+id/superplayer_controller_large"
         android:layout_width="match_parent"
         android:layout_height="match_parent" />
 
-    <com.tencent.liteav.demo.play.view.TCDanmuView
+    <com.tencent.liteav.demo.superplayer.ui.view.DanmuView
         android:id="@+id/superplayer_danmuku_view"
         android:layout_width="match_parent"
         android:layout_height="match_parent" />
 
-    <com.tencent.liteav.demo.play.controller.TCControllerFloat
+    <com.tencent.liteav.demo.superplayer.ui.player.FloatPlayer
         android:id="@+id/superplayer_controller_float"
         android:layout_width="match_parent"
         android:layout_height="match_parent" />

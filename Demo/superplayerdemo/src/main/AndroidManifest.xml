@@ -4,7 +4,7 @@
 
     <application android:theme="@style/AppTheme">
         <activity
-            android:name=".activity.SuperPlayerActivity"
+            android:name=".demo.SuperPlayerActivity"
             android:configChanges="orientation|keyboardHidden|screenSize"
             android:label="@string/superplayer_app_name"
             android:launchMode="singleTask"
@@ -19,14 +19,10 @@
         </activity>
 
         <activity
-            android:name=".activity.VodPlayerActivity"
+            android:name=".demo.QRCodeScanActivity"
             android:screenOrientation="portrait" />
 
-        <activity
-            android:name=".activity.QRCodeScanActivity"
-            android:screenOrientation="portrait" />
-
-        <receiver android:name=".reveiver.WebDataReceiver">
+        <receiver android:name=".expand.webdata.reveiver.WebDataReceiver">
             <intent-filter>
                 <action android:name="com.tencent.liteav.action.WED_DATA" />
             </intent-filter>
