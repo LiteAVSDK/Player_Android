@@ -302,7 +302,7 @@ public class SuperPlayerImpl implements SuperPlayer, ITXVodPlayListener, ITXLive
                 @Override
                 public void onError(int errCode, String message) {
                     TXCLog.i(TAG, "onFail: errorCode = " + errCode + " message = " + message);
-                    onError(SuperPlayerCode.VOD_REQUEST_FILE_ID_FAIL, "播放视频文件失败 code = " + errCode + " msg = " + message);
+                    SuperPlayerImpl.this.onError(SuperPlayerCode.VOD_REQUEST_FILE_ID_FAIL, "播放视频文件失败 code = " + errCode + " msg = " + message);
                 }
             });
         } else { // 根据URL播放
