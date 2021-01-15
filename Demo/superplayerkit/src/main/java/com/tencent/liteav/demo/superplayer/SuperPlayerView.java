@@ -710,8 +710,6 @@ public class SuperPlayerView extends RelativeLayout {
             if (mWatcher != null) {
                 mWatcher.stop();
             }
-            mFullScreenPlayer.updateImageSpriteInfo(null);
-            mFullScreenPlayer.updateKeyFrameDescInfo(null);
         }
 
         @Override

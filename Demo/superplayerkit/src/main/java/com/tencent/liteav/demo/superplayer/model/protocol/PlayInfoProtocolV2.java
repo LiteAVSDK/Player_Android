@@ -267,4 +267,9 @@ public class PlayInfoProtocolV2 implements IPlayInfoProtocol {
     public String getPenetrateContext() {
         return null;
     }
+
+    @Override
+    public String getDRMType() {
+        return mParser != null ? mParser.getDRMType() : "";
+    }
 }

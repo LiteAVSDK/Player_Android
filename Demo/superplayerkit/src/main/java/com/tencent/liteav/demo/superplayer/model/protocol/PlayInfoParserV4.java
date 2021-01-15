@@ -35,6 +35,7 @@ public class PlayInfoParserV4 implements IPlayInfoParser {
     private PlayImageSpriteInfo          mImageSpriteInfo;           // 雪碧图信息
     private List<PlayKeyFrameDescInfo>   mKeyFrameDescInfo;          // 关键帧信息
     private List<ResolutionName>         mResolutionNameList;        // 自适应码流画质名称匹配信息
+    private String                              mDRMType;
 
     public PlayInfoParserV4(JSONObject response) {
         mResponse = response;
@@ -88,6 +89,7 @@ public class PlayInfoParserV4 implements IPlayInfoParser {
                             EncryptedStreamingInfo info = new EncryptedStreamingInfo();
                             info.drmType = drmType;
                             info.url = url;
+                            mDRMType = drmType;
                             mEncryptedStreamingInfoList.add(info);
                             parseSubStreams(jsonObject.optJSONArray("subStreams"));
                         }
@@ -217,5 +219,10 @@ public class PlayInfoParserV4 implements IPlayInfoParser {
     @Override
     public List<ResolutionName> getResolutionNameList() {
         return mResolutionNameList;
+    }
+
+    @Override
+    public String getDRMType() {
+        return mDRMType;
     }
 }

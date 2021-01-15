@@ -92,4 +92,11 @@ public interface IPlayInfoProtocol {
      * @return 透传内容
      */
     String getPenetrateContext();
+
+
+    /**
+     * 获取 DRM 加密类型
+     * @return
+     */
+    String getDRMType();
 }

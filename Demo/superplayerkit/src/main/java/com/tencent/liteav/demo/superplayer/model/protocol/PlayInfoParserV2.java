@@ -445,4 +445,9 @@ public class PlayInfoParserV2 implements IPlayInfoParser{
     public List<ResolutionName> getResolutionNameList() {
         return null;
     }
+
+    @Override
+    public String getDRMType() {
+        return "";
+    }
 }

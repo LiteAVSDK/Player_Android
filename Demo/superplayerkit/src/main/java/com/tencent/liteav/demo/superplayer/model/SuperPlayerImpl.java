@@ -1,8 +1,10 @@
 package com.tencent.liteav.demo.superplayer.model;
 
 import android.content.Context;
+import android.net.Uri;
 import android.os.Bundle;
 import android.text.TextUtils;
+import android.util.Log;
 
 import com.tencent.liteav.basic.log.TXCLog;
 import com.tencent.liteav.demo.superplayer.SuperPlayerCode;
@@ -24,6 +26,7 @@ import com.tencent.liteav.demo.superplayer.model.utils.VideoQualityUtils;
 import com.tencent.rtmp.ITXLivePlayListener;
 import com.tencent.rtmp.ITXVodPlayListener;
 import com.tencent.rtmp.TXBitrateItem;
+import com.tencent.rtmp.TXLiveBase;
 import com.tencent.rtmp.TXLiveConstants;
 import com.tencent.rtmp.TXLivePlayConfig;
 import com.tencent.rtmp.TXLivePlayer;
@@ -39,6 +42,9 @@ import java.util.List;
 public class SuperPlayerImpl implements SuperPlayer, ITXVodPlayListener, ITXLivePlayListener {
 
     private static final String TAG = "SuperPlayerImpl";
+    private static final int SUPERPLAYER_MODE = 1;
+    private static final int SUPPORT_MAJOR_VERSION = 8;
+    private static final int SUPPORT_MINOR_VERSION = 2;
 
     private Context mContext;
     private TXCloudVideoView mVideoView;        // 腾讯云视频播放view
@@ -69,6 +75,8 @@ public class SuperPlayerImpl implements SuperPlayer, ITXVodPlayListener, ITXLive
     private boolean mIsPlayWithFileId;      // 是否是腾讯云fileId播放
     private boolean mDefaultQualitySet;     // 标记播放多码流url时是否设置过默认画质
     private boolean mChangeHWAcceleration;  // 切换硬解后接收到第一个关键帧前的标记位
+    private String mFileId;
+    private int mAppId;
 
     public SuperPlayerImpl(Context context, TXCloudVideoView videoView) {
         initialize(context, videoView);
@@ -286,6 +294,9 @@ public class SuperPlayerImpl implements SuperPlayer, ITXVodPlayListener, ITXLive
         } else {
             mCurrentProtocol = null;    // 当前播放的是非v2和v4协议视频，将其置空
         }
+        mFileId = params.fileId;
+        mAppId = params.appId;
+        updateVideoImageSpriteAndKeyFrame(null, null);
         if (model.videoId != null || model.videoIdV2 != null) { // 根据FileId播放
             mCurrentProtocol.sendRequest(new IPlayInfoRequestCallback() {
                 @Override
@@ -411,18 +422,63 @@ public class SuperPlayerImpl implements SuperPlayer, ITXVodPlayListener, ITXLive
             mVodPlayer.setStartTime(0);
             mVodPlayer.setAutoPlay(true);
             mVodPlayer.setVodListener(this);
+            String drmType = "plain";
             if (mCurrentProtocol != null) {
                 TXCLog.d(TAG, "TOKEN: " + mCurrentProtocol.getToken());
                 mVodPlayer.setToken(mCurrentProtocol.getToken());
+                String type = mCurrentProtocol.getDRMType();
+                if (type!=null && !type.isEmpty()) {
+                    drmType = type;
+                }
             } else {
                 mVodPlayer.setToken(null);
             }
-            int ret = mVodPlayer.startPlay(url);
+            int ret = 0;
+            if (isVersionSupportAppendUrl()) {
+                Uri uri = Uri.parse(url);
+                String query = uri.getQuery();
+                if(query==null || query.isEmpty()) {
+                    query = "";
+                } else {
+                    query = query + "&";
+                    if (query.contains("spfileid") || query.contains("spdrmtype") || query.contains("spappid")) {
+                        TXCLog.e(TAG, "url contains superplay key. " + query);
+                    }
+                }
+                query += "spfileid=" + mFileId + "&spdrmtype=" + drmType + "&spappid=" + mAppId;
+                Uri newUri = uri.buildUpon().query(query).build();
+                TXCLog.i(TAG, "playVodURL: newurl = " + newUri.toString() + " ;url= " + url);
+                ret = mVodPlayer.startPlay(newUri.toString());
+            } else {
+                ret = mVodPlayer.startPlay(url);
+            }
+
             if (ret == 0) {
                 updatePlayerState(SuperPlayerDef.PlayerState.PLAYING);
             }
         }
         mIsPlayWithFileId = false;
+    }
+
+    private boolean isVersionSupportAppendUrl() {
+        String strVersion = TXLiveBase.getSDKVersionStr();
+        String[] strVers = strVersion.split("\\.");
+        if (strVers.length <= 1) {
+            return false;
+        }
+        int majorVer = 0;
+        int minorVer = 0;
+        try{
+            majorVer = Integer.parseInt(strVers[0]);
+            minorVer = Integer.parseInt(strVers[1]);
+        }
+        catch (NumberFormatException e){
+            TXCLog.e(TAG, "parse version failed.", e);
+            majorVer = 0;
+            minorVer = 0;
+        }
+        Log.i(TAG, strVersion + " , " + majorVer + " , " + minorVer);
+        return majorVer > SUPPORT_MAJOR_VERSION || (majorVer == SUPPORT_MAJOR_VERSION && minorVer >= SUPPORT_MINOR_VERSION) ;
     }
 
     /**
