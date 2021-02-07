@@ -774,12 +774,8 @@ public class SuperPlayerView extends RelativeLayout {
 
         @Override
         public void onVideoQualityListChange(List<VideoQuality> videoQualities, VideoQuality defaultVideoQuality) {
-            if (videoQualities != null && !videoQualities.isEmpty()) {
-                mFullScreenPlayer.setVideoQualityList(videoQualities);
-            }
-            if (defaultVideoQuality != null) {
-                mFullScreenPlayer.updateVideoQuality(defaultVideoQuality);
-            }
+            mFullScreenPlayer.setVideoQualityList(videoQualities);
+            mFullScreenPlayer.updateVideoQuality(defaultVideoQuality);
         }
 
         @Override

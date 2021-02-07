@@ -460,7 +460,8 @@ public class SuperPlayerActivity extends Activity implements View.OnClickListene
     @Override
     protected void onResume() {
         super.onResume();
-        if (mSuperPlayerView.getPlayerState() == SuperPlayerDef.PlayerState.PAUSE) {
+        if (mSuperPlayerView.getPlayerState() == SuperPlayerDef.PlayerState.PLAYING
+        || mSuperPlayerView.getPlayerState() == SuperPlayerDef.PlayerState.PAUSE) {
             Log.i(TAG, "onResume state :" + mSuperPlayerView.getPlayerState());
             mSuperPlayerView.onResume();
             if (mSuperPlayerView.getPlayerMode() == SuperPlayerDef.PlayerMode.FLOAT) {

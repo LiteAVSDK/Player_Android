@@ -52,7 +52,7 @@ public class MainActivity extends Activity {
         setContentView(R.layout.activity_main);
 
         mTvVersion = (TextView) findViewById(R.id.main_tv_version);
-        mTvVersion.setText("超级播放器版本 v" + TXLiveBase.getSDKVersionStr()+"(8.3.647)");
+        mTvVersion.setText("超级播放器版本 v" + TXLiveBase.getSDKVersionStr()+"(8.4.664)");
 
         mMainTitle = (TextView) findViewById(R.id.main_title);
         mMainTitle.setOnLongClickListener(new View.OnLongClickListener() {
@@ -138,7 +138,7 @@ public class MainActivity extends Activity {
         List<ChildBean> playerChildList = new ArrayList<>();
         playerChildList.add(new ChildBean("超级播放器", R.drawable.play, 3, SuperPlayerActivity.class));
         if (playerChildList.size() != 0) {
-            GroupBean playerGroupBean = new GroupBean("播放器", R.drawable.composite, playerChildList);
+            GroupBean playerGroupBean = new GroupBean("播放器 Player", R.drawable.composite, playerChildList);
             groupList.add(playerGroupBean);
         }
 
