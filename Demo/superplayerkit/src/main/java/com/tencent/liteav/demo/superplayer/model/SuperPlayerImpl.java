@@ -44,7 +44,7 @@ public class SuperPlayerImpl implements SuperPlayer, ITXVodPlayListener, ITXLive
     private static final String TAG = "SuperPlayerImpl";
     private static final int SUPERPLAYER_MODE = 1;
     private static final int SUPPORT_MAJOR_VERSION = 8;
-    private static final int SUPPORT_MINOR_VERSION = 2;
+    private static final int SUPPORT_MINOR_VERSION = 5;
 
     private Context mContext;
     private TXCloudVideoView mVideoView;        // 腾讯云视频播放view
@@ -447,8 +447,8 @@ public class SuperPlayerImpl implements SuperPlayer, ITXVodPlayListener, ITXLive
                 }
                 query += "spfileid=" + mFileId + "&spdrmtype=" + drmType + "&spappid=" + mAppId;
                 Uri newUri = uri.buildUpon().query(query).build();
-                TXCLog.i(TAG, "playVodURL: newurl = " + newUri.toString() + " ;url= " + url);
-                ret = mVodPlayer.startPlay(newUri.toString());
+                TXCLog.i(TAG, "playVodURL: newurl = " + Uri.decode(newUri.toString()) + " ;url= " + url);
+                ret = mVodPlayer.startPlay(Uri.decode(newUri.toString()));
             } else {
                 ret = mVodPlayer.startPlay(url);
             }
