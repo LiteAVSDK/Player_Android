@@ -60,7 +60,7 @@ public class WindowPlayer extends AbsPlayer implements View.OnClickListener,
 
     private boolean                             isShowing;                              // 自身是否可见
     private boolean                             mIsChangingSeekBarProgress;             // 进度条是否正在拖动，避免SeekBar由于视频播放的update而跳动
-    private SuperPlayerDef.PlayerType           mPlayType;                              // 当前播放视频类型
+    private SuperPlayerDef.PlayerType           mPlayType = SuperPlayerDef.PlayerType.VOD;                          // 当前播放视频类型
     private SuperPlayerDef.PlayerState          mCurrentPlayState = SuperPlayerDef.PlayerState.END;                 // 当前播放状态
     private long                                mDuration;                              // 视频总时长
     private long                                mLivePushDuration;                      // 直播推流总时长

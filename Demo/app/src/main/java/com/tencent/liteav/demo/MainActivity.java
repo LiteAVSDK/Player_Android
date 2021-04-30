@@ -52,7 +52,7 @@ public class MainActivity extends Activity {
         setContentView(R.layout.activity_main);
 
         mTvVersion = (TextView) findViewById(R.id.main_tv_version);
-        mTvVersion.setText("超级播放器版本 v" + TXLiveBase.getSDKVersionStr()+"(8.5.677)");
+        mTvVersion.setText(getString(R.string.app_tv_super_player_version, TXLiveBase.getSDKVersionStr()+"(8.6.688)"));
 
         mMainTitle = (TextView) findViewById(R.id.main_title);
         mMainTitle.setOnLongClickListener(new View.OnLongClickListener() {
@@ -67,7 +67,7 @@ public class MainActivity extends Activity {
                             intent.setType("application/octet-stream");
                             //intent.setPackage("com.tencent.mobileqq");
                             intent.putExtra(Intent.EXTRA_STREAM, Uri.fromFile(logFile));
-                            startActivity(Intent.createChooser(intent, "分享日志"));
+                            startActivity(Intent.createChooser(intent, getString(R.string.app_title_share_log)));
                         }
                     }
                 });
@@ -114,14 +114,14 @@ public class MainActivity extends Activity {
     public void onBackPressed() {
         //退出登录
         AlertDialog alertDialog = new AlertDialog.Builder(this, R.style.common_alert_dialog)
-                .setMessage("确定要退出APP吗？")
-                .setPositiveButton("确定", new DialogInterface.OnClickListener() {
+                .setMessage(getString(R.string.app_dialog_exit_app))
+                .setPositiveButton(getString(R.string.btn_ok), new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         finish();
                     }
                 })
-                .setNegativeButton("取消", new DialogInterface.OnClickListener() {
+                .setNegativeButton(getString(R.string.btn_cancel), new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         dialog.dismiss();
@@ -136,9 +136,9 @@ public class MainActivity extends Activity {
 
         // 初始化播放器
         List<ChildBean> playerChildList = new ArrayList<>();
-        playerChildList.add(new ChildBean("超级播放器", R.drawable.play, 3, SuperPlayerActivity.class));
+        playerChildList.add(new ChildBean(getString(R.string.app_item_super_player), R.drawable.play, 3, SuperPlayerActivity.class));
         if (playerChildList.size() != 0) {
-            GroupBean playerGroupBean = new GroupBean("播放器 Player", R.drawable.composite, playerChildList);
+            GroupBean playerGroupBean = new GroupBean(getString(R.string.app_item_player), R.drawable.composite, playerChildList);
             groupList.add(playerGroupBean);
         }
 
