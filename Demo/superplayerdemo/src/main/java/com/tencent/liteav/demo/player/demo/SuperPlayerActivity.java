@@ -132,7 +132,6 @@ public class SuperPlayerActivity extends Activity implements View.OnClickListene
 
         mContext = this;
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
-        checkPermission();
         initView();
         initData();
 
@@ -175,21 +174,6 @@ public class SuperPlayerActivity extends Activity implements View.OnClickListene
         intent.addCategory("android.intent.category.DEFAULT");
         intent.setAction("com.tencent.liteav.action.liteavapp");
         startActivity(intent);
-    }
-
-    private void checkPermission() {
-        if (Build.VERSION.SDK_INT >= 23) {
-            List<String> permissions = new ArrayList<>();
-            if (PackageManager.PERMISSION_GRANTED != ActivityCompat.checkSelfPermission(this, Manifest.permission.CAMERA)) {
-                permissions.add(Manifest.permission.CAMERA);
-            }
-            if (PackageManager.PERMISSION_GRANTED != ActivityCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
-                permissions.add(Manifest.permission.WRITE_EXTERNAL_STORAGE);
-            }
-            if (permissions.size() != 0) {
-                ActivityCompat.requestPermissions(this, permissions.toArray(new String[0]), 100);
-            }
-        }
     }
 
     private void initView() {
