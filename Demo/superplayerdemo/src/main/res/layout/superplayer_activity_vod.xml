@@ -1,0 +1,282 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/root"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/superplayer_content_bg"
+    android:orientation="vertical" >
+
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginTop="0dp">
+
+        <com.tencent.rtmp.ui.TXCloudVideoView
+            android:id="@+id/video_view"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_centerInParent="true"
+            android:visibility="visible"/>
+
+        <ImageView
+            android:id="@+id/playerHeaderView"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:src="@drawable/superplayer_content_bg"
+            android:visibility="gone"/>
+
+        <SurfaceView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginLeft="10dp"
+            android:layout_marginTop="110dp"
+            android:layout_marginRight="10dp"
+            android:layout_marginBottom="110dp"
+            android:visibility="invisible"/>
+
+        <LinearLayout
+            android:orientation="vertical"
+            android:layout_gravity="bottom"
+            android:layout_marginBottom="70dp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:paddingLeft="10dp"
+                android:paddingRight="10dp">
+
+                <TextView
+                    android:layout_height="wrap_content"
+                    android:layout_width="50dp"
+                    android:textColor="@android:color/white"
+                    android:text="@string/superplayer_speed_rate"
+                    android:textSize="16sp"/>
+
+                <SeekBar
+                    android:id="@+id/seek_bar_speed"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:maxHeight="2.0dip"
+                    android:minHeight="2.0dip"
+                    android:paddingLeft="10dp"
+                    android:paddingRight="10dp"
+                    android:thumb="@drawable/superplayer_seekbar_icon"
+                    android:layout_weight="1"/>
+
+                <TextView
+                    android:id="@+id/text_speed"
+                    android:layout_height="wrap_content"
+                    android:layout_width="50dp"
+                    android:textColor="@android:color/white"
+                    android:text="1.00"
+                    android:textSize="16sp"/>
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_marginTop="15dp"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:paddingLeft="10dp"
+                android:paddingRight="10dp"
+                android:visibility="visible">
+
+                <TextView
+                    android:id="@+id/play_start"
+                    android:layout_height="wrap_content"
+                    android:layout_width="50dp"
+                    android:text="00:00"
+                    android:textColor="@android:color/white"
+                    android:textSize="16sp"/>
+                <SeekBar
+                    android:id="@+id/seekbar"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:max="0"
+                    android:maxHeight="2.0dip"
+                    android:minHeight="2.0dip"
+                    android:progress="0"
+                    android:paddingLeft="10dp"
+                    android:paddingRight="10dp"
+                    android:thumb="@drawable/superplayer_seekbar_icon"
+                    android:layout_weight="1"/>
+                <TextView
+                    android:id="@+id/duration"
+                    android:layout_height="wrap_content"
+                    android:layout_width="50dp"
+                    android:text="--:--"
+                    android:textColor="@android:color/white"
+                    android:textSize="16sp"/>
+            </LinearLayout>
+        </LinearLayout>
+
+        <HorizontalScrollView
+            android:layout_marginBottom="10dp"
+
+            android:layout_gravity="bottom"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                >
+                <TextView
+                    android:layout_height="wrap_content"
+                    android:layout_width="wrap_content"
+                    android:layout_weight="1"/>
+                <Button
+                    android:id="@+id/btnPlay"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/superplayer_play_start"/>
+                <TextView
+                    android:layout_height="wrap_content"
+                    android:layout_width="wrap_content"
+                    android:layout_weight="1"/>
+                <Button
+                    android:id="@+id/btnStop"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/superplayer_close_press"/>
+                <TextView
+                    android:layout_height="wrap_content"
+                    android:layout_width="wrap_content"
+                    android:layout_weight="1"/>
+                <Button
+                    android:id="@+id/btnLog"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/superplayer_log_show"/>
+                <TextView
+                    android:layout_height="wrap_content"
+                    android:layout_width="wrap_content"
+                    android:layout_weight="1"/>
+                <Button
+                    android:id="@+id/btnMute"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/superplayer_mic_enable"/>
+                <TextView
+                    android:layout_height="wrap_content"
+                    android:layout_width="wrap_content"
+                    android:layout_weight="1"/>
+                <Button
+                    android:id="@+id/btnHWDecode"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/superplayer_quick"/>
+                <TextView
+                    android:layout_height="wrap_content"
+                    android:layout_width="wrap_content"
+                    android:layout_weight="1"/>
+                <Button
+                    android:id="@+id/btnOrientation"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/superplayer_landscape"/>
+                <TextView
+                    android:layout_height="wrap_content"
+                    android:layout_width="wrap_content"
+                    android:layout_weight="1"/>
+                <Button
+                    android:id="@+id/btnRenderMode"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/superplayer_fill_mode"/>
+                <TextView
+                    android:layout_height="wrap_content"
+                    android:layout_width="wrap_content"
+                    android:layout_weight="1"/>
+
+                <Button
+                    android:id="@+id/btnCache"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:clickable="true"
+                    android:onClick="onClick"
+                    android:background="@drawable/superplayer_cache"/>
+
+                <TextView
+                    android:layout_height="wrap_content"
+                    android:layout_width="wrap_content"
+                    android:layout_weight="1"/>
+
+                <TextView
+                    android:layout_height="wrap_content"
+                    android:layout_width="wrap_content"
+                    android:layout_weight="1"/>
+            </LinearLayout>
+        </HorizontalScrollView>
+
+        <ImageView
+            android:id="@+id/loadingImageView"
+            android:layout_width="34dp"
+            android:layout_height="34dp"
+            android:layout_gravity="center"
+            android:src="@drawable/superplayer_loading_animation"
+            android:visibility="gone"/>
+
+        <com.tencent.liteav.demo.player.view.BitrateView
+            android:id="@+id/bitrate_view"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="right|center_vertical" />
+
+        <FrameLayout
+            android:layout_width="match_parent"
+            android:layout_height="41dp">
+
+            <LinearLayout
+                android:id="@+id/back_ll"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="12dp"
+                android:layout_gravity="center_vertical">
+
+                <ImageView
+                    android:layout_width="16dp"
+                    android:layout_height="16dp"
+                    android:layout_gravity="center_vertical"
+                    android:src="@drawable/superplayer_btn_back_gray"
+                    android:gravity="center"/>
+                <TextView
+                    android:id="@+id/back_tv"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="4dp"
+                    android:gravity="center_vertical"
+                    android:layout_gravity="center_vertical"
+                    android:textSize="16dp"
+                    android:textColor="#ffffff"
+                    android:text="@string/superplayer_back" />
+            </LinearLayout>
+            <TextView
+                android:id="@+id/title_tv"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:textColor="#ffffff"
+                android:textSize="18sp"/>
+
+            <ImageButton
+                android:id="@+id/webrtc_link_button"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="right|center_vertical"
+                android:background="@android:color/transparent"
+                android:padding="10dp"
+                android:src="@drawable/superplayer_question_link" />
+        </FrameLayout>
+
+        <include layout="@layout/superplayer_title_bar"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="12dp"
+            android:layout_marginRight="12dp"
+            android:layout_marginTop="45dp" />
+    </FrameLayout>
+</LinearLayout>

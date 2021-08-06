@@ -5,6 +5,7 @@ buildscript {
     repositories {
         jcenter()
         google()
+        mavenCentral()
     }
     dependencies {
         classpath 'com.android.tools.build:gradle:3.5.3'
@@ -27,8 +28,10 @@ allprojects {
                 dirs project(':liteav_leb_player').file('src/main/libs')
             }
         }
+        mavenCentral()
         jcenter()
         google()
+        mavenCentral()
     }
 }
 
@@ -46,10 +49,10 @@ if (!videoEngineSourcePath.isEmpty()) {
 
 ext {
     compileSdkVersion = 26
-    buildToolsVersion = "28.0.3"
-    supportSdkVersion = "26.0.1"
+    buildToolsVersion = "26.0.2"
+    supportSdkVersion = "26.1.0"
     minSdkVersion = 19
-    targetSdkVersion = 26
+    targetSdkVersion = 23
     if (!liteavSourcePath.isEmpty()) {
     liteavSdk="com.tencent.liteav:LiteAVSDK_Player:latest.release"
     } else {

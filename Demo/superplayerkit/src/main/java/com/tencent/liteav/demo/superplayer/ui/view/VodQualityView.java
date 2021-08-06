@@ -19,11 +19,11 @@ import java.util.List;
 
 /**
  * Created by yuejiaoli on 2018/7/4.
- *
+ * <p>
  * 视频画质选择弹框
- *
+ * <p>
  * 1、设置画质列表{@link #setVideoQualityList(List)}
- *
+ * <p>
  * 2、设置默认选中的画质{@link #setDefaultSelectedQuality(int)}
  */
 

@@ -8,9 +8,8 @@ import com.tencent.liteav.demo.superplayer.model.entity.SuperPlayerVideoIdV2;
  */
 public class PlayInfoParams {
     //必选
-    public int      appId;                  // 腾讯云视频appId
-    public String   fileId;                 // 腾讯云视频fileId
-
+    public int                  appId;                  // 腾讯云视频appId
+    public String               fileId;                 // 腾讯云视频fileId
     public SuperPlayerVideoId   videoId;    //v4 协议参数
     public SuperPlayerVideoIdV2 videoIdV2;  //v2 协议参数
 

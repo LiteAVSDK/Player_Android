@@ -4,7 +4,7 @@ import com.tencent.rtmp.TXLiveConstants;
 
 /**
  * Created by yuejiaoli on 2018/7/4.
- *
+ * <p>
  * 超级播放器全局配置类
  */
 

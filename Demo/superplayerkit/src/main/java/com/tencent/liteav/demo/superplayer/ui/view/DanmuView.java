@@ -23,19 +23,19 @@ import master.flame.danmaku.ui.widget.DanmakuView;
 
 /**
  * Created by liyuejiao on 2018/1/29.
- *
+ * <p>
  * 全功能播放器中的弹幕View
- *
+ * <p>
  * 1、随机发送弹幕{@link #addDanmaku(String, boolean)}
- *
+ * <p>
  * 2、弹幕操作所在线程的Handler{@link DanmuHandler}
  */
 public class DanmuView extends DanmakuView {
-    private Context         mContext;
-    private DanmakuContext  mDanmakuContext;
-    private boolean         mShowDanma;         // 弹幕是否开启
-    private HandlerThread   mHandlerThread;     // 发送弹幕的线程
-    private DanmuHandler    mDanmuHandler;      // 弹幕线程handler
+    private Context        mContext;
+    private DanmakuContext mDanmakuContext;
+    private boolean        mShowDanma;         // 弹幕是否开启
+    private HandlerThread  mHandlerThread;     // 发送弹幕的线程
+    private DanmuHandler   mDanmuHandler;      // 弹幕线程handler
 
     public DanmuView(Context context) {
         super(context);

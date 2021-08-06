@@ -19,53 +19,46 @@ import java.util.List;
 
 /**
  * 一个带有打点的，模仿seekbar的view
- *
+ * <p>
  * 除seekbar基本功能外，还具备关键帧信息打点的功能
- *
+ * <p>
  * 1、添加打点信息{@link #addPoint(PointParams, int)}
- *
+ * <p>
  * 2、自定义thumb{@link TCThumbView}
- *
+ * <p>
  * 3、打点view{@link TCPointView}
- *
+ * <p>
  * 4、打点信息参数{@link PointParams}
  */
 public class PointSeekBar extends RelativeLayout {
 
-    private int                             mWidth;                 // 自身宽度
-    private int                             mHeight;                // 自身高度
-    private int                             mSeekBarLeft;           // SeekBar的起点位置
-    private int                             mSeekBarRight;          // SeekBar的终点位置
-    private int                             mBgTop;                 // 进度条距离父布局上边界的距离
-    private int                             mBgBottom;              // 进度条距离父布局下边界的距离
-    private int                             mRoundSize;             // 进度条圆角大小
-    private int                             mViewEnd;               // 自身的右边界
-
-    private Paint                           mNormalPaint;           // seekbar背景画笔
-    private Paint                           mProgressPaint;         // seekbar进度条画笔
-    private Paint                           mPointerPaint;          // 打点view画笔
-
-    private Drawable                        mThumbDrawable;         // 拖动块图片
-    private int                             mHalfDrawableWidth;     // Thumb图片宽度的一半
-    // Thumb距父布局中的位置
-    private float                           mThumbLeft;             // thumb的marginLeft值
-    private float                           mThumbRight;            // thumb的marginRight值
-    private float                           mThumbTop;              // thumb的marginTop值
-    private float                           mThumbBottom;           // thumb的marginBottom值
-
-
-    private boolean                         mIsOnDrag;              // 是否处于拖动状态
-    private float                           mCurrentLeftOffset = 0; // thumb距离打点view的偏移量
-    private float                           mLastX;                 // 上一次点击事件的横坐标，用于计算偏移量
-
-    private int                             mCurrentProgress;       // 当前seekbar的数值
-    private int                             mMaxProgress = 100;     // seekbar最大数值
-    private float                           mBarHeightPx = 0;       // seekbar的高度大小 px
-
-    private TCThumbView                     mThumbView;             // 滑动ThumbView
-    private List<PointParams>               mPointList;             // 打点信息的列表
-    private OnSeekBarPointClickListener     mPointClickListener;    // 打点view点击回调
-    private boolean                         mIsChangePointViews;    // 打点信息是否更新过
+    private int                         mWidth;                 // 自身宽度
+    private int                         mHeight;                // 自身高度
+    private int                         mSeekBarLeft;           // SeekBar的起点位置
+    private int                         mSeekBarRight;          // SeekBar的终点位置
+    private int                         mBgTop;                 // 进度条距离父布局上边界的距离
+    private int                         mBgBottom;              // 进度条距离父布局下边界的距离
+    private int                         mRoundSize;             // 进度条圆角大小
+    private int                         mViewEnd;               // 自身的右边界
+    private Paint                       mNormalPaint;           // seekbar背景画笔
+    private Paint                       mProgressPaint;         // seekbar进度条画笔
+    private Paint                       mPointerPaint;          // 打点view画笔
+    private Drawable                    mThumbDrawable;         // 拖动块图片
+    private int                         mHalfDrawableWidth;     // Thumb图片宽度的一半
+    private float                       mThumbLeft;             // thumb的marginLeft值
+    private float                       mThumbRight;            // thumb的marginRight值
+    private float                       mThumbTop;              // thumb的marginTop值
+    private float                       mThumbBottom;           // thumb的marginBottom值
+    private boolean                     mIsOnDrag;              // 是否处于拖动状态
+    private float                       mCurrentLeftOffset = 0; // thumb距离打点view的偏移量
+    private float                       mLastX;                 // 上一次点击事件的横坐标，用于计算偏移量
+    private int                         mCurrentProgress;       // 当前seekbar的数值
+    private int                         mMaxProgress       = 100;     // seekbar最大数值
+    private float                       mBarHeightPx       = 0;       // seekbar的高度大小 px
+    private TCThumbView                 mThumbView;             // 滑动ThumbView
+    private List<PointParams>           mPointList;             // 打点信息的列表
+    private OnSeekBarPointClickListener mPointClickListener;    // 打点view点击回调
+    private boolean                     mIsChangePointViews;    // 打点信息是否更新过
 
     public PointSeekBar(Context context) {
         super(context);
@@ -218,7 +211,7 @@ public class PointSeekBar extends RelativeLayout {
                     addThumbView();
                     mIsChangePointViews = false;
                 }
-                if(!mIsOnDrag) {
+                if (!mIsOnDrag) {
                     calProgressDis();
                     changeThumbPos();
                 }
@@ -444,7 +437,7 @@ public class PointSeekBar extends RelativeLayout {
      */
     public static class PointParams {
         int progress = 0;       // 视频进度值(秒)
-        int color = Color.RED;  // 打点view的颜色
+        int color    = Color.RED;  // 打点view的颜色
 
         public PointParams(int progress, int color) {
             this.progress = progress;
@@ -465,12 +458,12 @@ public class PointSeekBar extends RelativeLayout {
             init();
         }
 
-        public TCPointView(Context context,  AttributeSet attrs) {
+        public TCPointView(Context context, AttributeSet attrs) {
             super(context, attrs);
             init();
         }
 
-        public TCPointView(Context context,  AttributeSet attrs, int defStyleAttr) {
+        public TCPointView(Context context, AttributeSet attrs, int defStyleAttr) {
             super(context, attrs, defStyleAttr);
             init();
         }

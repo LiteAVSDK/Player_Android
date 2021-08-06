@@ -8,8 +8,8 @@ package com.tencent.liteav.demo.superplayer.model.entity;
 
 public class VideoQuality {
 
-    public int index;
-    public int bitrate;
+    public int    index;
+    public int    bitrate;
     public String name;
     public String title;
     public String url;

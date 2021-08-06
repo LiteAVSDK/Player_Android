@@ -18,9 +18,8 @@ import java.util.List;
  */
 public abstract class AbsPlayer extends RelativeLayout implements Player {
 
-    protected static final int MAX_SHIFT_TIME = 7200; // demo演示直播时移是MAX_SHIFT_TIMEs，即2小时
-
-    protected Callback mControllerCallback; // 播放控制回调
+    protected static final int      MAX_SHIFT_TIME = 7200; // demo演示直播时移是MAX_SHIFT_TIMEs，即2小时
+    protected              Callback mControllerCallback; // 播放控制回调
 
     protected Runnable mHideViewRunnable = new Runnable() {
         @Override

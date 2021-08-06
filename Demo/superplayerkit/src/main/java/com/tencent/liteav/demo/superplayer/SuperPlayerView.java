@@ -53,41 +53,36 @@ import java.lang.reflect.Method;
 import java.util.List;
 
 /**
- *
  * 超级播放器view
- *
+ * <p>
  * 具备播放器基本功能，此外还包括横竖屏切换、悬浮窗播放、画质切换、硬件加速、倍速播放、镜像播放、手势控制等功能，同时支持直播与点播
  * 使用方式极为简单，只需要在布局文件中引入并获取到该控件，通过{@link #playWithModel(SuperPlayerModel)}传入{@link SuperPlayerModel}即可实现视频播放
- *
+ * <p>
  * 1、播放视频{@link #playWithModel(SuperPlayerModel)}
  * 2、设置回调{@link #setPlayerViewCallback(OnSuperPlayerViewCallback)}
  * 3、controller回调实现{@link #mControllerCallback}
  * 4、退出播放释放内存{@link #resetPlayer()}
  */
 public class SuperPlayerView extends RelativeLayout {
-    private static final String TAG = "SuperPlayerView";
+    private static final String TAG                    = "SuperPlayerView";
+    private final        int    OP_SYSTEM_ALERT_WINDOW = 24;                      // 支持TYPE_TOAST悬浮窗的最高API版本
 
-    private final int OP_SYSTEM_ALERT_WINDOW = 24;                      // 支持TYPE_TOAST悬浮窗的最高API版本
-
-    private Context mContext;
-
-    private ViewGroup        mRootView;                                 // SuperPlayerView的根view
-    private TXCloudVideoView mTXCloudVideoView;                         // 腾讯云视频播放view
-    private FullScreenPlayer mFullScreenPlayer;                         // 全屏模式控制view
-    private WindowPlayer     mWindowPlayer;                             // 窗口模式控制view
-    private FloatPlayer      mFloatPlayer;                              // 悬浮窗模式控制view
-    private DanmuView        mDanmuView;                                // 弹幕
-
+    private Context                    mContext;
+    private ViewGroup                  mRootView;                                 // SuperPlayerView的根view
+    private TXCloudVideoView           mTXCloudVideoView;                         // 腾讯云视频播放view
+    private FullScreenPlayer           mFullScreenPlayer;                         // 全屏模式控制view
+    private WindowPlayer               mWindowPlayer;                             // 窗口模式控制view
+    private FloatPlayer                mFloatPlayer;                              // 悬浮窗模式控制view
+    private DanmuView                  mDanmuView;                                // 弹幕
     private ViewGroup.LayoutParams     mLayoutParamWindowMode;          // 窗口播放时SuperPlayerView的布局参数
     private ViewGroup.LayoutParams     mLayoutParamFullScreenMode;      // 全屏播放时SuperPlayerView的布局参数
     private LayoutParams               mVodControllerWindowParams;      // 窗口controller的布局参数
     private LayoutParams               mVodControllerFullScreenParams;  // 全屏controller的布局参数
     private WindowManager              mWindowManager;                  // 悬浮窗窗口管理器
     private WindowManager.LayoutParams mWindowParams;                   // 悬浮窗布局参数
-
-    private OnSuperPlayerViewCallback mPlayerViewCallback;              // SuperPlayerView回调
-    private NetWatcher                mWatcher;                         // 网络质量监视器
-    private SuperPlayer               mSuperPlayer;
+    private OnSuperPlayerViewCallback  mPlayerViewCallback;              // SuperPlayerView回调
+    private NetWatcher                 mWatcher;                         // 网络质量监视器
+    private SuperPlayer                mSuperPlayer;
 
     public SuperPlayerView(Context context) {
         super(context);
@@ -738,7 +733,7 @@ public class SuperPlayerView extends RelativeLayout {
 
         @Override
         public void onSwitchStreamStart(boolean success, SuperPlayerDef.PlayerType playerType, VideoQuality quality) {
-            if(playerType == SuperPlayerDef.PlayerType.LIVE) {
+            if (playerType == SuperPlayerDef.PlayerType.LIVE) {
                 if (success) {
                     Toast.makeText(mContext, "正在切换到" + quality.title + "...", Toast.LENGTH_SHORT).show();
                 } else {

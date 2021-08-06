@@ -7,12 +7,12 @@ package com.tencent.liteav.demo.superplayer.model.entity;
  */
 
 public class PlayInfoStream {
-    public int height;
-    public int width;
-    public int size;
-    public int duration;
-    public int bitrate;
-    public int definition;
+    public int    height;
+    public int    width;
+    public int    size;
+    public int    duration;
+    public int    bitrate;
+    public int    definition;
     public String id;
     public String name;
     public String url;

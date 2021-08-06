@@ -16,8 +16,9 @@ package com.tencent.liteav.demo.common.widget.expandableadapter;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.view.ViewGroup;
+
 public interface ViewProducer {
-    int VIEW_TYPE_EMPTY = 1 << 30;
+    int VIEW_TYPE_EMPTY  = 1 << 30;
     int VIEW_TYPE_HEADER = VIEW_TYPE_EMPTY >> 1;
 
     /**

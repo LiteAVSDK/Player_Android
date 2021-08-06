@@ -9,7 +9,7 @@ public interface IPlayInfoRequestCallback {
      * 成功回调
      *
      * @param protocol 视频信息协议实现类
-     * @param param 视频信息协议输入参数
+     * @param param    视频信息协议输入参数
      */
     void onSuccess(IPlayInfoProtocol protocol, PlayInfoParams param);
 

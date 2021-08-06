@@ -21,33 +21,20 @@ public class VideoGestureDetector {
     private static final int BRIGHTNESS     = 2;    // 亮度
     private static final int VIDEO_PROGRESS = 3;    // 播放进度
 
-    private int                         mScrollMode = NONE;     // 手势类型
-
-    private VideoGestureListener        mVideoGestureListener;  // 回调
-    private int                         mVideoWidth;            // 视频宽度px
-
-    // 亮度相关
-    private float                       mBrightness = 1;        // 当前亮度(0.0~1.0)
-    private Window                      mWindow;                // 当前window
-    private WindowManager.LayoutParams  mLayoutParams;          // 用于获取和设置屏幕亮度
-    private ContentResolver             mResolver;              // 用于获取当前屏幕亮度
-
-    // 音量相关
-    private AudioManager                mAudioManager;          // 音频管理器，用于设置音量
-    private int                         mMaxVolume = 0;         // 最大音量值
-    private int                         mOldVolume = 0;         // 记录调节音量之前的旧音量值
-
-    // 视频进度相关
-    private int                         mVideoProgress;         // 记录滑动后的进度，在回调中抛出
-    private int                         mDownProgress;          // 滑动开始时的视频播放进度
-
-    /**
-     * 手势临界值，当两滑动事件坐标的水平差值>20时判定为{@link #VIDEO_PROGRESS}, 否则判定为{@link #VOLUME}或者{@link #BRIGHTNESS}
-     */
-    private int                         offsetX = 20;
-
-    //手势灵敏度 0.0~1.0
-    private float                       mSensitivity = 0.3f;    // 调节音量、亮度的灵敏度
+    private int                        mScrollMode  = NONE;     // 手势类型
+    private VideoGestureListener       mVideoGestureListener;  // 回调
+    private int                        mVideoWidth;            // 视频宽度px
+    private float                      mBrightness  = 1;        // 当前亮度(0.0~1.0)
+    private Window                     mWindow;                // 当前window
+    private WindowManager.LayoutParams mLayoutParams;          // 用于获取和设置屏幕亮度
+    private ContentResolver            mResolver;              // 用于获取当前屏幕亮度
+    private AudioManager               mAudioManager;          // 音频管理器，用于设置音量
+    private int                        mMaxVolume   = 0;         // 最大音量值
+    private int                        mOldVolume   = 0;         // 记录调节音量之前的旧音量值
+    private int                        mVideoProgress;         // 记录滑动后的进度，在回调中抛出
+    private int                        mDownProgress;          // 滑动开始时的视频播放进度
+    private int                        offsetX      = 20; //手势临界值，当两滑动事件坐标的水平差值>20时判定为{@link #VIDEO_PROGRESS}, 否则判定为{@link #VOLUME}或者{@link #BRIGHTNESS}
+    private float                      mSensitivity = 0.3f;    // 调节音量、亮度的灵敏度   //手势灵敏度 0.0~1.0
 
     public VideoGestureDetector(Context context) {
         mAudioManager = (AudioManager) context.getSystemService(Service.AUDIO_SERVICE);

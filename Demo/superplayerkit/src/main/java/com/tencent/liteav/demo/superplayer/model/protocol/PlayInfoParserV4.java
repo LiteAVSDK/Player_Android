@@ -19,7 +19,7 @@ import java.util.List;
 
 /**
  * V4视频协议解析实现类
- *
+ * <p>
  * 负责解析V4视频信息协议请求响应的Json数据
  */
 public class PlayInfoParserV4 implements IPlayInfoParser {
@@ -35,7 +35,7 @@ public class PlayInfoParserV4 implements IPlayInfoParser {
     private PlayImageSpriteInfo          mImageSpriteInfo;           // 雪碧图信息
     private List<PlayKeyFrameDescInfo>   mKeyFrameDescInfo;          // 关键帧信息
     private List<ResolutionName>         mResolutionNameList;        // 自适应码流画质名称匹配信息
-    private String                              mDRMType;
+    private String                       mDRMType;
 
     public PlayInfoParserV4(JSONObject response) {
         mResponse = response;

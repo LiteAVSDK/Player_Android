@@ -8,16 +8,15 @@ import java.util.Map;
 
 public class WebDataInfo {
 
-    public static final String EXTRA_FROM           = "from";
-    public static final String EXTRA_TARGET         = "target";
-    public static final String EXTRA_PROTOCOL       = "protocol";
-    public static final String EXTRA_DATA           = "data";
+    public static final String EXTRA_FROM         = "from";
+    public static final String EXTRA_TARGET       = "target";
+    public static final String EXTRA_PROTOCOL     = "protocol";
+    public static final String EXTRA_DATA         = "data";
+    public static final String TARGET_SUPERPLAYER = "superplayer";
 
-    public static final String TARGET_SUPERPLAYER   = "superplayer";
-
-    private String from;
-    private String target;
-    private String protocol;
+    private String              from;
+    private String              target;
+    private String              protocol;
     private Map<String, String> data;
 
     public WebDataInfo() {

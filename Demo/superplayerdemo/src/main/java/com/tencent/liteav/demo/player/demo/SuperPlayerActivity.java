@@ -62,55 +62,42 @@ public class SuperPlayerActivity extends Activity implements View.OnClickListene
         SuperVodListLoader.OnVodInfoLoadListener, SuperPlayerView.OnSuperPlayerViewCallback,
         TCVodPlayerListAdapter.OnItemClickListener, SwipeRefreshLayout.OnRefreshListener {
 
-    private static final String TAG = "SuperPlayerActivity";
+    private static final String TAG                   = "SuperPlayerActivity";
+    private static final String SHARE_PREFERENCE_NAME = "tx_super_player_guide_setting";
+    private static final String KEY_GUIDE_ONE         = "is_guide_one_finish";
+    private static final String KEY_GUIDE_TWO         = "is_guide_two_finish";
+    private static final String DEFAULT_IMAGHOLDER    = "http://xiaozhibo-10055601.file.myqcloud.com/coverImg.jpg";
+    private static final int    LIST_TYPE_LIVE        = 0;
+    private static final int    LIST_TYPE_VOD         = 1;
+    private static final int    REQUEST_CODE_QR_SCAN  = 100;
 
-    // 新手引导的标记
-    private static final String SHARE_PREFERENCE_NAME   = "tx_super_player_guide_setting";
-    private static final String KEY_GUIDE_ONE           = "is_guide_one_finish";
-    private static final String KEY_GUIDE_TWO           = "is_guide_two_finish";
-
-    private static final String DEFAULT_IMAGHOLDER      = "http://xiaozhibo-10055601.file.myqcloud.com/coverImg.jpg";
-
-    private static final int LIST_TYPE_LIVE = 0;
-    private static final int LIST_TYPE_VOD  = 1;
-
-    private static final int REQUEST_CODE_QR_SCAN = 100;
-
-    private Context             mContext;
-    //标题
-    private RelativeLayout      mLayoutTitle;
-    private RelativeLayout      mRelativeMaskOne;
-    private RelativeLayout      mRelativeMaskTwo;
-    private ImageView           mImageBack;
-    private ImageView           mBtnScan;
-    private ImageView           mImageAdd;
-    private ImageButton         mImageLink;
-    private View                mTitleMask;
-    private View                mListMask;
-    private TextView            mTextOne;
-    private TextView            mTextTwo;
-    private SwipeRefreshLayout  mSwipeRefreshLayout;
-    //超级播放器View
-    private SuperPlayerView     mSuperPlayerView;
-    //播放列表
-    private RecyclerView        mVodPlayerListView;
-
-    //进入默认播放的视频
-    private int DEFAULT_APPID   = 1252463788;
-    private int mDataType       = LIST_TYPE_LIVE;
-    private int mVideoCount;
-    //获取点播信息接口
-    private SuperVodListLoader          mSuperVodListLoader;
-    private TCVodPlayerListAdapter      mVodPlayerListAdapter;
-    private GetVideoInfoListListener    mGetVideoInfoListListener;
-
-    private ArrayList<VideoModel>       mLiveList;
-    private ArrayList<VideoModel>       mVodList;
-    private ArrayList<ListTabItem>      mListTabs;
-
-    private boolean mVideoHasPlay;
-    private boolean mDefaultVideo;
-    private String  mVideoId;
+    private Context                  mContext;
+    private RelativeLayout           mLayoutTitle;
+    private RelativeLayout           mRelativeMaskOne;
+    private RelativeLayout           mRelativeMaskTwo;
+    private ImageView                mImageBack;
+    private ImageView                mBtnScan;
+    private ImageView                mImageAdd;
+    private ImageButton              mImageLink;
+    private View                     mTitleMask;
+    private View                     mListMask;
+    private TextView                 mTextOne;
+    private TextView                 mTextTwo;
+    private SwipeRefreshLayout       mSwipeRefreshLayout;
+    private SuperPlayerView          mSuperPlayerView;
+    private RecyclerView             mVodPlayerListView;
+    private int                      DEFAULT_APPID = 1252463788;
+    private int                      mDataType     = LIST_TYPE_LIVE;
+    private int                      mVideoCount;
+    private SuperVodListLoader       mSuperVodListLoader;
+    private TCVodPlayerListAdapter   mVodPlayerListAdapter;
+    private GetVideoInfoListListener mGetVideoInfoListListener;
+    private ArrayList<VideoModel>    mLiveList;
+    private ArrayList<VideoModel>    mVodList;
+    private ArrayList<ListTabItem>   mListTabs;
+    private boolean                  mVideoHasPlay;
+    private boolean                  mDefaultVideo;
+    private String                   mVideoId;
 
     private static class ListTabItem {
         public ListTabItem(int type, TextView textView, ImageView imageView, View.OnClickListener listener) {
@@ -120,9 +107,9 @@ public class SuperPlayerActivity extends Activity implements View.OnClickListene
             this.textView.setOnClickListener(listener);
         }
 
-        public int          type;
-        public TextView     textView;
-        public ImageView    imageView;
+        public int       type;
+        public TextView  textView;
+        public ImageView imageView;
     }
 
     @Override
@@ -445,7 +432,7 @@ public class SuperPlayerActivity extends Activity implements View.OnClickListene
     protected void onResume() {
         super.onResume();
         if (mSuperPlayerView.getPlayerState() == SuperPlayerDef.PlayerState.PLAYING
-        || mSuperPlayerView.getPlayerState() == SuperPlayerDef.PlayerState.PAUSE) {
+                || mSuperPlayerView.getPlayerState() == SuperPlayerDef.PlayerState.PAUSE) {
             Log.i(TAG, "onResume state :" + mSuperPlayerView.getPlayerState());
             mSuperPlayerView.onResume();
             if (mSuperPlayerView.getPlayerMode() == SuperPlayerDef.PlayerMode.FLOAT) {
@@ -862,6 +849,7 @@ public class SuperPlayerActivity extends Activity implements View.OnClickListene
     /**
      * 播放外部传入的数据
      * 通过扫码返回的url数据
+     *
      * @param result
      */
     private void playExternalVideo(String result) {

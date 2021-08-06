@@ -21,8 +21,10 @@
     </style>
 
     <!--meeting room -->
-    <style name="MeetingActivityTheme" parent="Theme.AppCompat.NoActionBar"/>
-    <style name="MeetingDialogTheme" parent="Theme.AppCompat.DayNight.Dialog.Alert"/>
+    <style name="MeetingActivityTheme" parent="Theme.AppCompat.NoActionBar" />
+
+    <style name="MeetingDialogTheme" parent="Theme.AppCompat.DayNight.Dialog.Alert" />
+
     <style name="MeetingFragmentDialogTheme" parent="@android:style/Theme.Holo.Dialog">
         <item name="android:windowNoTitle">true</item>
         <item name="android:backgroundDimEnabled">false</item>

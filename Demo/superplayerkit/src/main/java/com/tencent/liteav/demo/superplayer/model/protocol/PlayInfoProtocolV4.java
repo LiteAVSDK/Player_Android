@@ -18,18 +18,16 @@ import java.util.List;
 
 /**
  * V4视频信息协议实现类
- *
+ * <p>
  * 负责V4视频信息协议的请求控制与数据获取
  */
 public class PlayInfoProtocolV4 implements IPlayInfoProtocol {
-    private static final String TAG = "TCPlayInfoProtocolV4";
-
-    private final String BASE_URLS_V4 = "https://playvideo.qcloud.com/getplayinfo/v4";  // V4协议请求地址
-
-    private Handler         mMainHandler;   // 用于切换线程
-    private PlayInfoParams  mParams;        // 协议请求输入的参数
-    private IPlayInfoParser mParser;        // 协议请求返回Json的解析对象
-    private String          mRequestContext;//透传字段
+    private static final String          TAG          = "TCPlayInfoProtocolV4";
+    private final        String          BASE_URLS_V4 = "https://playvideo.qcloud.com/getplayinfo/v4";  // V4协议请求地址
+    private              Handler         mMainHandler;   // 用于切换线程
+    private              PlayInfoParams  mParams;        // 协议请求输入的参数
+    private              IPlayInfoParser mParser;        // 协议请求返回Json的解析对象
+    private              String          mRequestContext;//透传字段
 
     public PlayInfoProtocolV4(PlayInfoParams params) {
         mParams = params;

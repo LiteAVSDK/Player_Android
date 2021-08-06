@@ -20,4 +20,12 @@
     <string name="superplayer_definition_standard">标清</string>
     <string name="superplayer_test_video">测试视频</string>
     <string name="superplayer_fetch_upload_list_video_fail">获取已上传的视频列表失败</string>
+    <string name="superplayer_speed_rate">速率</string>
+    <string name="superplayer_please_scan_qrcode"> 请输入或扫二维码获取播放地址</string>
+    <string name="superplayer_back">返回</string>
+    <string name="superplayer_resolution_normal">原画</string>
+    <string name="superplayer_resolution_low">流畅</string>
+    <string name="superplayer_open_hardware_speedup">已开启硬件解码加速，切换会重启播放流程!</string>
+    <string name="superplayer_close_hardware_speedup">已关闭硬件解码加速，切换会重启播放流程!</string>
+    <string name="superplayer_not_play_url">无播放地址</string>
 </resources>

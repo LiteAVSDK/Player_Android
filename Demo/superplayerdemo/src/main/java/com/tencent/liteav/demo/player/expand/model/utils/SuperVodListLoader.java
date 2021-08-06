@@ -29,16 +29,14 @@ import okhttp3.Response;
 
 public class SuperVodListLoader {
 
-    private static final String TAG = "SuperVodListLoader";
-    private Handler mHandler;
-    private HandlerThread mHandlerThread;
-
-    private boolean mIsHttps = true;
-    private final String BASE_URL = "http://playvideo.qcloud.com/getplayinfo/v4";
-    private final String BASE_URLS = "https://playvideo.qcloud.com/getplayinfo/v4";
-    private OnVodInfoLoadListener mOnVodInfoLoadListener;
-
-    private OkHttpClient mHttpClient;
+    private static final String                TAG       = "SuperVodListLoader";
+    private              Handler               mHandler;
+    private              HandlerThread         mHandlerThread;
+    private              boolean               mIsHttps  = true;
+    private final        String                BASE_URL  = "http://playvideo.qcloud.com/getplayinfo/v4";
+    private final        String                BASE_URLS = "https://playvideo.qcloud.com/getplayinfo/v4";
+    private              OnVodInfoLoadListener mOnVodInfoLoadListener;
+    private              OkHttpClient          mHttpClient;
 
     public SuperVodListLoader() {
         mHandlerThread = new HandlerThread("SuperVodListLoader");

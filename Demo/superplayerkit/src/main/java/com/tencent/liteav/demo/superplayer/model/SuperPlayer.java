@@ -36,9 +36,10 @@ public interface SuperPlayer {
 
     /**
      * 多分辨率播放
-     * @param appId             腾讯云视频appId
-     * @param superPlayerURLS   不同分辨率数据
-     * @param defaultIndex      默认播放Index
+     *
+     * @param appId           腾讯云视频appId
+     * @param superPlayerURLS 不同分辨率数据
+     * @param defaultIndex    默认播放Index
      */
     void play(int appId, List<SuperPlayerModel.SuperPlayerURL> superPlayerURLS, int defaultIndex);
 

@@ -25,7 +25,7 @@ public class FloatPlayer extends AbsPlayer implements View.OnClickListener {
 
     private TXCloudVideoView mFloatVideoView;   // 悬浮窗中的视频播放view
 
-    private int mStatusBarHeight;   // 系统状态栏的高度
+    private int   mStatusBarHeight;   // 系统状态栏的高度
     private float mXDownInScreen;   // 按下事件距离屏幕左边界的距离
     private float mYDownInScreen;   // 按下事件距离屏幕上边界的距离
     private float mXInScreen;       // 滑动事件距离屏幕左边界的距离

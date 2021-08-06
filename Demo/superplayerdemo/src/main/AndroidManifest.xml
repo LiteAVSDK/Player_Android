@@ -22,6 +22,8 @@
             android:name=".demo.QRCodeScanActivity"
             android:screenOrientation="portrait" />
 
+        <activity android:name=".demo.VodPlayerActivity"/>
+
         <receiver android:name=".expand.webdata.reveiver.WebDataReceiver">
             <intent-filter>
                 <action android:name="com.tencent.liteav.action.WED_DATA" />

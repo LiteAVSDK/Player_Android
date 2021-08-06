@@ -28,12 +28,10 @@ import okhttp3.Response;
  */
 
 public class VideoDataMgr {
-    private static final String TAG = "VideoDataMgr";
-
-    private static VideoDataMgr         sInstance;
-
-    private OkHttpClient                mOkHttpClient;
-    private GetVideoInfoListListener mGetVideoInfoListListener;
+    private static final String                   TAG = "VideoDataMgr";
+    private static       VideoDataMgr             sInstance;
+    private              OkHttpClient             mOkHttpClient;
+    private              GetVideoInfoListListener mGetVideoInfoListListener;
 
     public static VideoDataMgr getInstance() {
         if (sInstance == null) {

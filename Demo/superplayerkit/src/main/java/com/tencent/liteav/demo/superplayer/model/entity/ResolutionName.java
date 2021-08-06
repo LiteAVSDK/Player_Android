@@ -7,8 +7,8 @@ public class ResolutionName {
 
     public String name; // 画质名称
     public String type; // 类型 可能的取值有 video 和 audio
-    public int width;
-    public int height;
+    public int    width;
+    public int    height;
 
     @Override
     public String toString() {

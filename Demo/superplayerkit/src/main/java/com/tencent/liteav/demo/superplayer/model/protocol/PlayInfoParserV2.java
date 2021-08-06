@@ -23,10 +23,10 @@ import java.util.List;
 
 /**
  * V2视频信息协议解析实现类
- *
+ * <p>
  * 负责解析V2视频信息协议请求响应的Json数据
  */
-public class PlayInfoParserV2 implements IPlayInfoParser{
+public class PlayInfoParserV2 implements IPlayInfoParser {
     private static final String TAG = "TCPlayInfoParserV2";
 
     private JSONObject mResponse;   // 协议请求返回的Json数据
@@ -38,9 +38,9 @@ public class PlayInfoParserV2 implements IPlayInfoParser{
     private PlayImageSpriteInfo        mImageSpriteInfo;            // 雪碧图信息
     private List<PlayKeyFrameDescInfo> mKeyFrameDescInfo;           // 关键帧打点信息
     //视频信息
-    private String         mName;                                   // 视频名称
-    private PlayInfoStream mSourceStream;                           // 源视频流信息
-    private PlayInfoStream mMasterPlayList;                         // 主播放视频流信息
+    private String                     mName;                                   // 视频名称
+    private PlayInfoStream             mSourceStream;                           // 源视频流信息
+    private PlayInfoStream             mMasterPlayList;                         // 主播放视频流信息
 
     private LinkedHashMap<String, PlayInfoStream> mTranscodePlayList;   // 转码视频信息列表
 
@@ -55,18 +55,18 @@ public class PlayInfoParserV2 implements IPlayInfoParser{
 
     /**
      * 从视频信息协议请求响应的Json数据中解析出视频信息
-     *
+     * <p>
      * 解析流程：
-     *
+     * <p>
      * 1、解析播放器信息(playerInfo)字段，获取视频清晰度列表{@link #mVideoClassificationList}以及默认清晰度{@link #mDefaultVideoClassification}
-     *
+     * <p>
      * 2、解析雪碧图信息(imageSpriteInfo)字段，获取雪碧图信息{@link #mImageSpriteInfo}
-     *
+     * <p>
      * 3、解析关键帧信息(keyFrameDescInfo)字段，获取关键帧信息{@link #mKeyFrameDescInfo}
-     *
+     * <p>
      * 4、解析视频信息(videoInfo)字段，获取视频名称{@link #mName}、源视频信息{@link #mSourceStream}、
      * 主视频列表{@link #mMasterPlayList}、转码视频列表{@link #mTranscodePlayList}
-     *
+     * <p>
      * 5、从主视频列表、转码视频列表、源视频信息中解析出视频播放url{@link #mURL}、画质信息{@link #mVideoQualityList}、
      * 默认画质{@link #mDefaultVideoQuality}
      */
@@ -165,7 +165,7 @@ public class PlayInfoParserV2 implements IPlayInfoParser{
     }
 
     /**
-     *解析关键帧打点信息
+     * 解析关键帧打点信息
      *
      * @param keyFrameDescInfo 包含关键帧信息的Json对象
      * @return 关键帧信息数组
@@ -197,7 +197,7 @@ public class PlayInfoParserV2 implements IPlayInfoParser{
      * 解析视频名称
      *
      * @param videoInfo 包含视频名称信息的Json对象
-     * @return  视频名称字符串
+     * @return 视频名称字符串
      * @throws JSONException
      */
     private String parseName(JSONObject videoInfo) throws JSONException {
@@ -249,7 +249,7 @@ public class PlayInfoParserV2 implements IPlayInfoParser{
 
     /**
      * 解析转码视频流信息
-     *
+     * <p>
      * 转码视频流信息{@link #mTranscodePlayList}中不包含清晰度名称，需要与视频清晰度信息{@link #mVideoClassificationList}做匹配
      *
      * @param videoInfo 包含转码视频流信息的Json对象
@@ -321,10 +321,10 @@ public class PlayInfoParserV2 implements IPlayInfoParser{
 
     /**
      * 解析视频播放url、画质列表、默认画质
-     *
+     * <p>
      * V2协议响应Json数据中可能包含多个视频播放信息：主播放视频信息{@link #mMasterPlayList}、转码视频{@link #mTranscodePlayList}、
      * 源视频{@link #mSourceStream}, 播放优先级依次递减
-     *
+     * <p>
      * 从优先级最高的视频信息中解析出播放信息
      */
     private void parseVideoInfo() {

@@ -11,26 +11,25 @@ import org.json.JSONObject;
 
 /**
  * Created by liyuejiao on 2018/7/19.
- *
+ * <p>
  * 数据上报模块
  */
 public class LogReport {
 
-    private static final String TAG = "TCLogReport";
-    private String mAppName;
-    private String mPackageName;
-    //ELK上报事件
-    public static final String ELK_ACTION_CHANGE_RESOLUTION = "change_resolution";
-    public static final String ELK_ACTION_TIMESHIFT         = "timeshift";
-    public static final String ELK_ACTION_FLOATMOE          = "floatmode";
-    public static final String ELK_ACTION_LIVE_TIME         = "superlive";
-    public static final String ELK_ACTION_VOD_TIME          = "supervod";
-    public static final String ELK_ACTION_CHANGE_SPEED      = "change_speed";
-    public static final String ELK_ACTION_MIRROR            = "mirror";
-    public static final String ELK_ACTION_SOFT_DECODE       = "soft_decode";
-    public static final String ELK_ACTION_HW_DECODE         = "hw_decode";
-    public static final String ELK_ACTION_IMAGE_SPRITE      = "image_sprite";
-    public static final String ELK_ACTION_PLAYER_POINT      = "player_point";
+    private static final String TAG                          = "TCLogReport";
+    private              String mAppName;
+    private              String mPackageName;
+    public static final  String ELK_ACTION_CHANGE_RESOLUTION = "change_resolution";    //ELK上报事件
+    public static final  String ELK_ACTION_TIMESHIFT         = "timeshift";
+    public static final  String ELK_ACTION_FLOATMOE          = "floatmode";
+    public static final  String ELK_ACTION_LIVE_TIME         = "superlive";
+    public static final  String ELK_ACTION_VOD_TIME          = "supervod";
+    public static final  String ELK_ACTION_CHANGE_SPEED      = "change_speed";
+    public static final  String ELK_ACTION_MIRROR            = "mirror";
+    public static final  String ELK_ACTION_SOFT_DECODE       = "soft_decode";
+    public static final  String ELK_ACTION_HW_DECODE         = "hw_decode";
+    public static final  String ELK_ACTION_IMAGE_SPRITE      = "image_sprite";
+    public static final  String ELK_ACTION_PLAYER_POINT      = "player_point";
 
     private LogReport() {
     }

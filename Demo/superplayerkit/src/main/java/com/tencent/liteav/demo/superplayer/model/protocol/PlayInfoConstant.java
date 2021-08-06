@@ -7,13 +7,13 @@ public class PlayInfoConstant {
         SIMPLEAES("SimpleAES"),
         WIDEVINE("widevine");
 
-        EncryptedURLType(String type){
+        EncryptedURLType(String type) {
             value = type;
         }
 
-        private  String value;
+        private String value;
 
-        public String  getValue(){
+        public String getValue() {
             return value;
         }
     }

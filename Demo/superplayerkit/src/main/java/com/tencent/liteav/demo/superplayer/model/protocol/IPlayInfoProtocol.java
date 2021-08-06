@@ -96,6 +96,7 @@ public interface IPlayInfoProtocol {
 
     /**
      * 获取 DRM 加密类型
+     *
      * @return
      */
     String getDRMType();

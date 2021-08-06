@@ -15,7 +15,7 @@ import java.lang.ref.WeakReference;
 
 /**
  * 网络质量监视工具
- *
+ * <p>
  * 当loading次数大于等于3次时，提示用户切换到低清晰度
  */
 
@@ -27,15 +27,11 @@ public class NetWatcher {
 
     private WeakReference<Context>      mContext;
     private WeakReference<TXLivePlayer> mLivePlayer;    // 直播播放器
-
-    private String mPlayURL        = "";    // 播放的url
-
-    private int mLoadingCount      = 0;     // 记录loading次数
-
-    private long mLoadingTime      = 0;     // 记录单次loading的时长
-    private long mLoadingStartTime = 0;     // loading开始的时间
-
-    private boolean mWatching;              // 是否正在监控
+    private String                      mPlayURL          = "";    // 播放的url
+    private int                         mLoadingCount     = 0;     // 记录loading次数
+    private long                        mLoadingTime      = 0;     // 记录单次loading的时长
+    private long                        mLoadingStartTime = 0;     // loading开始的时间
+    private boolean                     mWatching;              // 是否正在监控
 
     public NetWatcher(Context context) {
         mContext = new WeakReference<>(context);
@@ -52,14 +48,14 @@ public class NetWatcher {
         mLivePlayer = new WeakReference<>(player);
         mPlayURL = playUrl;
         mLoadingCount = 0;
-        mLoadingTime= 0;
+        mLoadingTime = 0;
         mLoadingStartTime = 0;
         TXLog.w("NetWatcher", "net check start watch ");
         Handler mainHandler = new Handler(Looper.getMainLooper());
         mainHandler.postDelayed(new Runnable() {
             @Override
             public void run() {
-                TXLog.w("NetWatcher", "net check loading count = "+mLoadingCount+" loading time = "+mLoadingTime);
+                TXLog.w("NetWatcher", "net check loading count = " + mLoadingCount + " loading time = " + mLoadingTime);
                 if (mLoadingCount >= MAX_LOADING_COUNT || mLoadingTime >= MAX_LOADING_TIME) {
                     showSwitchStreamDialog();
                 }
@@ -75,7 +71,7 @@ public class NetWatcher {
     public void stop() {
         mWatching = false;
         mLoadingCount = 0;
-        mLoadingTime= 0;
+        mLoadingTime = 0;
         mLoadingStartTime = 0;
         mPlayURL = "";
         mLivePlayer = null;
@@ -115,14 +111,14 @@ public class NetWatcher {
         alertDialog.setButton(AlertDialog.BUTTON_NEUTRAL, "OK",
                 new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int which) {
-                        TXLivePlayer player = mLivePlayer!=null ? mLivePlayer.get() : null;
-                        String videoUrl = mPlayURL.replace(".flv","_900.flv");
+                        TXLivePlayer player = mLivePlayer != null ? mLivePlayer.get() : null;
+                        String videoUrl = mPlayURL.replace(".flv", "_900.flv");
                         if (player != null && !TextUtils.isEmpty(videoUrl)) {
                             int result = player.switchStream(videoUrl);
                             if (result < 0) {
-                                Toast.makeText(context,"切换高清清晰度失败，请稍候重试", Toast.LENGTH_SHORT).show();
+                                Toast.makeText(context, "切换高清清晰度失败，请稍候重试", Toast.LENGTH_SHORT).show();
                             } else {
-                                Toast.makeText(context,"正在为您切换为高清清晰度，请稍候...", Toast.LENGTH_SHORT).show();
+                                Toast.makeText(context, "正在为您切换为高清清晰度，请稍候...", Toast.LENGTH_SHORT).show();
                             }
                         }
                         dialog.dismiss();

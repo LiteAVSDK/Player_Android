@@ -43,7 +43,7 @@ public class VideoModel {
      * VIDEO 不同清晰度的URL链接
      */
     public List<VideoPlayerURL> multiVideoURLs;
-    public int playDefaultIndex; // 指定多码率情况下，默认播放的连接Index
+    public int                  playDefaultIndex; // 指定多码率情况下，默认播放的连接Index
 
     public static class VideoPlayerURL {
 

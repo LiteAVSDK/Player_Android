@@ -16,11 +16,11 @@ import com.tencent.liteav.demo.superplayer.R;
  */
 
 public class VideoProgressLayout extends RelativeLayout {
-    private ImageView       mIvThumbnail;       // 视频缩略图
-    private TextView        mTvTime;            // 视频进度文本
-    private ProgressBar     mProgressBar;       // 进度条
-    private HideRunnable    mHideRunnable;      // 隐藏自身的线程
-    private int             duration = 1000;    // 自身消失的延迟事件ms
+    private ImageView    mIvThumbnail;       // 视频缩略图
+    private TextView     mTvTime;            // 视频进度文本
+    private ProgressBar  mProgressBar;       // 进度条
+    private HideRunnable mHideRunnable;      // 隐藏自身的线程
+    private int          duration = 1000;    // 自身消失的延迟事件ms
 
     public VideoProgressLayout(Context context) {
         super(context);

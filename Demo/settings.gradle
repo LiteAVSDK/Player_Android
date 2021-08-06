@@ -1,4 +1,5 @@
 include ':app'
+include ':common'
 //project(':beauty').projectDir = new File(settingsDir, '../../../../project/android/demo/liteav/beauty')
 
 

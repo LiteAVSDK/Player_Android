@@ -22,14 +22,10 @@ import java.lang.reflect.Method;
 
 
 public class DemoApplication extends MultiDexApplication {
-    private static String TAG = "DemoApplication";
-
-    //配置bugly组件的appId
-    private static final String BUGLY_APPID = "";
-    // 配置bugly组件的APP渠道号
-    private static final String BUGLY_APP_CHANNEL = "";
-    //配置bugly组件的调试模式（true或者false）
-    private static final boolean BUGLY_ENABLE_DEBUG = true;
+    private static       String  TAG                = "DemoApplication";
+    private static final String  BUGLY_APPID        = ""; //配置bugly组件的appId
+    private static final String  BUGLY_APP_CHANNEL  = "";   // 配置bugly组件的APP渠道号
+    private static final boolean BUGLY_ENABLE_DEBUG = true;  //配置bugly组件的调试模式（true或者false）
 
     //    private RefWatcher mRefWatcher;
     private static DemoApplication instance;
@@ -69,18 +65,18 @@ public class DemoApplication extends MultiDexApplication {
 
     private void closeAndroidPDialog() {
         try {
-            Class       aClass              = Class.forName("android.content.pm.PackageParser$Package");
+            Class aClass = Class.forName("android.content.pm.PackageParser$Package");
             Constructor declaredConstructor = aClass.getDeclaredConstructor(String.class);
             declaredConstructor.setAccessible(true);
         } catch (Exception e) {
             e.printStackTrace();
         }
         try {
-            Class  cls            = Class.forName("android.app.ActivityThread");
+            Class cls = Class.forName("android.app.ActivityThread");
             Method declaredMethod = cls.getDeclaredMethod("currentActivityThread");
             declaredMethod.setAccessible(true);
-            Object activityThread         = declaredMethod.invoke(null);
-            Field  mHiddenApiWarningShown = cls.getDeclaredField("mHiddenApiWarningShown");
+            Object activityThread = declaredMethod.invoke(null);
+            Field mHiddenApiWarningShown = cls.getDeclaredField("mHiddenApiWarningShown");
             mHiddenApiWarningShown.setAccessible(true);
             mHiddenApiWarningShown.setBoolean(activityThread, true);
         } catch (Exception e) {
@@ -101,40 +97,40 @@ public class DemoApplication extends MultiDexApplication {
 
             @Override
             public void onCompleted(DownloadTask downloadTask) {
-                Log.d(TAG,"downloadListener download apk file success");
+                Log.d(TAG, "downloadListener download apk file success");
             }
 
             @Override
             public void onFailed(DownloadTask downloadTask, int i, String s) {
-                Log.d(TAG,"downloadListener download apk file fail");
+                Log.d(TAG, "downloadListener download apk file fail");
             }
         };
 
         //监听APP升级状态
-        Beta.upgradeStateListener = new UpgradeStateListener(){
+        Beta.upgradeStateListener = new UpgradeStateListener() {
             @Override
             public void onUpgradeFailed(boolean b) {
-                Log.d(TAG,"upgradeStateListener upgrade failed");
+                Log.d(TAG, "upgradeStateListener upgrade failed");
             }
 
             @Override
             public void onUpgradeSuccess(boolean b) {
-                Log.d(TAG,"upgradeStateListener upgrade success");
+                Log.d(TAG, "upgradeStateListener upgrade success");
             }
 
             @Override
             public void onUpgradeNoVersion(boolean b) {
-                Log.d(TAG,"upgradeStateListener upgrade has no new version");
+                Log.d(TAG, "upgradeStateListener upgrade has no new version");
             }
 
             @Override
             public void onUpgrading(boolean b) {
-                Log.d(TAG,"upgradeStateListener upgrading");
+                Log.d(TAG, "upgradeStateListener upgrading");
             }
 
             @Override
             public void onDownloadCompleted(boolean b) {
-                Log.d(TAG,"upgradeStateListener download apk file success");
+                Log.d(TAG, "upgradeStateListener download apk file success");
             }
         };
         Bugly.init(getApplicationContext(), BUGLY_APPID, BUGLY_ENABLE_DEBUG, strategy);

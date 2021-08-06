@@ -10,7 +10,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="@android:color/darker_gray"
-        android:text="原画" />
+        android:text="@string/superplayer_resolution_normal" />
 
     <Button
         android:id="@+id/superplayer_bv_button2"
@@ -18,7 +18,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="@android:color/darker_gray"
-        android:text="超清" />
+        android:text="@string/superplayer_definition_super" />
 
     <Button
         android:id="@+id/superplayer_bv_button3"
@@ -26,7 +26,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="@android:color/darker_gray"
-        android:text="高清" />
+        android:text="@string/superplayer_definition_high" />
 
     <Button
         android:id="@+id/superplayer_bv_button4"
@@ -34,5 +34,5 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="@android:color/darker_gray"
-        android:text="流畅" />
+        android:text="@string/superplayer_resolution_low" />
 </LinearLayout>

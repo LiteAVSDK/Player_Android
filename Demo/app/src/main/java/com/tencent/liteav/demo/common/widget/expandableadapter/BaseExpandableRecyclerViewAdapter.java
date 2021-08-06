@@ -49,11 +49,10 @@ public abstract class BaseExpandableRecyclerViewAdapter
     private Set<GroupBean>                                              mExpandGroupSet;
     private Map<GroupBean, BaseGroupViewHolder>                         mGroupBeanVideoHolder;
     private ExpandableRecyclerViewOnClickListener<GroupBean, ChildBean> mListener;
-
-    private boolean      mIsEmpty;
-    private boolean      mShowHeaderViewWhenEmpty;
-    private ViewProducer mEmptyViewProducer;
-    private ViewProducer mHeaderViewProducer;
+    private boolean                                                     mIsEmpty;
+    private boolean                                                     mShowHeaderViewWhenEmpty;
+    private ViewProducer                                                mEmptyViewProducer;
+    private ViewProducer                                                mHeaderViewProducer;
 
     public GroupViewHolder getGroupViewHolder(GroupBean bean) {
         return (GroupViewHolder) mGroupBeanVideoHolder.get(bean);
@@ -207,7 +206,7 @@ public abstract class BaseExpandableRecyclerViewAdapter
         Iterator<GroupBean> iter = mExpandGroupSet.iterator();
         while (iter.hasNext()) {
             GroupBean groupBean = iter.next();
-            final int position  = getAdapterPosition(getGroupIndex(groupBean));
+            final int position = getAdapterPosition(getGroupIndex(groupBean));
             notifyItemRangeRemoved(position + 1, groupBean.getChildCount());
             notifyItemChanged(position, EXPAND_PAYLOAD);
             iter.remove();
@@ -275,7 +274,7 @@ public abstract class BaseExpandableRecyclerViewAdapter
         if (position == 0 && mHeaderViewProducer != null) {
             return TYPE_HEADER;
         }
-        int[]     coord     = translateToDoubleIndex(position);
+        int[] coord = translateToDoubleIndex(position);
         GroupBean groupBean = getGroupItem(coord[0]);
         if (coord[1] < 0) {
             int groupType = getGroupType(groupBean);
@@ -430,9 +429,9 @@ public abstract class BaseExpandableRecyclerViewAdapter
         if (mHeaderViewProducer != null) {
             adapterPosition--;
         }
-        final int[] result               = new int[]{-1, -1};
-        final int   groupCount           = getGroupCount();
-        int         adaptePositionCursor = 0;
+        final int[] result = new int[]{-1, -1};
+        final int groupCount = getGroupCount();
+        int adaptePositionCursor = 0;
         for (int groupCursor = 0; groupCursor < groupCount; groupCursor++) {
             if (adaptePositionCursor == adapterPosition) {
                 result[0] = groupCursor;
@@ -442,7 +441,7 @@ public abstract class BaseExpandableRecyclerViewAdapter
             GroupBean groupBean = getGroupItem(groupCursor);
             if (mExpandGroupSet.contains(groupBean)) {
                 final int childCount = groupBean.getChildCount();
-                final int offset     = adapterPosition - adaptePositionCursor;
+                final int offset = adapterPosition - adaptePositionCursor;
                 if (childCount >= offset) {
                     result[0] = groupCursor;
                     result[1] = offset - 1;

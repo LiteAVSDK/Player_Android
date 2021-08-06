@@ -23,7 +23,7 @@
     <string name="item_chat_salon">Chat Salon</string>
 
     <string name="app_toast_login_success">Logged in</string>
-    <string name="app_toast_login_fail">Login failed [%d]%s</string>
+    <string name="app_toast_login_fail">Login failed [%1$d]%2$s</string>
 
     <string name="app_tv_video_cloud_tools_version">Video Cloud Toolkit v%s</string>
     <string name="app_title_share_log">Share Logs</string>
@@ -31,8 +31,9 @@
     <string name="app_dialog_exit_app">Are you sure you want to exit?</string>
 
     <string name="app_item_live_pusher">Push (Camera)</string>
-    <string name="app_item_live_pusher_screen">Push (Screen)</string>
+    <string name="app_item_live_pusher_screen">Screen Share</string>
     <string name="app_item_live_player">Pull</string>
+    <string name="app_item_leb_player">Leb</string>
     <string name="app_item_link_mic_new">Co-anchoring (New)</string>
     <string name="app_item_link_mic_old">Co-anchoring (Old)</string>
     <string name="app_item_link_mic">Co-anchoring</string>
@@ -91,4 +92,9 @@
     <string name="item_trtc_live">Interactive Live Video Streaming</string>
     <string name="item_trtc_call">Video Call</string>
     <string name="item_trtc_speed_test">Speed Test</string>
+    <string name="app_item_live_play">Live Play</string>
+    <string name="app_item_trtc_link">TRTC</string>
+    <string name="app_item_scene">Scene</string>
+    <string name="app_debug_switch_open">Open Debug</string>
+    <string name="app_debug_switch_close">Close Debug</string>
 </resources>

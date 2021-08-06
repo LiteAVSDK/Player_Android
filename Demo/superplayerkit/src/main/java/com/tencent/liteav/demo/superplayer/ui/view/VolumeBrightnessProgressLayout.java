@@ -14,10 +14,10 @@ import com.tencent.liteav.demo.superplayer.R;
  * 滑动手势设置音量、亮度时显示的提示view
  */
 public class VolumeBrightnessProgressLayout extends RelativeLayout {
-    private ImageView       mImageCenter;       // 中心图片：亮度提示、音量提示
-    private ProgressBar     mProgressBar;       // 进度条
-    private HideRunnable    mHideRunnable;      // 隐藏view的runnable
-    private int             mDuration = 1000;   // view消失延迟时间(秒)
+    private ImageView    mImageCenter;       // 中心图片：亮度提示、音量提示
+    private ProgressBar  mProgressBar;       // 进度条
+    private HideRunnable mHideRunnable;      // 隐藏view的runnable
+    private int          mDuration = 1000;   // view消失延迟时间(秒)
 
     public VolumeBrightnessProgressLayout(Context context) {
         super(context);
@@ -29,8 +29,8 @@ public class VolumeBrightnessProgressLayout extends RelativeLayout {
         init(context);
     }
 
-    private void init(Context context){
-        LayoutInflater.from(context).inflate(R.layout.superplayer_video_volume_brightness_progress_layout,this);
+    private void init(Context context) {
+        LayoutInflater.from(context).inflate(R.layout.superplayer_video_volume_brightness_progress_layout, this);
         mImageCenter = (ImageView) findViewById(R.id.superplayer_iv_center);
         mProgressBar = (ProgressBar) findViewById(R.id.superplayer_pb_progress_bar);
         mHideRunnable = new HideRunnable();
@@ -40,7 +40,7 @@ public class VolumeBrightnessProgressLayout extends RelativeLayout {
     /**
      * 显示
      */
-    public void show(){
+    public void show() {
         setVisibility(VISIBLE);
         removeCallbacks(mHideRunnable);
         postDelayed(mHideRunnable, mDuration);
@@ -51,7 +51,7 @@ public class VolumeBrightnessProgressLayout extends RelativeLayout {
      *
      * @param progress
      */
-    public void setProgress(int progress){
+    public void setProgress(int progress) {
         mProgressBar.setProgress(progress);
     }
 
@@ -69,14 +69,14 @@ public class VolumeBrightnessProgressLayout extends RelativeLayout {
      *
      * @param resource
      */
-    public void setImageResource(int resource){
+    public void setImageResource(int resource) {
         mImageCenter.setImageResource(resource);
     }
 
     /**
      * 隐藏view的runnable
      */
-    private class HideRunnable implements Runnable{
+    private class HideRunnable implements Runnable {
         @Override
         public void run() {
             VolumeBrightnessProgressLayout.this.setVisibility(GONE);

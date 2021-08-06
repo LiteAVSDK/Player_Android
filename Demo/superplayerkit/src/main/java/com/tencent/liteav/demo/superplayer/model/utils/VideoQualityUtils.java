@@ -12,7 +12,7 @@ import java.util.List;
 
 /**
  * Created by yuejiaoli on 2018/7/6.
- *
+ * <p>
  * 清晰度转换工具
  */
 

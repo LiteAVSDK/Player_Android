@@ -103,9 +103,9 @@ public class QRCodeScanActivity extends Activity implements ZXingScannerView.Res
     }
 
     private static class CustomViewFinderView extends ViewFinderView {
-        public static final String TRADE_MARK_TEXT = "scan url";
-        public static final int TRADE_MARK_TEXT_SIZE_SP = 40;
-        public final Paint PAINT = new Paint();
+        public static final String TRADE_MARK_TEXT         = "scan url";
+        public static final int    TRADE_MARK_TEXT_SIZE_SP = 40;
+        public final        Paint  PAINT                   = new Paint();
 
         public CustomViewFinderView(Context context) {
             super(context);

@@ -23,13 +23,11 @@ import java.util.List;
  */
 public class PlayInfoProtocolV2 implements IPlayInfoProtocol {
 
-    private static final String TAG = "TCPlayInfoProtocolV2";
-
-    private final String BASE_URLS_V2 = "https://playvideo.qcloud.com/getplayinfo/v2";  // V2协议请求地址
-
-    private Handler         mMainHandler;   // 用于切换线程
-    private PlayInfoParams  mParams;        // 协议请求输入的参数
-    private IPlayInfoParser mParser;        // 协议请求返回Json的解析对象
+    private static final String          TAG          = "TCPlayInfoProtocolV2";
+    private final        String          BASE_URLS_V2 = "https://playvideo.qcloud.com/getplayinfo/v2";  // V2协议请求地址
+    private              Handler         mMainHandler;   // 用于切换线程
+    private              PlayInfoParams  mParams;        // 协议请求输入的参数
+    private              IPlayInfoParser mParser;        // 协议请求返回Json的解析对象
 
     public PlayInfoProtocolV2(PlayInfoParams params) {
         mParams = params;

@@ -19,9 +19,9 @@ import java.util.ArrayList;
  */
 
 public class TCVodPlayerListAdapter extends RecyclerView.Adapter<TCVodPlayerListAdapter.ViewHolder> {
-    private Context                 mContext;
-    private ArrayList<VideoModel>   mSuperPlayerModelList;
-    private OnItemClickListener     mOnItemClickListener;
+    private Context               mContext;
+    private ArrayList<VideoModel> mSuperPlayerModelList;
+    private OnItemClickListener   mOnItemClickListener;
 
     public TCVodPlayerListAdapter(Context context) {
         mContext = context;
@@ -38,7 +38,7 @@ public class TCVodPlayerListAdapter extends RecyclerView.Adapter<TCVodPlayerList
     public void onBindViewHolder(ViewHolder holder, final int position) {
         final VideoModel videoModel = mSuperPlayerModelList.get(position);
         if (TextUtils.isEmpty(videoModel.placeholderImage)) {
-            Glide.with(mContext).load(R.drawable.default_cover_thumb).into(holder.thumb);
+            Glide.with(mContext).load(R.drawable.superplayer_default_cover_thumb).into(holder.thumb);
         } else {
             Glide.with(mContext).load(videoModel.placeholderImage).into(holder.thumb);
         }
@@ -74,9 +74,9 @@ public class TCVodPlayerListAdapter extends RecyclerView.Adapter<TCVodPlayerList
     }
 
     public class ViewHolder extends RecyclerView.ViewHolder {
-        private TextView    duration;
-        private TextView    title;
-        private ImageView   thumb;
+        private TextView  duration;
+        private TextView  title;
+        private ImageView thumb;
 
         public ViewHolder(final View itemView) {
             super(itemView);

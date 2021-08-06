@@ -52,7 +52,7 @@ public class MainActivity extends Activity {
         setContentView(R.layout.activity_main);
 
         mTvVersion = (TextView) findViewById(R.id.main_tv_version);
-        mTvVersion.setText(getString(R.string.app_tv_super_player_version, TXLiveBase.getSDKVersionStr()+"(8.9.1015)"));
+        mTvVersion.setText(getString(R.string.app_tv_super_player_version, TXLiveBase.getSDKVersionStr()+"(9.0.857)"));
 
         mMainTitle = (TextView) findViewById(R.id.main_title);
         mMainTitle.setOnLongClickListener(new View.OnLongClickListener() {
@@ -322,12 +322,12 @@ public class MainActivity extends Activity {
             return null;
         }
 
-        String       path      = sdcardDir.getAbsolutePath() + "/log/liteav";
-        List<String> logs      = new ArrayList<>();
-        File         directory = new File(path);
+        String path = sdcardDir.getAbsolutePath() + "/log/liteav";
+        List<String> logs = new ArrayList<>();
+        File directory = new File(path);
         if (directory != null && directory.exists() && directory.isDirectory()) {
             long lastModify = 0;
-            File files[]    = directory.listFiles();
+            File files[] = directory.listFiles();
             if (files != null && files.length > 0) {
                 for (File file : files) {
                     if (file.getName().endsWith("xlog")) {
@@ -345,7 +345,7 @@ public class MainActivity extends Activity {
     private File zip(List<String> files, String zipFileName) {
         File zipFile = new File(zipFileName);
         zipFile.deleteOnExit();
-        InputStream     is  = null;
+        InputStream is = null;
         ZipOutputStream zos = null;
 
         try {
@@ -359,7 +359,7 @@ public class MainActivity extends Activity {
                     is = new FileInputStream(file);
                     zos.putNextEntry(new ZipEntry(file.getName()));
                     byte[] buffer = new byte[8 * 1024];
-                    int    length = 0;
+                    int length = 0;
                     while ((length = is.read(buffer)) != -1) {
                         zos.write(buffer, 0, length);
                     }
