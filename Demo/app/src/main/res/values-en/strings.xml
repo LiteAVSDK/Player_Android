@@ -97,4 +97,11 @@
     <string name="app_item_scene">Scene</string>
     <string name="app_debug_switch_open">Open Debug</string>
     <string name="app_debug_switch_close">Close Debug</string>
+
+    <string name="app_item_other_tools">Other tools</string>
+    <string name="item_live_pusher_v1">Push (Camera) V1</string>
+    <string name="item_live_pusher_video_v1">Video Share V1</string>
+    <string name="item_live_pusher_screen_v1">Screen Share V1</string>
+    <string name="item_live_player_v1">Pull V1</string>
+    <string name="item_link_mic_v1">Co-anchoring (Old)</string>
 </resources>

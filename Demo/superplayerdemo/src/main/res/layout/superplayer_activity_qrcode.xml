@@ -21,7 +21,6 @@
         android:layout_height="wrap_content"
         android:layout_centerHorizontal="true"
         android:paddingTop="14dp"
-        android:text="超级播放器"
         android:textColor="@color/superplayer_white"
         android:textSize="18sp" />
 

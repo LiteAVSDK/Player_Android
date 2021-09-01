@@ -79,4 +79,11 @@
     <string name="app_item_scene">场景应用</string>
     <string name="app_debug_switch_open">DEBUG开关已打开</string>
     <string name="app_debug_switch_close">DEBUG开关已关闭</string>
+
+    <string name="app_item_other_tools">其他工具</string>
+    <string name="item_live_pusher_v1">直播推流 V1</string>
+    <string name="item_live_pusher_video_v1">视频分享 V1</string>
+    <string name="item_live_pusher_screen_v1">屏幕分享 V1</string>
+    <string name="item_live_player_v1">直播拉流 V1</string>
+    <string name="item_link_mic_v1">连麦演示 V1</string>
 </resources>

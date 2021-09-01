@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="superplayer_hardware_Acceleration">Hardware Acceleration</string>
+    <string name="superplayer_mirror">Mirror</string>
+    <string name="superplayer_multi_speed_playback">Speed</string>
+    <string name="superplayer_brightness">Brightness</string>
+    <string name="superplayer_sound">Volume</string>
+    <string name="superplayer_sharpness">Video Preference</string>
+    <string name="superplayer_back_live">Back to Live Streaming</string>
+    <string name="superplayer_small_video_special_effects_editing">UGSV - Special Effects</string>
+    <string name="superplayer_original_picture">Original</string>
+    <string name="superplayer_test_video">Test Video</string>
+    <string name="superplayer_screenshot_fail">Screenshot failed.</string>
+    <string name="superplayer_float_play_fail">Failed to play video in a floating window.</string>
+    <string name="superplayer_enter_setting_fail">Failed to open settings. Please grant the floating window permission manually.</string>
+</resources>

@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
@@ -7,12 +7,11 @@
     android:background="@drawable/app_content_bg"
     android:orientation="vertical">
 
-    <android.support.v7.widget.Toolbar
+    <androidx.appcompat.widget.Toolbar
         android:id="@+id/rl_title"
         android:layout_width="match_parent"
         android:layout_height="42dp"
         android:layout_marginTop="28dp"
-        android:layout_marginRight="10dp"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintTop_toTopOf="parent"
@@ -28,7 +27,7 @@
             android:textColor="@color/app_color_white"
             android:textSize="18sp"
             android:textStyle="bold" />
-    </android.support.v7.widget.Toolbar>
+    </androidx.appcompat.widget.Toolbar>
 
     <de.hdodenhof.circleimageview.CircleImageView
         android:id="@+id/iv_avatar"
@@ -53,7 +52,6 @@
         app:layout_constraintTop_toBottomOf="@id/iv_avatar"
         tools:text="nickname" />
 
-
     <ImageView
         android:id="@+id/img_show_name"
         android:layout_width="16dp"
@@ -72,8 +70,8 @@
         android:layout_marginTop="6dp"
         android:textColor="#999999"
         android:textSize="16sp"
-        app:layout_constraintLeft_toLeftOf="@id/tv_show_name"
-        app:layout_constraintRight_toRightOf="@id/img_show_name"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintTop_toBottomOf="@id/tv_show_name"
         tools:text="ID:264738" />
 
@@ -251,4 +249,4 @@
         android:textSize="12sp"
         app:layout_constraintBottom_toTopOf="@id/tv_tips" />
 
-</android.support.constraint.ConstraintLayout>
+</androidx.constraintlayout.widget.ConstraintLayout>

@@ -13,7 +13,7 @@
 
 package com.tencent.liteav.demo.common.widget.expandableadapter;
 
-import android.support.v7.widget.RecyclerView;
+import androidx.recyclerview.widget.RecyclerView;
 import android.view.View;
 import android.view.ViewGroup;
 

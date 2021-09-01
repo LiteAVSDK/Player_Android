@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="superplayer_app_name">Superplayer</string>
+    <string name="superplayer_cancel">Cancel</string>
+    <string name="superplayer_ok">OK</string>
+    <string name="superplayer_vod_ffplay">ffplay</string>
+    <string name="superplayer_vod_exo">exo</string>
+    <string name="superplayer_scancode_tip">Invalid playback URL. Check the QR code.</string>
+    <string name="superplayer_small_video_special_effects_editing">UGSV - Special Effects</string>
+    <string name="superplayer_set_appid_fileid">Set AppID and FileID</string>
+    <string name="superplayer_set_play_url">Set Playback URL</string>
+    <string name="superplayer_input_correct_appid">Enter a valid AppID.</string>
+    <string name="superplayer_input_correct_fileid">Enter a valid FileID.</string>
+    <string name="superplayer_input_correct_play_url">Enter a valid playback URL.</string>
+    <string name="superplayer_request_fail">Failed to request FileID.</string>
+    <string name="superplayer_definition_super">FHD</string>
+    <string name="superplayer_definition_high">HD</string>
+    <string name="superplayer_definition_standard">SD</string>
+    <string name="superplayer_test_video">Test Video</string>
+    <string name="superplayer_fetch_upload_list_video_fail">Failed to obtain the list of uploaded videos.</string>
+    <string name="superplayer_speed_rate">Speed</string>
+    <string name="superplayer_please_scan_qrcode">Enter a playback URL or scan QR code.</string>
+    <string name="superplayer_back">Back</string>
+    <string name="superplayer_resolution_normal">Original</string>
+    <string name="superplayer_resolution_low">Smooth</string>
+    <string name="superplayer_open_hardware_speedup">Hardware acceleration enabled. The playback will restart.</string>
+    <string name="superplayer_close_hardware_speedup">Hardware acceleration disabled. The playback will restart.</string>
+    <string name="superplayer_not_play_url">No playback URL.</string>
+</resources>

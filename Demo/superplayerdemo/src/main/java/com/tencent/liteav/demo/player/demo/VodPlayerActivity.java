@@ -41,7 +41,7 @@ import java.util.List;
 import java.util.Map;
 
 public class VodPlayerActivity extends Activity implements ITXVodPlayListener {
-    private static final String TAG                   = VodPlayerActivity.class.getSimpleName();
+    private static final String TAG                   = "VodPlayerActivity";
     private static final String WEBRTC_LINK_URL       = "https://cloud.tencent.com/document/product/454/12148";
     private static final String DEFAULT_PLAY_URL      = "http://200024424.vod.myqcloud.com/200024424_709ae516bdf811e6ad39991f76a4df69.f20.mp4";
     private static final String SPEED_FORMAT_TEMPLATE = "%.2f";
