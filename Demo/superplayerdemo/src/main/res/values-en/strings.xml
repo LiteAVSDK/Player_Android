@@ -7,7 +7,7 @@
     <string name="superplayer_vod_exo">exo</string>
     <string name="superplayer_scancode_tip">Invalid playback URL. Check the QR code.</string>
     <string name="superplayer_small_video_special_effects_editing">UGSV - Special Effects</string>
-    <string name="superplayer_set_appid_fileid">Set AppID and FileID</string>
+    <string name="superplayer_set_appid_fileid">Set AppID, FileID and PSign</string>
     <string name="superplayer_set_play_url">Set Playback URL</string>
     <string name="superplayer_input_correct_appid">Enter a valid AppID.</string>
     <string name="superplayer_input_correct_fileid">Enter a valid FileID.</string>

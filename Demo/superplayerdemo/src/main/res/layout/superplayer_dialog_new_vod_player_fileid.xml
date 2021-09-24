@@ -43,4 +43,22 @@
         android:textColor="@color/superplayer_white"
         android:textSize="14dp" />
 
+    <TextView
+        android:id="@+id/superplayer_tv_psign_text"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="5dp"
+        android:layout_marginBottom="5dp"
+        android:text="PSign(optional)"
+        android:textColor="@color/superplayer_white"
+        android:textSize="14dp" />
+
+    <EditText
+        android:id="@+id/superplayer_et_psign"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@drawable/superplayer_ic_vod_search"
+        android:textColor="@color/superplayer_white"
+        android:textSize="14dp" />
+
 </LinearLayout>

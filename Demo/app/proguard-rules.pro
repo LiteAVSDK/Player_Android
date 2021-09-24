@@ -20,3 +20,27 @@
 # hide the original source file name.
 #-renamesourcefileattribute SourceFile
 -keep class com.tencent.** { *; }
+
+-dontwarn com.tencent.bugly.**
+-keep public class com.tencent.bugly.**{*;}
+
+-keep public class * extends com.qq.taf.jce.JceStruct{*;}
+
+#wup的协议包：
+-keep public class com.qq.jce.*{
+public * ;
+protected * ;
+}
+
+#native jni接口
+-keepclasseswithmembernames class * {
+    native <methods>;
+}
+
+#native 回调接口
+-keep public interface com.tencent.feedback.eup.jni.NativeExceptionHandler{
+*;
+}
+-keep public class com.tencent.feedback.eup.jni.NativeExceptionUpload{
+*;
+}

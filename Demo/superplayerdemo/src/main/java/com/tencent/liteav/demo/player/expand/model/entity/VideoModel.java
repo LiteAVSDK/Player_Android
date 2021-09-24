@@ -40,6 +40,11 @@ public class VideoModel {
     public String fileid;
 
     /**
+     * 签名字串
+     */
+    public String pSign;
+
+    /**
      * VIDEO 不同清晰度的URL链接
      */
     public List<VideoPlayerURL> multiVideoURLs;

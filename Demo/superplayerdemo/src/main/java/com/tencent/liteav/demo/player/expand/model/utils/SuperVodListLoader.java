@@ -5,8 +5,8 @@ import android.os.HandlerThread;
 import android.text.TextUtils;
 
 import com.tencent.liteav.basic.log.TXCLog;
-import com.tencent.liteav.demo.superplayer.model.entity.PlayInfoStream;
 import com.tencent.liteav.demo.player.expand.model.entity.VideoModel;
+import com.tencent.liteav.demo.superplayer.model.entity.PlayInfoStream;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -101,7 +101,7 @@ public class SuperVodListLoader {
         mHandler.post(new Runnable() {
             @Override
             public void run() {
-                String urlStr = makeUrlString(model.appid, model.fileid, null, null, -1, null);
+                String urlStr = makeUrlString(model.appid, model.fileid, model.pSign);
                 Request request = new Request.Builder().url(urlStr).build();
                 Call call = mHttpClient.newCall(request);
                 call.enqueue(new Callback() {
@@ -208,52 +208,82 @@ public class SuperVodListLoader {
                 TXCLog.e(TAG, message);
                 return;
             }
-            PlayInfoResponseParser playInfoResponse = new PlayInfoResponseParser(jsonObject);
-            videoModel.placeholderImage = playInfoResponse.coverURL();
-
-            PlayInfoStream stream = playInfoResponse.getSource();
-            if (stream != null) {
-                videoModel.duration = stream.getDuration();
-            }
-            videoModel.title = playInfoResponse.description();
-            if (videoModel.title == null || videoModel.title.length() == 0) {
-                videoModel.title = playInfoResponse.name();
-            }
-            if (mOnVodInfoLoadListener != null) {
-                mOnVodInfoLoadListener.onSuccess(videoModel);
+            int version = jsonObject.getInt("version");
+            // 解析视频基础信息，雪碧图，视频名称，播放时长等
+            if (version == 2) {
+                PlayInfoResponseParser playInfoResponse = new PlayInfoResponseParser(jsonObject);
+                videoModel.placeholderImage = playInfoResponse.coverURL();
+                PlayInfoStream stream = playInfoResponse.getSource();
+                if (stream != null) {
+                    videoModel.duration = stream.getDuration();
+                }
+                videoModel.title = playInfoResponse.description();
+                if (videoModel.title == null || videoModel.title.length() == 0) {
+                    videoModel.title = playInfoResponse.name();
+                }
+                if (mOnVodInfoLoadListener != null) {
+                    mOnVodInfoLoadListener.onSuccess(videoModel);
+                }
+            } else if (version == 4) {
+                JSONObject media = jsonObject.getJSONObject("media");
+                if (media != null) {
+                    JSONObject basicInfo = media.optJSONObject("basicInfo");
+                    if (basicInfo != null) {
+                        videoModel.title = basicInfo.optString("description");
+                        if (videoModel.title == null || videoModel.title.length() == 0) {
+                            videoModel.title = basicInfo.optString("name");
+                        }
+                        videoModel.placeholderImage = basicInfo.optString("coverUrl");
+                        videoModel.duration = basicInfo.optInt("duration");
+                    }
+                    if (mOnVodInfoLoadListener != null) {
+                        mOnVodInfoLoadListener.onSuccess(videoModel);
+                    }
+                    return;
+                }
             }
         } catch (JSONException e) {
             e.printStackTrace();
         }
     }
 
-    private String makeUrlString(int appId, String fileId, String timeout, String us, int exper, String sign) {
+    /**
+     * 拼装协议请求url
+     *
+     * @return 协议请求url字符串
+     */
+    private String makeUrlString(int appId, String fileId, String pSign) {
         String urlStr;
         if (mIsHttps) {
-            urlStr = String.format("%s/%d/%s", BASE_URL, appId, fileId);
-        } else {
+            // 默认用https
             urlStr = String.format("%s/%d/%s", BASE_URLS, appId, fileId);
+        } else {
+            urlStr = String.format("%s/%d/%s", BASE_URL, appId, fileId);
         }
-        String query = makeQueryString(timeout, us, exper, sign);
+        String query = makeQueryString(null, pSign, null);
         if (query != null) {
             urlStr = urlStr + "?" + query;
         }
         return urlStr;
     }
 
-    private String makeQueryString(String timeout, String us, int exper, String sign) {
+    /**
+     * 拼装协议请求url中的query字段
+     *
+     * @return query字段字符串
+     */
+    private String makeQueryString(String pcfg, String psign, String content) {
         StringBuilder str = new StringBuilder();
-        if (timeout != null) {
-            str.append("t=" + timeout + "&");
+        if (!TextUtils.isEmpty(pcfg)) {
+            str.append("pcfg=" + pcfg + "&");
         }
-        if (us != null) {
-            str.append("us=" + us + "&");
+
+        if (!TextUtils.isEmpty(psign)) {
+            str.append("psign=" + psign + "&");
         }
-        if (sign != null) {
-            str.append("sign=" + sign + "&");
-        }
-        if (exper >= 0) {
-            str.append("exper=" + exper + "&");
+
+        if(!TextUtils.isEmpty(content)){
+            str.append("context=" + content + "&");
         }
         if (str.length() > 1) {
             str.deleteCharAt(str.length() - 1);

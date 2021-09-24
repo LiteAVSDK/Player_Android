@@ -524,6 +524,7 @@ public class SuperPlayerActivity extends Activity implements View.OnClickListene
         } else if (!TextUtils.isEmpty(videoModel.fileid)) {
             superPlayerModelV3.videoId = new SuperPlayerVideoId();
             superPlayerModelV3.videoId.fileId = videoModel.fileid;
+            superPlayerModelV3.videoId.pSign = videoModel.pSign;
         }
         mSuperPlayerView.playWithModel(superPlayerModelV3);
     }
@@ -701,6 +702,7 @@ public class SuperPlayerActivity extends Activity implements View.OnClickListene
 
         final EditText etAppId = (EditText) dialogView.findViewById(R.id.superplayer_et_appid);
         final EditText etFileId = (EditText) dialogView.findViewById(R.id.superplayer_et_fileid);
+        final EditText etPSign = (EditText) dialogView.findViewById(R.id.superplayer_et_psign);
 
         if (mDataType == LIST_TYPE_VOD) {
             dialog.setTitle(getString(R.string.superplayer_set_appid_fileid));
@@ -709,6 +711,7 @@ public class SuperPlayerActivity extends Activity implements View.OnClickListene
             dialogView.findViewById(R.id.superplayer_tv_appid_text).setVisibility(GONE);
             dialogView.findViewById(R.id.superplayer_tv_fileid_text).setVisibility(GONE);
             etFileId.setVisibility(GONE);
+            etPSign.setVisibility(GONE);
         }
 
         dialog.setNegativeButton(getString(R.string.superplayer_cancel), new DialogInterface.OnClickListener() {
@@ -725,6 +728,7 @@ public class SuperPlayerActivity extends Activity implements View.OnClickListene
                         if (mDataType == LIST_TYPE_VOD) {
                             String appId = etAppId.getText().toString();
                             String fileId = etFileId.getText().toString();
+                            String pSign = etPSign.getText().toString();
 
                             if (TextUtils.isEmpty(appId)) {
                                 Toast.makeText(mContext, getString(R.string.superplayer_input_correct_appid), Toast.LENGTH_SHORT).show();
@@ -745,6 +749,7 @@ public class SuperPlayerActivity extends Activity implements View.OnClickListene
                             VideoModel videoModel = new VideoModel();
                             videoModel.appid = appid;
                             videoModel.fileid = fileId;
+                            videoModel.pSign = pSign;
 
                             // 尝试请求fileid信息
                             SuperVodListLoader loader = new SuperVodListLoader();

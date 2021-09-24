@@ -48,8 +48,8 @@ if (!videoEngineSourcePath.isEmpty()) {
 }
 
 ext {
-    compileSdkVersion = 28
-    buildToolsVersion = "26.0.2"
+    compileSdkVersion = 29
+    buildToolsVersion = "29.0.2"
     supportSdkVersion = "26.1.0"
     minSdkVersion = 19
     targetSdkVersion = 23

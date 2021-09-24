@@ -177,6 +177,7 @@ public class SuperPlayerImpl implements SuperPlayer, ITXVodPlayListener, ITXLive
                         videoQualities.add(quality);
                     }
                     if (!mDefaultQualitySet) {
+                        mVodPlayer.getDuration();
                         mVodPlayer.setBitrateIndex(bitrateItems.get(bitrateItems.size() - 1).index); //默认播放码率最高的
                         mDefaultQualitySet = true;
                     }
@@ -279,6 +280,7 @@ public class SuperPlayerImpl implements SuperPlayer, ITXVodPlayListener, ITXLive
         if (model.videoId != null) {
             params.fileId = model.videoId.fileId;
             params.videoId = model.videoId;
+            params.videoId.pSign = model.videoId.pSign;
             mCurrentProtocol = new PlayInfoProtocolV4(params);
         } else if (model.videoIdV2 != null) {
             params.fileId = model.videoIdV2.fileId;
@@ -297,6 +299,12 @@ public class SuperPlayerImpl implements SuperPlayer, ITXVodPlayListener, ITXLive
                     TXCLog.i(TAG, "onSuccess: protocol params = " + param.toString());
                     mReportVodStartTime = System.currentTimeMillis();
                     mVodPlayer.setPlayerView(mVideoView);
+                    // 设置HLS安全加固加解密参数
+                    if (param != null && param.videoId != null) {
+                        if (!TextUtils.isEmpty(param.videoId.overlayKey) && !TextUtils.isEmpty(param.videoId.overlayIv)) {
+                            setOverlayKeyIv(param.videoId.overlayKey, param.videoId.overlayIv);
+                        }
+                    }
                     playModeVideo(mCurrentProtocol);
                     updatePlayerType(SuperPlayerDef.PlayerType.VOD);
                     updatePlayProgress(0, 0);
@@ -351,6 +359,19 @@ public class SuperPlayerImpl implements SuperPlayer, ITXVodPlayListener, ITXLive
             updatePlayProgress(0, 0);
             updateVideoQualityList(videoQualities, defaultVideoQuality);
         }
+    }
+
+    /**
+     * 设置HLS安全加固加解密参数
+     * @param overlayKey HLS安全加固加解密key stop时重置为null
+     * @param overlayIv  HLS安全加固加解密Iv  stop时重置为null
+     */
+    private void setOverlayKeyIv(String overlayKey, String overlayIv) {
+        if (mVodPlayConfig == null) {
+            mVodPlayConfig = new TXVodPlayConfig();
+        }
+        mVodPlayConfig.setOverlayKey(overlayKey);
+        mVodPlayConfig.setOverlayIv(overlayIv);
     }
 
     /**
@@ -427,7 +448,7 @@ public class SuperPlayerImpl implements SuperPlayer, ITXVodPlayListener, ITXLive
                 mVodPlayer.setToken(null);
             }
             int ret = 0;
-            if (isVersionSupportAppendUrl()) {
+            if (!TextUtils.isEmpty(mFileId) && mAppId != 0 && isVersionSupportAppendUrl()) {
                 Uri uri = Uri.parse(url);
                 String query = uri.getQuery();
                 if (query == null || query.isEmpty()) {
@@ -733,7 +754,10 @@ public class SuperPlayerImpl implements SuperPlayer, ITXVodPlayListener, ITXLive
         }
         if (mLivePlayer != null) {
             mLivePlayer.stopPlay(false);
-            mVideoView.removeVideoView();
+        }
+        // 重置overlayKey和overlayIv配置
+        if (mVodPlayConfig != null) {
+            setOverlayKeyIv(null, null);
         }
         updatePlayerState(SuperPlayerDef.PlayerState.END);
         reportPlayTime();

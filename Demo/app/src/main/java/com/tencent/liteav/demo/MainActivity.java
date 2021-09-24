@@ -52,7 +52,7 @@ public class MainActivity extends Activity {
         setContentView(R.layout.activity_main);
 
         mTvVersion = (TextView) findViewById(R.id.main_tv_version);
-        mTvVersion.setText(getString(R.string.app_tv_super_player_version, TXLiveBase.getSDKVersionStr()+"(9.1.1084)"));
+        mTvVersion.setText(getString(R.string.app_tv_super_player_version, TXLiveBase.getSDKVersionStr()+"(9.2.1029)"));
 
         mMainTitle = (TextView) findViewById(R.id.main_title);
         mMainTitle.setOnLongClickListener(new View.OnLongClickListener() {
