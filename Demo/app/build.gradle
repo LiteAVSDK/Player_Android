@@ -63,6 +63,6 @@ dependencies {
         exclude group: 'com.google.code.gson', module: 'gson'
     })
 
-    implementation 'com.tencent.rqd:crashreport:latest.release'
-    implementation 'com.tencent.rqd:nativecrashreport:latest.release'
+    compile 'com.tencent.bugly:crashreport_upgrade:1.5.1'
+    compile 'com.tencent.bugly:nativecrashreport:3.8.0'
 }

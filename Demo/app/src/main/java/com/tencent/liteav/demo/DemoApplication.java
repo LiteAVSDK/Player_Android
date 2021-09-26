@@ -4,12 +4,15 @@ import android.app.ApplicationErrorReport;
 import android.content.Context;
 import android.os.Build;
 import android.os.StrictMode;
+import androidx.multidex.MultiDexApplication;
 import android.util.Log;
 
-import androidx.multidex.MultiDexApplication;
-
-import com.tencent.feedback.anr.ANRReport;
-import com.tencent.feedback.eup.CrashReport;
+import com.tencent.bugly.Bugly;
+import com.tencent.bugly.beta.Beta;
+import com.tencent.bugly.beta.download.DownloadListener;
+import com.tencent.bugly.beta.download.DownloadTask;
+import com.tencent.bugly.beta.upgrade.UpgradeStateListener;
+import com.tencent.bugly.crashreport.CrashReport;
 import com.tencent.rtmp.TXLiveBase;
 
 import java.lang.reflect.Constructor;
@@ -17,7 +20,10 @@ import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 
 public class DemoApplication extends MultiDexApplication {
-    private static       String TAG          = "DemoApplication";
+    private static       String  TAG                = "DemoApplication";
+    private static final String  BUGLY_APPID        = ""; //配置bugly组件的appId
+    private static final String  BUGLY_APP_CHANNEL  = "";   // 配置bugly组件的APP渠道号
+    private static final boolean BUGLY_ENABLE_DEBUG = true;  //配置bugly组件的调试模式（true或者false）
 
     //    private RefWatcher mRefWatcher;
     private static DemoApplication instance;
@@ -35,9 +41,8 @@ public class DemoApplication extends MultiDexApplication {
         mAppContext = this.getApplicationContext();
         instance = this;
 
-        // 蓝盾 RELEASE 版本下，去掉注释，打开 bugly oa 的上报功能; 代码如有改动，记得在脚本做相应修改。
-        initBuglyOA();
-
+        TXLiveBase.setConsoleEnabled(true);
+        initBugly();
         TXLiveBase.getInstance().setLicence(instance, licenceUrl, licenseKey);
 
         // 短视频licence设置
@@ -74,26 +79,56 @@ public class DemoApplication extends MultiDexApplication {
         }
     }
 
-    private void initBuglyOA() {
-        Log.d(TAG, "LiteAVDemo initBuglyOA");
-        CrashReport.setProductVersion(mAppContext, TXLiveBase.getSDKVersionStr());
+    //配置bugly组件的APP ID，bugly组件为腾讯提供的用于crash上报,分析和升级的开放组件，如果您不需要该组件，可以自行移除
+    private void initBugly() {
+        CrashReport.UserStrategy strategy = new CrashReport.UserStrategy(getApplicationContext());
+        strategy.setAppVersion(TXLiveBase.getSDKVersionStr());
+        strategy.setAppChannel(BUGLY_APP_CHANNEL);
+        //监听安装包下载状态
+        Beta.downloadListener = new DownloadListener() {
+            @Override
+            public void onReceive(DownloadTask downloadTask) {
+            }
 
-        /** 这条语句已经能让你的java端异常被捕获，并且上报了。BuglyOA 在后台通过包名和 App ID 匹配，buglyoa网站上 BundleId 须和包名保持一致。 */
-        CrashReport.initCrashReport(mAppContext);
-        String tombDirectoryPath = mAppContext.getDir("tomb", Context.MODE_PRIVATE).getAbsolutePath();
-        /**
-         * 前提是你需要先初始化java端异常上报功能，
-         * 这条语句已经能让你的native端异常被捕获，并且上报了。
-         *
-         * @param context
-         * @param tombDirectoryPath（也可以默认设置为空）
-         *            tomb文件的存放路径,tomb文件可以理解为详细的堆栈信息，平均每一个异常会产生一个tomb文件，
-         *            平均10k
-         * @param openNativeLog
-         *            打开Native Log功能,true则输出debug级log，false则只有warn及error有log输出。
-         */
-        CrashReport.initNativeCrashReport(mAppContext, tombDirectoryPath, true);
-        // 开启ANR监控,注意ANR的初始化一定要放在native sdk初始化之后，否则不生效
-        ANRReport.startANRMonitor(mAppContext);
+            @Override
+            public void onCompleted(DownloadTask downloadTask) {
+                Log.d(TAG, "downloadListener download apk file success");
+            }
+
+            @Override
+            public void onFailed(DownloadTask downloadTask, int i, String s) {
+                Log.d(TAG, "downloadListener download apk file fail");
+            }
+        };
+
+        //监听APP升级状态
+        Beta.upgradeStateListener = new UpgradeStateListener() {
+            @Override
+            public void onUpgradeFailed(boolean b) {
+                Log.d(TAG, "upgradeStateListener upgrade failed");
+            }
+
+            @Override
+            public void onUpgradeSuccess(boolean b) {
+                Log.d(TAG, "upgradeStateListener upgrade success");
+            }
+
+            @Override
+            public void onUpgradeNoVersion(boolean b) {
+                Log.d(TAG, "upgradeStateListener upgrade has no new version");
+            }
+
+            @Override
+            public void onUpgrading(boolean b) {
+                Log.d(TAG, "upgradeStateListener upgrading");
+            }
+
+            @Override
+            public void onDownloadCompleted(boolean b) {
+                Log.d(TAG, "upgradeStateListener download apk file success");
+            }
+        };
+        Bugly.init(getApplicationContext(), BUGLY_APPID, BUGLY_ENABLE_DEBUG, strategy);
     }
+
 }
