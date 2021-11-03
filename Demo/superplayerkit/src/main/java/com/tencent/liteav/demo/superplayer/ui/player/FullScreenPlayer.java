@@ -17,6 +17,7 @@ import android.widget.TextView;
 
 import com.tencent.liteav.demo.superplayer.R;
 import com.tencent.liteav.demo.superplayer.SuperPlayerDef;
+import com.tencent.liteav.demo.superplayer.model.VipWatchModel;
 import com.tencent.liteav.demo.superplayer.model.entity.PlayImageSpriteInfo;
 import com.tencent.liteav.demo.superplayer.model.entity.PlayKeyFrameDescInfo;
 import com.tencent.liteav.demo.superplayer.model.net.LogReport;
@@ -24,6 +25,7 @@ import com.tencent.liteav.demo.superplayer.model.utils.VideoGestureDetector;
 import com.tencent.liteav.demo.superplayer.ui.view.PointSeekBar;
 import com.tencent.liteav.demo.superplayer.ui.view.VideoProgressLayout;
 import com.tencent.liteav.demo.superplayer.model.entity.VideoQuality;
+import com.tencent.liteav.demo.superplayer.ui.view.VipWatchView;
 import com.tencent.liteav.demo.superplayer.ui.view.VodMoreView;
 import com.tencent.liteav.demo.superplayer.ui.view.VodQualityView;
 import com.tencent.liteav.demo.superplayer.ui.view.VolumeBrightnessProgressLayout;
@@ -57,7 +59,7 @@ import java.util.List;
  * 8、硬件加速监听{@link #onHWAcceleration(boolean)}
  */
 public class FullScreenPlayer extends AbsPlayer implements View.OnClickListener,
-        VodMoreView.Callback, VodQualityView.Callback, PointSeekBar.OnSeekBarChangeListener, PointSeekBar.OnSeekBarPointClickListener {
+        VodMoreView.Callback, VodQualityView.Callback, PointSeekBar.OnSeekBarChangeListener, PointSeekBar.OnSeekBarPointClickListener, VipWatchView.VipWatchViewClickListener {
 
     // UI控件
     private RelativeLayout                 mLayoutTop;                             // 顶部标题栏布局
@@ -104,6 +106,7 @@ public class FullScreenPlayer extends AbsPlayer implements View.OnClickListener,
     private VideoQuality                   mDefaultVideoQuality;                   // 默认画质
     private List<VideoQuality>             mVideoQualityList;                      // 画质列表
     private boolean                        mFirstShowQuality;                      // 是都是首次显示画质信息
+
 
     public FullScreenPlayer(Context context) {
         super(context);
@@ -276,6 +279,8 @@ public class FullScreenPlayer extends AbsPlayer implements View.OnClickListener,
         mGestureVolumeBrightnessProgressLayout = (VolumeBrightnessProgressLayout) findViewById(R.id.superplayer_gesture_progress);
         mGestureVideoProgressLayout = (VideoProgressLayout) findViewById(R.id.superplayer_video_progress_layout);
         mIvWatermark = (ImageView) findViewById(R.id.superplayer_large_iv_water_mark);
+        mVipWatchView = findViewById(R.id.superplayer_vip_watch_view);
+        mVipWatchView.setVipWatchViewClickListener(this);
     }
 
     /**
@@ -439,7 +444,7 @@ public class FullScreenPlayer extends AbsPlayer implements View.OnClickListener,
     }
 
     /**
-     * 更新是屁播放进度
+     * 更新实时播放进度
      *
      * @param current  当前进度(秒)
      * @param duration 视频总时长(秒)
@@ -460,6 +465,8 @@ public class FullScreenPlayer extends AbsPlayer implements View.OnClickListener,
             long leftTime = mDuration - mProgress;
             mDuration = mDuration > MAX_SHIFT_TIME ? MAX_SHIFT_TIME : mDuration;
             percentage = 1 - (float) leftTime / (float) mDuration;
+        }else {
+            mVipWatchView.setCurrentTime(current);
         }
 
         if (percentage >= 0 && percentage <= 1) {
@@ -593,6 +600,9 @@ public class FullScreenPlayer extends AbsPlayer implements View.OnClickListener,
                     mControllerCallback.onSeekTo(seekTime);
                 }
                 mIsChangingSeekBarProgress = false;
+                if (mPlayType == SuperPlayerDef.PlayerType.VOD) {
+                    mVipWatchView.setCurrentTime(seekTime);
+                }
             }
         }
 
@@ -771,9 +781,16 @@ public class FullScreenPlayer extends AbsPlayer implements View.OnClickListener,
                     toggleView(mLayoutReplay, false);
                     float percentage = ((float) curProgress) / maxProgress;
                     int position = (int) (mDuration * percentage);
+                    boolean showResult = mVipWatchView.canShowVipWatchView(position);
                     if (mControllerCallback != null) {
                         mControllerCallback.onSeekTo(position);
-                        mControllerCallback.onResume();
+                        if (!showResult) {
+                            mControllerCallback.onResume();
+                            return;
+                        }
+                    }
+                    if (showResult) {
+                        mVipWatchView.setCurrentTime(position);
                     }
                 }
                 break;
@@ -828,10 +845,14 @@ public class FullScreenPlayer extends AbsPlayer implements View.OnClickListener,
     private void setThumbnail(int progress) {
         float percentage = ((float) progress) / mSeekBarProgress.getMax();
         float seekTime = (mDuration * percentage);
-        if (mTXImageSprite != null) {
-            Bitmap bitmap = mTXImageSprite.getThumbnail(seekTime);
-            if (bitmap != null) {
-                mGestureVideoProgressLayout.setThumbnail(bitmap);
+        if (mVipWatchView.canShowVipWatchView(seekTime)) {
+            mGestureVideoProgressLayout.hideThumbnail();
+        } else {
+            if (mTXImageSprite != null) {
+                Bitmap bitmap = mTXImageSprite.getThumbnail(seekTime);
+                if (bitmap != null) {
+                    mGestureVideoProgressLayout.setThumbnail(bitmap);
+                }
             }
         }
     }
@@ -893,6 +914,43 @@ public class FullScreenPlayer extends AbsPlayer implements View.OnClickListener,
             mControllerCallback.onQualityChange(quality);
         }
         mVodQualityView.setVisibility(View.GONE);
+    }
+
+
+    @Override
+    public void onClickVipTitleBack() {
+        if (mControllerCallback != null) {
+            mControllerCallback.onBackPressed(SuperPlayerDef.PlayerMode.FULLSCREEN);
+            mControllerCallback.onClickVipTitleBack(SuperPlayerDef.PlayerMode.FULLSCREEN);
+        }
+    }
+
+    @Override
+    public void onClickVipRetry() {
+        if (mControllerCallback != null) {
+            mControllerCallback.onClickVipRetry();
+        }
+    }
+
+    @Override
+    public void onShowVipView() {
+        if (mControllerCallback != null) {
+            mControllerCallback.onPause();
+        }
+    }
+
+    @Override
+    public void onClickVipBtn() {
+        if (mControllerCallback != null) {
+            mControllerCallback.onClickHandleVip();
+        }
+    }
+
+    @Override
+    public void onCloseVipTip() {
+        if (mControllerCallback != null) {
+            mControllerCallback.onCloseVipTip();
+        }
     }
 
     /**

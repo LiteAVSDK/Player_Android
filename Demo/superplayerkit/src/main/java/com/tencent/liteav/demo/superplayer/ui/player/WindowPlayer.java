@@ -17,9 +17,11 @@ import android.widget.TextView;
 
 import com.tencent.liteav.demo.superplayer.R;
 import com.tencent.liteav.demo.superplayer.SuperPlayerDef;
+import com.tencent.liteav.demo.superplayer.model.VipWatchModel;
 import com.tencent.liteav.demo.superplayer.model.utils.VideoGestureDetector;
 import com.tencent.liteav.demo.superplayer.ui.view.PointSeekBar;
 import com.tencent.liteav.demo.superplayer.ui.view.VideoProgressLayout;
+import com.tencent.liteav.demo.superplayer.ui.view.VipWatchView;
 import com.tencent.liteav.demo.superplayer.ui.view.VolumeBrightnessProgressLayout;
 
 /**
@@ -36,7 +38,7 @@ import com.tencent.liteav.demo.superplayer.ui.view.VolumeBrightnessProgressLayou
  * {@link #onStopTrackingTouch(PointSeekBar)}
  */
 public class WindowPlayer extends AbsPlayer implements View.OnClickListener,
-        PointSeekBar.OnSeekBarChangeListener {
+        PointSeekBar.OnSeekBarChangeListener, VipWatchView.VipWatchViewClickListener {
 
     // UI控件
     private LinearLayout                   mLayoutTop;                             // 顶部标题栏布局
@@ -163,7 +165,7 @@ public class WindowPlayer extends AbsPlayer implements View.OnClickListener,
                     mGestureVideoProgressLayout.setProgress(progress);
                     mGestureVideoProgressLayout.show();
 
-                    float percentage = ((float) progress) / mSeekBarProgress.getMax();
+                    float percentage  = ((float) progress) / mSeekBarProgress.getMax();
                     float currentTime = (mDuration * percentage);
                     if (mPlayType == SuperPlayerDef.PlayerType.LIVE || mPlayType == SuperPlayerDef.PlayerType.LIVE_SHIFT) {
                         if (mLivePushDuration > MAX_SHIFT_TIME) {
@@ -221,6 +223,8 @@ public class WindowPlayer extends AbsPlayer implements View.OnClickListener,
         setBackground(mBackgroundBmp);
 
         mIvWatermark = (ImageView) findViewById(R.id.superplayer_small_iv_water_mark);
+        mVipWatchView = findViewById(R.id.superplayer_vip_watch_view);
+        mVipWatchView.setVipWatchViewClickListener(this);
     }
 
     /**
@@ -383,6 +387,8 @@ public class WindowPlayer extends AbsPlayer implements View.OnClickListener,
             long leftTime = mDuration - mProgress;
             mDuration = mDuration > MAX_SHIFT_TIME ? MAX_SHIFT_TIME : mDuration;
             percentage = 1 - (float) leftTime / (float) mDuration;
+        } else {
+            mVipWatchView.setCurrentTime(current);
         }
 
         if (percentage >= 0 && percentage <= 1) {
@@ -520,7 +526,7 @@ public class WindowPlayer extends AbsPlayer implements View.OnClickListener,
             }
             mSeekBarProgress.setProgress(progress);
 
-            int seekTime;
+            int   seekTime;
             float percentage = progress * 1.0f / mSeekBarProgress.getMax();
             if (mPlayType == SuperPlayerDef.PlayerType.LIVE || mPlayType == SuperPlayerDef.PlayerType.LIVE_SHIFT) {
                 if (mLivePushDuration > MAX_SHIFT_TIME) {
@@ -535,6 +541,10 @@ public class WindowPlayer extends AbsPlayer implements View.OnClickListener,
                 mControllerCallback.onSeekTo(seekTime);
             }
             mIsChangingSeekBarProgress = false;
+            if (mPlayType == SuperPlayerDef.PlayerType.VOD) {
+                mVipWatchView.setCurrentTime(seekTime);
+            }
+
         }
 
         if (event.getAction() == MotionEvent.ACTION_DOWN) {
@@ -580,7 +590,7 @@ public class WindowPlayer extends AbsPlayer implements View.OnClickListener,
     public void onProgressChanged(PointSeekBar seekBar, int progress, boolean fromUser) {
         if (mGestureVideoProgressLayout != null && fromUser) {
             mGestureVideoProgressLayout.show();
-            float percentage = ((float) progress) / seekBar.getMax();
+            float percentage  = ((float) progress) / seekBar.getMax();
             float currentTime = (mDuration * percentage);
             if (mPlayType == SuperPlayerDef.PlayerType.LIVE || mPlayType == SuperPlayerDef.PlayerType.LIVE_SHIFT) {
                 if (mLivePushDuration > MAX_SHIFT_TIME) {
@@ -613,9 +623,16 @@ public class WindowPlayer extends AbsPlayer implements View.OnClickListener,
                     toggleView(mLayoutReplay, false);
                     float percentage = ((float) curProgress) / maxProgress;
                     int position = (int) (mDuration * percentage);
+                    boolean showResult = mVipWatchView.canShowVipWatchView(position);
                     if (mControllerCallback != null) {
                         mControllerCallback.onSeekTo(position);
-                        mControllerCallback.onResume();
+                        if (!showResult) {
+                            mControllerCallback.onResume();
+                            return;
+                        }
+                    }
+                    if (showResult) {
+                        mVipWatchView.setCurrentTime(position);
                     }
                 }
                 break;
@@ -632,5 +649,43 @@ public class WindowPlayer extends AbsPlayer implements View.OnClickListener,
                 break;
         }
         postDelayed(mHideViewRunnable, 7000);
+    }
+
+
+
+    @Override
+    public void onClickVipTitleBack() {
+        if (mControllerCallback != null) {
+            mControllerCallback.onClickVipTitleBack(SuperPlayerDef.PlayerMode.WINDOW);
+            mControllerCallback.onSeekTo(0);
+        }
+    }
+
+    @Override
+    public void onClickVipRetry() {
+        if (mControllerCallback != null) {
+            mControllerCallback.onClickVipRetry();
+        }
+    }
+
+    @Override
+    public void onShowVipView() {
+        if (mControllerCallback != null) {
+            mControllerCallback.onPause();
+        }
+    }
+
+    @Override
+    public void onClickVipBtn() {
+        if (mControllerCallback != null) {
+            mControllerCallback.onClickHandleVip();
+        }
+    }
+
+    @Override
+    public void onCloseVipTip() {
+        if (mControllerCallback != null) {
+            mControllerCallback.onCloseVipTip();
+        }
     }
 }

@@ -34,6 +34,7 @@ dependencies {
     compile 'com.squareup.okhttp3:okhttp:3.11.0'
     compile 'androidx.multidex:multidex:2.0.0'
     compile 'com.github.bumptech.glide:glide:3.7.0'
+    compile 'androidx.cardview:cardview:1.0.0'
     compile 'com.google.code.gson:gson:2.3.1'
     compile('com.blankj:utilcode:1.25.9', {
         exclude group: 'com.google.code.gson', module: 'gson'

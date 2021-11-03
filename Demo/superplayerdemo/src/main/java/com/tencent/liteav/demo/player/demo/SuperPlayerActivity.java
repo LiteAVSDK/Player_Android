@@ -42,6 +42,7 @@ import com.tencent.liteav.demo.player.expand.model.entity.VideoInfo;
 import com.tencent.liteav.demo.player.expand.model.utils.SuperVodListLoader;
 import com.tencent.liteav.demo.player.expand.ui.TCVodPlayerListAdapter;
 import com.tencent.liteav.demo.player.expand.model.entity.VideoModel;
+import com.tencent.liteav.demo.superplayer.model.VipWatchModel;
 import com.tencent.rtmp.TXLiveBase;
 import com.tencent.rtmp.TXLiveConstants;
 
@@ -345,7 +346,7 @@ public class SuperPlayerActivity extends Activity implements View.OnClickListene
 
     private void updateVodList() {
         if (mDefaultVideo) {
-            ArrayList<VideoModel> superPlayerModels = mSuperVodListLoader.loadDefaultVodList();
+            ArrayList<VideoModel> superPlayerModels = mSuperVodListLoader.loadDefaultVodList(this.getApplicationContext());
             mSuperVodListLoader.getVodInfoOneByOne(superPlayerModels);
             mImageAdd.setVisibility(VISIBLE);
         } else {
@@ -432,7 +433,9 @@ public class SuperPlayerActivity extends Activity implements View.OnClickListene
         if (mSuperPlayerView.getPlayerState() == SuperPlayerDef.PlayerState.PLAYING
                 || mSuperPlayerView.getPlayerState() == SuperPlayerDef.PlayerState.PAUSE) {
             Log.i(TAG, "onResume state :" + mSuperPlayerView.getPlayerState());
-            mSuperPlayerView.onResume();
+            if(!mSuperPlayerView.isShowingVipView()) {
+                mSuperPlayerView.onResume();
+            }
             if (mSuperPlayerView.getPlayerMode() == SuperPlayerDef.PlayerMode.FLOAT) {
                 mSuperPlayerView.switchPlayMode(SuperPlayerDef.PlayerMode.WINDOW);
             }
@@ -506,6 +509,7 @@ public class SuperPlayerActivity extends Activity implements View.OnClickListene
     private void playVideoModel(VideoModel videoModel) {
         final SuperPlayerModel superPlayerModelV3 = new SuperPlayerModel();
         superPlayerModelV3.appId = videoModel.appid;
+        superPlayerModelV3.vipWatchMode=videoModel.vipWatchModel;
         if (!TextUtils.isEmpty(videoModel.videoURL)) {
             if (isSuperPlayerVideo(videoModel)) {
                 playSuperPlayerVideo(videoModel);

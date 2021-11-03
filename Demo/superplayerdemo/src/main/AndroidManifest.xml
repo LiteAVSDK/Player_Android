@@ -17,7 +17,14 @@
                 <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
         </activity>
-
+        <activity android:name=".demo.shortvideo.base.AbsBaseActivity"/>
+        <activity android:name=".demo.shortvideo.view.ShortVideoActivity"
+            android:configChanges="orientation|keyboardHidden|screenSize"
+            android:launchMode="singleTask"
+            android:screenOrientation="portrait"
+            android:windowSoftInputMode="stateHidden"
+            android:theme="@style/Theme.AppCompat.Light.NoActionBar"
+            />
         <activity
             android:name=".demo.QRCodeScanActivity"
             android:screenOrientation="portrait" />

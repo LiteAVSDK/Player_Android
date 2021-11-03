@@ -1,10 +1,14 @@
 package com.tencent.liteav.demo.player.expand.model.utils;
 
+import android.content.Context;
 import android.os.Handler;
 import android.os.HandlerThread;
 import android.text.TextUtils;
 
 import com.tencent.liteav.basic.log.TXCLog;
+import com.tencent.liteav.demo.player.R;
+import com.tencent.liteav.demo.superplayer.model.VipWatchModel;
+import com.tencent.liteav.demo.superplayer.model.entity.PlayInfoStream;
 import com.tencent.liteav.demo.player.expand.model.entity.VideoModel;
 import com.tencent.liteav.demo.superplayer.model.entity.PlayInfoStream;
 
@@ -52,7 +56,7 @@ public class SuperVodListLoader {
         mOnVodInfoLoadListener = listener;
     }
 
-    public ArrayList<VideoModel> loadDefaultVodList() {
+    public ArrayList<VideoModel> loadDefaultVodList(Context applicationContext) {
         ArrayList<VideoModel> list = new ArrayList<>();
         VideoModel model = new VideoModel();
         model.appid = 1252463788;
@@ -82,6 +86,8 @@ public class SuperVodListLoader {
         model = new VideoModel();
         model.appid = 1252463788;
         model.fileid = "4564972819219081699";
+        model.title = applicationContext.getString(R.string.superplayer_vip_title);
+        model.vipWatchModel = new VipWatchModel(applicationContext.getString(R.string.superplayer_vip_watch_tip), 15);
         list.add(model);
 
         return list;
@@ -217,9 +223,14 @@ public class SuperVodListLoader {
                 if (stream != null) {
                     videoModel.duration = stream.getDuration();
                 }
-                videoModel.title = playInfoResponse.description();
-                if (videoModel.title == null || videoModel.title.length() == 0) {
-                    videoModel.title = playInfoResponse.name();
+                String title = playInfoResponse.description();
+                if (TextUtils.isEmpty(title)) {
+                    title = playInfoResponse.name();
+                }
+                if (videoModel.vipWatchModel != null) {
+                    videoModel.title = title + videoModel.title;
+                } else {
+                    videoModel.title = title;
                 }
                 if (mOnVodInfoLoadListener != null) {
                     mOnVodInfoLoadListener.onSuccess(videoModel);
@@ -229,9 +240,14 @@ public class SuperVodListLoader {
                 if (media != null) {
                     JSONObject basicInfo = media.optJSONObject("basicInfo");
                     if (basicInfo != null) {
-                        videoModel.title = basicInfo.optString("description");
-                        if (videoModel.title == null || videoModel.title.length() == 0) {
-                            videoModel.title = basicInfo.optString("name");
+                        String title  = basicInfo.optString("description");
+                        if (TextUtils.isEmpty(title)) {
+                            title  = basicInfo.optString("name");
+                        }
+                        if (videoModel.vipWatchModel != null) {
+                            videoModel.title = title + videoModel.title;
+                        } else {
+                            videoModel.title = title;
                         }
                         videoModel.placeholderImage = basicInfo.optString("coverUrl");
                         videoModel.duration = basicInfo.optInt("duration");

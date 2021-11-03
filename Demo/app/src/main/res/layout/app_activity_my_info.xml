@@ -43,6 +43,8 @@
         android:id="@+id/tv_show_name"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:maxWidth="300dp"
+        android:singleLine="true"
         android:layout_marginTop="10dp"
         android:textColor="@color/app_color_white"
         android:textSize="18sp"

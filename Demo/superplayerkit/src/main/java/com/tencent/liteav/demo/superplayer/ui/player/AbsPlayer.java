@@ -7,9 +7,11 @@ import android.view.View;
 import android.widget.RelativeLayout;
 
 import com.tencent.liteav.demo.superplayer.SuperPlayerDef;
+import com.tencent.liteav.demo.superplayer.model.VipWatchModel;
 import com.tencent.liteav.demo.superplayer.model.entity.PlayImageSpriteInfo;
 import com.tencent.liteav.demo.superplayer.model.entity.PlayKeyFrameDescInfo;
 import com.tencent.liteav.demo.superplayer.model.entity.VideoQuality;
+import com.tencent.liteav.demo.superplayer.ui.view.VipWatchView;
 
 import java.util.List;
 
@@ -19,7 +21,9 @@ import java.util.List;
 public abstract class AbsPlayer extends RelativeLayout implements Player {
 
     protected static final int      MAX_SHIFT_TIME = 7200; // demo演示直播时移是MAX_SHIFT_TIMEs，即2小时
-    protected              Callback mControllerCallback; // 播放控制回调
+    protected Callback     mControllerCallback; // 播放控制回调
+    protected VipWatchView mVipWatchView;                           //用于展示VIP 试看的view控件
+
 
     protected Runnable mHideViewRunnable = new Runnable() {
         @Override
@@ -117,6 +121,33 @@ public abstract class AbsPlayer extends RelativeLayout implements Player {
     @Override
     public void updateKeyFrameDescInfo(List<PlayKeyFrameDescInfo> list) {
 
+    }
+
+
+    public void setVipWatchModel(VipWatchModel vipWatchModel) {
+        if (mVipWatchView != null) {
+            mVipWatchView.setVipWatchMode(vipWatchModel);
+        }
+    }
+
+    public void hideVipView() {
+        if (mVipWatchView != null) {
+            mVipWatchView.hideVipView();
+        }
+    }
+
+    public void hideTipView() {
+        if (mVipWatchView != null) {
+            mVipWatchView.hideTipView();
+        }
+    }
+
+    public boolean isShowingVipView(){
+        if (mVipWatchView != null) {
+           return mVipWatchView.isShowing();
+        }else {
+            return false;
+        }
     }
 
     /**

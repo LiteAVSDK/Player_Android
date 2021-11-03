@@ -8,8 +8,8 @@ android {
         applicationId "com.tencent.liteav.demo"
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
-        versionCode 14
-        versionName "9.2.1029"
+        versionCode 24
+        versionName "9.3.1169"
 
         multiDexEnabled true
         ndk {
@@ -63,6 +63,4 @@ dependencies {
         exclude group: 'com.google.code.gson', module: 'gson'
     })
 
-    compile 'com.tencent.bugly:crashreport_upgrade:1.5.1'
-    compile 'com.tencent.bugly:nativecrashreport:3.8.0'
 }

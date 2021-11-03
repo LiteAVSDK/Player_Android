@@ -297,6 +297,11 @@ public class SuperPlayerImpl implements SuperPlayer, ITXVodPlayListener, ITXLive
                 @Override
                 public void onSuccess(IPlayInfoProtocol protocol, PlayInfoParams param) {
                     TXCLog.i(TAG, "onSuccess: protocol params = " + param.toString());
+                    IPlayInfoProtocol tmpProtocol = mCurrentProtocol;
+                    if (tmpProtocol == null) {
+                        return;
+                    }
+
                     mReportVodStartTime = System.currentTimeMillis();
                     mVodPlayer.setPlayerView(mVideoView);
                     // 设置HLS安全加固加解密参数
@@ -305,10 +310,11 @@ public class SuperPlayerImpl implements SuperPlayer, ITXVodPlayListener, ITXLive
                             setOverlayKeyIv(param.videoId.overlayKey, param.videoId.overlayIv);
                         }
                     }
-                    playModeVideo(mCurrentProtocol);
+
+                    playModeVideo(tmpProtocol);
                     updatePlayerType(SuperPlayerDef.PlayerType.VOD);
                     updatePlayProgress(0, 0);
-                    updateVideoImageSpriteAndKeyFrame(mCurrentProtocol.getImageSpriteInfo(), mCurrentProtocol.getKeyFrameDescInfo());
+                    updateVideoImageSpriteAndKeyFrame(tmpProtocol.getImageSpriteInfo(), tmpProtocol.getKeyFrameDescInfo());
                 }
 
                 @Override

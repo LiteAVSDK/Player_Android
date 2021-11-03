@@ -1,6 +1,7 @@
 package com.tencent.liteav.demo.superplayer;
 
 
+import com.tencent.liteav.demo.superplayer.model.VipWatchModel;
 import com.tencent.liteav.demo.superplayer.model.entity.SuperPlayerVideoIdV2;
 
 import java.util.List;
@@ -55,6 +56,8 @@ public class SuperPlayerModel {
     public SuperPlayerVideoIdV2 videoIdV2;
 
     public String title = "";             // 视频文件名 （用于显示在UI层);使用file id播放，若未指定title，则使用FileId返回的Title；使用url播放需要指定title，否则title显示为空
+
+    public VipWatchModel vipWatchMode = null;
 
     public static class SuperPlayerURL {
         public SuperPlayerURL(String url, String qualityName) {

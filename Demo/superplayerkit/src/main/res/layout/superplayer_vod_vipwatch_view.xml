@@ -1,0 +1,101 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+
+    <LinearLayout
+        android:id="@+id/vip_watch_tip_view"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="left|bottom"
+        android:layout_marginLeft="50dp"
+        android:layout_marginBottom="25dp"
+        android:background="@drawable/superplayer_shape_vip_tip_bg"
+        android:gravity="center_vertical"
+        android:orientation="horizontal"
+        android:paddingLeft="3dp"
+        android:paddingTop="1dp"
+        android:paddingRight="3dp"
+        android:paddingBottom="1dp"
+        android:visibility="gone">
+
+        <TextView
+            android:id="@+id/vip_watch_tip_txt"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="@color/superplayer_white"
+            android:textSize="10sp" />
+
+        <ImageView
+            android:layout_marginLeft="3dp"
+            android:id="@+id/vip_watch_tip_close"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/superplayer_ic_float_close" />
+    </LinearLayout>
+
+
+    <RelativeLayout
+        android:id="@+id/vip_view"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@color/superplayer_black"
+        android:visibility="gone">
+
+        <ImageView
+            android:id="@+id/vip_watch_back_img"
+            android:layout_width="wrap_content"
+            android:layout_height="@dimen/superplayer_media_controller_view_height"
+            android:layout_gravity="center_vertical"
+            android:layout_marginLeft="20dp"
+            android:src="@drawable/superplayer_btn_back_play" />
+
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true"
+            android:gravity="center"
+            android:orientation="vertical">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerHorizontal="true"
+                android:text="@string/superplayer_vipwatch_endwatch_tip"
+                android:textColor="@android:color/white"
+                android:textSize="13sp"
+                />
+
+            <Button
+                android:layout_marginTop="10dp"
+                android:id="@+id/vip_watch_handle_vip_btn"
+                android:layout_width="100dp"
+                android:layout_height="36dp"
+                android:textSize="12sp"
+                android:text="@string/superplayer_vipwatch_open_vip_tip"
+                android:textColor="@android:color/white"
+                android:background="@drawable/superplayer_vipwatch_yellow_shape"
+                />
+
+            <Button
+                android:background="@android:color/transparent"
+                android:id="@+id/vip_watch_retry_btn"
+                android:layout_width="wrap_content"
+                android:layout_height="36dp"
+                android:layout_marginTop="10dp"
+                android:clickable="true"
+                android:text="@string/superplayer_vipwatch_retry_tip"
+                android:textColor="@android:color/white" />
+
+
+        </LinearLayout>
+
+
+    </RelativeLayout>
+
+
+</FrameLayout>

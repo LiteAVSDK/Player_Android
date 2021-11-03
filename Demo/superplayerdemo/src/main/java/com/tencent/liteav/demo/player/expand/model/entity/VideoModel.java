@@ -1,6 +1,7 @@
 package com.tencent.liteav.demo.player.expand.model.entity;
 
 
+import com.tencent.liteav.demo.superplayer.model.VipWatchModel;
 import java.util.List;
 
 /**
@@ -49,6 +50,8 @@ public class VideoModel {
      */
     public List<VideoPlayerURL> multiVideoURLs;
     public int                  playDefaultIndex; // 指定多码率情况下，默认播放的连接Index
+    public VipWatchModel        vipWatchModel = null;
+
 
     public static class VideoPlayerURL {
 

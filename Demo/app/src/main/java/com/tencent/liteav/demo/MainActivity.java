@@ -7,8 +7,6 @@ import android.content.Intent;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -16,9 +14,12 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import com.tencent.liteav.demo.common.widget.expandableadapter.BaseExpandableRecyclerViewAdapter;
 import com.tencent.liteav.demo.player.demo.SuperPlayerActivity;
+import com.tencent.liteav.demo.player.demo.shortvideo.view.ShortVideoActivity;
 import com.tencent.rtmp.TXLiveBase;
 
 import java.io.File;
@@ -34,9 +35,9 @@ import java.util.zip.ZipOutputStream;
 public class MainActivity extends Activity {
     private static final String TAG = "MainActivity";
 
-    private TextView              mMainTitle;
-    private TextView              mTvVersion;
-    private RecyclerView          mRvList;
+    private TextView mMainTitle;
+    private TextView mTvVersion;
+    private RecyclerView mRvList;
     private MainExpandableAdapter mAdapter;
 
     @Override
@@ -52,7 +53,7 @@ public class MainActivity extends Activity {
         setContentView(R.layout.activity_main);
 
         mTvVersion = (TextView) findViewById(R.id.main_tv_version);
-        mTvVersion.setText(getString(R.string.app_tv_super_player_version, TXLiveBase.getSDKVersionStr()+"(9.2.1029)"));
+        mTvVersion.setText(getString(R.string.app_tv_super_player_version, TXLiveBase.getSDKVersionStr()+"(9.3.1169)"));
 
         mMainTitle = (TextView) findViewById(R.id.main_title);
         mMainTitle.setOnLongClickListener(new View.OnLongClickListener() {
@@ -137,6 +138,7 @@ public class MainActivity extends Activity {
         // 初始化播放器
         List<ChildBean> playerChildList = new ArrayList<>();
         playerChildList.add(new ChildBean(getString(R.string.app_item_super_player), R.drawable.play, 3, SuperPlayerActivity.class));
+        playerChildList.add(new ChildBean(getString(R.string.app_item_shortvideo_player), R.drawable.play, 3, ShortVideoActivity.class));
         if (playerChildList.size() != 0) {
             GroupBean playerGroupBean = new GroupBean(getString(R.string.app_item_player), R.drawable.composite, playerChildList);
             groupList.add(playerGroupBean);
@@ -148,7 +150,7 @@ public class MainActivity extends Activity {
 
     private static class MainExpandableAdapter extends BaseExpandableRecyclerViewAdapter<GroupBean, ChildBean, GroupVH, ChildVH> {
         private List<GroupBean> mListGroupBean;
-        private GroupBean       mGroupBean;
+        private GroupBean mGroupBean;
 
         public void setSelectedChildBean(GroupBean groupBean) {
             boolean isExpand = isExpand(groupBean);
@@ -222,7 +224,7 @@ public class MainActivity extends Activity {
 
     public static class GroupVH extends BaseExpandableRecyclerViewAdapter.BaseGroupViewHolder {
         ImageView ivLogo;
-        TextView  textView;
+        TextView textView;
 
         GroupVH(View itemView) {
             super(itemView);
@@ -238,7 +240,7 @@ public class MainActivity extends Activity {
 
     public static class ChildVH extends RecyclerView.ViewHolder {
         TextView textView;
-        View     divideView;
+        View divideView;
 
         ChildVH(View itemView) {
             super(itemView);
@@ -249,9 +251,9 @@ public class MainActivity extends Activity {
     }
 
     private class GroupBean implements BaseExpandableRecyclerViewAdapter.BaseGroupBean<ChildBean> {
-        private String          mName;
+        private String mName;
         private List<ChildBean> mChildList;
-        private int             mIconId;
+        private int mIconId;
 
         public GroupBean(String name, int iconId, List<ChildBean> list) {
             mName = name;
@@ -289,9 +291,9 @@ public class MainActivity extends Activity {
 
     private class ChildBean {
         public String mName;
-        public int    mIconId;
-        public Class  mTargetClass;
-        public int    mType;
+        public int mIconId;
+        public Class mTargetClass;
+        public int mType;
 
         public ChildBean(String name, int iconId, int type, Class targetActivityClass) {
             this.mName = name;

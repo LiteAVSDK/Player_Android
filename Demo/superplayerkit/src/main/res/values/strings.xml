@@ -13,4 +13,7 @@
     <string name="superplayer_screenshot_fail">截图失败</string>
     <string name="superplayer_float_play_fail">悬浮播放失败</string>
     <string name="superplayer_enter_setting_fail">进入设置页面失败,请手动开启悬浮窗权限</string>
+    <string name="superplayer_vipwatch_endwatch_tip">试看结束，VIP会员可观看完整视频</string>
+    <string name="superplayer_vipwatch_open_vip_tip">开通VIP会员</string>
+    <string name="superplayer_vipwatch_retry_tip">重新试看</string>
 </resources>

@@ -13,4 +13,7 @@
     <string name="superplayer_screenshot_fail">Screenshot failed.</string>
     <string name="superplayer_float_play_fail">Failed to play video in a floating window.</string>
     <string name="superplayer_enter_setting_fail">Failed to open settings. Please grant the floating window permission manually.</string>
+    <string name="superplayer_vipwatch_endwatch_tip">The trial is over, VIP members can watch the full video</string>
+    <string name="superplayer_vipwatch_open_vip_tip">Open VIP membership</string>
+    <string name="superplayer_vipwatch_retry_tip">Try again</string>
 </resources>

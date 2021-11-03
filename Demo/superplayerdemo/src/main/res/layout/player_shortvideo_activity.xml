@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/superplayer_content_bg">
+
+    <!--标题-->
+    <RelativeLayout
+        android:id="@+id/superplayer_rl_title"
+        android:layout_width="match_parent"
+        android:layout_height="48dp">
+
+        <ImageView
+            android:id="@+id/superplayer_iv_back"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_centerVertical="true"
+            android:paddingLeft="10dp"
+            android:onClick="onBackClick"
+            android:src="@drawable/superplayer_ic_new_vod_back_normal" />
+
+        <TextView
+            android:id="@+id/superplayer_tv_url"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true"
+            android:layout_gravity="center"
+            android:layout_marginRight="5dp"
+            android:paddingLeft="2dp"
+            android:paddingRight="2dp"
+            android:singleLine="true"
+            android:text="短视频列表"
+            android:textColor="@color/superplayer_white"
+            android:textSize="16dp" />
+
+        <View
+            android:id="@+id/superplayer_view_title_mask"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:alpha="0.7"
+            android:background="@color/superplayer_black"
+            android:visibility="gone" />
+    </RelativeLayout>
+
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_below="@+id/superplayer_rl_title">
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/superplayer_recycler_view"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="15dp"
+                android:layout_marginRight="15dp" />
+
+    </RelativeLayout>
+</RelativeLayout>

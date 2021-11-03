@@ -28,4 +28,6 @@
     <string name="superplayer_open_hardware_speedup">已开启硬件解码加速，切换会重启播放流程!</string>
     <string name="superplayer_close_hardware_speedup">已关闭硬件解码加速，切换会重启播放流程!</string>
     <string name="superplayer_not_play_url">无播放地址</string>
+    <string name="superplayer_vip_title">- 试看功能演示</string>
+    <string name="superplayer_vip_watch_tip">可试看%ss，开通VIP观看完整视频</string>
 </resources>

@@ -13,6 +13,8 @@ import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Binder;
 import android.os.Build;
+import android.os.Handler;
+import android.os.Looper;
 import android.provider.MediaStore;
 import android.provider.Settings;
 import android.util.AttributeSet;
@@ -31,6 +33,7 @@ import com.tencent.liteav.basic.log.TXCLog;
 import com.tencent.liteav.demo.superplayer.model.SuperPlayer;
 import com.tencent.liteav.demo.superplayer.model.SuperPlayerImpl;
 import com.tencent.liteav.demo.superplayer.model.SuperPlayerObserver;
+import com.tencent.liteav.demo.superplayer.model.VipWatchModel;
 import com.tencent.liteav.demo.superplayer.model.entity.PlayImageSpriteInfo;
 import com.tencent.liteav.demo.superplayer.model.entity.PlayKeyFrameDescInfo;
 import com.tencent.liteav.demo.superplayer.model.entity.VideoQuality;
@@ -184,6 +187,19 @@ public class SuperPlayerView extends RelativeLayout {
         } else {
             mSuperPlayer.play(model.url);
         }
+        mFullScreenPlayer.setVipWatchModel(model.vipWatchMode);
+        mWindowPlayer.setVipWatchModel(model.vipWatchMode);
+        mFloatPlayer.setVipWatchModel(model.vipWatchMode);
+    }
+
+    /**
+     * 设置VipWatchModel 数据，传入null可隐藏掉展示的VIP页面
+     * @param vipWatchModel
+     */
+    public void setVipWatchModel(VipWatchModel vipWatchModel){
+        mFullScreenPlayer.setVipWatchModel(vipWatchModel);
+        mWindowPlayer.setVipWatchModel(vipWatchModel);
+        mFloatPlayer.setVipWatchModel(vipWatchModel);
     }
 
     /**
@@ -236,6 +252,15 @@ public class SuperPlayerView extends RelativeLayout {
         mWindowPlayer.updateTitle(title);
         mFullScreenPlayer.updateTitle(title);
     }
+
+    /**
+     * 用于判断VIP试看页面是否已经展示出来了
+     * @return
+     */
+    public boolean isShowingVipView(){
+        return mFullScreenPlayer.isShowingVipView() || mWindowPlayer.isShowingVipView() || mFloatPlayer.isShowingVipView();
+    }
+
 
     /**
      * resume生命周期回调
@@ -532,6 +557,45 @@ public class SuperPlayerView extends RelativeLayout {
         public void onHWAccelerationToggle(boolean isAccelerate) {
             mSuperPlayer.enableHardwareDecode(isAccelerate);
         }
+
+        @Override
+        public void onClickHandleVip() {
+            Intent intent = new Intent(Intent.ACTION_VIEW);
+            intent.setData(Uri.parse("https://cloud.tencent.com/document/product/454/18872"));
+            if(getContext() instanceof Activity){
+                getContext().startActivity(intent);
+            }
+        }
+
+        @Override
+        public void onClickVipTitleBack( SuperPlayerDef.PlayerMode playerMode) {
+            mFullScreenPlayer.hideVipView();
+            mWindowPlayer.hideVipView();
+            mFloatPlayer.hideVipView();
+        }
+
+        @Override
+        public void onClickVipRetry() {
+            mControllerCallback.onSeekTo(0);
+            postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    mControllerCallback.onResume();
+                    //隐藏VIP View
+                    mFullScreenPlayer.hideVipView();
+                    mWindowPlayer.hideVipView();
+                    mFloatPlayer.hideVipView();
+                }
+            }, 500);
+
+        }
+
+        @Override
+        public void onCloseVipTip() {
+            mFullScreenPlayer.hideTipView();
+            mWindowPlayer.hideTipView();
+            mFloatPlayer.hideTipView();
+        }
     };
 
     /**
@@ -720,6 +784,7 @@ public class SuperPlayerView extends RelativeLayout {
         public void onPlayProgress(long current, long duration) {
             mWindowPlayer.updateVideoProgress(current, duration);
             mFullScreenPlayer.updateVideoProgress(current, duration);
+            mFloatPlayer.updateVideoProgress(current, duration);
         }
 
         @Override
@@ -757,6 +822,7 @@ public class SuperPlayerView extends RelativeLayout {
         public void onPlayerTypeChange(SuperPlayerDef.PlayerType playType) {
             mWindowPlayer.updatePlayType(playType);
             mFullScreenPlayer.updatePlayType(playType);
+            mFloatPlayer.updatePlayType(playType);
         }
 
         @Override

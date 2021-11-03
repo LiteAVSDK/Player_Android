@@ -88,6 +88,13 @@ public class VideoProgressLayout extends RelativeLayout {
     }
 
     /**
+     * 设置缩略图
+     */
+    public void hideThumbnail(){
+        mIvThumbnail.setVisibility(GONE);
+    }
+
+    /**
      * 设置progressbar的可见性
      *
      * @param enable

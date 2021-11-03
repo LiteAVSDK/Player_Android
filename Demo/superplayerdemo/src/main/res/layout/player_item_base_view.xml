@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    >
+
+    <ImageView
+        android:id="@+id/iv_cover"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_gravity="center"
+        android:scaleType="centerInside"
+        android:visibility="visible" />
+
+    <com.tencent.rtmp.ui.TXCloudVideoView
+        android:id="@+id/tcv_video_view"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_gravity="center" />
+
+    <View
+        android:id="@+id/empty_view"
+        android:layout_width="match_parent"
+        android:layout_height="52dp"
+        android:layout_alignParentBottom="true"
+        android:background="@color/superplayer_transparent"/>
+
+    <SeekBar
+        android:id="@+id/seekbar_short_video"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_above="@id/empty_view"
+        android:maxHeight="6dp"
+        android:minHeight="6dp"
+        android:progressDrawable="@drawable/player_video_seek_bar"
+        android:thumb="@drawable/player_thumb_view" />
+
+
+    <TextView
+        android:id="@+id/tv_progress_time"
+        android:layout_width="118dp"
+        android:layout_height="30dp"
+        android:layout_above="@id/seekbar_short_video"
+        android:layout_centerHorizontal="true"
+        android:layout_marginBottom="12dp"
+        android:background="@drawable/player_short_video_time"
+        android:gravity="center"
+        android:text="00:00/00:00"
+        android:textSize="16sp" />
+
+    <ImageView
+        android:id="@+id/iv_pause"
+        android:layout_width="80dp"
+        android:layout_height="80dp"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="314dp"
+        android:src="@drawable/player_pause"
+        android:visibility="gone" />
+
+</RelativeLayout>

@@ -2,6 +2,7 @@ package com.tencent.liteav.demo.superplayer.ui.player;
 
 
 import android.graphics.Bitmap;
+import android.view.View;
 
 import com.tencent.liteav.demo.superplayer.SuperPlayerDef;
 import com.tencent.liteav.demo.superplayer.model.entity.PlayImageSpriteInfo;
@@ -219,5 +220,30 @@ public interface Player {
          * @param isAccelerate 开启：true 关闭：false
          */
         void onHWAccelerationToggle(boolean isAccelerate);
+
+        /**
+         * 当用户点击了 开通VIP会员按钮的回调事件
+         */
+        void onClickHandleVip();
+
+        /**
+         * 当点击了VIP试看界面的返回按钮的的回调
+         *  * @param playMode 当前播放模式：
+         *                       窗口模式      {@link SuperPlayerDef.PlayerMode#WINDOW  }
+         *                       全屏模式      {@link SuperPlayerDef.PlayerMode#FULLSCREEN  }
+         *                       悬浮窗模式    {@link SuperPlayerDef.PlayerMode#FLOAT  }
+         */
+        void onClickVipTitleBack(SuperPlayerDef.PlayerMode playMode);
+
+        /**
+         * 但点击了VIP页面的重新试看按钮
+         */
+        void onClickVipRetry();
+
+        /**
+         * 当点击了提示语的关闭按钮
+         */
+        void onCloseVipTip();
+
     }
 }

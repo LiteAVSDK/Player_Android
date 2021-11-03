@@ -17,5 +17,9 @@
         android:layout_marginTop="10dp"
         android:layout_marginRight="10dp"
         android:src="@drawable/superplayer_ic_float_close" />
+    <com.tencent.liteav.demo.superplayer.ui.view.VipWatchView
+        android:id="@+id/superplayer_vip_watch_view"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"/>
 
 </RelativeLayout>

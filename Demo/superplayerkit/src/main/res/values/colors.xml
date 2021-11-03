@@ -19,9 +19,12 @@
     <!--special color-->
     <color name="superplayer_black_a10_color">#1a000000</color>
 
+    <color name="superplayer_shape_vip_tip_color">#88000000</color>
+
     <!--gray4-->
     <color name="superplayer_color_gray">#787878</color>
 
     <color name="superplayer_default_progress_color">#FF4081</color>
     <color name="superplayer_default_progress_background_color">#BBBBBB</color>
+    <color name="superplayer_vipwatch_yellow_color">#F4E096</color>
 </resources>
