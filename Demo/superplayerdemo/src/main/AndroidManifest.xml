@@ -30,6 +30,12 @@
             android:screenOrientation="portrait" />
 
         <activity android:name=".demo.VodPlayerActivity"/>
+        <activity android:name=".demo.FeedActivity"
+            android:configChanges="keyboardHidden|orientation|screenSize"
+            android:launchMode="singleTask"
+            android:screenOrientation="portrait"
+            android:windowSoftInputMode="stateHidden"
+            />
 
         <receiver android:name=".expand.webdata.reveiver.WebDataReceiver">
             <intent-filter>

@@ -331,6 +331,11 @@ public class PlayInfoParserV2 implements IPlayInfoParser {
         //有主播放视频信息时，从中解析出支持多码率播放的url
         if (mMasterPlayList != null) {
             mURL = mMasterPlayList.getUrl();
+            if (mTranscodePlayList != null && mTranscodePlayList.size() != 0) {
+                PlayInfoStream stream = mTranscodePlayList.get(mDefaultVideoClassification);
+                mVideoQualityList = VideoQualityUtils.convertToVideoQualityList(mTranscodePlayList);
+                mDefaultVideoQuality = VideoQualityUtils.convertToVideoQuality(stream);
+            }
             return;
         }
         //无主播放信息，从转码视频信息中解析出各码流信息

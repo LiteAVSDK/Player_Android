@@ -281,6 +281,10 @@ public class VodMoreView extends RelativeLayout implements RadioGroup.OnCheckedC
         if (visibility == View.VISIBLE) {
             updateCurrentVolume();
             updateCurrentLight();
+            SuperPlayerGlobalConfig config = SuperPlayerGlobalConfig.getInstance();
+            mSwitchAccelerate.setOnCheckedChangeListener(null);
+            mSwitchAccelerate.setChecked(config.enableHWAcceleration);
+            mSwitchAccelerate.setOnCheckedChangeListener(this);
             registerReceiver();
         } else {
             unregisterReceiver();
@@ -306,6 +310,25 @@ public class VodMoreView extends RelativeLayout implements RadioGroup.OnCheckedC
             mLayoutMirror.setVisibility(View.GONE);
         }
     }
+
+    /**
+     * 还原界面上的镜像按钮
+     * 还原倍速播放选项
+     */
+    public void revertUI() {
+        mRadioGroup.setOnCheckedChangeListener(null);
+        mRbSpeed1.setChecked(true);
+        mRbSpeed125.setChecked(false);
+        mRbSpeed15.setChecked(false);
+        mRbSpeed2.setChecked(false);
+        mRadioGroup.setOnCheckedChangeListener(this);
+        if (mSwitchMirror.isChecked()) {
+            mSwitchMirror.setOnCheckedChangeListener(null);
+            mSwitchMirror.setChecked(false);
+            mSwitchMirror.setOnCheckedChangeListener(this);
+        }
+    }
+
 
     private class VolumeBroadcastReceiver extends BroadcastReceiver {
 

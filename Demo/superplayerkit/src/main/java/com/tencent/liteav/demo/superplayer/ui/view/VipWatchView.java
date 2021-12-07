@@ -8,15 +8,14 @@ import android.view.View;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+
 import com.tencent.liteav.demo.superplayer.R;
 import com.tencent.liteav.demo.superplayer.model.VipWatchModel;
 
 /**
  * VIP 试看界面View
- * <p>
  * showTip(string tip,int times)  展示tip提示view
  * 参数说明：tip指展示的文本信息   times是指试看的最长时间，单位为秒
- * <p>
  * setCurrentTime(int currentTime)
  */
 public class VipWatchView extends RelativeLayout implements View.OnClickListener {
@@ -126,6 +125,7 @@ public class VipWatchView extends RelativeLayout implements View.OnClickListener
 
     /**
      * 用于判断是否可以展示VIP view了
+     *
      * @param currentTime 当前视频的播放位置（时间节点）
      * @return
      */

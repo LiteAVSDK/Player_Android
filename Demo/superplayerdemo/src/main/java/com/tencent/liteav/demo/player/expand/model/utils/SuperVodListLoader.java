@@ -4,6 +4,7 @@ import android.content.Context;
 import android.os.Handler;
 import android.os.HandlerThread;
 import android.text.TextUtils;
+import android.util.Log;
 
 import com.tencent.liteav.basic.log.TXCLog;
 import com.tencent.liteav.demo.player.R;
@@ -18,6 +19,7 @@ import org.json.JSONObject;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 import okhttp3.Call;
@@ -25,6 +27,9 @@ import okhttp3.Callback;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
+
+import static com.tencent.liteav.demo.superplayer.SuperPlayerModel.PLAY_ACTION_AUTO_PLAY;
+import static com.tencent.liteav.demo.superplayer.SuperPlayerModel.PLAY_ACTION_MANUAL_PLAY;
 
 /**
  * Created by liyuejiao on 2018/7/3.
@@ -90,10 +95,17 @@ public class SuperVodListLoader {
         model.vipWatchModel = new VipWatchModel(applicationContext.getString(R.string.superplayer_vip_watch_tip), 15);
         list.add(model);
 
+        model = new VideoModel();
+        model.appid = 1500005830;
+        model.playAction = PLAY_ACTION_MANUAL_PLAY;
+        model.fileid = "8602268011437356984";
+        model.coverPictureUrl = "http://1500005830.vod2.myqcloud.com/6c9a5118vodcq1500005830/cc1e28208602268011087336518/MXUW1a5I9TsA.png";
+        list.add(model);
+
         return list;
     }
 
-    public void getVodInfoOneByOne(ArrayList<VideoModel> videoModels) {
+    public void getVodInfoOneByOne(List<VideoModel> videoModels) {
         if (videoModels == null || videoModels.size() == 0) {
             return;
         }
@@ -171,7 +183,6 @@ public class SuperVodListLoader {
                                 model.appid = playItem.optInt("appId", 0);
                                 model.title = playItem.optString("name", "");
                                 model.placeholderImage = playItem.optString("coverUrl", "");
-
                                 JSONArray urlList = playItem.getJSONArray("playUrl");
                                 if (urlList.length() > 0) {
 
@@ -227,9 +238,7 @@ public class SuperVodListLoader {
                 if (TextUtils.isEmpty(title)) {
                     title = playInfoResponse.name();
                 }
-                if (videoModel.vipWatchModel != null) {
-                    videoModel.title = title + videoModel.title;
-                } else {
+                if (videoModel.vipWatchModel == null) {
                     videoModel.title = title;
                 }
                 if (mOnVodInfoLoadListener != null) {
@@ -244,9 +253,7 @@ public class SuperVodListLoader {
                         if (TextUtils.isEmpty(title)) {
                             title  = basicInfo.optString("name");
                         }
-                        if (videoModel.vipWatchModel != null) {
-                            videoModel.title = title + videoModel.title;
-                        } else {
+                        if (videoModel.vipWatchModel == null) {
                             videoModel.title = title;
                         }
                         videoModel.placeholderImage = basicInfo.optString("coverUrl");

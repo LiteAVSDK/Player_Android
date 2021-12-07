@@ -11,6 +11,13 @@ import java.util.List;
 public abstract class SuperPlayerObserver {
 
     /**
+     * 准备播放
+     */
+    public void onPlayPrepare() {
+
+    }
+
+    /**
      * 开始播放
      *
      * @param name 当前视频名称
@@ -67,5 +74,9 @@ public abstract class SuperPlayerObserver {
     }
 
     public void onVideoImageSpriteAndKeyFrameChanged(PlayImageSpriteInfo info, List<PlayKeyFrameDescInfo> list) {
+    }
+
+    public void onRcvFirstIframe(){
+
     }
 }

@@ -30,9 +30,8 @@ public class UserModelManager {
     }
 
     public synchronized UserModel getUserModel() {
-        if (mUserModel == null) {
-            loadUserModel();
-        }
+        // 保证每次都能获取到最新的UserModel
+        loadUserModel();
         return mUserModel == null ? new UserModel() : mUserModel;
     }
 

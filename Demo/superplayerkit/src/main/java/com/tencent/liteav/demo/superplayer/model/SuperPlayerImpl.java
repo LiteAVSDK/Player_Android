@@ -11,7 +11,6 @@ import com.tencent.liteav.demo.superplayer.SuperPlayerCode;
 import com.tencent.liteav.demo.superplayer.SuperPlayerDef;
 import com.tencent.liteav.demo.superplayer.SuperPlayerGlobalConfig;
 import com.tencent.liteav.demo.superplayer.SuperPlayerModel;
-import com.tencent.liteav.demo.superplayer.SuperPlayerVideoId;
 import com.tencent.liteav.demo.superplayer.model.entity.PlayImageSpriteInfo;
 import com.tencent.liteav.demo.superplayer.model.entity.PlayKeyFrameDescInfo;
 import com.tencent.liteav.demo.superplayer.model.entity.ResolutionName;
@@ -30,6 +29,7 @@ import com.tencent.rtmp.TXLiveBase;
 import com.tencent.rtmp.TXLiveConstants;
 import com.tencent.rtmp.TXLivePlayConfig;
 import com.tencent.rtmp.TXLivePlayer;
+import com.tencent.rtmp.TXLog;
 import com.tencent.rtmp.TXVodPlayConfig;
 import com.tencent.rtmp.TXVodPlayer;
 import com.tencent.rtmp.ui.TXCloudVideoView;
@@ -38,6 +38,10 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+
+import static com.tencent.liteav.demo.superplayer.SuperPlayerModel.PLAY_ACTION_AUTO_PLAY;
+import static com.tencent.liteav.demo.superplayer.SuperPlayerModel.PLAY_ACTION_MANUAL_PLAY;
+import static com.tencent.liteav.demo.superplayer.SuperPlayerModel.PLAY_ACTION_PRELOAD;
 
 public class SuperPlayerImpl implements SuperPlayer, ITXVodPlayListener, ITXLivePlayListener {
 
@@ -58,18 +62,23 @@ public class SuperPlayerImpl implements SuperPlayer, ITXVodPlayListener, ITXLive
     private VideoQuality               mVideoQuality;
     private SuperPlayerDef.PlayerType  mCurrentPlayType     = SuperPlayerDef.PlayerType.VOD;       // 当前播放类型
     private SuperPlayerDef.PlayerMode  mCurrentPlayMode     = SuperPlayerDef.PlayerMode.WINDOW;    // 当前播放模式
-    private SuperPlayerDef.PlayerState mCurrentPlayState    = SuperPlayerDef.PlayerState.PLAYING;  // 当前播放状态
+    private SuperPlayerDef.PlayerState mCurrentPlayState    = SuperPlayerDef.PlayerState.INIT;  // 当前播放状态
     private String                     mCurrentPlayVideoURL;    // 当前播放的URL
     private int                        mSeekPos;                   // 记录切换硬解时的播放时间
+    private float                      mStartPos;                // 视频开始播放时间
     private long                       mReportLiveStartTime = -1; // 直播开始时间，用于上报使用时长
     private long                       mReportVodStartTime  = -1;  // 点播开始时间，用于上报使用时长
     private long                       mMaxLiveProgressTime;      // 观看直播的最大时长
+    private boolean                    mIsAutoPlay          = true;      // 是否自动播放
     private boolean                    mIsMultiBitrateStream;  // 是否是多码流url播放
     private boolean                    mIsPlayWithFileId;      // 是否是腾讯云fileId播放
     private boolean                    mDefaultQualitySet;     // 标记播放多码流url时是否设置过默认画质
     private boolean                    mChangeHWAcceleration;  // 切换硬解后接收到第一个关键帧前的标记位
     private String                     mFileId;
     private int                        mAppId;
+    private int                        mPlayAction;            //播放模式
+    private boolean                    isPrepared           = false;
+    private boolean                    isNeedResume         = false;
 
     public SuperPlayerImpl(Context context, TXCloudVideoView videoView) {
         initialize(context, videoView);
@@ -114,6 +123,8 @@ public class SuperPlayerImpl implements SuperPlayer, ITXVodPlayListener, ITXLive
                 updatePlayerState(SuperPlayerDef.PlayerState.LOADING);
                 break;
             case TXLiveConstants.PLAY_EVT_RCV_FIRST_I_FRAME:
+                updatePlayerState(SuperPlayerDef.PlayerState.PLAYING);
+                mObserver.onRcvFirstIframe();
                 break;
             case TXLiveConstants.PLAY_EVT_STREAM_SWITCH_SUCC:
                 updateStreamEndStatus(true, SuperPlayerDef.PlayerType.LIVE, mVideoQuality);
@@ -156,48 +167,33 @@ public class SuperPlayerImpl implements SuperPlayer, ITXVodPlayListener, ITXLive
         }
         switch (event) {
             case TXLiveConstants.PLAY_EVT_VOD_PLAY_PREPARED://视频播放开始
-                updatePlayerState(SuperPlayerDef.PlayerState.PLAYING);
-                if (mIsMultiBitrateStream) {
-                    List<TXBitrateItem> bitrateItems = mVodPlayer.getSupportedBitrates();
-                    if (bitrateItems == null || bitrateItems.size() == 0) {
-                        return;
-                    }
-                    Collections.sort(bitrateItems); //masterPlaylist多清晰度，按照码率排序，从低到高
-                    List<VideoQuality> videoQualities = new ArrayList<>();
-                    int size = bitrateItems.size();
-                    List<ResolutionName> resolutionNames = (mCurrentProtocol != null) ? mCurrentProtocol.getResolutionNameList() : null;
-                    for (int i = 0; i < size; i++) {
-                        TXBitrateItem bitrateItem = bitrateItems.get(i);
-                        VideoQuality quality;
-                        if (resolutionNames != null) {
-                            quality = VideoQualityUtils.convertToVideoQuality(bitrateItem, mCurrentProtocol.getResolutionNameList());
-                        } else {
-                            quality = VideoQualityUtils.convertToVideoQuality(bitrateItem, i);
-                        }
-                        videoQualities.add(quality);
-                    }
-                    if (!mDefaultQualitySet) {
-                        mVodPlayer.getDuration();
-                        mVodPlayer.setBitrateIndex(bitrateItems.get(bitrateItems.size() - 1).index); //默认播放码率最高的
-                        mDefaultQualitySet = true;
-                    }
-                    updateVideoQualityList(videoQualities, null);
-                }
+                onVodPlayPrepared();
                 break;
             case TXLiveConstants.PLAY_EVT_RCV_FIRST_I_FRAME:
+                TXLog.i(TAG, "PLAY_EVT_RCV_FIRST_I_FRAME");
                 if (mChangeHWAcceleration) { //切换软硬解码器后，重新seek位置
                     TXCLog.i(TAG, "seek pos:" + mSeekPos);
                     seek(mSeekPos);
                     mChangeHWAcceleration = false;
                 }
+                updatePlayerState(SuperPlayerDef.PlayerState.PLAYING);
+                mObserver.onRcvFirstIframe();
                 break;
             case TXLiveConstants.PLAY_EVT_PLAY_END:
+                TXLog.i(TAG, "PLAY_EVT_PLAY_END");
+                //mFirstPlay = true;
                 updatePlayerState(SuperPlayerDef.PlayerState.END);
                 break;
             case TXLiveConstants.PLAY_EVT_PLAY_PROGRESS:
                 int progress = param.getInt(TXLiveConstants.EVT_PLAY_PROGRESS_MS);
                 int duration = param.getInt(TXLiveConstants.EVT_PLAY_DURATION_MS);
-                updatePlayProgress(progress / 1000, duration / 1000);
+                if (duration != 0) {
+                    updatePlayProgress(progress / 1000, duration / 1000);
+                }
+                break;
+            case TXLiveConstants.PLAY_EVT_PLAY_LOADING:
+                TXLog.i(TAG, "PLAY_EVT_PLAY_LOADING");
+                updatePlayerState(SuperPlayerDef.PlayerState.LOADING);
                 break;
             case TXLiveConstants.PLAY_EVT_PLAY_BEGIN:
                 updatePlayerState(SuperPlayerDef.PlayerState.PLAYING);
@@ -209,6 +205,48 @@ public class SuperPlayerImpl implements SuperPlayer, ITXVodPlayListener, ITXLive
             mVodPlayer.stopPlay(true);
             updatePlayerState(SuperPlayerDef.PlayerState.PAUSE);
             onError(SuperPlayerCode.VOD_PLAY_FAIL, param.getString(TXLiveConstants.EVT_DESCRIPTION));
+        }
+    }
+
+
+    private void onVodPlayPrepared() {
+        TXLog.i(TAG, "PLAY_EVT_VOD_PLAY_PREPARED");
+        if (mIsMultiBitrateStream) {
+            List<TXBitrateItem> bitrateItems = mVodPlayer.getSupportedBitrates();
+            if (bitrateItems == null || bitrateItems.size() == 0) {
+                return;
+            }
+            Collections.sort(bitrateItems); //masterPlaylist多清晰度，按照码率排序，从低到高
+            List<VideoQuality> videoQualities = new ArrayList<>();
+            int size = bitrateItems.size();
+            List<ResolutionName> resolutionNames = (mCurrentProtocol != null) ? mCurrentProtocol.getResolutionNameList() : null;
+            for (int i = 0; i < size; i++) {
+                TXBitrateItem bitrateItem = bitrateItems.get(i);
+                VideoQuality quality;
+                if (resolutionNames != null) {
+                    quality = VideoQualityUtils.convertToVideoQuality(bitrateItem, mCurrentProtocol.getResolutionNameList());
+                } else {
+                    quality = VideoQualityUtils.convertToVideoQuality(bitrateItem, i);
+                }
+                videoQualities.add(quality);
+            }
+            if (!mDefaultQualitySet) {
+                mVodPlayer.getDuration();
+                mVodPlayer.setBitrateIndex(bitrateItems.get(bitrateItems.size() - 1).index); //默认播放码率最高的
+                mDefaultQualitySet = true;
+            }
+            int bitrateIndex = mVodPlayer.getBitrateIndex();   //获取默认码率的index
+            VideoQuality defaultQuality = null;
+            for (VideoQuality quality : videoQualities) {
+                if (quality.index == bitrateIndex) {
+                    defaultQuality = quality;
+                }
+            }
+            updateVideoQualityList(videoQualities, defaultQuality);
+        }
+        isPrepared = true;
+        if (isNeedResume) {
+            mVodPlayer.resume();
         }
     }
 
@@ -245,10 +283,15 @@ public class SuperPlayerImpl implements SuperPlayer, ITXVodPlayListener, ITXLive
             mVodPlayConfig.setCacheFolderPath(sdcardDir.getPath() + "/txcache");
         }
         mVodPlayConfig.setMaxCacheItems(config.maxCacheItem);
+        mVodPlayConfig.setHeaders(config.headers);
         mVodPlayer.setConfig(mVodPlayConfig);
         mVodPlayer.setRenderMode(config.renderMode);
         mVodPlayer.setVodListener(this);
         mVodPlayer.enableHardwareDecode(config.enableHWAcceleration);
+        mVodPlayer.setRate(config.playRate);
+        mVodPlayer.setMute(config.mute);
+        mVodPlayer.setMirror(config.mirror);
+        TXCLog.setConsoleEnabled(config.enableLog);
     }
 
     /**
@@ -260,11 +303,14 @@ public class SuperPlayerImpl implements SuperPlayer, ITXVodPlayListener, ITXLive
         mLivePlayer = new TXLivePlayer(context);
         SuperPlayerGlobalConfig config = SuperPlayerGlobalConfig.getInstance();
         mLivePlayConfig = new TXLivePlayConfig();
+        mLivePlayConfig.setHeaders(config.headers);
         mLivePlayer.setConfig(mLivePlayConfig);
         mLivePlayer.setRenderMode(config.renderMode);
         mLivePlayer.setRenderRotation(TXLiveConstants.RENDER_ROTATION_PORTRAIT);
         mLivePlayer.setPlayListener(this);
         mLivePlayer.enableHardwareDecode(config.enableHWAcceleration);
+        mLivePlayer.setMute(config.mute);
+        TXCLog.setConsoleEnabled(config.enableLog);
     }
 
     /**
@@ -272,9 +318,8 @@ public class SuperPlayerImpl implements SuperPlayer, ITXVodPlayListener, ITXLive
      *
      * @param model
      */
-    public void playWithModel(final SuperPlayerModel model) {
-        mCurrentModel = model;
-        stop();
+    public void playWithModel(SuperPlayerModel model) {
+        reset();
         PlayInfoParams params = new PlayInfoParams();
         params.appId = model.appId;
         if (model.videoId != null) {
@@ -293,82 +338,90 @@ public class SuperPlayerImpl implements SuperPlayer, ITXVodPlayListener, ITXLive
         mAppId = params.appId;
         updateVideoImageSpriteAndKeyFrame(null, null);
         if (model.videoId != null || model.videoIdV2 != null) { // 根据FileId播放
-            mCurrentProtocol.sendRequest(new IPlayInfoRequestCallback() {
-                @Override
-                public void onSuccess(IPlayInfoProtocol protocol, PlayInfoParams param) {
-                    TXCLog.i(TAG, "onSuccess: protocol params = " + param.toString());
-                    IPlayInfoProtocol tmpProtocol = mCurrentProtocol;
-                    if (tmpProtocol == null) {
-                        return;
-                    }
-
-                    mReportVodStartTime = System.currentTimeMillis();
-                    mVodPlayer.setPlayerView(mVideoView);
-                    // 设置HLS安全加固加解密参数
-                    if (param != null && param.videoId != null) {
-                        if (!TextUtils.isEmpty(param.videoId.overlayKey) && !TextUtils.isEmpty(param.videoId.overlayIv)) {
-                            setOverlayKeyIv(param.videoId.overlayKey, param.videoId.overlayIv);
-                        }
-                    }
-
-                    playModeVideo(tmpProtocol);
-                    updatePlayerType(SuperPlayerDef.PlayerType.VOD);
-                    updatePlayProgress(0, 0);
-                    updateVideoImageSpriteAndKeyFrame(tmpProtocol.getImageSpriteInfo(), tmpProtocol.getKeyFrameDescInfo());
-                }
-
-                @Override
-                public void onError(int errCode, String message) {
-                    TXCLog.i(TAG, "onFail: errorCode = " + errCode + " message = " + message);
-                    SuperPlayerImpl.this.onError(SuperPlayerCode.VOD_REQUEST_FILE_ID_FAIL, "播放视频文件失败 code = " + errCode + " msg = " + message);
-                }
-            });
+            sendRequest(model);
         } else { // 根据URL播放
-            String videoURL = null;
-            List<VideoQuality> videoQualities = new ArrayList<>();
-            VideoQuality defaultVideoQuality = null;
-            if (model.multiURLs != null && !model.multiURLs.isEmpty()) {// 多码率URL播放
-                int i = 0;
-                for (SuperPlayerModel.SuperPlayerURL superPlayerURL : model.multiURLs) {
-                    if (i == model.playDefaultIndex) {
-                        videoURL = superPlayerURL.url;
-                    }
-                    videoQualities.add(new VideoQuality(i++, superPlayerURL.qualityName, superPlayerURL.url));
+            playWithUrl(model);
+        }
+    }
+
+    private void sendRequest(final SuperPlayerModel model) {
+        mCurrentProtocol.sendRequest(new IPlayInfoRequestCallback() {
+            @Override
+            public void onSuccess(IPlayInfoProtocol protocol, PlayInfoParams param) {
+                TXCLog.i(TAG, "onSuccess: protocol params = " + param.toString());
+                IPlayInfoProtocol tmpProtocol = mCurrentProtocol;
+                if (tmpProtocol == null) {
+                    return;
                 }
-                defaultVideoQuality = videoQualities.get(model.playDefaultIndex);
-            } else if (!TextUtils.isEmpty(model.url)) { // 传统URL模式播放
-                videoURL = model.url;
+                if (mCurrentModel != null && mCurrentModel.playAction != PLAY_ACTION_PRELOAD) {
+                    mReportVodStartTime = System.currentTimeMillis();
+                }
+                mVodPlayer.setPlayerView(mVideoView);
+                // 设置HLS安全加固加解密参数
+                if (param != null && param.videoId != null) {
+                    if (!TextUtils.isEmpty(param.videoId.overlayKey) && !TextUtils.isEmpty(param.videoId.overlayIv)) {
+                        setOverlayKeyIv(param.videoId.overlayKey, param.videoId.overlayIv);
+                    }
+                }
+                playModeVideo(tmpProtocol);
+                updatePlayerType(SuperPlayerDef.PlayerType.VOD);
+                updatePlayProgress(0, model.duration);
+                updateVideoImageSpriteAndKeyFrame(tmpProtocol.getImageSpriteInfo(), tmpProtocol.getKeyFrameDescInfo());
             }
 
-            if (TextUtils.isEmpty(videoURL)) {
-                onError(SuperPlayerCode.PLAY_URL_EMPTY, "播放视频失败，播放链接为空");
-                return;
+            @Override
+            public void onError(int errCode, String message) {
+                TXCLog.i(TAG, "onFail: errorCode = " + errCode + " message = " + message);
+                SuperPlayerImpl.this.onError(SuperPlayerCode.VOD_REQUEST_FILE_ID_FAIL, "播放视频文件失败 code = " + errCode + " msg = " + message);
             }
-            if (isRTMPPlay(videoURL)) { // 直播播放器：普通RTMP流播放
-                mReportLiveStartTime = System.currentTimeMillis();
-                mLivePlayer.setPlayerView(mVideoView);
-                playLiveURL(videoURL, TXLivePlayer.PLAY_TYPE_LIVE_RTMP);
-            } else if (isFLVPlay(videoURL)) { // 直播播放器：直播FLV流播放
-                mReportLiveStartTime = System.currentTimeMillis();
-                mLivePlayer.setPlayerView(mVideoView);
-                playTimeShiftLiveURL(model.appId, videoURL);
-                if (model.multiURLs != null && !model.multiURLs.isEmpty()) {
-                    startMultiStreamLiveURL(videoURL);
+        });
+    }
+
+    private void playWithUrl(SuperPlayerModel model) {
+        String videoURL = null;
+        List<VideoQuality> videoQualities = new ArrayList<>();
+        VideoQuality defaultVideoQuality = null;
+        if (model.multiURLs != null && !model.multiURLs.isEmpty()) {    // 多码率URL播放
+            int i = 0;
+            for (SuperPlayerModel.SuperPlayerURL superPlayerURL : model.multiURLs) {
+                if (i == model.playDefaultIndex) {
+                    videoURL = superPlayerURL.url;
                 }
-            } else { // 点播播放器：播放点播文件
-                mReportVodStartTime = System.currentTimeMillis();
-                mVodPlayer.setPlayerView(mVideoView);
-                playVodURL(videoURL);
+                videoQualities.add(new VideoQuality(i++, superPlayerURL.qualityName, superPlayerURL.url));
             }
-            boolean isLivePlay = (isRTMPPlay(videoURL) || isFLVPlay(videoURL));
-            updatePlayerType(isLivePlay ? SuperPlayerDef.PlayerType.LIVE : SuperPlayerDef.PlayerType.VOD);
-            updatePlayProgress(0, 0);
-            updateVideoQualityList(videoQualities, defaultVideoQuality);
+            defaultVideoQuality = videoQualities.get(model.playDefaultIndex);
+        } else if (!TextUtils.isEmpty(model.url)) { // 传统URL模式播放
+            videoURL = model.url;
         }
+        if (TextUtils.isEmpty(videoURL)) {
+            onError(SuperPlayerCode.PLAY_URL_EMPTY, "播放视频失败，播放链接为空");
+            return;
+        }
+        if (isRTMPPlay(videoURL)) { // 直播播放器：普通RTMP流播放
+            mReportLiveStartTime = System.currentTimeMillis();
+            mLivePlayer.setPlayerView(mVideoView);
+            playLiveURL(videoURL, TXLivePlayer.PLAY_TYPE_LIVE_RTMP);
+        } else if (isFLVPlay(videoURL)) { // 直播播放器：直播FLV流播放
+            mReportLiveStartTime = System.currentTimeMillis();
+            mLivePlayer.setPlayerView(mVideoView);
+            playTimeShiftLiveURL(model.appId, videoURL);
+            if (model.multiURLs != null && !model.multiURLs.isEmpty()) {
+                startMultiStreamLiveURL(videoURL);
+            }
+        } else { // 点播播放器：播放点播文件
+            mReportVodStartTime = System.currentTimeMillis();
+            mVodPlayer.setPlayerView(mVideoView);
+            playVodURL(videoURL);
+        }
+        boolean isLivePlay = (isRTMPPlay(videoURL) || isFLVPlay(videoURL));
+        updatePlayerType(isLivePlay ? SuperPlayerDef.PlayerType.LIVE : SuperPlayerDef.PlayerType.VOD);
+        updatePlayProgress(0, model.duration);
+        updateVideoQualityList(videoQualities, defaultVideoQuality);
     }
 
     /**
      * 设置HLS安全加固加解密参数
+     *
      * @param overlayKey HLS安全加固加解密key stop时重置为null
      * @param overlayIv  HLS安全加固加解密Iv  stop时重置为null
      */
@@ -417,6 +470,7 @@ public class SuperPlayerImpl implements SuperPlayer, ITXVodPlayListener, ITXLive
         mCurrentPlayVideoURL = url;
         if (mLivePlayer != null) {
             mLivePlayer.setPlayListener(this);
+            mLivePlayer.setPlayerView(mVideoView);
             int result = mLivePlayer.startPlay(url, playType); // result返回值：0 success;  -1 empty url; -2 invalid url; -3 invalid playType;
             if (result != 0) {
                 TXCLog.e(TAG, "playLiveURL videoURL:" + url + ",result:" + result);
@@ -439,8 +493,14 @@ public class SuperPlayerImpl implements SuperPlayer, ITXVodPlayListener, ITXLive
         }
         if (mVodPlayer != null) {
             mDefaultQualitySet = false;
-            mVodPlayer.setStartTime(0);
-            mVodPlayer.setAutoPlay(true);
+            mVodPlayer.setStartTime(mStartPos);
+            mVodPlayer.setAutoPlay(mIsAutoPlay);
+            if (mPlayAction == PLAY_ACTION_AUTO_PLAY || mPlayAction == PLAY_ACTION_MANUAL_PLAY) {
+                mVodPlayer.setAutoPlay(true);
+            } else if (mPlayAction == PLAY_ACTION_PRELOAD) {
+                mVodPlayer.setAutoPlay(false);
+                mPlayAction = PLAY_ACTION_AUTO_PLAY;
+            }
             mVodPlayer.setVodListener(this);
             String drmType = "plain";
             if (mCurrentProtocol != null) {
@@ -471,10 +531,6 @@ public class SuperPlayerImpl implements SuperPlayer, ITXVodPlayListener, ITXLive
                 ret = mVodPlayer.startPlay(Uri.decode(newUri.toString()));
             } else {
                 ret = mVodPlayer.startPlay(url);
-            }
-
-            if (ret == 0) {
-                updatePlayerState(SuperPlayerDef.PlayerState.PLAYING);
             }
         }
         mIsPlayWithFileId = false;
@@ -589,6 +645,9 @@ public class SuperPlayerImpl implements SuperPlayer, ITXVodPlayListener, ITXLive
             return;
         }
         switch (playState) {
+            case INIT:
+                mObserver.onPlayPrepare();
+                break;
             case PLAYING:
                 mObserver.onPlayBegin(getPlayName());
                 break;
@@ -666,38 +725,9 @@ public class SuperPlayerImpl implements SuperPlayer, ITXVodPlayListener, ITXLive
     }
 
     @Override
-    public void play(String url) {
-        SuperPlayerModel model = new SuperPlayerModel();
-        model.url = url;
-        playWithModel(model);
-    }
-
-    @Override
-    public void play(int appId, String url) {
-        SuperPlayerModel model = new SuperPlayerModel();
-        model.appId = appId;
-        model.url = url;
-        playWithModel(model);
-    }
-
-    @Override
-    public void play(int appId, String fileId, String psign) {
-        SuperPlayerVideoId videoId = new SuperPlayerVideoId();
-        videoId.fileId = fileId;
-        videoId.pSign = psign;
-
-        SuperPlayerModel model = new SuperPlayerModel();
-        model.appId = appId;
-        model.videoId = videoId;
-        playWithModel(model);
-    }
-
-    @Override
-    public void play(int appId, List<SuperPlayerModel.SuperPlayerURL> superPlayerURLS, int defaultIndex) {
-        SuperPlayerModel model = new SuperPlayerModel();
-        model.appId = appId;
-        model.multiURLs = superPlayerURLS;
-        model.playDefaultIndex = defaultIndex;
+    public void play(SuperPlayerModel model) {
+        mPlayAction = model.playAction;
+        mCurrentModel = model;
         playWithModel(model);
     }
 
@@ -738,7 +768,10 @@ public class SuperPlayerImpl implements SuperPlayer, ITXVodPlayListener, ITXLive
     @Override
     public void resume() {
         if (mCurrentPlayType == SuperPlayerDef.PlayerType.VOD) {
-            mVodPlayer.resume();
+            isNeedResume = true;
+            if (isPrepared) {
+                mVodPlayer.resume();
+            }
         } else {
             mLivePlayer.resume();
         }
@@ -755,17 +788,33 @@ public class SuperPlayerImpl implements SuperPlayer, ITXVodPlayListener, ITXLive
 
     @Override
     public void stop() {
+        resetPlayer();
+        updatePlayerState(SuperPlayerDef.PlayerState.END);
+    }
+
+    @Override
+    public void reset() {
+        resetPlayer();
+        updatePlayerState(SuperPlayerDef.PlayerState.INIT);
+    }
+
+
+    private void resetPlayer() {
+        isPrepared = false;
+        isNeedResume = false;
         if (mVodPlayer != null) {
+            mVodPlayer.setVodListener(null);
             mVodPlayer.stopPlay(false);
         }
         if (mLivePlayer != null) {
+            mLivePlayer.setPlayListener(null);
             mLivePlayer.stopPlay(false);
+            mVideoView.removeVideoView();
         }
         // 重置overlayKey和overlayIv配置
         if (mVodPlayConfig != null) {
             setOverlayKeyIv(null, null);
         }
-        updatePlayerState(SuperPlayerDef.PlayerState.END);
         reportPlayTime();
     }
 
@@ -773,6 +822,20 @@ public class SuperPlayerImpl implements SuperPlayer, ITXVodPlayListener, ITXLive
     public void destroy() {
 
     }
+
+    /**
+     * 对镜像设置进行还原处理
+     * 对播放速度进行还原处理
+     */
+    @Override
+    public void revertSettings() {
+        //取消镜像
+        if (mCurrentPlayType == SuperPlayerDef.PlayerType.VOD) {
+            mVodPlayer.setMirror(false);
+            mVodPlayer.setRate(1.0f);
+        }
+    }
+
 
     @Override
     public void switchPlayMode(SuperPlayerDef.PlayerMode playerMode) {
@@ -920,4 +983,22 @@ public class SuperPlayerImpl implements SuperPlayer, ITXVodPlayListener, ITXLive
     public void setObserver(SuperPlayerObserver observer) {
         mObserver = observer;
     }
+
+    @Override
+    public void setLoop(boolean isLoop) {
+        mVodPlayer.setLoop(isLoop);
+    }
+
+    @Override
+    public void setStartTime(float startPos) {
+        this.mStartPos = startPos;
+        mVodPlayer.setStartTime(startPos);
+    }
+
+    @Override
+    public void setAutoPlay(boolean isAutoPlay) {
+        this.mIsAutoPlay = isAutoPlay;
+        mVodPlayer.setAutoPlay(isAutoPlay);
+    }
+    
 }

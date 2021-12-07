@@ -142,10 +142,10 @@ public abstract class AbsPlayer extends RelativeLayout implements Player {
         }
     }
 
-    public boolean isShowingVipView(){
+    public boolean isShowingVipView() {
         if (mVipWatchView != null) {
-           return mVipWatchView.isShowing();
-        }else {
+            return mVipWatchView.isShowing();
+        } else {
             return false;
         }
     }

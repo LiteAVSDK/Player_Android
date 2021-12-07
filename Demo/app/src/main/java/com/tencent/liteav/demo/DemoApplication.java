@@ -6,9 +6,6 @@ import android.os.StrictMode;
 
 import androidx.multidex.MultiDexApplication;
 
-import com.tencent.rtmp.TXLiveBase;
-import com.tencent.rtmp.TXLiveBaseListener;
-
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
@@ -19,10 +16,6 @@ public class DemoApplication extends MultiDexApplication {
     //    private RefWatcher mRefWatcher;
     private static DemoApplication instance;
 
-    // 如何获取License? 请参考官网指引 https://cloud.tencent.com/document/product/454/34750
-    String licenceUrl = "请替换成您的licenseUrl";
-    String licenseKey = "请替换成您的licenseKey";
-
     private Context mAppContext;
     @Override
     public void onCreate() {
@@ -32,19 +25,6 @@ public class DemoApplication extends MultiDexApplication {
         mAppContext = this.getApplicationContext();
         instance = this;
 
-
-        TXLiveBase.getInstance().setLicence(instance, licenceUrl, licenseKey);
-        TXLiveBase.setListener(new TXLiveBaseListener() {
-            @Override
-            public void onUpdateNetworkTime(int errCode, String errMsg) {
-                if (errCode != 0) {
-                    TXLiveBase.updateNetworkTime();
-                }
-            }
-        });
-        TXLiveBase.updateNetworkTime();
-
-        // 短视频licence设置
         StrictMode.VmPolicy.Builder builder = new StrictMode.VmPolicy.Builder();
         StrictMode.setVmPolicy(builder.build());
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR2) {

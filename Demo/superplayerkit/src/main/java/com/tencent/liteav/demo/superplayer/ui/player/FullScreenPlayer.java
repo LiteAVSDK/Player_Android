@@ -15,9 +15,11 @@ import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import com.bumptech.glide.Glide;
 import com.tencent.liteav.demo.superplayer.R;
 import com.tencent.liteav.demo.superplayer.SuperPlayerDef;
 import com.tencent.liteav.demo.superplayer.model.VipWatchModel;
+import com.tencent.liteav.demo.superplayer.SuperPlayerModel;
 import com.tencent.liteav.demo.superplayer.model.entity.PlayImageSpriteInfo;
 import com.tencent.liteav.demo.superplayer.model.entity.PlayKeyFrameDescInfo;
 import com.tencent.liteav.demo.superplayer.model.net.LogReport;
@@ -30,10 +32,14 @@ import com.tencent.liteav.demo.superplayer.ui.view.VodMoreView;
 import com.tencent.liteav.demo.superplayer.ui.view.VodQualityView;
 import com.tencent.liteav.demo.superplayer.ui.view.VolumeBrightnessProgressLayout;
 import com.tencent.rtmp.TXImageSprite;
+import com.tencent.rtmp.TXLog;
 
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.List;
+
+import static com.tencent.liteav.demo.superplayer.SuperPlayerModel.PLAY_ACTION_AUTO_PLAY;
+import static com.tencent.liteav.demo.superplayer.SuperPlayerModel.PLAY_ACTION_MANUAL_PLAY;
 
 /**
  * 全屏模式播放控件
@@ -81,6 +87,8 @@ public class FullScreenPlayer extends AbsPlayer implements View.OnClickListener,
     private ImageView                      mIvSnapshot;                            // 截屏按钮
     private ImageView                      mIvLock;                                // 锁屏按钮
     private ImageView                      mIvMore;                                // 更多设置弹窗按钮
+    private ImageView                      mImageStartAndResume;                   // 开始播放的三角
+    private ImageView                      mImageCover;                            // 封面图
     private VodQualityView                 mVodQualityView;                        // 画质列表弹窗
     private VodMoreView                    mVodMoreView;                           // 更多设置弹窗
     private TextView                       mTvVttText;                             // 关键帧打点信息文本
@@ -106,7 +114,7 @@ public class FullScreenPlayer extends AbsPlayer implements View.OnClickListener,
     private VideoQuality                   mDefaultVideoQuality;                   // 默认画质
     private List<VideoQuality>             mVideoQualityList;                      // 画质列表
     private boolean                        mFirstShowQuality;                      // 是都是首次显示画质信息
-
+    private boolean                        mIsOpenGesture    = true;                  // 是否开启手势
 
     public FullScreenPlayer(Context context) {
         super(context);
@@ -232,7 +240,6 @@ public class FullScreenPlayer extends AbsPlayer implements View.OnClickListener,
     private void initView(Context context) {
         mHideLockViewRunnable = new HideLockViewRunnable(this);
         LayoutInflater.from(context).inflate(R.layout.superplayer_vod_player_fullscreen, this);
-
         mLayoutTop = (RelativeLayout) findViewById(R.id.superplayer_rl_top);
         mLayoutTop.setOnClickListener(this);
         mLayoutBottom = (LinearLayout) findViewById(R.id.superplayer_ll_bottom);
@@ -248,6 +255,8 @@ public class FullScreenPlayer extends AbsPlayer implements View.OnClickListener,
         mIvSnapshot = (ImageView) findViewById(R.id.superplayer_iv_snapshot);
         mTvCurrent = (TextView) findViewById(R.id.superplayer_tv_current);
         mTvDuration = (TextView) findViewById(R.id.superplayer_tv_duration);
+        mImageCover = (ImageView) findViewById(R.id.superplayer_cover_view);
+        mImageStartAndResume = (ImageView) findViewById(R.id.superplayer_resume);
 
         mSeekBarProgress = (PointSeekBar) findViewById(R.id.superplayer_seekbar_progress);
         mSeekBarProgress.setProgress(0);
@@ -262,6 +271,7 @@ public class FullScreenPlayer extends AbsPlayer implements View.OnClickListener,
         mVodMoreView = (VodMoreView) findViewById(R.id.superplayer_vod_more);
         mVodMoreView.setCallback(this);
 
+        mImageStartAndResume.setOnClickListener(this);
         mTvBackToLive.setOnClickListener(this);
         mLayoutReplay.setOnClickListener(this);
         mIvLock.setOnClickListener(this);
@@ -290,6 +300,7 @@ public class FullScreenPlayer extends AbsPlayer implements View.OnClickListener,
      */
     private void togglePlayState() {
         switch (mCurrentPlayState) {
+            case INIT:
             case PAUSE:
             case END:
                 if (mControllerCallback != null) {
@@ -332,6 +343,30 @@ public class FullScreenPlayer extends AbsPlayer implements View.OnClickListener,
         if (mVodMoreView.getVisibility() == VISIBLE) {
             mVodMoreView.setVisibility(GONE);
         }
+    }
+
+    private void updateStartUI(boolean isAutoPlay) {
+        if (isAutoPlay) {
+            toggleView(mImageStartAndResume, false);
+            toggleView(mPbLiveLoading, true);
+        } else {
+            toggleView(mImageStartAndResume, true);
+            toggleView(mPbLiveLoading, false);
+        }
+        toggleView(mLayoutReplay, false);
+    }
+
+    public void preparePlayVideo(SuperPlayerModel superPlayerModel) {
+        if (superPlayerModel.coverPictureUrl != null) {
+            Glide.with(getContext()).load(superPlayerModel.coverPictureUrl).placeholder(R.drawable.superplayer_default).into(mImageCover);
+        } else {
+            Glide.with(getContext()).load(superPlayerModel.placeholderImage).placeholder(R.drawable.superplayer_default).into(mImageCover);
+        }
+        toggleView(mImageCover, true);
+        mIvPause.setImageResource(R.drawable.superplayer_ic_vod_play_normal);
+        updateVideoProgress(0, superPlayerModel.duration);
+        mSeekBarProgress.setEnabled(superPlayerModel.playAction != SuperPlayerModel.PLAY_ACTION_MANUAL_PLAY);
+        updateStartUI(superPlayerModel.playAction == SuperPlayerModel.PLAY_ACTION_AUTO_PLAY);
     }
 
     /**
@@ -397,15 +432,31 @@ public class FullScreenPlayer extends AbsPlayer implements View.OnClickListener,
         releaseTXImageSprite();
     }
 
+
+    public void toggleCoverView(boolean isVisible) {
+        toggleView(mImageCover, isVisible);
+    }
+
+    public void prepareLoading() {
+        toggleView(mPbLiveLoading, true);
+        toggleView(mImageStartAndResume, false);
+    }
+
     @Override
     public void updatePlayState(SuperPlayerDef.PlayerState playState) {
         switch (playState) {
+            case INIT:
+                mIvPause.setImageResource(R.drawable.superplayer_ic_vod_play_normal);
+                break;
             case PLAYING:
+                mSeekBarProgress.setEnabled(true);
                 mIvPause.setImageResource(R.drawable.superplayer_ic_vod_pause_normal);
+                toggleView(mImageStartAndResume, false);
                 toggleView(mPbLiveLoading, false);
                 toggleView(mLayoutReplay, false);
                 break;
             case LOADING:
+                mSeekBarProgress.setEnabled(true);
                 mIvPause.setImageResource(R.drawable.superplayer_ic_vod_pause_normal);
                 toggleView(mPbLiveLoading, true);
                 toggleView(mLayoutReplay, false);
@@ -413,9 +464,11 @@ public class FullScreenPlayer extends AbsPlayer implements View.OnClickListener,
             case PAUSE:
                 mIvPause.setImageResource(R.drawable.superplayer_ic_vod_play_normal);
                 toggleView(mLayoutReplay, false);
+                toggleView(mImageStartAndResume, true);
                 break;
             case END:
                 mIvPause.setImageResource(R.drawable.superplayer_ic_vod_play_normal);
+                toggleView(mPbLiveLoading, false);
                 toggleView(mLayoutReplay, true);
                 break;
         }
@@ -465,7 +518,7 @@ public class FullScreenPlayer extends AbsPlayer implements View.OnClickListener,
             long leftTime = mDuration - mProgress;
             mDuration = mDuration > MAX_SHIFT_TIME ? MAX_SHIFT_TIME : mDuration;
             percentage = 1 - (float) leftTime / (float) mDuration;
-        }else {
+        } else {
             mVipWatchView.setCurrentTime(current);
         }
 
@@ -571,8 +624,9 @@ public class FullScreenPlayer extends AbsPlayer implements View.OnClickListener,
 
     @Override
     public boolean onTouchEvent(MotionEvent event) {
-        if (mGestureDetector != null)
+        if (mIsOpenGesture && mGestureDetector != null) {
             mGestureDetector.onTouchEvent(event);
+        }
 
         if (!mLockScreen) {
             if (event.getAction() == MotionEvent.ACTION_UP && mVideoGestureDetector != null && mVideoGestureDetector.isVideoProgressModel()) {
@@ -624,7 +678,7 @@ public class FullScreenPlayer extends AbsPlayer implements View.OnClickListener,
             if (mControllerCallback != null) {
                 mControllerCallback.onBackPressed(SuperPlayerDef.PlayerMode.FULLSCREEN);
             }
-        } else if (i == R.id.superplayer_iv_pause) {            //暂停\播放按钮
+        } else if (i == R.id.superplayer_iv_pause || i == R.id.superplayer_resume) {            //暂停\播放按钮
             togglePlayState();
         } else if (i == R.id.superplayer_iv_danmuku) {          //弹幕按钮
             toggleBarrage();
@@ -663,6 +717,24 @@ public class FullScreenPlayer extends AbsPlayer implements View.OnClickListener,
             mControllerCallback.onDanmuToggle(mBarrageOn);
         }
     }
+
+    /**
+     * 还原界面上的信息
+     * 关闭弹幕信息
+     * 关闭镜像
+     * 还原播放速度UI
+     */
+    public void revertUI() {
+        //关闭弹幕
+        if (mBarrageOn) {
+            mBarrageOn = false;
+            mIvDanmu.setImageResource(R.drawable.superplayer_ic_danmuku_off);
+        }
+        if (mVodMoreView != null) {
+            mVodMoreView.revertUI();
+        }
+    }
+
 
     /**
      * 显示更多设置弹窗
@@ -916,6 +988,10 @@ public class FullScreenPlayer extends AbsPlayer implements View.OnClickListener,
         mVodQualityView.setVisibility(View.GONE);
     }
 
+
+    public void disableGesture(boolean flag) {
+        this.mIsOpenGesture = !flag;
+    }
 
     @Override
     public void onClickVipTitleBack() {

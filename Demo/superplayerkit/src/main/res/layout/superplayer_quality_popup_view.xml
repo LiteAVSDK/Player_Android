@@ -20,6 +20,7 @@
         android:layout_height="match_parent"
         android:layout_below="@id/superplayer_tv_title"
         android:layout_marginTop="50dp"
-        android:choiceMode="singleChoice"></ListView>
+        android:listSelector="@android:color/transparent"
+        android:choiceMode="singleChoice"/>
 
 </RelativeLayout>

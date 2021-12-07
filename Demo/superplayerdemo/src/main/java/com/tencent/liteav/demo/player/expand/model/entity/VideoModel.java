@@ -4,6 +4,8 @@ package com.tencent.liteav.demo.player.expand.model.entity;
 import com.tencent.liteav.demo.superplayer.model.VipWatchModel;
 import java.util.List;
 
+import static com.tencent.liteav.demo.superplayer.SuperPlayerModel.PLAY_ACTION_AUTO_PLAY;
+
 /**
  * Created by yuejiaoli on 2018/7/4.
  */
@@ -20,10 +22,17 @@ public class VideoModel {
      */
     public String videoURL;
 
+
     /**
-     * 视频封面本地图片
+     *  从服务器拉取的封面图片
      */
     public String placeholderImage;
+
+
+    /**
+     * 用户设置图片的接口 如果是本地图片前面加file://
+     */
+    public String coverPictureUrl;
 
     /**
      * 视频时长
@@ -45,6 +54,9 @@ public class VideoModel {
      */
     public String pSign;
 
+    public int playAction = PLAY_ACTION_AUTO_PLAY;
+
+
     /**
      * VIDEO 不同清晰度的URL链接
      */
@@ -52,6 +64,9 @@ public class VideoModel {
     public int                  playDefaultIndex; // 指定多码率情况下，默认播放的连接Index
     public VipWatchModel        vipWatchModel = null;
 
+    //feed流视频描述信息
+    public String videoDescription     = null;
+    public String videoMoreDescription = null;
 
     public static class VideoPlayerURL {
 

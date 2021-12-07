@@ -18,6 +18,20 @@ import java.util.List;
  */
 public class SuperPlayerModel {
 
+    /**
+     * 自动播放
+     */
+    public static final int PLAY_ACTION_AUTO_PLAY = 0;
+
+    /**
+     * 手动播放
+     */
+    public static final int PLAY_ACTION_MANUAL_PLAY = 1;
+
+    /**
+     * 预加载
+     */
+    public static final int PLAY_ACTION_PRELOAD = 2;
     public int appId;              // AppId 用于腾讯云点播 File ID 播放及腾讯云直播时移功能
 
     /**
@@ -57,7 +71,21 @@ public class SuperPlayerModel {
 
     public String title = "";             // 视频文件名 （用于显示在UI层);使用file id播放，若未指定title，则使用FileId返回的Title；使用url播放需要指定title，否则title显示为空
 
+    public int playAction = PLAY_ACTION_AUTO_PLAY;
+
+    /**
+     * 从腾讯服务器拉取的封面图片
+     */
+    public String placeholderImage;
+
+    /**
+     * 用户设置的封面图片
+     */
+    public String coverPictureUrl;
+
     public VipWatchModel vipWatchMode = null;
+
+    public int duration;
 
     public static class SuperPlayerURL {
         public SuperPlayerURL(String url, String qualityName) {

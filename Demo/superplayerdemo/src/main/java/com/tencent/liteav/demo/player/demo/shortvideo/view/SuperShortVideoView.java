@@ -24,18 +24,19 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class SuperShortVideoView extends RelativeLayout {
-    private static final String TAG = "ShortVideoDemo:SuperShortVideoView";
-    private static final int MAX_PLAYER_COUNT_ON_PASS = 3;
-    private View mRootView;
-    private RecyclerView mRecyclerView;
-    private ShortVideoPlayAdapter mAdapter;
-    private List<ShortVideoBean> mUrlList;
-    private LinearLayoutManager mLayoutManager;
-    private PagerSnapHelper mSnapHelper;
-    private int mLastPositionInIDLE = -1;
-    private TXVideoBaseView mBaseItemView;
-    private Handler mHandler;
+    private static final String TAG                      = "ShortVideoDemo:SuperShortVideoView";
+    private static final int    MAX_PLAYER_COUNT_ON_PASS = 3;
 
+    private View                  mRootView;
+    private RecyclerView          mRecyclerView;
+    private ShortVideoPlayAdapter mAdapter;
+    private List<ShortVideoBean>  mUrlList;
+    private LinearLayoutManager   mLayoutManager;
+    private PagerSnapHelper       mSnapHelper;
+    private int                   mLastPositionInIDLE = -1;
+    private TXVideoBaseView       mBaseItemView;
+    private Handler               mHandler;
+    private Object                mLock                = new Object();
 
     public SuperShortVideoView(Context context) {
         super(context);
@@ -80,7 +81,13 @@ public class SuperShortVideoView extends RelativeLayout {
         TXLog.i(TAG, "[setDataSource]");
         Message message = new Message();
         message.obj = dataSource;
-        mHandler.sendMessage(message);
+        synchronized (mLock) {
+            if (mHandler == null) {
+                return;
+            }
+            mHandler.sendMessage(message);
+        }
+
     }
 
     private void addListener() {
@@ -160,8 +167,10 @@ public class SuperShortVideoView extends RelativeLayout {
     }
 
     public void releasePlayer() {
-        mHandler.removeCallbacksAndMessages(null);
-        mHandler = null;
+        synchronized (mLock) {
+            mHandler.removeCallbacksAndMessages(null);
+            mHandler = null;
+        }
         if (mBaseItemView != null) {
             mBaseItemView.stopPlayer();
         }

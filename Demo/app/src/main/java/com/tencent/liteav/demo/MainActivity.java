@@ -18,6 +18,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.tencent.liteav.demo.common.widget.expandableadapter.BaseExpandableRecyclerViewAdapter;
+import com.tencent.liteav.demo.player.demo.FeedActivity;
 import com.tencent.liteav.demo.player.demo.SuperPlayerActivity;
 import com.tencent.liteav.demo.player.demo.shortvideo.view.ShortVideoActivity;
 import com.tencent.rtmp.TXLiveBase;
@@ -50,10 +51,11 @@ public class MainActivity extends Activity {
             return;
         }
 
+        TXCSDKService.init(getApplicationContext());
         setContentView(R.layout.activity_main);
 
         mTvVersion = (TextView) findViewById(R.id.main_tv_version);
-        mTvVersion.setText(getString(R.string.app_tv_super_player_version, TXLiveBase.getSDKVersionStr()+"(9.3.1169)"));
+        mTvVersion.setText(getString(R.string.app_tv_super_player_version, TXLiveBase.getSDKVersionStr()+"(9.4.0.1218)"));
 
         mMainTitle = (TextView) findViewById(R.id.main_title);
         mMainTitle.setOnLongClickListener(new View.OnLongClickListener() {
@@ -139,6 +141,7 @@ public class MainActivity extends Activity {
         List<ChildBean> playerChildList = new ArrayList<>();
         playerChildList.add(new ChildBean(getString(R.string.app_item_super_player), R.drawable.play, 3, SuperPlayerActivity.class));
         playerChildList.add(new ChildBean(getString(R.string.app_item_shortvideo_player), R.drawable.play, 3, ShortVideoActivity.class));
+        playerChildList.add(new ChildBean(getString(R.string.app_feed_player), R.drawable.play, 3, FeedActivity.class));
         if (playerChildList.size() != 0) {
             GroupBean playerGroupBean = new GroupBean(getString(R.string.app_item_player), R.drawable.composite, playerChildList);
             groupList.add(playerGroupBean);

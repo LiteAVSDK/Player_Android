@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:paddingTop="10dp"
+    android:paddingRight="10dp"
+    android:paddingBottom="10dp">
+
+
+    <ImageView
+        android:id="@+id/feed_detail_holder_img"
+        android:layout_width="100dp"
+        android:scaleType="centerCrop"
+        android:layout_height="70dp" />
+
+    <TextView
+        android:id="@+id/feed_detail_holder_title_txt"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignTop="@+id/feed_detail_holder_img"
+        android:layout_marginLeft="10dp"
+        android:layout_toRightOf="@+id/feed_detail_holder_img"
+        android:ellipsize="end"
+        android:lines="1"
+        android:textColor="@color/superplayer_white"
+        android:textSize="16sp" />
+
+    <TextView
+        android:id="@+id/feed_detail_holder_describe_txt"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/feed_detail_holder_title_txt"
+        android:layout_marginLeft="10dp"
+        android:layout_marginTop="5dp"
+        android:layout_toRightOf="@+id/feed_detail_holder_img"
+        android:ellipsize="end"
+        android:lines="2"
+        android:textColor="#ccffffff"
+        android:textSize="14sp" />
+
+
+    <TextView
+        android:id="@+id/feed_detail_holder_video_duration_tv"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignRight="@+id/feed_detail_holder_img"
+        android:layout_alignBottom="@+id/feed_detail_holder_img"
+        android:layout_marginRight="5dp"
+        android:layout_marginBottom="5dp"
+        android:textColor="#ccffffff"
+        android:textSize="11sp" />
+
+
+</RelativeLayout>

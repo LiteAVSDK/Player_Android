@@ -90,7 +90,7 @@ public class VideoProgressLayout extends RelativeLayout {
     /**
      * 设置缩略图
      */
-    public void hideThumbnail(){
+    public void hideThumbnail() {
         mIvThumbnail.setVisibility(GONE);
     }
 

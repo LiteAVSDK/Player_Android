@@ -10,6 +10,8 @@ import com.tencent.rtmp.TXVodPlayConfig;
 import com.tencent.rtmp.TXVodPlayer;
 import com.tencent.rtmp.ui.TXCloudVideoView;
 
+import java.io.File;
+
 import static com.tencent.rtmp.TXLiveConstants.PLAY_EVT_PLAY_BEGIN;
 import static com.tencent.rtmp.TXLiveConstants.PLAY_EVT_PLAY_END;
 import static com.tencent.rtmp.TXLiveConstants.PLAY_EVT_PLAY_PROGRESS;
@@ -31,6 +33,10 @@ public class TXVodPlayerWrapper implements ITXVodPlayListener {
         mTXVodPlayConfig.setProgressInterval(1);
         mTXVodPlayConfig.setSmoothSwitchBitrate(true);
         mTXVodPlayConfig.setMaxBufferSize(5);
+        File sdcardDir = context.getExternalFilesDir(null);
+        if (sdcardDir != null) {
+            mTXVodPlayConfig.setCacheFolderPath(sdcardDir.getPath() + "/txcache");
+        }
         mVodPlayer.setConfig(mTXVodPlayConfig);
     }
 
@@ -112,8 +118,8 @@ public class TXVodPlayerWrapper implements ITXVodPlayListener {
         mVodPlayer.stopPlay(true);
         TXLog.i(TAG, "[preStartPlay] , startOnPrepare ，" + mStartOnPrepare + "， mVodPlayer " + mVodPlayer.hashCode());
         mVodPlayer.setAutoPlay(false);
-        mVodPlayer.startPlay(bean.videoURL);
         mVodPlayer.setBitrateIndex(bean.bitRateIndex);
+        mVodPlayer.startPlay(bean.videoURL);
     }
 
     private void playerStatusChanged(TxVodStatus status) {

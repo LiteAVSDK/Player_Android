@@ -112,6 +112,7 @@
     <string name="app_debug_switch_close">DEBUG开关已关闭</string>
     <string name="app_vod_player">点播播放器</string>
     <string name="app_rtc_player">超低延时播放</string>
+    <string name="app_feed_player">Feed流播放</string>
 
     <string name="app_item_other_tools">其他工具</string>
     <string name="item_live_pusher_v1">直播推流 V1</string>
@@ -119,4 +120,11 @@
     <string name="item_live_pusher_screen_v1">屏幕分享 V1</string>
     <string name="item_live_player_v1">直播拉流 V1</string>
     <string name="item_link_mic_v1">连麦演示 V1</string>
+
+    <string name="setting_download_title">下载中</string>
+    <string name="setting_download_description">%s 下载中</string>
+    <string name="setting_download_failed">下载失败</string>
+    <string name="setting_update_dialog_title">升级提示</string>
+    <string name="setting_update_dialog_content">检测到当前Android 腾讯云视立方有新版本: %s, 请升级后使用!</string>
+    <string name="setting_update_dialog_confirm">开始升级</string>
 </resources>

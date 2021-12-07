@@ -76,71 +76,6 @@
         </LinearLayout>
     </RelativeLayout>
 
-    <LinearLayout
-        android:id="@+id/superplayer_ll_bottom"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
-        android:background="@drawable/superplayer_bottom_shadow"
-        android:orientation="horizontal">
-
-        <!--播放/暂停-->
-        <ImageView
-            android:id="@+id/superplayer_iv_pause"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center_vertical"
-            android:layout_marginLeft="20dp"
-            android:src="@drawable/superplayer_ic_vod_pause_normal" />
-
-        <!--播放位置-->
-        <TextView
-            android:id="@+id/superplayer_tv_current"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center_vertical"
-            android:text="00:00"
-            android:textColor="@android:color/white"
-            android:textSize="11.0sp" />
-
-        <com.tencent.liteav.demo.superplayer.ui.view.PointSeekBar
-            android:id="@+id/superplayer_seekbar_progress"
-            android:layout_width="0.0dip"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center_vertical"
-            android:layout_marginLeft="5.0dip"
-            android:layout_marginRight="5.0dip"
-            android:layout_weight="1.0"
-            app:psb_backgroundColor="@color/superplayer_biz_audio_progress_second"
-            app:psb_max="100"
-            app:psb_progress="0"
-            app:psb_progressColor="#FF584C"
-            app:psb_progressHeight="2dp"
-            app:psb_thumbBackground="@drawable/superplayer_ic_vod_thumb" />
-
-        <!--总时长-->
-        <TextView
-            android:id="@+id/superplayer_tv_duration"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center_vertical"
-            android:text="00:00"
-            android:textColor="@android:color/white"
-            android:textSize="11.0sp" />
-
-        <TextView
-            android:id="@+id/superplayer_tv_quality"
-            android:layout_width="wrap_content"
-            android:layout_height="match_parent"
-            android:layout_centerInParent="true"
-            android:layout_marginEnd="5dp"
-            android:gravity="center_vertical"
-            android:paddingLeft="10dp"
-            android:paddingRight="10dp"
-            android:text="@string/superplayer_original_picture"
-            android:textColor="@android:color/white"
-            android:textSize="11dp" />
-    </LinearLayout>
 
     <TextView
         android:id="@+id/superplayer_large_tv_vtt_text"
@@ -210,12 +145,6 @@
         android:text="@string/superplayer_back_live"
         android:visibility="gone" />
 
-    <ProgressBar
-        android:id="@+id/superplayer_pb_live"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_centerInParent="true"
-        android:visibility="gone" />
 
     <com.tencent.liteav.demo.superplayer.ui.view.VolumeBrightnessProgressLayout
         android:id="@+id/superplayer_gesture_progress"
@@ -238,6 +167,93 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:visibility="gone" />
+
+    <ImageView
+        android:scaleType="centerCrop"
+        android:id="@+id/superplayer_cover_view"
+        android:layout_width="match_parent"
+        android:visibility="gone"
+        android:layout_height="match_parent" />
+
+    <LinearLayout
+        android:id="@+id/superplayer_ll_bottom"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:background="@drawable/superplayer_bottom_shadow"
+        android:paddingEnd="15dp"
+        android:orientation="horizontal">
+
+        <!--播放/暂停-->
+        <ImageView
+            android:id="@+id/superplayer_iv_pause"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
+            android:layout_marginLeft="20dp"
+            android:src="@drawable/superplayer_ic_vod_pause_normal" />
+
+        <!--播放位置-->
+        <TextView
+            android:id="@+id/superplayer_tv_current"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
+            android:text="00:00"
+            android:textColor="@android:color/white"
+            android:textSize="11.0sp" />
+
+        <com.tencent.liteav.demo.superplayer.ui.view.PointSeekBar
+            android:id="@+id/superplayer_seekbar_progress"
+            android:layout_width="0.0dip"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
+            android:layout_marginLeft="5.0dip"
+            android:layout_marginRight="5.0dip"
+            android:layout_weight="1.0"
+            app:psb_backgroundColor="@color/superplayer_biz_audio_progress_second"
+            app:psb_max="100"
+            app:psb_progress="0"
+            app:psb_progressColor="#FF584C"
+            app:psb_progressHeight="2dp"
+            app:psb_thumbBackground="@drawable/superplayer_ic_vod_thumb" />
+
+        <!--总时长-->
+        <TextView
+            android:id="@+id/superplayer_tv_duration"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
+            android:text="00:00"
+            android:textColor="@android:color/white"
+            android:textSize="11.0sp" />
+
+        <TextView
+            android:id="@+id/superplayer_tv_quality"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_centerInParent="true"
+            android:gravity="center_vertical"
+            android:paddingLeft="10dp"
+            android:text="@string/superplayer_original_picture"
+            android:textColor="@android:color/white"
+            android:textSize="11dp" />
+    </LinearLayout>
+
+    <ProgressBar
+        android:id="@+id/superplayer_pb_live"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerInParent="true"
+        android:visibility="gone" />
+
+    <ImageView
+        android:id="@+id/superplayer_resume"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:layout_centerInParent="true"
+        android:src="@drawable/superplayer_ic_vod_play_normal"
+        android:visibility="visible" />
 
     <com.tencent.liteav.demo.superplayer.ui.view.VipWatchView
         android:id="@+id/superplayer_vip_watch_view"

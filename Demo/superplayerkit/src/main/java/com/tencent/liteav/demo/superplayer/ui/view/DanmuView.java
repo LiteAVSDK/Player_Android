@@ -148,6 +148,9 @@ public class DanmuView extends DanmakuView {
 
     public void toggle(boolean on) {
         TXCLog.i(TAG, "onToggleControllerView on:" + on);
+        if (mDanmuHandler == null) {
+            return;
+        }
         if (on) {
             mDanmuHandler.sendEmptyMessageAtTime(DanmuHandler.MSG_SEND_DANMU, 100);
         } else {

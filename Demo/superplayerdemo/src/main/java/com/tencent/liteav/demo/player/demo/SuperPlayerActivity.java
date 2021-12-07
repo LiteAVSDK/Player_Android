@@ -433,7 +433,7 @@ public class SuperPlayerActivity extends Activity implements View.OnClickListene
         if (mSuperPlayerView.getPlayerState() == SuperPlayerDef.PlayerState.PLAYING
                 || mSuperPlayerView.getPlayerState() == SuperPlayerDef.PlayerState.PAUSE) {
             Log.i(TAG, "onResume state :" + mSuperPlayerView.getPlayerState());
-            if(!mSuperPlayerView.isShowingVipView()) {
+            if (!mSuperPlayerView.isShowingVipView()) {
                 mSuperPlayerView.onResume();
             }
             if (mSuperPlayerView.getPlayerMode() == SuperPlayerDef.PlayerMode.FLOAT) {
@@ -478,6 +478,9 @@ public class SuperPlayerActivity extends Activity implements View.OnClickListene
      */
     @Override
     public void onSuccess(final VideoModel videoModel) {
+        if ("8602268011437356984".equals(videoModel.fileid)) {
+            videoModel.title = "自定义封面演示";
+        }
         runOnUiThread(new Runnable() {
             @Override
             public void run() {
@@ -509,7 +512,7 @@ public class SuperPlayerActivity extends Activity implements View.OnClickListene
     private void playVideoModel(VideoModel videoModel) {
         final SuperPlayerModel superPlayerModelV3 = new SuperPlayerModel();
         superPlayerModelV3.appId = videoModel.appid;
-        superPlayerModelV3.vipWatchMode=videoModel.vipWatchModel;
+        superPlayerModelV3.vipWatchMode = videoModel.vipWatchModel;
         if (!TextUtils.isEmpty(videoModel.videoURL)) {
             if (isSuperPlayerVideo(videoModel)) {
                 playSuperPlayerVideo(videoModel);
@@ -530,6 +533,10 @@ public class SuperPlayerActivity extends Activity implements View.OnClickListene
             superPlayerModelV3.videoId.fileId = videoModel.fileid;
             superPlayerModelV3.videoId.pSign = videoModel.pSign;
         }
+        superPlayerModelV3.playAction = videoModel.playAction;
+        superPlayerModelV3.placeholderImage = videoModel.placeholderImage;
+        superPlayerModelV3.coverPictureUrl = videoModel.coverPictureUrl;
+        superPlayerModelV3.duration = videoModel.duration;
         mSuperPlayerView.playWithModel(superPlayerModelV3);
     }
 
@@ -916,6 +923,21 @@ public class SuperPlayerActivity extends Activity implements View.OnClickListene
         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         intent.addCategory(Intent.CATEGORY_HOME);
         startActivity(intent);
+    }
+
+    @Override
+    public void onPlaying() {
+
+    }
+
+    @Override
+    public void onPlayEnd() {
+
+    }
+
+    @Override
+    public void onError(int code) {
+
     }
 
     @Override
