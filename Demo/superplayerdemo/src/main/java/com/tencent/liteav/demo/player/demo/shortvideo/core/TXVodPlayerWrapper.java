@@ -2,10 +2,10 @@ package com.tencent.liteav.demo.player.demo.shortvideo.core;
 
 import android.content.Context;
 import android.os.Bundle;
+import android.util.Log;
 
 import com.tencent.liteav.demo.player.demo.shortvideo.bean.ShortVideoBean;
 import com.tencent.rtmp.ITXVodPlayListener;
-import com.tencent.rtmp.TXLog;
 import com.tencent.rtmp.TXVodPlayConfig;
 import com.tencent.rtmp.TXVodPlayer;
 import com.tencent.rtmp.ui.TXCloudVideoView;
@@ -45,7 +45,7 @@ public class TXVodPlayerWrapper implements ITXVodPlayListener {
         switch (event) {
             case PLAY_EVT_VOD_PLAY_PREPARED:
                 playerStatusChanged(TxVodStatus.TX_VIDEO_PLAYER_STATUS_PREPARED);
-                TXLog.i(TAG, "[onPlayEvent] , startOnPrepare，" + mStartOnPrepare + "，mVodPlayer " + mVodPlayer.hashCode()+" mUrl " +mUrl);
+                Log.i(TAG, "[onPlayEvent] , startOnPrepare，" + mStartOnPrepare + "，mVodPlayer " + mVodPlayer.hashCode()+" mUrl " +mUrl);
                 if (mStartOnPrepare) {
                     mVodPlayer.resume();
                     mStartOnPrepare = false;
@@ -53,7 +53,7 @@ public class TXVodPlayerWrapper implements ITXVodPlayListener {
                 }
                 break;
             case PLAY_EVT_PLAY_BEGIN:
-                TXLog.i(TAG, "[onPlayEvent] , PLAY_EVT_PLAY_BEGIN，" + mVodPlayer.hashCode() + ",url " + mUrl);
+                Log.i(TAG, "[onPlayEvent] , PLAY_EVT_PLAY_BEGIN，" + mVodPlayer.hashCode() + ",url " + mUrl);
                 break;
             case PLAY_EVT_PLAY_PROGRESS:
                 if (mSeekBarChangeListener != null) {
@@ -87,7 +87,7 @@ public class TXVodPlayerWrapper implements ITXVodPlayListener {
         } else {
             mStartOnPrepare = true;
         }
-        TXLog.i(TAG, "[resumePlay] , startOnPrepare， " + mStartOnPrepare + " mVodPlayer " + mVodPlayer.hashCode() + " url " + mUrl);
+        Log.i(TAG, "[resumePlay] , startOnPrepare， " + mStartOnPrepare + " mVodPlayer " + mVodPlayer.hashCode() + " url " + mUrl);
     }
 
 
@@ -100,6 +100,12 @@ public class TXVodPlayerWrapper implements ITXVodPlayListener {
         return mVodPlayer.isPlaying();
     }
 
+
+    public void stopForPlaying() {
+        if (mStatus == TxVodStatus.TX_VIDEO_PLAYER_STATUS_PLAYING) {
+            mVodPlayer.stopPlay(true);
+        }
+    }
 
     public void stopPlay() {
         mVodPlayer.stopPlay(true);
@@ -116,7 +122,7 @@ public class TXVodPlayerWrapper implements ITXVodPlayListener {
         mStartOnPrepare = false;
         mVodPlayer.setLoop(true);
         mVodPlayer.stopPlay(true);
-        TXLog.i(TAG, "[preStartPlay] , startOnPrepare ，" + mStartOnPrepare + "， mVodPlayer " + mVodPlayer.hashCode());
+        Log.i(TAG, "[preStartPlay] , startOnPrepare ，" + mStartOnPrepare + "， mVodPlayer " + mVodPlayer.hashCode());
         mVodPlayer.setAutoPlay(false);
         mVodPlayer.setBitrateIndex(bean.bitRateIndex);
         mVodPlayer.startPlay(bean.videoURL);
@@ -124,7 +130,7 @@ public class TXVodPlayerWrapper implements ITXVodPlayListener {
 
     private void playerStatusChanged(TxVodStatus status) {
         this.mStatus = status;
-        TXLog.i(TAG," [playerStatusChanged] mVodPlayer" +mVodPlayer.hashCode()+" mStatus "+mStatus );
+        Log.i(TAG," [playerStatusChanged] mVodPlayer" +mVodPlayer.hashCode()+" mStatus "+mStatus );
     }
 
     public void setVodChangeListener(ISeekBarChangeListener listener) {

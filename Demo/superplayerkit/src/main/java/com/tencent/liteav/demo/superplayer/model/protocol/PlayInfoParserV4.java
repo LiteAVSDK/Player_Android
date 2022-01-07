@@ -3,7 +3,6 @@ package com.tencent.liteav.demo.superplayer.model.protocol;
 import android.text.TextUtils;
 import android.util.Log;
 
-import com.tencent.liteav.basic.log.TXCLog;
 import com.tencent.liteav.demo.superplayer.model.entity.PlayImageSpriteInfo;
 import com.tencent.liteav.demo.superplayer.model.entity.PlayKeyFrameDescInfo;
 import com.tencent.liteav.demo.superplayer.model.entity.EncryptedStreamingInfo;
@@ -71,31 +70,45 @@ public class PlayInfoParserV4 implements IPlayInfoParser {
                 if (basicInfo != null) {
                     mName = basicInfo.optString("name");
                 }
-                //解析视频播放url
-                JSONObject streamingInfo = media.getJSONObject("streamingInfo");
-                if (streamingInfo != null) {
-                    JSONObject plainoutObj = streamingInfo.optJSONObject("plainOutput");//未加密的输出
-                    if (plainoutObj != null) {
-                        mURL = plainoutObj.optString("url");//未加密直接解析出视频url
-                        parseSubStreams(plainoutObj.optJSONArray("subStreams"));
-                    }
-                    JSONArray drmoutputobj = streamingInfo.optJSONArray("drmOutput");//加密输出
-                    if (drmoutputobj != null && drmoutputobj.length() > 0) {
-                        mEncryptedStreamingInfoList = new ArrayList<>();
-                        for (int i = 0; i < drmoutputobj.length(); i++) {
-                            JSONObject jsonObject = drmoutputobj.optJSONObject(i);
-                            String drmType = jsonObject.optString("type");
-                            String url = jsonObject.optString("url");
-                            EncryptedStreamingInfo info = new EncryptedStreamingInfo();
-                            info.drmType = drmType;
-                            info.url = url;
-                            mDRMType = drmType;
-                            mEncryptedStreamingInfoList.add(info);
-                            parseSubStreams(jsonObject.optJSONArray("subStreams"));
+                String audioVideoType = media.optString("audioVideoType");
+                if (TextUtils.equals(audioVideoType, "AdaptiveDynamicStream")) { // 多码率视频信息
+                    //解析视频播放url
+                    JSONObject streamingInfo = media.getJSONObject("streamingInfo");
+                    if (streamingInfo != null) {
+                        JSONObject plainoutObj = streamingInfo.optJSONObject("plainOutput");//未加密的输出
+                        if (plainoutObj != null) {
+                            mURL = plainoutObj.optString("url");//未加密直接解析出视频url
+                            parseSubStreams(plainoutObj.optJSONArray("subStreams"));
                         }
+                        JSONArray drmoutputobj = streamingInfo.optJSONArray("drmOutput");//加密输出
+                        if (drmoutputobj != null && drmoutputobj.length() > 0) {
+                            mEncryptedStreamingInfoList = new ArrayList<>();
+                            for (int i = 0; i < drmoutputobj.length(); i++) {
+                                JSONObject jsonObject = drmoutputobj.optJSONObject(i);
+                                String drmType = jsonObject.optString("type");
+                                String url = jsonObject.optString("url");
+                                EncryptedStreamingInfo info = new EncryptedStreamingInfo();
+                                info.drmType = drmType;
+                                info.url = url;
+                                mDRMType = drmType;
+                                mEncryptedStreamingInfoList.add(info);
+                                parseSubStreams(jsonObject.optJSONArray("subStreams"));
+                            }
+                        }
+                        mToken = streamingInfo.optString("drmToken");
                     }
-                    mToken = streamingInfo.optString("drmToken");
+                } else if (TextUtils.equals(audioVideoType,"Transcode")) { // 转码视频信息
+                    JSONObject transCodeInfo = media.optJSONObject("transcodeInfo");
+                    if (transCodeInfo != null) {
+                        mURL = transCodeInfo.optString("url");
+                    }
+                } else if (TextUtils.equals(audioVideoType, "Original")) { // 原始视频信息
+                    JSONObject originalInfo = media.optJSONObject("originalInfo");
+                    if (originalInfo != null) {
+                        mURL = originalInfo.optString("url");
+                    }
                 }
+
                 //解析雪碧图信息
                 JSONObject imageSpriteInfo = media.optJSONObject("imageSpriteInfo");
                 if (imageSpriteInfo != null) {
@@ -111,24 +124,32 @@ public class PlayInfoParserV4 implements IPlayInfoParser {
                         mImageSpriteInfo.imageUrls = imageUrls;
                     }
                 }
-                //解析关键帧信息
-                JSONObject keyFrameDescInfo = media.optJSONObject("keyFrameDescInfo");
-                if (keyFrameDescInfo != null) {
-                    mKeyFrameDescInfo = new ArrayList<>();
-                    JSONArray keyFrameDescList = keyFrameDescInfo.optJSONArray("keyFrameDescList");
-                    if (keyFrameDescList != null && keyFrameDescList.length() > 0) {
-                        for (int i = 0; i < keyFrameDescList.length(); i++) {
-                            JSONObject jsonObject = keyFrameDescList.getJSONObject(i);
-                            PlayKeyFrameDescInfo info = new PlayKeyFrameDescInfo();
-                            info.time = jsonObject.optLong("timeOffset");
-                            info.content = jsonObject.optString("content");
-                            mKeyFrameDescInfo.add(info);
-                        }
-                    }
-                }
+                parseKeyFrameDescList(media);
             }
         } catch (JSONException e) {
-            TXCLog.e(TAG, Log.getStackTraceString(e));
+            Log.e(TAG, Log.getStackTraceString(e));
+        }
+    }
+
+    private void parseKeyFrameDescList(JSONObject media) {
+        JSONObject keyFrameDescInfo = media.optJSONObject("keyFrameDescInfo");
+        if (keyFrameDescInfo != null) {
+            mKeyFrameDescInfo = new ArrayList<>();
+            JSONArray keyFrameDescList = keyFrameDescInfo.optJSONArray("keyFrameDescList");
+            if (keyFrameDescList != null && keyFrameDescList.length() > 0) {
+                for (int i = 0; i < keyFrameDescList.length(); i++) {
+                    JSONObject jsonObject = null;
+                    try {
+                        jsonObject = keyFrameDescList.getJSONObject(i);
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+                    PlayKeyFrameDescInfo info = new PlayKeyFrameDescInfo();
+                    info.time = jsonObject.optLong("timeOffset");
+                    info.content = jsonObject.optString("content");
+                    mKeyFrameDescInfo.add(info);
+                }
+            }
         }
     }
 

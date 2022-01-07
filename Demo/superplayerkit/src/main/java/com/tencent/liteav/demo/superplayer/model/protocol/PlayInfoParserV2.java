@@ -2,7 +2,6 @@ package com.tencent.liteav.demo.superplayer.model.protocol;
 
 import android.util.Log;
 
-import com.tencent.liteav.basic.log.TXCLog;
 import com.tencent.liteav.demo.superplayer.model.entity.PlayImageSpriteInfo;
 import com.tencent.liteav.demo.superplayer.model.entity.PlayInfoStream;
 import com.tencent.liteav.demo.superplayer.model.entity.PlayKeyFrameDescInfo;
@@ -94,7 +93,7 @@ public class PlayInfoParserV2 implements IPlayInfoParser {
             }
             parseVideoInfo();
         } catch (JSONException e) {
-            TXCLog.e(TAG, Log.getStackTraceString(e));
+            Log.e(TAG, Log.getStackTraceString(e));
         }
     }
 

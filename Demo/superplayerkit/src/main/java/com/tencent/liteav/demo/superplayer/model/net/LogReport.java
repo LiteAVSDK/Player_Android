@@ -3,8 +3,7 @@ package com.tencent.liteav.demo.superplayer.model.net;
 import android.content.Context;
 import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageInfo;
-
-import com.tencent.liteav.basic.log.TXCLog;
+import android.util.Log;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -60,7 +59,7 @@ public class LogReport {
                 jsonObject.put("appidentifier", mPackageName);
             }
             body = jsonObject.toString();
-            TXCLog.d(TAG, body);
+            Log.d(TAG, body);
         } catch (JSONException e) {
             e.printStackTrace();
         }

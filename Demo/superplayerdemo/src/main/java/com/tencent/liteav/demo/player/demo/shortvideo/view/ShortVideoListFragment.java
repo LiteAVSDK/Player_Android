@@ -17,7 +17,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 
-public class ShortVideoListFragment extends AbsBaseFragment implements ShortVideoActivity.IOnListDataLoadedListener {
+public class ShortVideoListFragment extends AbsBaseFragment {
     private static final String TAG = "ShortVideoDemo:ShortVideoListFragment";
     private RecyclerView mRecyclerView;
 
@@ -43,8 +43,6 @@ public class ShortVideoListFragment extends AbsBaseFragment implements ShortVide
 
     @Override
     protected void initViews(@Nullable Bundle savedInstanceState) {
-
-        ((ShortVideoActivity) getActivity()).setOnListDataLoadedListener(this);
         mShortVideoBeanList = new ArrayList<>();
         mBackList = getActivity().findViewById(R.id.ib_back);
         mRecyclerView = getActivity().findViewById(R.id.recycler_view_short_video_list);
@@ -68,17 +66,18 @@ public class ShortVideoListFragment extends AbsBaseFragment implements ShortVide
     }
 
 
-    @Override
     public void onLoaded(List<ShortVideoBean> shortVideoBeanList) {
         mShortVideoBeanList = shortVideoBeanList;
         mAdapter = new ShortVideoListAdapter(getContext(), mIOnItemClickListener, mShortVideoBeanList);
         final RecyclerView.LayoutManager layoutManager = new StaggeredGridLayoutManager(2, StaggeredGridLayoutManager.VERTICAL);
-        getActivity().runOnUiThread(new Runnable() {
-            @Override
-            public void run() {
-                mRecyclerView.setLayoutManager(layoutManager);
-                mRecyclerView.setAdapter(mAdapter);
-            }
-        });
+        if (getActivity() != null) {
+            getActivity().runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    mRecyclerView.setLayoutManager(layoutManager);
+                    mRecyclerView.setAdapter(mAdapter);
+                }
+            });
+        }
     }
 }

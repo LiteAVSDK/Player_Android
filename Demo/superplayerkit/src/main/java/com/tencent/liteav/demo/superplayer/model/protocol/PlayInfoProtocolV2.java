@@ -3,8 +3,8 @@ package com.tencent.liteav.demo.superplayer.model.protocol;
 import android.os.Handler;
 import android.os.Looper;
 import android.text.TextUtils;
+import android.util.Log;
 
-import com.tencent.liteav.basic.log.TXCLog;
 import com.tencent.liteav.demo.superplayer.model.entity.PlayImageSpriteInfo;
 import com.tencent.liteav.demo.superplayer.model.entity.PlayKeyFrameDescInfo;
 import com.tencent.liteav.demo.superplayer.model.entity.ResolutionName;
@@ -45,11 +45,11 @@ public class PlayInfoProtocolV2 implements IPlayInfoProtocol {
             return;
         }
         String urlStr = makeUrlString();
-        TXCLog.i(TAG, "getVodByFileId: url = " + urlStr);
+        Log.i(TAG, "getVodByFileId: url = " + urlStr);
         HttpURLClient.getInstance().get(urlStr, new HttpURLClient.OnHttpCallback() {
             @Override
             public void onSuccess(String result) {
-                TXCLog.i(TAG, "http request success:  result = " + result);
+                Log.i(TAG, "http request success:  result = " + result);
                 parseJson(result, callback);
                 runOnMainThread(new Runnable() {
                     @Override
@@ -204,7 +204,7 @@ public class PlayInfoProtocolV2 implements IPlayInfoProtocol {
      */
     private boolean parseJson(String content, final IPlayInfoRequestCallback callback) {
         if (TextUtils.isEmpty(content)) {
-            TXCLog.e(TAG, "parseJsonV2 err, content is empty!");
+            Log.e(TAG, "parseJsonV2 err, content is empty!");
             runOnMainThread(new Runnable() {
                 @Override
                 public void run() {
@@ -217,7 +217,7 @@ public class PlayInfoProtocolV2 implements IPlayInfoProtocol {
             JSONObject jsonObject = new JSONObject(content);
             final int code = jsonObject.getInt("code");
             final String message = jsonObject.optString("message");
-            TXCLog.e(TAG, message);
+            Log.e(TAG, message);
             if (code == 0) {
                 mParser = new PlayInfoParserV2(jsonObject);
             } else {
@@ -231,7 +231,7 @@ public class PlayInfoProtocolV2 implements IPlayInfoProtocol {
             }
         } catch (JSONException e) {
             e.printStackTrace();
-            TXCLog.e(TAG, "parseJson err");
+            Log.e(TAG, "parseJson err");
         }
         return true;
     }

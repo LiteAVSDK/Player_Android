@@ -10,22 +10,24 @@ import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
 import com.tencent.liteav.demo.player.R;
+import com.tencent.liteav.demo.player.expand.model.entity.VideoListModel;
 import com.tencent.liteav.demo.player.expand.model.entity.VideoModel;
 
 import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Created by liyuejiao on 2018/7/3.
  */
 
 public class TCVodPlayerListAdapter extends RecyclerView.Adapter<TCVodPlayerListAdapter.ViewHolder> {
-    private Context               mContext;
-    private ArrayList<VideoModel> mSuperPlayerModelList;
-    private OnItemClickListener   mOnItemClickListener;
+    private Context                   mContext;
+    private ArrayList<VideoListModel> mVideoListModelList;
+    private OnItemClickListener       mOnItemClickListener;
 
     public TCVodPlayerListAdapter(Context context) {
         mContext = context;
-        mSuperPlayerModelList = new ArrayList<VideoModel>();
+        mVideoListModelList = new ArrayList<>();
     }
 
     @Override
@@ -36,25 +38,33 @@ public class TCVodPlayerListAdapter extends RecyclerView.Adapter<TCVodPlayerList
 
     @Override
     public void onBindViewHolder(ViewHolder holder, final int position) {
-        final VideoModel videoModel = mSuperPlayerModelList.get(position);
-        if (TextUtils.isEmpty(videoModel.placeholderImage)) {
-            Glide.with(mContext).load(R.drawable.superplayer_default_cover_thumb).into(holder.thumb);
+        if (mVideoListModelList.get(position).videoModelList.size() == 1) {
+            final VideoModel videoModel = mVideoListModelList.get(position).videoModelList.get(0);
+            if (TextUtils.isEmpty(videoModel.placeholderImage)) {
+                Glide.with(mContext).load(R.drawable.superplayer_default_cover_thumb).into(holder.thumb);
+            } else {
+                Glide.with(mContext).load(videoModel.placeholderImage).into(holder.thumb);
+            }
+            if (videoModel.duration > 0) {
+                holder.duration.setText(formattedTime(videoModel.duration));
+            } else {
+                holder.duration.setText("");
+            }
+            if (videoModel.title != null) {
+                holder.title.setText(videoModel.title);
+            }
+
         } else {
-            Glide.with(mContext).load(videoModel.placeholderImage).into(holder.thumb);
-        }
-        if (videoModel.duration > 0) {
-            holder.duration.setText(formattedTime(videoModel.duration));
-        } else {
+            final VideoListModel videoListModel = mVideoListModelList.get(position);
+            Glide.with(mContext).load(videoListModel.icon).into(holder.thumb);
+            holder.title.setText(videoListModel.title);
             holder.duration.setText("");
-        }
-        if (videoModel.title != null) {
-            holder.title.setText(videoModel.title);
         }
         holder.title.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 if (mOnItemClickListener != null) {
-                    mOnItemClickListener.onItemClick(position, videoModel);
+                    mOnItemClickListener.onItemClick(mVideoListModelList.get(position).videoModelList);
                 }
             }
         });
@@ -62,7 +72,7 @@ public class TCVodPlayerListAdapter extends RecyclerView.Adapter<TCVodPlayerList
             @Override
             public void onClick(View v) {
                 if (mOnItemClickListener != null) {
-                    mOnItemClickListener.onItemClick(position, videoModel);
+                    mOnItemClickListener.onItemClick(mVideoListModelList.get(position).videoModelList);
                 }
             }
         });
@@ -70,7 +80,7 @@ public class TCVodPlayerListAdapter extends RecyclerView.Adapter<TCVodPlayerList
 
     @Override
     public int getItemCount() {
-        return mSuperPlayerModelList.size();
+        return mVideoListModelList.size();
     }
 
     public class ViewHolder extends RecyclerView.ViewHolder {
@@ -89,11 +99,11 @@ public class TCVodPlayerListAdapter extends RecyclerView.Adapter<TCVodPlayerList
     /**
      * 添加一个SuperPlayerModel
      *
-     * @param superPlayerModel
+     * @param videoListModel
      */
-    public void addSuperPlayerModel(VideoModel superPlayerModel) {
-        notifyItemInserted(mSuperPlayerModelList.size());
-        mSuperPlayerModelList.add(superPlayerModel);
+    public void addSuperPlayerModel(VideoListModel videoListModel) {
+        notifyItemInserted(mVideoListModelList.size());
+        mVideoListModelList.add(videoListModel);
     }
 
     public void setOnItemClickListener(OnItemClickListener listener) {
@@ -101,11 +111,12 @@ public class TCVodPlayerListAdapter extends RecyclerView.Adapter<TCVodPlayerList
     }
 
     public void clear() {
-        mSuperPlayerModelList.clear();
+        mVideoListModelList.clear();
     }
 
     public interface OnItemClickListener {
-        void onItemClick(int position, VideoModel superPlayerModel);
+
+        void onItemClick(List<VideoModel> videoModelArrayList);
     }
 
     private static String formattedTime(long second) {

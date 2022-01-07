@@ -117,7 +117,7 @@ public class FeedVodListLoader {
         List<VideoModel> videoModelList = page == 0 ? loadDefaultVodList() : loadDefaultVodList().subList(0, random);
         final int size = videoModelList.size();
         SuperVodListLoader mSuperVodListLoader = new SuperVodListLoader();
-        mSuperVodListLoader.setOnVodInfoLoadListener(new SuperVodListLoader.OnVodInfoLoadListener() {
+        mSuperVodListLoader.getVodInfoOneByOne(videoModelList, new SuperVodListLoader.OnVodInfoLoadListener() {
             int count = 0;
             List<VideoModel> resultList = new ArrayList<>();
 
@@ -152,7 +152,6 @@ public class FeedVodListLoader {
                 });
             }
         });
-        mSuperVodListLoader.getVodInfoOneByOne(videoModelList);
     }
 
 
@@ -247,6 +246,4 @@ public class FeedVodListLoader {
         int result = random.nextInt(max) % (max - min + 1) + min;
         return result;
     }
-
-
 }

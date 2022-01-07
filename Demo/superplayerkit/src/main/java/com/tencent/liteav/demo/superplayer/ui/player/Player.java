@@ -245,6 +245,6 @@ public interface Player {
          */
         void onCloseVipTip();
 
-
+        void playNext();
     }
 }

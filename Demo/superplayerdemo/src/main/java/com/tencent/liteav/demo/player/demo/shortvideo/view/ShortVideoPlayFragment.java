@@ -2,6 +2,7 @@ package com.tencent.liteav.demo.player.demo.shortvideo.view;
 
 import android.content.Context;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.ImageButton;
 import android.widget.RelativeLayout;
@@ -12,14 +13,13 @@ import androidx.annotation.Nullable;
 import com.tencent.liteav.demo.player.R;
 import com.tencent.liteav.demo.player.demo.shortvideo.base.AbsBaseFragment;
 import com.tencent.liteav.demo.player.demo.shortvideo.bean.ShortVideoBean;
-import com.tencent.rtmp.TXLog;
 
 import java.util.List;
 
 import static android.view.View.GONE;
 import static android.view.View.VISIBLE;
 
-public class ShortVideoPlayFragment extends AbsBaseFragment implements ShortVideoActivity.IOnItemClickListener, ShortVideoActivity.IOnListPageScrolledListener, View.OnClickListener, ShortVideoActivity.IOnListDataLoadedListener {
+public class ShortVideoPlayFragment extends AbsBaseFragment implements View.OnClickListener {
     private static final String TAG = "ShortVideoDemo:ShortVideoPlayFragment";
     private static final String SHARE_PREFERENCE_NAME = "tx_short_video_player_guide_setting";
     private static final String KEY_GUIDE_ONE = "is_guide_one_finish";
@@ -46,9 +46,6 @@ public class ShortVideoPlayFragment extends AbsBaseFragment implements ShortVide
 
     @Override
     protected void initViews(@Nullable Bundle savedInstanceState) {
-        ((ShortVideoActivity) getActivity()).setOnItemClickListener(this);
-        ((ShortVideoActivity) getActivity()).setOnListDataLoadedListener(this);
-        ((ShortVideoActivity) getActivity()).setOnListPageScrolledListener(this);
         mMaskOne = getActivity().findViewById(R.id.rl_mask_one);
         mMaskTwo = getActivity().findViewById(R.id.rl_mask_two);
         mMaskThree = getActivity().findViewById(R.id.rl_mask_three);
@@ -142,7 +139,7 @@ public class ShortVideoPlayFragment extends AbsBaseFragment implements ShortVide
             putBoolean(KEY_GUIDE_THREE, true);
             putBoolean(KEY_GUIDE_FOUR, true);
         } else {
-            TXLog.i(TAG, "onClick in other case");
+            Log.i(TAG, "onClick in other case");
         }
     }
 
@@ -163,9 +160,6 @@ public class ShortVideoPlayFragment extends AbsBaseFragment implements ShortVide
     public void onDestroyView() {
         super.onDestroyView();
         mSuperShortVideoView.releasePlayer();
-        ((ShortVideoActivity) getActivity()).setOnItemClickListener(null);
-        ((ShortVideoActivity) getActivity()).setOnListDataLoadedListener(null);
-        ((ShortVideoActivity) getActivity()).setOnListPageScrolledListener(null);
     }
 
     private void putBoolean(String key, boolean value) {
@@ -181,18 +175,17 @@ public class ShortVideoPlayFragment extends AbsBaseFragment implements ShortVide
      *
      * @param position
      */
-    @Override
     public void onItemClick(final int position) {
         mSuperShortVideoView.onItemClick(position);
     }
 
-    @Override
     public void onListPageScrolled() {
         mSuperShortVideoView.onListPageScrolled();
     }
 
-    @Override
     public void onLoaded(List<ShortVideoBean> shortVideoBeanList) {
-        mSuperShortVideoView.setDataSource(shortVideoBeanList);
+        if (mSuperShortVideoView != null) {
+            mSuperShortVideoView.setDataSource(shortVideoBeanList);
+        }
     }
 }

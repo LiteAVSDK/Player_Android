@@ -1,8 +1,8 @@
 package com.tencent.liteav.demo.player.expand.model;
 
 import android.text.TextUtils;
+import android.util.Log;
 
-import com.tencent.liteav.basic.log.TXCLog;
 import com.tencent.liteav.demo.player.expand.model.entity.VideoInfo;
 import com.tencent.liteav.demo.player.expand.model.entity.VideoModel;
 
@@ -63,14 +63,14 @@ public class VideoDataMgr {
         mOkHttpClient.newCall(request).enqueue(new Callback() {
             @Override
             public void onFailure(Call call, IOException e) {
-                TXCLog.e(TAG, "getVideoList onFailure : " + e.toString());
+                Log.e(TAG, "getVideoList onFailure : " + e.toString());
                 notifyGetVideoListFail(SuperPlayerConstants.RetCode.CODE_REQUEST_ERR);
             }
 
             @Override
             public void onResponse(Call call, Response response) throws IOException {
                 String contentStr = response.body().string();
-                TXCLog.i(TAG, "getVideoList onResponse : " + contentStr);
+                Log.i(TAG, "getVideoList onResponse : " + contentStr);
                 parseVideoList(contentStr);
             }
         });
@@ -78,14 +78,14 @@ public class VideoDataMgr {
 
     private void parseVideoList(String contentStr) {
         if (TextUtils.isEmpty(contentStr)) {
-            TXCLog.e(TAG, "parseVideoList err, contentStr is empty");
+            Log.e(TAG, "parseVideoList err, contentStr is empty");
             return;
         }
         try {
             JSONObject resObject = new JSONObject(contentStr);
             int code = resObject.optInt("code");
             if (code != SuperPlayerConstants.RetCode.CODE_SUCCESS) {
-                TXCLog.e(TAG, "parseVideoList fail, code = " + code);
+                Log.e(TAG, "parseVideoList fail, code = " + code);
                 notifyGetVideoListFail(code);
                 return;
             }

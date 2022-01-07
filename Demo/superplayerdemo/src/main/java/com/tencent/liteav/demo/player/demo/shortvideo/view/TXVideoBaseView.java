@@ -7,6 +7,7 @@ import android.text.SpannableStringBuilder;
 import android.text.Spanned;
 import android.text.style.ForegroundColorSpan;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.ImageView;
@@ -58,7 +59,7 @@ public class TXVideoBaseView extends RelativeLayout implements View.OnClickListe
         mTXVodPlayerWrapper = TXVodPlayerWrapper;
         mTXVodPlayerWrapper.setPlayerView(mTXCloudVideoView);
         mTXVodPlayerWrapper.setVodChangeListener(this);
-        TXLog.i(TAG, "[setTXVodPlayer] , PLAY_EVT_PLAY_PROGRESS，" + mTXVodPlayerWrapper.getVodPlayer().hashCode() + " url " + TXVodPlayerWrapper.getUrl());
+        Log.i(TAG, "[setTXVodPlayer] , PLAY_EVT_PLAY_PROGRESS，" + mTXVodPlayerWrapper.getVodPlayer().hashCode() + " url " + TXVodPlayerWrapper.getUrl());
     }
 
     private void init(Context context) {
@@ -151,7 +152,7 @@ public class TXVideoBaseView extends RelativeLayout implements View.OnClickListe
         // 解决viewPager和的滑动冲突问题
         getParent().requestDisallowInterceptTouchEvent(false);
         if (mTXVodPlayerWrapper != null) {
-            TXLog.i(TAG, "[onStopTrackingTouch] seekBar.getProgress() " + seekBar.getProgress());
+            Log.i(TAG, "[onStopTrackingTouch] seekBar.getProgress() " + seekBar.getProgress());
             mTXVodPlayerWrapper.seekTo(seekBar.getProgress() / 1000);
         }
         mTrackingTouchTS = System.currentTimeMillis();
@@ -171,15 +172,22 @@ public class TXVideoBaseView extends RelativeLayout implements View.OnClickListe
         if (mTXVodPlayerWrapper != null) {
             mPauseImageView.setVisibility(View.GONE);
             mTXVodPlayerWrapper.resumePlay();
-            TXLog.i(TAG, "[startPlay] mTXVodPlayerWrapper.url " + mTXVodPlayerWrapper.getUrl());
+            Log.i(TAG, "[startPlay] mTXVodPlayerWrapper.url " + mTXVodPlayerWrapper.getUrl());
         }
     }
 
     public void stopPlayer() {
-        mTXCloudVideoView.removeVideoView();
         if (mTXVodPlayerWrapper != null) {
             mTXVodPlayerWrapper.stopPlay();
-            TXLog.i(TAG, "[stopPlayer] mTXVodPlayerWrapper.url " + mTXVodPlayerWrapper.getUrl());
+            Log.i(TAG, "[stopPlayer] mTXVodPlayerWrapper.url " + mTXVodPlayerWrapper.getUrl());
+            mPauseImageView.setVisibility(View.GONE);
+        }
+    }
+
+    public void stopForPlaying() {
+        if (mTXVodPlayerWrapper != null) {
+            mTXVodPlayerWrapper.stopForPlaying();
+            TXLog.i(TAG, "[stopForPlaying] mTXVodPlayerWrapper.url " + mTXVodPlayerWrapper.getUrl());
             mPauseImageView.setVisibility(View.GONE);
         }
     }

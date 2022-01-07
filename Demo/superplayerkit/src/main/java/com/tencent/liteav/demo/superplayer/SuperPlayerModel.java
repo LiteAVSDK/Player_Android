@@ -2,6 +2,7 @@ package com.tencent.liteav.demo.superplayer;
 
 
 import com.tencent.liteav.demo.superplayer.model.VipWatchModel;
+import com.tencent.liteav.demo.superplayer.model.entity.DynamicWaterConfig;
 import com.tencent.liteav.demo.superplayer.model.entity.SuperPlayerVideoIdV2;
 
 import java.util.List;
@@ -84,6 +85,10 @@ public class SuperPlayerModel {
     public String coverPictureUrl;
 
     public VipWatchModel vipWatchMode = null;
+    /**
+     * 动态水印配置
+     */
+    public DynamicWaterConfig dynamicWaterConfig = null;
 
     public int duration;
 

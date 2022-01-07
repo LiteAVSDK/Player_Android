@@ -17,6 +17,7 @@ import android.widget.TextView;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.tencent.liteav.demo.common.utils.IntentUtils;
 import com.tencent.liteav.demo.common.widget.expandableadapter.BaseExpandableRecyclerViewAdapter;
 import com.tencent.liteav.demo.player.demo.FeedActivity;
 import com.tencent.liteav.demo.player.demo.SuperPlayerActivity;
@@ -55,7 +56,7 @@ public class MainActivity extends Activity {
         setContentView(R.layout.activity_main);
 
         mTvVersion = (TextView) findViewById(R.id.main_tv_version);
-        mTvVersion.setText(getString(R.string.app_tv_super_player_version, TXLiveBase.getSDKVersionStr()+"(9.4.0.1218)"));
+        mTvVersion.setText(getString(R.string.app_tv_super_player_version, TXLiveBase.getSDKVersionStr()));
 
         mMainTitle = (TextView) findViewById(R.id.main_title);
         mMainTitle.setOnLongClickListener(new View.OnLongClickListener() {
@@ -70,7 +71,9 @@ public class MainActivity extends Activity {
                             intent.setType("application/octet-stream");
                             //intent.setPackage("com.tencent.mobileqq");
                             intent.putExtra(Intent.EXTRA_STREAM, Uri.fromFile(logFile));
-                            startActivity(Intent.createChooser(intent, getString(R.string.app_title_share_log)));
+                            IntentUtils.safeStartActivity(
+                                    MainActivity.this,
+                                    Intent.createChooser(intent, getString(R.string.app_title_share_log)));
                         }
                     }
                 });
@@ -110,7 +113,7 @@ public class MainActivity extends Activity {
         Intent intent = new Intent(this, childItem.getTargetClass());
         intent.putExtra("TITLE", childItem.mName);
         intent.putExtra("TYPE", childItem.mType);
-        startActivity(intent);
+        IntentUtils.safeStartActivity(this, intent);
     }
 
     @Override

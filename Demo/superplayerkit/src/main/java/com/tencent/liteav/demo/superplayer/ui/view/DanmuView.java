@@ -7,8 +7,7 @@ import android.os.HandlerThread;
 import android.os.Looper;
 import android.os.Message;
 import android.util.AttributeSet;
-
-import com.tencent.liteav.basic.log.TXCLog;
+import android.util.Log;
 
 import java.util.Random;
 
@@ -147,7 +146,7 @@ public class DanmuView extends DanmakuView {
     }
 
     public void toggle(boolean on) {
-        TXCLog.i(TAG, "onToggleControllerView on:" + on);
+        Log.i(TAG, "onToggleControllerView on:" + on);
         if (mDanmuHandler == null) {
             return;
         }

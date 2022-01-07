@@ -4,6 +4,7 @@ import android.content.Context;
 import android.os.Handler;
 import android.os.Message;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.RelativeLayout;
@@ -18,7 +19,6 @@ import com.tencent.liteav.demo.player.demo.shortvideo.adapter.ShortVideoPlayAdap
 import com.tencent.liteav.demo.player.demo.shortvideo.bean.ShortVideoBean;
 import com.tencent.liteav.demo.player.demo.shortvideo.core.PlayerManager;
 import com.tencent.liteav.demo.player.demo.shortvideo.core.TXVodPlayerWrapper;
-import com.tencent.rtmp.TXLog;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -78,7 +78,7 @@ public class SuperShortVideoView extends RelativeLayout {
     }
 
     public void setDataSource(final List<ShortVideoBean> dataSource) {
-        TXLog.i(TAG, "[setDataSource]");
+        Log.i(TAG, "[setDataSource]");
         Message message = new Message();
         message.obj = dataSource;
         synchronized (mLock) {
@@ -105,11 +105,11 @@ public class SuperShortVideoView extends RelativeLayout {
                     case RecyclerView.SCROLL_STATE_IDLE://停止滚动
                         View view = mSnapHelper.findSnapView(mLayoutManager);
                         int position = recyclerView.getChildAdapterPosition(view);
-                        TXLog.i(TAG, "[SCROLL_STATE_IDLE] mLastPositionInIDLE " + mLastPositionInIDLE + " position " + position);
+                        Log.i(TAG, "[SCROLL_STATE_IDLE] mLastPositionInIDLE " + mLastPositionInIDLE + " position " + position);
                         if (mLastPositionInIDLE != position) {
                             onPageSelectedMethod(position);
                             mLastPositionInIDLE = position;
-                            TXLog.i(TAG, "[SCROLL_STATE_IDLE] into [startPlay] ");
+                            Log.i(TAG, "[SCROLL_STATE_IDLE] into [startPlay] ");
                         }
                         break;
                     case RecyclerView.SCROLL_STATE_DRAGGING://拖动
@@ -124,12 +124,12 @@ public class SuperShortVideoView extends RelativeLayout {
     private void onPageSelectedMethod(int position) {
         View view = mSnapHelper.findSnapView(mLayoutManager);
         mBaseItemView = (TXVideoBaseView) view.findViewById(R.id.baseItemView);
-        TXLog.i(TAG, "onPageSelected " + position);
+        Log.i(TAG, "onPageSelected " + position);
         List<ShortVideoBean> tempUrlList = initUrlList(position, MAX_PLAYER_COUNT_ON_PASS);
         PlayerManager.getInstance(getContext()).updateManager(tempUrlList);
         TXVodPlayerWrapper txVodPlayerWrapper = PlayerManager.getInstance(getContext()).getPlayer(mUrlList.get(position));
-        TXLog.i(TAG, "txVodPlayerWrapper " + txVodPlayerWrapper + "url-- " + mUrlList.get(position).videoURL);
-        TXLog.i(TAG, "txVodPlayerWrapper " + txVodPlayerWrapper);
+        Log.i(TAG, "txVodPlayerWrapper " + txVodPlayerWrapper + "url-- " + mUrlList.get(position).videoURL);
+        Log.i(TAG, "txVodPlayerWrapper " + txVodPlayerWrapper);
         mBaseItemView.setTXVodPlayer(txVodPlayerWrapper);
         mBaseItemView.startPlay();
     }
@@ -188,7 +188,7 @@ public class SuperShortVideoView extends RelativeLayout {
         mRecyclerView.post(new Runnable() {
             @Override
             public void run() {
-                TXLog.i(TAG, "onItemClick");
+                Log.i(TAG, "onItemClick");
                 onPageSelectedMethod(position);
             }
         });

@@ -1,6 +1,7 @@
 package com.tencent.liteav.demo.player.demo.shortvideo.view;
 
 import android.os.Bundle;
+import android.util.Log;
 
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
@@ -12,7 +13,6 @@ import com.tencent.liteav.demo.player.demo.shortvideo.adapter.ShortVideoPageAdap
 import com.tencent.liteav.demo.player.demo.shortvideo.base.AbsBaseActivity;
 import com.tencent.liteav.demo.player.demo.shortvideo.bean.ShortVideoBean;
 import com.tencent.liteav.demo.player.demo.shortvideo.core.ShortVideoModel;
-import com.tencent.rtmp.TXLog;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -30,13 +30,9 @@ public class ShortVideoActivity extends AbsBaseActivity implements ViewPager.OnP
 
     private List<Fragment> mFragmentList;
 
-    private IOnItemClickListener mItemClickListener;
+    private ShortVideoPlayFragment mPlayFragment;
 
-    private IOnListPageScrolledListener mIOnListPageScrolledListener;
-
-    private List<ShortVideoBean> mShortVideoBeanList;
-
-    private List<IOnListDataLoadedListener> mOnListDataLoadedList;
+    private ShortVideoListFragment mListFragment;
 
     @Override
     protected void initLayout(@Nullable Bundle savedInstanceState) {
@@ -52,14 +48,14 @@ public class ShortVideoActivity extends AbsBaseActivity implements ViewPager.OnP
     @Override
     protected void initData() {
         mFragmentList = new ArrayList<>();
-        mFragmentList.add(new ShortVideoPlayFragment());
-        ShortVideoListFragment shortVideoListFragment = new ShortVideoListFragment(this);
-        mFragmentList.add(shortVideoListFragment);
+        mPlayFragment = new ShortVideoPlayFragment();
+        mListFragment = new ShortVideoListFragment();
+        mFragmentList.add(mPlayFragment);
+        mListFragment = new ShortVideoListFragment(this);
+        mFragmentList.add(mListFragment);
         mViewPager.setAdapter(new ShortVideoPageAdapter(getSupportFragmentManager(), mFragmentList));
         mViewPager.addOnPageChangeListener(this);
         mViewPager.setCurrentItem(PLAY_FRAGMENT);
-        mShortVideoBeanList = new ArrayList<>();
-        mOnListDataLoadedList = new ArrayList<>();
         ShortVideoModel.getInstance().loadDefaultVideo();
         ShortVideoModel.getInstance().getVideoByFileId();
     }
@@ -68,11 +64,11 @@ public class ShortVideoActivity extends AbsBaseActivity implements ViewPager.OnP
     @Override
     public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
         if (position == LIST_FRAGMENT) {
-            mIOnListPageScrolledListener.onListPageScrolled();
+            mPlayFragment.onListPageScrolled();
         } else if (position == PLAY_FRAGMENT) {
-            TXLog.i(TAG, "onPageScrolled of play fragment");
+            Log.i(TAG, "onPageScrolled of play fragment");
         } else {
-            TXLog.i(TAG, "onPageScrolled other case");
+            Log.i(TAG, "onPageScrolled other case");
         }
     }
 
@@ -89,8 +85,8 @@ public class ShortVideoActivity extends AbsBaseActivity implements ViewPager.OnP
     @Override
     public void onItemClick(int position) {
         mViewPager.setCurrentItem(PLAY_FRAGMENT);
-        mItemClickListener.onItemClick(position);
-        TXLog.i(TAG, "from list position " + position);
+        mPlayFragment.onItemClick(position);
+        Log.i(TAG, "from list position " + position);
     }
 
 
@@ -98,35 +94,10 @@ public class ShortVideoActivity extends AbsBaseActivity implements ViewPager.OnP
         mViewPager.setCurrentItem(PLAY_FRAGMENT);
     }
 
-    interface IOnItemClickListener {
-        void onItemClick(int position);
-    }
-
-    public void setOnItemClickListener(IOnItemClickListener listener) {
-        mItemClickListener = listener;
-    }
-
-    interface IOnListPageScrolledListener {
-        void onListPageScrolled();
-    }
-
-    public void setOnListPageScrolledListener(IOnListPageScrolledListener listener) {
-        mIOnListPageScrolledListener = listener;
-    }
-
-    interface IOnListDataLoadedListener {
-        void onLoaded(List<ShortVideoBean> shortVideoBeanList);
-    }
-
-    public void setOnListDataLoadedListener(IOnListDataLoadedListener listener) {
-        mOnListDataLoadedList.add(listener);
-    }
-
     @Override
     public void onLoaded(List<ShortVideoBean> videoBeanList) {
-        for (int i = 0; i < mOnListDataLoadedList.size(); i++) {
-            mOnListDataLoadedList.get(i).onLoaded(videoBeanList);
-        }
+        mListFragment.onLoaded(videoBeanList);
+        mPlayFragment.onLoaded(videoBeanList);
         ShortVideoModel.getInstance().release();
     }
 }

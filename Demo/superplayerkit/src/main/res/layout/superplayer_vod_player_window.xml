@@ -146,6 +146,15 @@
             android:textSize="11.0sp" />
 
         <ImageView
+            android:id="@+id/superplayer_iv_play_next"
+            android:visibility="gone"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true"
+            android:layout_gravity="center_vertical"
+            android:src="@drawable/superplayer_play_next"/>
+
+        <ImageView
             android:id="@+id/superplayer_iv_fullscreen"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"

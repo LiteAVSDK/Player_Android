@@ -27,6 +27,7 @@ import android.widget.Toast;
 
 import com.blankj.utilcode.constant.PermissionConstants;
 import com.blankj.utilcode.util.PermissionUtils;
+import com.tencent.liteav.demo.common.utils.IntentUtils;
 import com.tencent.liteav.demo.player.R;
 import com.tencent.liteav.demo.player.view.BitrateView;
 import com.tencent.rtmp.ITXVodPlayListener;
@@ -385,7 +386,7 @@ public class VodPlayerActivity extends Activity implements ITXVodPlayListener {
             public void onClick(View v) {
                 Intent intent = new Intent(Intent.ACTION_VIEW);
                 intent.setData(Uri.parse(WEBRTC_LINK_URL));
-                startActivity(intent);
+                IntentUtils.safeStartActivity(VodPlayerActivity.this, intent);
             }
         });
     }

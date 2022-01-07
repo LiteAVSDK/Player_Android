@@ -20,8 +20,9 @@ android {
 }
 
 dependencies {
-    compile('com.blankj:utilcode:1.25.9', {
+    implementation('com.blankj:utilcode:1.25.9', {
         exclude group: 'com.google.code.gson', module: 'gson'
     })
+    implementation 'me.dm7.barcodescanner:zxing:1.8.4'
 }
 

@@ -1,12 +1,11 @@
 package com.tencent.liteav.demo.player.demo.shortvideo.core;
 
 import android.text.TextUtils;
+import android.util.Log;
 
-import com.tencent.liteav.basic.log.TXCLog;
 import com.tencent.liteav.demo.player.demo.shortvideo.bean.DataBeanParser;
 import com.tencent.liteav.demo.player.demo.shortvideo.bean.ShortVideoBean;
 import com.tencent.liteav.demo.player.demo.shortvideo.bean.SubStreamsDTO;
-import com.tencent.rtmp.TXLog;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -104,7 +103,7 @@ public class ShortVideoModel {
                     call.enqueue(new Callback() {
                         @Override
                         public void onFailure(Call call, IOException e) {
-                            TXCLog.e(TAG, "onFailure");
+                            Log.e(TAG, "onFailure");
                             //获取请求信息失败
                             checkIfReady();
                         }
@@ -122,7 +121,7 @@ public class ShortVideoModel {
 
     private void parseJson(ShortVideoBean videoModel, String content) {
         if (TextUtils.isEmpty(content)) {
-            TXCLog.e(TAG, "parseJson err, content is empty!");
+            Log.e(TAG, "parseJson err, content is empty!");
             checkIfReady();
             return;
         }
@@ -131,7 +130,7 @@ public class ShortVideoModel {
             int code = jsonObject.getInt("code");
             if (code != 0) {
                 String message = jsonObject.getString("message");
-                TXCLog.e(TAG, message + "");
+                Log.e(TAG, message + "");
                 checkIfReady();
                 return;
             }
@@ -142,12 +141,12 @@ public class ShortVideoModel {
             videoModel.videoURL = dataBeanParser.url();
             List<SubStreamsDTO> subStreamsDTOList = dataBeanParser.getSubStreamDTOArray();
             videoModel.bitRateIndex = findBitRateIndex(subStreamsDTOList);
-            TXLog.i(TAG, "[parseJson] betterIndex " + videoModel.bitRateIndex);
+            Log.i(TAG, "[parseJson] betterIndex " + videoModel.bitRateIndex);
             data_list.add(videoModel);
             checkIfReady();
         } catch (JSONException e) {
             e.printStackTrace();
-            TXCLog.e(TAG, e.getMessage() + "");
+            Log.e(TAG, e.getMessage() + "");
             checkIfReady();
         }
     }
@@ -206,7 +205,7 @@ public class ShortVideoModel {
 
     private synchronized void checkIfReady() {
         mTotalSize++;
-        TXLog.i(TAG, "mTotalSize" + mTotalSize);
+        Log.i(TAG, "mTotalSize" + mTotalSize);
         if (mTotalSize == getFileIDSLength()) {
             mOnDataLoadFullListener.onLoaded(data_list);
         }
