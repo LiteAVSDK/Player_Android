@@ -1,6 +1,7 @@
 package com.tencent.liteav.demo.superplayer.model.utils;
 
-import com.tencent.liteav.basic.log.TXCLog;
+import android.util.Log;
+
 import com.tencent.liteav.demo.superplayer.model.entity.PlayInfoStream;
 import com.tencent.liteav.demo.superplayer.model.entity.ResolutionName;
 import com.tencent.liteav.demo.superplayer.model.entity.VideoQuality;
@@ -149,7 +150,7 @@ public class VideoQualityUtils {
             }
         }
         if (!getName) {
-            TXCLog.i(TAG, "error: could not get quality name!");
+            Log.i(TAG, "error: could not get quality name!");
         }
         return quality;
     }

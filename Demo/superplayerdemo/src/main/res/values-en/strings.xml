@@ -28,7 +28,10 @@
     <string name="superplayer_not_play_url">No playback URL.</string>
     <string name="superplayer_vip_title">Try function demo </string>
     <string name="superplayer_vip_watch_tip">You can try it for %ss, open VIP to watch the full video</string>
-
+    <string name="superplayer_cover_video_name">Custom cover presentation</string>
     <string name="app_feed_title">Feed stream play</string>
     <string name="app_feed_detail_title">Video details</string>
+    <string name="superplayer_dynamic_watermark_title">Dynamic watermark demo</string>
+    <string name="superplayer_dynamic_watermark_tip">shipinyun</string>
+    <string name="superplayer_cover_title">Custom cover presentation</string>
 </resources>

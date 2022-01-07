@@ -1,14 +1,15 @@
 package com.tencent.liteav.demo.player.expand.model.utils;
 
 import android.content.Context;
+import android.graphics.Color;
 import android.os.Handler;
 import android.os.HandlerThread;
 import android.text.TextUtils;
 import android.util.Log;
 
-import com.tencent.liteav.basic.log.TXCLog;
 import com.tencent.liteav.demo.player.R;
 import com.tencent.liteav.demo.superplayer.model.VipWatchModel;
+import com.tencent.liteav.demo.superplayer.model.entity.DynamicWaterConfig;
 import com.tencent.liteav.demo.superplayer.model.entity.PlayInfoStream;
 import com.tencent.liteav.demo.player.expand.model.entity.VideoModel;
 import com.tencent.liteav.demo.superplayer.model.entity.PlayInfoStream;
@@ -19,8 +20,10 @@ import org.json.JSONObject;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import okhttp3.Call;
 import okhttp3.Callback;
@@ -52,7 +55,6 @@ public class SuperVodListLoader {
         mHandlerThread.start();
         mHandler = new Handler(mHandlerThread.getLooper());
 
-
         mHttpClient = new OkHttpClient();
         mHttpClient.newBuilder().connectTimeout(5, TimeUnit.SECONDS);
     }
@@ -71,6 +73,9 @@ public class SuperVodListLoader {
         model = new VideoModel();
         model.appid = 1252463788;
         model.fileid = "4564972819220421305";
+        model.title = applicationContext.getString(R.string.superplayer_dynamic_watermark_title);
+        String tipStr = applicationContext.getString(R.string.superplayer_dynamic_watermark_tip);
+        model.dynamicWaterConfig = new DynamicWaterConfig(tipStr, 30, Color.parseColor("#80FFFFFF"));
         list.add(model);
 
         model = new VideoModel();
@@ -99,23 +104,72 @@ public class SuperVodListLoader {
         model.appid = 1500005830;
         model.playAction = PLAY_ACTION_MANUAL_PLAY;
         model.fileid = "8602268011437356984";
+        model.title = applicationContext.getString(R.string.superplayer_cover_title);
         model.coverPictureUrl = "http://1500005830.vod2.myqcloud.com/6c9a5118vodcq1500005830/cc1e28208602268011087336518/MXUW1a5I9TsA.png";
         list.add(model);
-
         return list;
     }
 
-    public void getVodInfoOneByOne(List<VideoModel> videoModels) {
+    public ArrayList<VideoModel> loadCircleVodList() {
+        VideoModel model = new VideoModel();
+        model = new VideoModel();
+        model.appid = 1252463788;
+        model.fileid = "4564972819219071568";
+        ArrayList<VideoModel> list = new ArrayList<>();
+        list.add(model);
+
+        model = new VideoModel();
+        model.appid = 1252463788;
+        model.fileid = "4564972819219071679";
+        list.add(model);
+
+        model = new VideoModel();
+        model.appid = 1252463788;
+        model.fileid = "4564972819219071668";
+        list.add(model);
+        return list;
+    }
+
+    public void getBatchVodList(final ArrayList<VideoModel> videoModels, final OnListLoadListener listener) {
+        if (videoModels == null || videoModels.size() == 0) {
+            return;
+        }
+        mHandler.post(new Runnable() {
+            @Override
+            public void run() {
+                final int loadSize = videoModels.size();
+                final AtomicInteger integer = new AtomicInteger(1);
+                for (VideoModel model : videoModels) {
+                    getVodByFileId(model, new OnVodInfoLoadListener() {
+                        @Override
+                        public void onSuccess(VideoModel videoModel) {
+                            integer.getAndAdd(1);
+                            if (integer.get() == loadSize) {
+                                listener.onSuccess(videoModels);
+                            }
+                        }
+
+                        @Override
+                        public void onFail(int errCode) {
+                            listener.onFail(-1);
+                        }
+                    });
+                }
+            }
+        });
+    }
+
+    public void getVodInfoOneByOne(List<VideoModel> videoModels, OnVodInfoLoadListener listener) {
         if (videoModels == null || videoModels.size() == 0) {
             return;
         }
 
         for (VideoModel model : videoModels) {
-            getVodByFileId(model);
+            getVodByFileId(model, listener);
         }
     }
 
-    public void getVodByFileId(final VideoModel model) {
+    public void getVodByFileId(final VideoModel model, final OnVodInfoLoadListener listener) {
         mHandler.post(new Runnable() {
             @Override
             public void run() {
@@ -126,15 +180,13 @@ public class SuperVodListLoader {
                     @Override
                     public void onFailure(Call call, IOException e) {
                         //获取请求信息失败
-                        if (mOnVodInfoLoadListener != null) {
-                            mOnVodInfoLoadListener.onFail(-1);
-                        }
+                        listener.onFail(-1);
                     }
 
                     @Override
                     public void onResponse(Call call, Response response) throws IOException {
                         String content = response.body().string();
-                        parseJson(model, content);
+                        parseJson(model, content, listener);
                     }
                 });
             }
@@ -171,7 +223,7 @@ public class SuperVodListLoader {
                                 if (listener != null) {
                                     listener.onFail(-1);
                                 }
-                                TXCLog.e(TAG, message);
+                                Log.e(TAG, message);
                                 return;
                             }
                             JSONObject data = jsonObject.getJSONObject("data");
@@ -185,7 +237,6 @@ public class SuperVodListLoader {
                                 model.placeholderImage = playItem.optString("coverUrl", "");
                                 JSONArray urlList = playItem.getJSONArray("playUrl");
                                 if (urlList.length() > 0) {
-
                                     model.multiVideoURLs = new ArrayList<>(urlList.length());
                                     model.playDefaultIndex = 0;
                                     model.videoURL = urlList.getJSONObject(model.playDefaultIndex).optString("url", "");
@@ -209,9 +260,9 @@ public class SuperVodListLoader {
         });
     }
 
-    private void parseJson(VideoModel videoModel, String content) {
+    private void parseJson(VideoModel videoModel, String content, OnVodInfoLoadListener listener) {
         if (TextUtils.isEmpty(content)) {
-            TXCLog.e(TAG, "parseJson err, content is empty!");
+            Log.e(TAG, "parseJson err, content is empty!");
             return;
         }
         try {
@@ -219,10 +270,8 @@ public class SuperVodListLoader {
             int code = jsonObject.getInt("code");
             if (code != 0) {
                 String message = jsonObject.getString("message");
-                if (mOnVodInfoLoadListener != null) {
-                    mOnVodInfoLoadListener.onFail(-1);
-                }
-                TXCLog.e(TAG, message);
+                listener.onFail(-1);
+                Log.e(TAG, message);
                 return;
             }
             int version = jsonObject.getInt("version");
@@ -238,35 +287,33 @@ public class SuperVodListLoader {
                 if (TextUtils.isEmpty(title)) {
                     title = playInfoResponse.name();
                 }
-                if (videoModel.vipWatchModel == null) {
-                    videoModel.title = title;
-                }
-                if (mOnVodInfoLoadListener != null) {
-                    mOnVodInfoLoadListener.onSuccess(videoModel);
-                }
+                upDataTitle(videoModel, title);
+                listener.onSuccess(videoModel);
             } else if (version == 4) {
                 JSONObject media = jsonObject.getJSONObject("media");
                 if (media != null) {
                     JSONObject basicInfo = media.optJSONObject("basicInfo");
                     if (basicInfo != null) {
-                        String title  = basicInfo.optString("description");
+                        String title = basicInfo.optString("description");
                         if (TextUtils.isEmpty(title)) {
-                            title  = basicInfo.optString("name");
+                            title = basicInfo.optString("name");
                         }
-                        if (videoModel.vipWatchModel == null) {
-                            videoModel.title = title;
-                        }
+                        upDataTitle(videoModel, title);
                         videoModel.placeholderImage = basicInfo.optString("coverUrl");
                         videoModel.duration = basicInfo.optInt("duration");
                     }
-                    if (mOnVodInfoLoadListener != null) {
-                        mOnVodInfoLoadListener.onSuccess(videoModel);
-                    }
+                    listener.onSuccess(videoModel);
                     return;
                 }
             }
         } catch (JSONException e) {
             e.printStackTrace();
+        }
+    }
+
+    private void upDataTitle(VideoModel videoModel, String newTitle) {
+        if (TextUtils.isEmpty(videoModel.title)) {
+            videoModel.title = newTitle;
         }
     }
 
@@ -305,7 +352,7 @@ public class SuperVodListLoader {
             str.append("psign=" + psign + "&");
         }
 
-        if(!TextUtils.isEmpty(content)){
+        if (!TextUtils.isEmpty(content)) {
             str.append("context=" + content + "&");
         }
         if (str.length() > 1) {
@@ -321,7 +368,7 @@ public class SuperVodListLoader {
     }
 
     public interface OnListLoadListener {
-        void onSuccess(ArrayList<VideoModel> videoModels);
+        void onSuccess(List<VideoModel> videoModels);
 
         void onFail(int errCode);
     }

@@ -19,6 +19,18 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent" />
 
+    <LinearLayout
+        android:id="@+id/superplayer_dynamic_watermark_layout"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical">
+
+        <com.tencent.liteav.demo.superplayer.ui.view.DynamicWatermarkView
+            android:id="@+id/superplayer_dynamic_watermark"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent" />
+    </LinearLayout>
+
     <com.tencent.liteav.demo.superplayer.ui.view.DanmuView
         android:id="@+id/superplayer_danmuku_view"
         android:layout_width="match_parent"

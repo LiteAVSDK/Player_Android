@@ -9,13 +9,6 @@ buildscript {
     }
     dependencies {
         classpath 'com.android.tools.build:gradle:3.5.3'
-        if (!videoEngineSourcePath.isEmpty()) {
-            classpath 'me.tatarka:gradle-retrolambda:3.7.1'
-        }
-
-
-        // NOTE: Do not place your application dependencies here; they belong
-        // in the individual module build.gradle files
     }
 }
 
@@ -24,11 +17,7 @@ allprojects {
         flatDir {
             dirs 'libs'
             dirs project(':app').file('libs')
-            if (!liteavSourcePath.isEmpty()) {
-                dirs project(':liteav_leb_player').file('src/main/libs')
-            }
         }
-        mavenCentral()
         jcenter()
         google()
         mavenCentral()
@@ -39,28 +28,14 @@ task clean(type: Delete) {
     delete rootProject.buildDir
 }
 
-if (!liteavSourcePath.isEmpty()) {
-    apply from: new File(getRootDir().getPath(), "../source_link_gradle/liteav_source_build.gradle").getAbsolutePath()
-}
-
-if (!videoEngineSourcePath.isEmpty()) {
-    apply from: new File(getRootDir().getPath(), "../source_link_gradle/videoengine_source_build.gradle").getAbsolutePath()
-}
-
 ext {
     compileSdkVersion = 29
     buildToolsVersion = "29.0.2"
     supportSdkVersion = "26.1.0"
     minSdkVersion = 19
     targetSdkVersion = 23
-    if (!liteavSourcePath.isEmpty()) {
-    liteavSdk="com.tencent.liteav:LiteAVSDK_Player:latest.release"
-    } else {
-    liteavSdk="com.tencent.liteav:LiteAVSDK_Player:latest.release"
-    }
-    imSdk = 'com.tencent.imsdk:imsdk:4.9.1'
     versionCode = 1
     versionName = "v1.0"
-    ndkAbi = 'armeabi-v7a'//,'armeabi-v7a', 'arm64-v8a'
-    aekit_version = '1.0.10-cloud'
+    imSdk = 'com.tencent.imsdk:imsdk:4.9.1'
+    liteavSdk="com.tencent.liteav:LiteAVSDK_Player:latest.release"
 }

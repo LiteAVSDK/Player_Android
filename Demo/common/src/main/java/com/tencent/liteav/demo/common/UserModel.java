@@ -6,6 +6,7 @@ public class UserModel implements Serializable {
     public String   phone;
     public String   userId;
     public String   userSig;
+    public String   userNameSig;
     public String   userName;
     public String   userAvatar;
     public UserType userType = UserType.NONE;

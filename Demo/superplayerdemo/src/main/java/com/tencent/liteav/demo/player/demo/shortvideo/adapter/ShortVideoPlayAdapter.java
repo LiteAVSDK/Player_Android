@@ -1,5 +1,6 @@
 package com.tencent.liteav.demo.player.demo.shortvideo.adapter;
 
+import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
@@ -11,7 +12,6 @@ import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.tencent.liteav.demo.player.R;
 import com.tencent.liteav.demo.player.demo.shortvideo.bean.ShortVideoBean;
 import com.tencent.liteav.demo.player.demo.shortvideo.view.TXVideoBaseView;
-import com.tencent.rtmp.TXLog;
 import com.tencent.rtmp.ui.TXCloudVideoView;
 
 import java.util.List;
@@ -42,9 +42,9 @@ public class ShortVideoPlayAdapter extends AbsPlayerRecyclerViewAdapter<ShortVid
     @Override
     public void onViewDetachedFromWindow(@NonNull ShortVideoPlayAdapter.VideoViewHolder holder) {
         super.onViewDetachedFromWindow(holder);
-        TXLog.i(TAG,"onViewDetachedFromWindow");
+        Log.i(TAG,"onViewDetachedFromWindow");
         TXVideoBaseView videoView = (TXVideoBaseView) holder.mRootView.findViewById(R.id.baseItemView);
-        videoView.stopPlayer();
+        videoView.stopForPlaying();
     }
 
     public class VideoViewHolder extends AbsViewHolder {

@@ -3,14 +3,13 @@ package com.tencent.liteav.demo.superplayer.model.protocol;
 import android.os.Handler;
 import android.os.Looper;
 import android.text.TextUtils;
+import android.util.Log;
 
-import com.tencent.liteav.basic.log.TXCLog;
 import com.tencent.liteav.demo.superplayer.model.entity.PlayImageSpriteInfo;
 import com.tencent.liteav.demo.superplayer.model.entity.PlayKeyFrameDescInfo;
 import com.tencent.liteav.demo.superplayer.model.entity.ResolutionName;
 import com.tencent.liteav.demo.superplayer.model.entity.VideoQuality;
 import com.tencent.liteav.demo.superplayer.model.net.HttpURLClient;
-import com.tencent.rtmp.TXLog;
 import com.tencent.rtmp.TXVodPlayer;
 
 import org.json.JSONException;
@@ -84,7 +83,7 @@ public class PlayInfoProtocolV4 implements IPlayInfoProtocol {
      */
     private boolean parseJson(String content, final IPlayInfoRequestCallback callback) {
         if (TextUtils.isEmpty(content)) {
-            TXCLog.e(TAG, "parseJson err, content is empty!");
+            Log.e(TAG, "parseJson err, content is empty!");
             runOnMainThread(new Runnable() {
                 @Override
                 public void run() {
@@ -99,9 +98,9 @@ public class PlayInfoProtocolV4 implements IPlayInfoProtocol {
             final String message = jsonObject.optString("message");
             final String warning = jsonObject.optString("warning");
             mRequestContext = jsonObject.optString("context");
-            TXCLog.i(TAG, "context : " + mRequestContext);
-            TXCLog.i(TAG, "message: " + message);
-            TXCLog.i(TAG, "warning: " + warning);
+            Log.i(TAG, "context : " + mRequestContext);
+            Log.i(TAG, "message: " + message);
+            Log.i(TAG, "warning: " + warning);
             if (code == 0) {
                 int version = jsonObject.getInt("version");
                 if (version == 2) {
@@ -122,7 +121,7 @@ public class PlayInfoProtocolV4 implements IPlayInfoProtocol {
             }
         } catch (JSONException e) {
             e.printStackTrace();
-            TXCLog.e(TAG, "parseJson err");
+            Log.e(TAG, "parseJson err");
         }
         return true;
     }
@@ -143,7 +142,7 @@ public class PlayInfoProtocolV4 implements IPlayInfoProtocol {
         if (!TextUtils.isEmpty(query)) {
             urlStr = urlStr + "?" + query;
         }
-        TXCLog.d(TAG, "request url: " + urlStr);
+        Log.d(TAG, "request url: " + urlStr);
         return urlStr;
     }
 
@@ -173,7 +172,7 @@ public class PlayInfoProtocolV4 implements IPlayInfoProtocol {
                 String keyId = "";
                 mParams.videoId.overlayKey = genRandomHexString();
                 mParams.videoId.overlayIv = genRandomHexString();
-                TXLog.i(TAG, "V4 protocol send request fileId : " + mParams.fileId +
+                Log.i(TAG, "V4 protocol send request fileId : " + mParams.fileId +
                         " | overlayKey: " + mParams.videoId.overlayKey +
                         " | overlayIv: " + mParams.videoId.overlayIv);
                 String cipheredOverlayKey = TXVodPlayer.getEncryptedPlayKey(mParams.videoId.overlayKey);

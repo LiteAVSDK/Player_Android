@@ -7,6 +7,7 @@ import android.text.TextUtils;
 import android.util.Log;
 
 import com.google.gson.Gson;
+import com.tencent.liteav.demo.common.utils.IntentUtils;
 import com.tencent.liteav.demo.player.demo.SuperPlayerActivity;
 
 import java.util.Map;
@@ -78,7 +79,7 @@ public class WebDataParser {
         try {
             Intent intent = assembleIntent(context, webDataInfo);
             if (intent != null) {
-                context.startActivity(intent);
+                IntentUtils.safeStartActivity(context, intent);
                 if (callback != null) {
                     callback.onSuccess(webDataInfo);
                 }

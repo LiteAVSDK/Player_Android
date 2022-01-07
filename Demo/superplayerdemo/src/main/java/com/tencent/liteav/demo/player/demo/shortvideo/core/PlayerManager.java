@@ -1,9 +1,9 @@
 package com.tencent.liteav.demo.player.demo.shortvideo.core;
 
 import android.content.Context;
+import android.util.Log;
 
 import com.tencent.liteav.demo.player.demo.shortvideo.bean.ShortVideoBean;
-import com.tencent.rtmp.TXLog;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -45,7 +45,7 @@ public class PlayerManager {
         }
 
         List<ShortVideoBean> lastBeanList = playedShortVideoBean();
-        TXLog.i(TAG, " [updateManager]" + ",urlList = " + shortVideoBeanList.toString() + ",lastBeanList = " + lastBeanList.toString());
+        Log.i(TAG, " [updateManager]" + ",urlList = " + shortVideoBeanList.toString() + ",lastBeanList = " + lastBeanList.toString());
 
         //找到 lastUrlList中不包含urlList的 lastUrlList为上次传进来的urlList urlList为这次传进来的urlList
         List<ShortVideoBean> exprList = findDiffBeanList(shortVideoBeanList, lastBeanList);
@@ -53,12 +53,12 @@ public class PlayerManager {
         List<ShortVideoBean> newList = findDiffBeanList(lastBeanList, shortVideoBeanList);
         if (exprList != null) {
             for (int i = 0; i < exprList.size(); i++) {
-                TXLog.i(TAG, "[updateManager] exprUrl " + exprList.get(i).videoURL);
+                Log.i(TAG, "[updateManager] exprUrl " + exprList.get(i).videoURL);
             }
         }
         if (newList != null) {
             for (int i = 0; i < newList.size(); i++) {
-                TXLog.i(TAG, "[updateManager] newUrl " + newList.get(i).videoURL);
+                Log.i(TAG, "[updateManager] newUrl " + newList.get(i).videoURL);
             }
         }
         if (newList.size() > 0) {
@@ -87,7 +87,7 @@ public class PlayerManager {
         }
 
         if (shortVideoBeanList.contains(mLastPlayedVideoBean)) {
-            TXLog.i(TAG, " [updateManager]" + ",mLastPlayedBean = " + mLastPlayedVideoBean.videoURL);
+            Log.i(TAG, " [updateManager]" + ",mLastPlayedBean = " + mLastPlayedVideoBean.videoURL);
             if (mUrlPlayerMap.get(mLastPlayedVideoBean) != null) {
                 mUrlPlayerMap.get(mLastPlayedVideoBean).preStartPlay(mLastPlayedVideoBean);
             }
