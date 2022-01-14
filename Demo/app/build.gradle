@@ -9,7 +9,7 @@ android {
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
         versionCode 24
-        versionName "9.5.0.1473"
+        versionName "9.5.0.29006"
 
         multiDexEnabled true
         ndk {
@@ -63,6 +63,4 @@ dependencies {
     implementation('com.blankj:utilcode:1.25.9', {
         exclude group: 'com.google.code.gson', module: 'gson'
     })
-
-
 }

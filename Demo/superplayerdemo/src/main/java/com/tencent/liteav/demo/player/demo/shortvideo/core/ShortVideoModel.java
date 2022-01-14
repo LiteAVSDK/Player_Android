@@ -33,12 +33,9 @@ public class ShortVideoModel {
     private final String BASE_URLS_V2 = "https://playvideo.qcloud.com/getplayinfo/v2";
     private final String V2 = "v2";
     private final String V4 = "v4";
-    private static final String[] FILE_IDS = new String[]{"3701925920152292697", "3701925920152048882", "3701925920152283492"
-            , "3701925920152283699", "3701925920152049422", "3701925920152049645"
-            , "3701925920152293774", "3701925920152293840", "3701925920152050112"
-            , "3701925920152294230", "3701925920152285056", "3701925920152285302"
-            , "3701925920152050929", "3701925920152131172", "3701925920152286184"
-            , "3701925920152286399"};
+    private static final String[] FILE_IDS = new String[]{"387702294394366256", "387702294394228858",
+            "387702294394228636", "387702294394228527", "387702294167066523",
+            "387702294167066515", "387702294168748446", "387702294394227941"};
 
     private ArrayList<ShortVideoBean> source_list;
     private ArrayList<ShortVideoBean> data_list;
