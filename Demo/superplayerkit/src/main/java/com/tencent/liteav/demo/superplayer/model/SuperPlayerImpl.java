@@ -571,7 +571,6 @@ public class SuperPlayerImpl implements SuperPlayer, ITXVodPlayListener, ITXLive
         try {
             bizidNum = Integer.parseInt(bizid);
         } catch (NumberFormatException e) {
-            e.printStackTrace();
             Log.e(TAG, "playTimeShiftLiveURL: bizidNum error = " + bizid);
         }
         mLivePlayer.prepareLiveSeek(domian, bizidNum);
