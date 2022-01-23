@@ -28,9 +28,11 @@ public class ShortVideoPlayAdapter extends AbsPlayerRecyclerViewAdapter<ShortVid
     public void onHolder(VideoViewHolder holder, ShortVideoBean bean, int position) {
         ViewGroup.LayoutParams layoutParams = holder.itemView.getLayoutParams();
         layoutParams.height = ViewGroup.LayoutParams.MATCH_PARENT;
-        Glide.with(mContext).load(bean.placeholderImage).
-                diskCacheStrategy(DiskCacheStrategy.ALL).centerCrop()
-                .into(holder.mImageViewCover);
+        if (bean != null && bean.placeholderImage != null) {
+            Glide.with(mContext).load(bean.placeholderImage).
+                    diskCacheStrategy(DiskCacheStrategy.ALL).centerCrop()
+                    .into(holder.mImageViewCover);;
+        }
     }
 
 
