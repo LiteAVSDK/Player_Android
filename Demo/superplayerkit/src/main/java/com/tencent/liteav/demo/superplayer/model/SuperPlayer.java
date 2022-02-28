@@ -119,6 +119,12 @@ public interface SuperPlayer {
     void setObserver(SuperPlayerObserver observer);
 
     /**
+     * 设置超级播放器中点播事件和直播事件的回调
+     * @param superPlayerListener
+     */
+    void setSuperPlayerListener(ISuperPlayerListener superPlayerListener);
+
+    /**
      * 设置是否循环
      * @param isLoop true循环，false不循环
      */
