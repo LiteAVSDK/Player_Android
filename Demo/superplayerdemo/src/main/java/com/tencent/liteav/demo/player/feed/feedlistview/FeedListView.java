@@ -2,6 +2,7 @@ package com.tencent.liteav.demo.player.feed.feedlistview;
 
 import android.content.Context;
 import android.util.AttributeSet;
+import android.view.View;
 import android.view.ViewGroup;
 import android.widget.FrameLayout;
 
@@ -65,8 +66,10 @@ public class FeedListView extends FrameLayout implements FeedListItemView.FeedLi
         refreshLayout.setEnableOverScrollBounce(false);//是否启用越界回弹
         recyclerView = new RecyclerView(getContext());
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
-        recyclerView.setItemViewCacheSize(0);
         recyclerView.setHasFixedSize(true);
+        recyclerView.setItemViewCacheSize(5);
+        recyclerView.setDrawingCacheEnabled(true);
+        recyclerView.setDrawingCacheQuality(View.DRAWING_CACHE_QUALITY_HIGH);
         feedListAdapter = new FeedListAdapter(getContext(), this, feedPlayerManager);
         recyclerView.setAdapter(feedListAdapter);
         feedListScrollListener = new FeedListScrollListener(feedPlayerManager);
@@ -89,7 +92,7 @@ public class FeedListView extends FrameLayout implements FeedListItemView.FeedLi
                 }
             }
         });
-        linearSmoothScroller = new FeedLinearSmoothScroller(getContext(), feedListAdapter.listItemHeight);
+        linearSmoothScroller = new FeedLinearSmoothScroller(getContext(), feedListAdapter.getListItemHeight());
     }
 
 

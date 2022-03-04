@@ -31,7 +31,7 @@ public class ShortVideoPlayAdapter extends AbsPlayerRecyclerViewAdapter<ShortVid
         if (bean != null && bean.placeholderImage != null) {
             Glide.with(mContext).load(bean.placeholderImage).
                     diskCacheStrategy(DiskCacheStrategy.ALL).centerCrop()
-                    .into(holder.mImageViewCover);;
+                    .into(holder.mImageViewCover);
         }
     }
 
