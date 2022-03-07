@@ -21,7 +21,7 @@ public class FeedListAdapter extends RecyclerView.Adapter<FeedListAdapter.FeedLi
     private FeedListItemView.FeedListItemViewCallBack feedListItemViewCallBack = null;
     private FeedPlayerManager                         feedPlayerManager        = null;
     private List<FeedListItemView>                    listItemViews            = new ArrayList<>();
-    public  int                                       listItemHeight           = 0;   //列表item 高度
+    private   int                                     listItemHeight           = 0;   //列表item 高度
 
     public FeedListAdapter(Context context, FeedListItemView.FeedListItemViewCallBack itemCallBack, FeedPlayerManager feedPlayerManager) {
         this.feedListItemViewCallBack = itemCallBack;
@@ -31,6 +31,9 @@ public class FeedListAdapter extends RecyclerView.Adapter<FeedListAdapter.FeedLi
         listItemHeight = (int) (videoViewHeight + dp2px(context, 20 + 55));
     }
 
+    public int getListItemHeight() {
+        return listItemHeight;
+    }
 
     /**
      * 添加数据
@@ -78,14 +81,6 @@ public class FeedListAdapter extends RecyclerView.Adapter<FeedListAdapter.FeedLi
         super.onViewAttachedToWindow(holder);
         final int position = (int) holder.itemView.getTag();
         holder.feedListItemView.bindItemData(videoModels.get(position), feedListItemViewCallBack, position);
-        holder.itemView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (feedListItemViewCallBack != null) {
-                    feedListItemViewCallBack.onItemClick(holder.feedListItemView, videoModels.get(position), position);
-                }
-            }
-        });
         holder.feedListItemView.getFeedPlayerView().setFeedPlayerManager(feedPlayerManager);
     }
 
@@ -126,14 +121,21 @@ public class FeedListAdapter extends RecyclerView.Adapter<FeedListAdapter.FeedLi
         return dp * scale + 0.5f;
     }
 
-    static class FeedListItemHolder extends RecyclerView.ViewHolder {
+    class FeedListItemHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
         public FeedListItemView feedListItemView;
 
         public FeedListItemHolder(@NonNull View itemView) {
             super(itemView);
             if (itemView instanceof FeedListItemView) {
                 feedListItemView = (FeedListItemView) itemView;
+                feedListItemView.setOnClickListener(this);
             }
+        }
+
+        @Override
+        public void onClick(View v) {
+            int position = (int) feedListItemView.getTag();
+            feedListItemViewCallBack.onItemClick(feedListItemView, videoModels.get(position), position);
         }
     }
 }

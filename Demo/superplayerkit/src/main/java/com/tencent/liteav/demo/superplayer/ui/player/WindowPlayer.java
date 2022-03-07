@@ -306,6 +306,7 @@ public class WindowPlayer extends AbsPlayer implements View.OnClickListener,
                         .placeholder(R.drawable.superplayer_default).into(mImageCover);
             }
         }
+        mLivePushDuration = 0;
         toggleView(mImageCover, true);
         mIvPause.setImageResource(R.drawable.superplayer_ic_vod_play_normal);
         updateVideoProgress(0, superPlayerModel.duration);
@@ -446,7 +447,6 @@ public class WindowPlayer extends AbsPlayer implements View.OnClickListener,
 
         float percentage = mDuration > 0 ? ((float) mProgress / (float) mDuration) : 1.0f;
         if (mProgress == 0) {
-            mLivePushDuration = 0;
             percentage = 0;
         }
         if (mPlayType == SuperPlayerDef.PlayerType.LIVE || mPlayType == SuperPlayerDef.PlayerType.LIVE_SHIFT) {

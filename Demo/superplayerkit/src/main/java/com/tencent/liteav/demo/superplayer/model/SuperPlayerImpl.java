@@ -442,7 +442,14 @@ public class SuperPlayerImpl implements SuperPlayer, ITXVodPlayListener, ITXLive
     private void playModeVideo(IPlayInfoProtocol protocol) {
         playVodURL(protocol.getUrl());
         List<VideoQuality> videoQualities = protocol.getVideoQualityList();
-        mIsMultiBitrateStream = videoQualities != null;
+        List<ResolutionName> resolutionNames = protocol.getResolutionNameList();
+        String videoUrl = protocol.getUrl();
+
+        boolean isV4Multi = resolutionNames != null;
+        boolean isV2Multi = videoQualities != null;
+        boolean isUrlContainMulti = videoUrl != null && videoUrl.contains(".m3u8");
+
+        mIsMultiBitrateStream = isV4Multi || isV2Multi || isUrlContainMulti;
         VideoQuality defaultVideoQuality = protocol.getDefaultVideoQuality();
         updateVideoQualityList(videoQualities, defaultVideoQuality);
     }
@@ -849,15 +856,17 @@ public class SuperPlayerImpl implements SuperPlayer, ITXVodPlayListener, ITXLive
     @Override
     public void enableHardwareDecode(boolean enable) {
         if (mCurrentPlayType == SuperPlayerDef.PlayerType.VOD) {
-            mChangeHWAcceleration = true;
             mVodPlayer.enableHardwareDecode(enable);
-            mSeekPos = (int) mVodPlayer.getCurrentPlaybackTime();
-            Log.i(TAG, "save pos:" + mSeekPos);
-            resetPlayer();
-            if (mCurrentProtocol == null) {    // 当protocol为空时，则说明当前播放视频为非v2和v4视频
-                playModeVideo(mCurrentModel);
-            } else {
-                playModeVideo(mCurrentProtocol);
+            if (mCurrentPlayState != SuperPlayerDef.PlayerState.END) {
+                mChangeHWAcceleration = true;
+                mSeekPos = (int) mVodPlayer.getCurrentPlaybackTime();
+                Log.i(TAG, "save pos:" + mSeekPos);
+                resetPlayer();
+                if (mCurrentProtocol == null) {    // 当protocol为空时，则说明当前播放视频为非v2和v4视频
+                    playModeVideo(mCurrentModel);
+                } else {
+                    playModeVideo(mCurrentProtocol);
+                }
             }
         } else {
             mLivePlayer.enableHardwareDecode(enable);

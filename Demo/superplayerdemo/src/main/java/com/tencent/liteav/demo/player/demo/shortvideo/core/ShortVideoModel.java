@@ -76,7 +76,9 @@ public class ShortVideoModel {
 
     public void loadDefaultVideo() {
         source_list.clear();
-        data_list.clear();
+        synchronized (data_list) {
+            data_list.clear();
+        }
         for (int i = 0; i < FILE_IDS.length; i++) {
             source_list.add(new ShortVideoBean(APP_ID, FILE_IDS[i], V4));
         }
@@ -139,7 +141,9 @@ public class ShortVideoModel {
             List<SubStreamsDTO> subStreamsDTOList = dataBeanParser.getSubStreamDTOArray();
             videoModel.bitRateIndex = findBitRateIndex(subStreamsDTOList);
             Log.i(TAG, "[parseJson] betterIndex " + videoModel.bitRateIndex);
-            data_list.add(videoModel);
+            synchronized (data_list) {
+                data_list.add(videoModel);
+            }
             checkIfReady();
         } catch (JSONException e) {
             e.printStackTrace();
