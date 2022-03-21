@@ -24,6 +24,9 @@ import android.util.Pair;
 import android.widget.ImageView.ScaleType;
 
 import java.nio.Buffer;
+import java.nio.ByteBuffer;
+import java.nio.ByteOrder;
+import java.nio.FloatBuffer;
 
 import javax.microedition.khronos.opengles.GL10;
 
@@ -162,5 +165,23 @@ public class OpenGlUtils {
 
     private static float addDistance(float coordinate, float distance) {
         return coordinate == 0.0f ? distance : 1 - distance;
+    }
+
+    public static FloatBuffer createNormalCubeVerticesBuffer() {
+        return (FloatBuffer) ByteBuffer.allocateDirect(CUBE.length * 4)
+                .order(ByteOrder.nativeOrder())
+                .asFloatBuffer()
+                .put(CUBE)
+                .position(0);
+    }
+
+    public static FloatBuffer createTextureCoordsBuffer(
+            Rotation rotation, boolean flipHorizontal, boolean flipVertical) {
+        float[] temp = TextureRotationUtils.getRotation(rotation, flipHorizontal, flipVertical);
+        FloatBuffer buffer = ByteBuffer.allocateDirect(TEXTURE.length * 4)
+                .order(ByteOrder.nativeOrder())
+                .asFloatBuffer();
+        buffer.put(temp).position(0);
+        return buffer;
     }
 }

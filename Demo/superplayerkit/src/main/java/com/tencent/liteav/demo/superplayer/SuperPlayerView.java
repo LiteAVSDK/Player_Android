@@ -34,6 +34,7 @@ import android.widget.Toast;
 
 import com.cloud.tencent.liteav.demo.comon.TUIBuild;
 import com.tencent.liteav.demo.common.utils.IntentUtils;
+import com.tencent.liteav.demo.superplayer.model.ISuperPlayerListener;
 import com.tencent.liteav.demo.superplayer.model.SuperPlayer;
 import com.tencent.liteav.demo.superplayer.model.SuperPlayerImpl;
 import com.tencent.liteav.demo.superplayer.model.SuperPlayerObserver;
@@ -104,6 +105,7 @@ public class SuperPlayerView extends RelativeLayout {
     private boolean                    isCallResume = false;            //resume方法时候被调用，在预加载模式使用
     private LinearLayout               mDynamicWatermarkLayout;
     private DynamicWatermarkView       mDynamicWatermarkView;
+    private ISuperPlayerListener mSuperPlayerListener;
 
     public SuperPlayerView(Context context) {
         super(context);
@@ -380,6 +382,18 @@ public class SuperPlayerView extends RelativeLayout {
     }
 
     /**
+     * 设置超级播放器中点播播放器和直播播放器的回调
+     *
+     * @param superPlayerListener
+     */
+    public void setSuperPlayerListener(ISuperPlayerListener superPlayerListener) {
+        mSuperPlayerListener = superPlayerListener;
+        if (mSuperPlayer != null) {
+            mSuperPlayer.setSuperPlayerListener(mSuperPlayerListener);
+        }
+    }
+
+    /**
      * 控制是否全屏显示
      */
     private void fullScreen(boolean isFull) {
@@ -457,7 +471,9 @@ public class SuperPlayerView extends RelativeLayout {
                 mDynamicWatermarkLayout.addView(mDynamicWatermarkView);
                 mWindowManager.removeView(mFloatPlayer);
                 mSuperPlayer.setPlayerView(mTXCloudVideoView);
-                mSuperPlayer.resume();
+                if (!isShowingVipView()) {    //当展示了试看功能的时候，不进行resume操作
+                    mSuperPlayer.resume();
+                }
             } catch (Exception e) {
                 e.printStackTrace();
             }
@@ -681,6 +697,10 @@ public class SuperPlayerView extends RelativeLayout {
 
         @Override
         public void onClickVipTitleBack(SuperPlayerDef.PlayerMode playerMode) {
+            if (playerMode == SuperPlayerDef.PlayerMode.FULLSCREEN) {
+                mFullScreenPlayer.hideVipView();
+                return;
+            }
             mFullScreenPlayer.hideVipView();
             mWindowPlayer.hideVipView();
             mFloatPlayer.hideVipView();
