@@ -17,6 +17,7 @@ import android.widget.TextView;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.blankj.utilcode.util.UriUtils;
 import com.tencent.liteav.demo.common.utils.IntentUtils;
 import com.tencent.liteav.demo.common.widget.expandableadapter.BaseExpandableRecyclerViewAdapter;
 import com.tencent.liteav.demo.player.demo.FeedActivity;
@@ -69,8 +70,7 @@ public class MainActivity extends Activity {
                         if (logFile != null) {
                             Intent intent = new Intent(Intent.ACTION_SEND);
                             intent.setType("application/octet-stream");
-                            //intent.setPackage("com.tencent.mobileqq");
-                            intent.putExtra(Intent.EXTRA_STREAM, Uri.fromFile(logFile));
+                            intent.putExtra(Intent.EXTRA_STREAM, UriUtils.file2Uri(logFile));
                             IntentUtils.safeStartActivity(
                                     MainActivity.this,
                                     Intent.createChooser(intent, getString(R.string.app_title_share_log)));

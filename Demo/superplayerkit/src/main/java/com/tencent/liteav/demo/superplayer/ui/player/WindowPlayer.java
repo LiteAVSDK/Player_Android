@@ -101,6 +101,9 @@ public class WindowPlayer extends AbsPlayer implements View.OnClickListener,
         mGestureDetector = new GestureDetector(getContext(), new GestureDetector.SimpleOnGestureListener() {
             @Override
             public boolean onDoubleTap(MotionEvent e) {
+                if (isShowingVipView()) {   //当展示了试看页面的时候，不处理双击事件
+                    return true;
+                }
                 togglePlayState();
                 show();
                 if (mHideViewRunnable != null) {

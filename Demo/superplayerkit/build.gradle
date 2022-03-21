@@ -27,7 +27,7 @@ dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
 //    implementation project(':liteav_sdk')
     implementation project(':common')
-    implementation rootProject.ext.liteavSdk
+    api rootProject.ext.liteavSdk
     implementation 'com.github.ctiao:DanmakuFlameMaster:0.5.3'
 
     implementation 'androidx.appcompat:appcompat:1.0.0'

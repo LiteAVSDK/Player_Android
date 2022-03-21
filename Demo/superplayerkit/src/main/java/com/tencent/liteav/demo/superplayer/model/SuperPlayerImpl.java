@@ -55,6 +55,7 @@ public class SuperPlayerImpl implements SuperPlayer, ITXVodPlayListener, ITXLive
     private TXVodPlayConfig            mVodPlayConfig;   // 点播播放器配置
     private TXLivePlayer               mLivePlayer;      // 直播播放器
     private TXLivePlayConfig           mLivePlayConfig;  // 直播播放器配置
+    private ISuperPlayerListener mSuperPlayerListener;
     private SuperPlayerModel           mCurrentModel;  // 当前播放的model
     private SuperPlayerObserver        mObserver;
     private VideoQuality               mVideoQuality;
@@ -77,6 +78,7 @@ public class SuperPlayerImpl implements SuperPlayer, ITXVodPlayListener, ITXLive
     private int                        mPlayAction;            //播放模式
     private boolean                    isPrepared           = false;
     private boolean                    isNeedResume         = false;
+    private boolean                    mNeedToPause         = false;
 
     public SuperPlayerImpl(Context context, TXCloudVideoView videoView) {
         initialize(context, videoView);
@@ -138,6 +140,9 @@ public class SuperPlayerImpl implements SuperPlayer, ITXVodPlayListener, ITXLive
             default:
                 break;
         }
+        if (mSuperPlayerListener != null) {
+            mSuperPlayerListener.onLivePlayEvent(event, param);
+        }
     }
 
     /**
@@ -147,7 +152,9 @@ public class SuperPlayerImpl implements SuperPlayer, ITXVodPlayListener, ITXLive
      */
     @Override
     public void onNetStatus(Bundle bundle) {
-
+        if (mSuperPlayerListener != null) {
+            mSuperPlayerListener.onLiveNetStatus(bundle);
+        }
     }
 
     /**
@@ -169,6 +176,9 @@ public class SuperPlayerImpl implements SuperPlayer, ITXVodPlayListener, ITXLive
                 break;
             case TXLiveConstants.PLAY_EVT_RCV_FIRST_I_FRAME:
                 Log.i(TAG, "PLAY_EVT_RCV_FIRST_I_FRAME");
+                if (mNeedToPause) {
+                    return;
+                }
                 if (mChangeHWAcceleration) { //切换软硬解码器后，重新seek位置
                     Log.i(TAG, "seek pos:" + mSeekPos);
                     seek(mSeekPos);
@@ -179,7 +189,6 @@ public class SuperPlayerImpl implements SuperPlayer, ITXVodPlayListener, ITXLive
                 break;
             case TXLiveConstants.PLAY_EVT_PLAY_END:
                 Log.i(TAG, "PLAY_EVT_PLAY_END");
-                //mFirstPlay = true;
                 updatePlayerState(SuperPlayerDef.PlayerState.END);
                 break;
             case TXLiveConstants.PLAY_EVT_PLAY_PROGRESS:
@@ -194,6 +203,9 @@ public class SuperPlayerImpl implements SuperPlayer, ITXVodPlayListener, ITXLive
                 updatePlayerState(SuperPlayerDef.PlayerState.LOADING);
                 break;
             case TXLiveConstants.PLAY_EVT_PLAY_BEGIN:
+                if (mNeedToPause) {
+                    return;
+                }
                 updatePlayerState(SuperPlayerDef.PlayerState.PLAYING);
                 break;
             default:
@@ -204,12 +216,16 @@ public class SuperPlayerImpl implements SuperPlayer, ITXVodPlayListener, ITXLive
             updatePlayerState(SuperPlayerDef.PlayerState.PAUSE);
             onError(SuperPlayerCode.VOD_PLAY_FAIL, param.getString(TXLiveConstants.EVT_DESCRIPTION));
         }
+        if (mSuperPlayerListener != null) {
+            mSuperPlayerListener.onVodPlayEvent(player, event, param);
+        }
     }
 
 
     private void onVodPlayPrepared() {
         Log.i(TAG, "PLAY_EVT_VOD_PLAY_PREPARED");
         isPrepared = true;
+
         if (mIsMultiBitrateStream) {
             List<TXBitrateItem> bitrateItems = mVodPlayer.getSupportedBitrates();
             int bitrateItemSize = bitrateItems != null ? bitrateItems.size() : 0;
@@ -244,6 +260,10 @@ public class SuperPlayerImpl implements SuperPlayer, ITXVodPlayListener, ITXLive
                 updateVideoQualityList(videoQualities, defaultQuality);
             }
         }
+        if (mNeedToPause) {
+            pauseVod();
+            return;
+        }
         if (isNeedResume) {
             mVodPlayer.resume();
         }
@@ -257,7 +277,9 @@ public class SuperPlayerImpl implements SuperPlayer, ITXVodPlayListener, ITXLive
      */
     @Override
     public void onNetStatus(TXVodPlayer player, Bundle bundle) {
-
+        if (mSuperPlayerListener != null) {
+            mSuperPlayerListener.onVodNetStatus(player, bundle);
+        }
     }
 
     private void initialize(Context context, TXCloudVideoView videoView) {
@@ -737,6 +759,7 @@ public class SuperPlayerImpl implements SuperPlayer, ITXVodPlayListener, ITXLive
         mPlayAction = model.playAction;
         mCurrentModel = model;
         playWithModel(model);
+        mNeedToPause = false;
     }
 
     @Override
@@ -771,6 +794,7 @@ public class SuperPlayerImpl implements SuperPlayer, ITXVodPlayListener, ITXLive
             mVodPlayer.pause();
         }
         updatePlayerState(SuperPlayerDef.PlayerState.PAUSE);
+        mNeedToPause = true;
     }
 
     @Override
@@ -784,6 +808,7 @@ public class SuperPlayerImpl implements SuperPlayer, ITXVodPlayListener, ITXLive
             mLivePlayer.resume();
         }
         updatePlayerState(SuperPlayerDef.PlayerState.PLAYING);
+        mNeedToPause = false;
     }
 
     @Override
@@ -810,6 +835,7 @@ public class SuperPlayerImpl implements SuperPlayer, ITXVodPlayListener, ITXLive
     private void resetPlayer() {
         isPrepared = false;
         isNeedResume = false;
+        mNeedToPause = false;
         if (mVodPlayer != null) {
             mVodPlayer.setVodListener(null);
             mVodPlayer.stopPlay(false);
@@ -1001,6 +1027,11 @@ public class SuperPlayerImpl implements SuperPlayer, ITXVodPlayListener, ITXLive
     }
 
     @Override
+    public void setSuperPlayerListener(ISuperPlayerListener superPlayerListener) {
+        mSuperPlayerListener = superPlayerListener;
+    }
+
+    @Override
     public void setLoop(boolean isLoop) {
         mVodPlayer.setLoop(isLoop);
     }
@@ -1016,5 +1047,4 @@ public class SuperPlayerImpl implements SuperPlayer, ITXVodPlayListener, ITXLive
         this.mIsAutoPlay = isAutoPlay;
         mVodPlayer.setAutoPlay(isAutoPlay);
     }
-    
 }

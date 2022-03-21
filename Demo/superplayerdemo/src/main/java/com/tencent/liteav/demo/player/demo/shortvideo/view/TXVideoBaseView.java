@@ -18,7 +18,6 @@ import android.widget.TextView;
 import com.tencent.liteav.demo.player.R;
 import com.tencent.liteav.demo.player.demo.shortvideo.core.TXVodPlayerWrapper;
 import com.tencent.rtmp.TXLiveConstants;
-import com.tencent.rtmp.TXLog;
 import com.tencent.rtmp.ui.TXCloudVideoView;
 
 import java.util.Locale;
@@ -27,7 +26,7 @@ import java.util.Locale;
  * 沉浸式播放组件
  */
 public class TXVideoBaseView extends RelativeLayout implements View.OnClickListener, SeekBar.OnSeekBarChangeListener, TXVodPlayerWrapper.ISeekBarChangeListener {
-    private static final String TAG = "ShortVideoDemo:TXVideoBaseView";
+    private static final String TAG = "TXVideoBaseView";
     private View mRootView;
     private SeekBar mSeekBar;
     private TXCloudVideoView mTXCloudVideoView;
@@ -187,7 +186,7 @@ public class TXVideoBaseView extends RelativeLayout implements View.OnClickListe
     public void stopForPlaying() {
         if (mTXVodPlayerWrapper != null) {
             mTXVodPlayerWrapper.stopForPlaying();
-            TXLog.i(TAG, "[stopForPlaying] mTXVodPlayerWrapper.url " + mTXVodPlayerWrapper.getUrl());
+            Log.i(TAG, "[stopForPlaying] mTXVodPlayerWrapper.url " + mTXVodPlayerWrapper.getUrl());
             mPauseImageView.setVisibility(View.GONE);
         }
     }

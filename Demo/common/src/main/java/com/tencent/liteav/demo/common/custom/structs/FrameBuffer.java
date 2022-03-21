@@ -47,4 +47,12 @@ public class FrameBuffer {
         OpenGlUtils.deleteFrameBuffer(mFrameBufferId);
         mFrameBufferId = OpenGlUtils.NO_TEXTURE;
     }
+
+    public int getHeight() {
+        return mHeight;
+    }
+
+    public int getWidth() {
+        return mWidth;
+    }
 }
