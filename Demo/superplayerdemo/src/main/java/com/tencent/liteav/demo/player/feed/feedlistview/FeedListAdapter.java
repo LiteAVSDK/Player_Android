@@ -17,22 +17,25 @@ import java.util.List;
 
 public class FeedListAdapter extends RecyclerView.Adapter<FeedListAdapter.FeedListItemHolder> {
 
-    private List<VideoModel>                          videoModels              = null;
-    private FeedListItemView.FeedListItemViewCallBack feedListItemViewCallBack = null;
-    private FeedPlayerManager                         feedPlayerManager        = null;
-    private List<FeedListItemView>                    listItemViews            = new ArrayList<>();
-    private   int                                     listItemHeight           = 0;   //列表item 高度
+    private       List<VideoModel>                          mVideoModels              = null;
+    private       FeedListItemView.FeedListItemViewCallBack mFeedListItemViewCallBack = null;
+    private       FeedPlayerManager                         mFeedPlayerManager        = null;
+    private       int                                       mListItemHeight           = 0;   //列表item 高度
+    private       RecyclerView                              mRecyclerView;
+    private final FeedViewManager                           mFeedViewManager;
 
     public FeedListAdapter(Context context, FeedListItemView.FeedListItemViewCallBack itemCallBack, FeedPlayerManager feedPlayerManager) {
-        this.feedListItemViewCallBack = itemCallBack;
-        this.feedPlayerManager = feedPlayerManager;
+        this.mFeedListItemViewCallBack = itemCallBack;
+        this.mFeedPlayerManager = feedPlayerManager;
         int videoViewWidth = (int) (context.getResources().getDisplayMetrics().widthPixels - dp2px(context, 20));
         int videoViewHeight = videoViewWidth * 9 / 16;
-        listItemHeight = (int) (videoViewHeight + dp2px(context, 20 + 55));
+        mListItemHeight = (int) (videoViewHeight + dp2px(context, 20 + 55));
+        // recyclerView目前最多会创建11个，这里选择预缓存12个
+        mFeedViewManager = new FeedViewManager(context, mListItemHeight, 12);
     }
 
     public int getListItemHeight() {
-        return listItemHeight;
+        return mListItemHeight;
     }
 
     /**
@@ -43,18 +46,18 @@ public class FeedListAdapter extends RecyclerView.Adapter<FeedListAdapter.FeedLi
      */
     public void addVideoData(List<VideoModel> videoModels, boolean isCleanData) {
         if (isCleanData) {
-            if (this.videoModels != null) {
-                this.videoModels.clear();
+            if (this.mVideoModels != null) {
+                this.mVideoModels.clear();
             }
-            this.videoModels = videoModels;
+            this.mVideoModels = videoModels;
             notifyDataSetChanged();
         } else {
             if (videoModels != null && videoModels.size() > 0) {
-                if (this.videoModels == null) {
-                    this.videoModels = new ArrayList<>();
+                if (this.mVideoModels == null) {
+                    this.mVideoModels = new ArrayList<>();
                 }
-                int size = this.videoModels.size();
-                this.videoModels.addAll(videoModels);
+                int size = this.mVideoModels.size();
+                this.mVideoModels.addAll(videoModels);
                 notifyItemRangeInserted(size, getItemCount() - size);
             }
         }
@@ -64,10 +67,7 @@ public class FeedListAdapter extends RecyclerView.Adapter<FeedListAdapter.FeedLi
     @NonNull
     @Override
     public FeedListItemHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        FeedListItemView feedListItemView = new FeedListItemView(parent.getContext());
-        feedListItemView.setLayoutParams(new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, listItemHeight));
-        listItemViews.add(feedListItemView);
-        return new FeedListItemHolder(feedListItemView);
+        return new FeedListItemHolder(mFeedViewManager.fetchFeedListItemView());
     }
 
     @Override
@@ -80,23 +80,32 @@ public class FeedListAdapter extends RecyclerView.Adapter<FeedListAdapter.FeedLi
     public void onViewAttachedToWindow(@NonNull final FeedListItemHolder holder) {
         super.onViewAttachedToWindow(holder);
         final int position = (int) holder.itemView.getTag();
-        holder.feedListItemView.bindItemData(videoModels.get(position), feedListItemViewCallBack, position);
-        holder.feedListItemView.getFeedPlayerView().setFeedPlayerManager(feedPlayerManager);
+        holder.feedListItemView.bindItemData(mVideoModels.get(position), mFeedListItemViewCallBack, position);
+        holder.feedListItemView.getFeedPlayerView().setFeedPlayerManager(mFeedPlayerManager);
+        if (null != this.mRecyclerView) {
+            holder.feedListItemView.registerScrollListener(this.mRecyclerView);
+        }
     }
 
     @Override
     public void onViewDetachedFromWindow(@NonNull FeedListItemHolder holder) {
         super.onViewDetachedFromWindow(holder);
         holder.feedListItemView.stop();
+        if (null != this.mRecyclerView) {
+            holder.feedListItemView.unRegisterScrollListener(this.mRecyclerView);
+        }
+    }
+
+    @Override
+    public void onAttachedToRecyclerView(@NonNull RecyclerView recyclerView) {
+        super.onAttachedToRecyclerView(recyclerView);
+        this.mRecyclerView = recyclerView;
     }
 
     @Override
     public void onDetachedFromRecyclerView(@NonNull RecyclerView recyclerView) {
         super.onDetachedFromRecyclerView(recyclerView);
-        for (FeedListItemView itemView : listItemViews) {
-            itemView.destroy();
-        }
-        listItemViews.clear();
+        mFeedViewManager.release();
     }
 
     /**
@@ -108,12 +117,15 @@ public class FeedListAdapter extends RecyclerView.Adapter<FeedListAdapter.FeedLi
     public void onViewRecycled(@NonNull FeedListItemHolder holder) {
         super.onViewRecycled(holder);
         holder.feedListItemView.reset();
+        if (null != this.mRecyclerView) {
+            holder.feedListItemView.unRegisterScrollListener(this.mRecyclerView);
+        }
     }
 
 
     @Override
     public int getItemCount() {
-        return this.videoModels != null ? this.videoModels.size() : 0;
+        return this.mVideoModels != null ? this.mVideoModels.size() : 0;
     }
 
     private float dp2px(Context context, float dp) {
@@ -135,7 +147,7 @@ public class FeedListAdapter extends RecyclerView.Adapter<FeedListAdapter.FeedLi
         @Override
         public void onClick(View v) {
             int position = (int) feedListItemView.getTag();
-            feedListItemViewCallBack.onItemClick(feedListItemView, videoModels.get(position), position);
+            mFeedListItemViewCallBack.onItemClick(feedListItemView, mVideoModels.get(position), position);
         }
     }
 }

@@ -1,24 +1,39 @@
 package com.tencent.liteav.demo.player.feed.model;
 
-import static com.tencent.liteav.demo.superplayer.SuperPlayerModel.PLAY_ACTION_PRELOAD;
-
 import android.os.Handler;
 import android.os.Looper;
 import android.text.TextUtils;
+import android.util.Log;
 
 import com.tencent.liteav.demo.player.expand.model.entity.VideoModel;
 import com.tencent.liteav.demo.player.expand.model.utils.SuperVodListLoader;
 import com.tencent.liteav.demo.superplayer.SuperPlayerModel;
 import com.tencent.liteav.demo.superplayer.SuperPlayerVideoId;
+import com.tencent.liteav.demo.superplayer.model.entity.VideoQuality;
+import com.tencent.liteav.demo.superplayer.model.protocol.PlayInfoParserV2;
+import com.tencent.liteav.demo.superplayer.model.protocol.PlayInfoParserV4;
+
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Random;
-import java.util.concurrent.atomic.AtomicInteger;
+
+import static com.tencent.liteav.demo.superplayer.SuperPlayerModel.PLAY_ACTION_PRELOAD;
 
 public class FeedVodListLoader {
 
+    private final static String M3U8_SUFFIX = ".m3u8";
+
     private Handler handler = new Handler(Looper.getMainLooper());
+    private SuperVodListLoader dataLoader;
+
+    public FeedVodListLoader() {
+        dataLoader = new SuperVodListLoader();
+    }
+
 
     private List<VideoModel> loadDefaultVodList() {
         List<VideoModel> list = new ArrayList<>();
@@ -116,8 +131,7 @@ public class FeedVodListLoader {
         int random = getRandomNumber(1, 5);
         List<VideoModel> videoModelList = page == 0 ? loadDefaultVodList() : loadDefaultVodList().subList(0, random);
         final int size = videoModelList.size();
-        SuperVodListLoader mSuperVodListLoader = new SuperVodListLoader();
-        mSuperVodListLoader.getVodInfoOneByOne(videoModelList, new SuperVodListLoader.OnVodInfoLoadListener() {
+        getVodInfoOneByOne(videoModelList, new SuperVodListLoader.OnVodInfoLoadListener() {
             int count = 0;
             List<VideoModel> resultList = new ArrayList<>();
 
@@ -154,6 +168,77 @@ public class FeedVodListLoader {
         });
     }
 
+    private void getVodInfoOneByOne(List<VideoModel> videoModels, SuperVodListLoader.OnVodInfoLoadListener listener) {
+        if (videoModels == null || videoModels.size() == 0) {
+            return;
+        }
+
+        for (VideoModel model : videoModels) {
+            getVodByFileId(model, listener);
+        }
+    }
+
+    private void getVodByFileId(final VideoModel videoModel, final SuperVodListLoader.OnVodInfoLoadListener listener) {
+        dataLoader.getVodJsonByFieId(videoModel, new SuperVodListLoader.OnVodJsonLoadListener() {
+            @Override
+            public void onSuccess(String content) {
+                try {
+                    JSONObject jsonObject = new JSONObject(content);
+                    int version = jsonObject.getInt("version");
+                    if(version == 2) {
+                        PlayInfoParserV2 parserV2 = new PlayInfoParserV2(jsonObject);
+
+                        videoModel.placeholderImage = parserV2.getCoverUrl();
+                        videoModel.duration = parserV2.getDuration();
+                        upDataTitle(videoModel, parserV2.getName());
+
+                        String url = parserV2.getURL();
+                        if(url.contains(M3U8_SUFFIX) || parserV2.getVideoQualityList().isEmpty()) {
+                            videoModel.videoURL = url;
+                            if (videoModel.multiVideoURLs != null) {
+                                videoModel.multiVideoURLs.clear();
+                            }
+                        } else {
+                            videoModel.videoURL = null;
+                            videoModel.multiVideoURLs = new ArrayList<>();
+                            List<VideoQuality> videoQualityList = parserV2.getVideoQualityList();
+                            Collections.sort(videoQualityList); // 码率从高到底排序
+                            for(int i = 0;i < videoQualityList.size();i++) {
+                                VideoQuality videoQuality = videoQualityList.get(i);
+                                videoModel.multiVideoURLs.add(new VideoModel.VideoPlayerURL(videoQuality.title,videoQuality.url));
+                            }
+                        }
+                        listener.onSuccess(videoModel);
+                    } else if(version == 4) {
+                        PlayInfoParserV4 parserV4 = new PlayInfoParserV4(jsonObject);
+                        videoModel.videoURL = parserV4.getURL();
+                        String title = parserV4.getDescription();
+                        if(TextUtils.isEmpty(title)) {
+                            title = parserV4.getName();
+                        }
+                        upDataTitle(videoModel,title);
+                        videoModel.placeholderImage = parserV4.getCoverUrl();
+                        videoModel.duration = parserV4.getDuration();
+
+                        listener.onSuccess(videoModel);
+                    }
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+            }
+
+            @Override
+            public void onFail(int errCode) {
+            }
+        });
+    }
+
+    private void upDataTitle(VideoModel videoModel, String newTitle) {
+        if (TextUtils.isEmpty(videoModel.title)) {
+            videoModel.title = newTitle;
+        }
+    }
+
 
     public interface LoadDataCallBack {
         void onLoadedData(List<VideoModel> videoModels);
@@ -178,24 +263,26 @@ public class FeedVodListLoader {
             } else {
                 superPlayerModelV3.title = videoModel.title;
                 superPlayerModelV3.url = videoModel.videoURL;
-
-                superPlayerModelV3.multiURLs = new ArrayList<>();
-                if (videoModel.multiVideoURLs != null) {
-                    for (VideoModel.VideoPlayerURL modelURL : videoModel.multiVideoURLs) {
-                        superPlayerModelV3.multiURLs.add(new SuperPlayerModel.SuperPlayerURL(modelURL.url, modelURL.title));
-                    }
-                }
             }
         } else if (!TextUtils.isEmpty(videoModel.fileid)) {
             superPlayerModelV3.videoId = new SuperPlayerVideoId();
             superPlayerModelV3.videoId.fileId = videoModel.fileid;
             superPlayerModelV3.videoId.pSign = videoModel.pSign;
         }
+
+        if (videoModel.multiVideoURLs != null) {
+            superPlayerModelV3.multiURLs = new ArrayList<>();
+            for (VideoModel.VideoPlayerURL modelURL : videoModel.multiVideoURLs) {
+                superPlayerModelV3.multiURLs.add(new SuperPlayerModel.SuperPlayerURL(modelURL.url, modelURL.title));
+            }
+        }
+
         superPlayerModelV3.playAction = videoModel.playAction;
         superPlayerModelV3.placeholderImage = videoModel.placeholderImage;
         superPlayerModelV3.coverPictureUrl = videoModel.coverPictureUrl;
         superPlayerModelV3.duration = videoModel.duration;
         superPlayerModelV3.title = videoModel.title;
+
         return superPlayerModelV3;
     }
 

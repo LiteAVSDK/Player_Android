@@ -8,7 +8,9 @@ import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.resource.bitmap.CircleCrop;
@@ -168,6 +170,24 @@ public class FeedListItemView extends RelativeLayout {
         ((ViewGroup) feedPlayerView.getParent()).removeView(feedPlayerView);
         feedPlayerView.setTranslationY(0);
         addView(feedPlayerView, playerLayoutParams);
+    }
+
+    private final RecyclerView.OnScrollListener onScrollListener =
+            new RecyclerView.OnScrollListener() {
+        @Override
+        public void onScrollStateChanged(@NonNull RecyclerView recyclerView, int newState) {
+            if(newState == RecyclerView.SCROLL_STATE_IDLE && null != feedPlayerView) {
+                feedPlayerView.preLoad();
+            }
+        }
+    };
+
+    public void registerScrollListener(RecyclerView recyclerView) {
+        recyclerView.addOnScrollListener(onScrollListener);
+    }
+
+    public void unRegisterScrollListener(RecyclerView recyclerView) {
+        recyclerView.removeOnScrollListener(onScrollListener);
     }
 
 

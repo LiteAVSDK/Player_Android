@@ -141,4 +141,6 @@ public interface SuperPlayer {
      * @param isAutoPlay true自动播放，false不自动播放
      */
     void setAutoPlay(boolean isAutoPlay);
+
+    void setNeedToPause(boolean value);
 }

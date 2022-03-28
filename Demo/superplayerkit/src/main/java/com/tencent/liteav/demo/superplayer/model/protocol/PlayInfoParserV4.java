@@ -30,6 +30,10 @@ public class PlayInfoParserV4 implements IPlayInfoParser {
     private String     mURL;        // 未加密视频播放url
     private String     mToken;      // DRM token
 
+    private String mDescription; // description
+    private String mCoverUrl;   // coverUrl
+    private int    mDuration;   // duration
+
     private List<EncryptedStreamingInfo> mEncryptedStreamingInfoList;// 加密视频播放url 数组
     private PlayImageSpriteInfo          mImageSpriteInfo;           // 雪碧图信息
     private List<PlayKeyFrameDescInfo>   mKeyFrameDescInfo;          // 关键帧信息
@@ -69,6 +73,9 @@ public class PlayInfoParserV4 implements IPlayInfoParser {
                 JSONObject basicInfo = media.optJSONObject("basicInfo");
                 if (basicInfo != null) {
                     mName = basicInfo.optString("name");
+                    mDescription = basicInfo.optString("description");
+                    mCoverUrl = basicInfo.optString("coverUrl");
+                    mDuration = basicInfo.optInt("duration");
                 }
                 String audioVideoType = media.optString("audioVideoType");
                 if (TextUtils.equals(audioVideoType, "AdaptiveDynamicStream")) { // 多码率视频信息
@@ -97,7 +104,7 @@ public class PlayInfoParserV4 implements IPlayInfoParser {
                         }
                         mToken = streamingInfo.optString("drmToken");
                     }
-                } else if (TextUtils.equals(audioVideoType,"Transcode")) { // 转码视频信息
+                } else if (TextUtils.equals(audioVideoType, "Transcode")) { // 转码视频信息
                     JSONObject transCodeInfo = media.optJSONObject("transcodeInfo");
                     if (transCodeInfo != null) {
                         mURL = transCodeInfo.optString("url");
@@ -190,6 +197,18 @@ public class PlayInfoParserV4 implements IPlayInfoParser {
     @Override
     public String getName() {
         return mName;
+    }
+
+    public String getDescription() {
+        return mDescription;
+    }
+
+    public String getCoverUrl() {
+        return mCoverUrl;
+    }
+
+    public int getDuration() {
+        return mDuration;
     }
 
     /**

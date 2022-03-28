@@ -169,6 +169,34 @@ public class SuperVodListLoader {
         }
     }
 
+    public void getVodJsonByFieId(final VideoModel model, final OnVodJsonLoadListener listener) {
+        mHandler.post(new Runnable() {
+            @Override
+            public void run() {
+                String urlStr = makeUrlString(model.appid, model.fileid, model.pSign);
+                Request request = new Request.Builder().url(urlStr).build();
+                Call call = mHttpClient.newCall(request);
+                call.enqueue(new Callback() {
+                    @Override
+                    public void onFailure(Call call, IOException e) {
+                        //获取请求信息失败
+                        if(null != listener) {
+                            listener.onFail(-1);
+                        }
+                    }
+
+                    @Override
+                    public void onResponse(Call call, Response response) throws IOException {
+                        String content = response.body().string();
+                        if(null != listener) {
+                            listener.onSuccess(content);
+                        }
+                    }
+                });
+            }
+        });
+    }
+
     public void getVodByFileId(final VideoModel model, final OnVodInfoLoadListener listener) {
         mHandler.post(new Runnable() {
             @Override
@@ -363,6 +391,12 @@ public class SuperVodListLoader {
 
     public interface OnVodInfoLoadListener {
         void onSuccess(VideoModel videoModel);
+
+        void onFail(int errCode);
+    }
+
+    public interface OnVodJsonLoadListener {
+        void onSuccess(String content);
 
         void onFail(int errCode);
     }

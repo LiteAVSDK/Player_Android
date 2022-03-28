@@ -6,7 +6,7 @@ package com.tencent.liteav.demo.superplayer.model.entity;
  * 清晰度
  */
 
-public class VideoQuality {
+public class VideoQuality implements Comparable<VideoQuality> {
 
     public int    index;
     public int    bitrate;
@@ -21,5 +21,10 @@ public class VideoQuality {
         this.index = index;
         this.title = title;
         this.url = url;
+    }
+
+    @Override
+    public int compareTo(VideoQuality o) {
+        return o.bitrate - this.bitrate;
     }
 }

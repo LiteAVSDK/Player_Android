@@ -80,8 +80,14 @@ public class SuperPlayerImpl implements SuperPlayer, ITXVodPlayListener, ITXLive
     private boolean                    isNeedResume         = false;
     private boolean                    mNeedToPause         = false;
 
+
     public SuperPlayerImpl(Context context, TXCloudVideoView videoView) {
         initialize(context, videoView);
+    }
+
+    @Override
+    public void setNeedToPause(boolean value) {
+        mNeedToPause = value;
     }
 
     /**
@@ -204,6 +210,7 @@ public class SuperPlayerImpl implements SuperPlayer, ITXVodPlayListener, ITXLive
                 break;
             case TXLiveConstants.PLAY_EVT_PLAY_BEGIN:
                 if (mNeedToPause) {
+                    pause();
                     return;
                 }
                 updatePlayerState(SuperPlayerDef.PlayerState.PLAYING);
@@ -368,9 +375,9 @@ public class SuperPlayerImpl implements SuperPlayer, ITXVodPlayListener, ITXLive
         mCurrentProtocol.sendRequest(new IPlayInfoRequestCallback() {
             @Override
             public void onSuccess(IPlayInfoProtocol protocol, PlayInfoParams param) {
-                    if (mCurrentModel != model) {
-                        return;
-                    }
+                if (mCurrentModel != model) {
+                    return;
+                }
                 Log.i(TAG, "onSuccess: protocol params = " + param.toString());
                 IPlayInfoProtocol tmpProtocol = mCurrentProtocol;
                 if (tmpProtocol == null) {
@@ -759,7 +766,6 @@ public class SuperPlayerImpl implements SuperPlayer, ITXVodPlayListener, ITXLive
         mPlayAction = model.playAction;
         mCurrentModel = model;
         playWithModel(model);
-        mNeedToPause = false;
     }
 
     @Override
@@ -794,7 +800,6 @@ public class SuperPlayerImpl implements SuperPlayer, ITXVodPlayListener, ITXLive
             mVodPlayer.pause();
         }
         updatePlayerState(SuperPlayerDef.PlayerState.PAUSE);
-        mNeedToPause = true;
     }
 
     @Override
@@ -808,7 +813,6 @@ public class SuperPlayerImpl implements SuperPlayer, ITXVodPlayListener, ITXLive
             mLivePlayer.resume();
         }
         updatePlayerState(SuperPlayerDef.PlayerState.PLAYING);
-        mNeedToPause = false;
     }
 
     @Override
@@ -835,7 +839,6 @@ public class SuperPlayerImpl implements SuperPlayer, ITXVodPlayListener, ITXLive
     private void resetPlayer() {
         isPrepared = false;
         isNeedResume = false;
-        mNeedToPause = false;
         if (mVodPlayer != null) {
             mVodPlayer.setVodListener(null);
             mVodPlayer.stopPlay(false);
