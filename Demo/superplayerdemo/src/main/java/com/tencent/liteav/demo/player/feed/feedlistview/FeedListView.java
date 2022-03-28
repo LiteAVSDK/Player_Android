@@ -120,7 +120,7 @@ public class FeedListView extends FrameLayout implements FeedListItemView.FeedLi
                 public void run() {
                     feedListScrollListener.firstPlayItem(recyclerView, RecyclerView.SCROLL_STATE_IDLE);
                 }
-            }, 1000);
+            }, 500);
         }
     }
 

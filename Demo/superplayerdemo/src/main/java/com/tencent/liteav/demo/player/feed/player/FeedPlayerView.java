@@ -27,7 +27,7 @@ public class FeedPlayerView extends FrameLayout implements FeedPlayer {
     private FeedPlayerManager  feedPlayerManager      = null;
     private int                position               = -1;
     private VideoModel         videoModel             = null;
-    private boolean            playWithModelIsSuccess = true;
+    private boolean            playWithModelIsSuccess = false;
 
 
     public FeedPlayerView(@NonNull Context context) {
@@ -132,11 +132,21 @@ public class FeedPlayerView extends FrameLayout implements FeedPlayer {
 
     @Override
     public void preparePlayVideo(int position, VideoModel videoModel) {
-        playWithModelIsSuccess = true;
         this.position = position;
         this.videoModel = videoModel;
         SuperPlayerModel playerModel = FeedVodListLoader.conversionModel(videoModel);
         if (playerModel != null && superPlayerView != null) {
+            playerModel.playAction = SuperPlayerModel.PLAY_ACTION_MANUAL_PLAY;
+            playWithModelIsSuccess = false;
+            superPlayerView.playWithModel(playerModel);
+        }
+    }
+
+    public void preLoad() {
+        if(null != videoModel && position > 0 && !playWithModelIsSuccess) {
+            SuperPlayerModel playerModel = FeedVodListLoader.conversionModel(videoModel);
+            playerModel.playAction = SuperPlayerModel.PLAY_ACTION_PRELOAD;
+            playWithModelIsSuccess = true;
             superPlayerView.playWithModel(playerModel);
         }
     }
@@ -145,6 +155,8 @@ public class FeedPlayerView extends FrameLayout implements FeedPlayer {
     public void play(VideoModel videoModel) {
         SuperPlayerModel playerModel = FeedVodListLoader.conversionModel(videoModel);
         if (playerModel != null && superPlayerView != null) {
+            playerModel.playAction = SuperPlayerModel.PLAY_ACTION_PRELOAD;
+            playWithModelIsSuccess = true;
             superPlayerView.playWithModel(playerModel);
             superPlayerView.onResume();
         }
@@ -221,6 +233,5 @@ public class FeedPlayerView extends FrameLayout implements FeedPlayer {
         void onClickSmallReturnBtn();
 
     }
-
 
 }

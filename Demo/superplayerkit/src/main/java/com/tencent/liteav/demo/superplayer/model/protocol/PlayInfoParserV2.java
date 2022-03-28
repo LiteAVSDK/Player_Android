@@ -47,6 +47,8 @@ public class PlayInfoParserV2 implements IPlayInfoParser {
     private List<VideoQuality> mVideoQualityList;       // 视频画质信息列表
     private VideoQuality       mDefaultVideoQuality;    // 默认视频画质
 
+    private String mCoverUrl;   // coverUrl
+
     public PlayInfoParserV2(JSONObject response) {
         mResponse = response;
         parsePlayInfo();
@@ -90,6 +92,10 @@ public class PlayInfoParserV2 implements IPlayInfoParser {
                 mSourceStream = parseSourceStream(videoInfo);
                 mMasterPlayList = parseMasterPlayList(videoInfo);
                 mTranscodePlayList = parseTranscodePlayList(videoInfo);
+            }
+            JSONObject coverInfo = mResponse.optJSONObject("coverInfo");
+            if(coverInfo != null) {
+                mCoverUrl = coverInfo.optString("coverUrl");
             }
             parseVideoInfo();
         } catch (JSONException e) {
@@ -398,6 +404,18 @@ public class PlayInfoParserV2 implements IPlayInfoParser {
     @Override
     public String getName() {
         return mName;
+    }
+
+
+    public String getCoverUrl() {
+        return mCoverUrl;
+    }
+
+    public int getDuration() {
+        if(null != mSourceStream) {
+            return mSourceStream.duration;
+        }
+        return 0;
     }
 
     /**

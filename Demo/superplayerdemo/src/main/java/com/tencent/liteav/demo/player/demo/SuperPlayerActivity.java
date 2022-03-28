@@ -104,7 +104,7 @@ public class SuperPlayerActivity extends Activity implements View.OnClickListene
     private boolean                  mVideoHasPlay;
     private boolean                  mDefaultVideo;
     private String                   mVideoId;
-
+    private boolean                  mIsManualPause = false;
 
     private static class ListTabItem {
         public ListTabItem(int type, TextView textView, ImageView imageView, View.OnClickListener listener) {
@@ -520,7 +520,7 @@ public class SuperPlayerActivity extends Activity implements View.OnClickListene
         if (mSuperPlayerView.getPlayerState() == SuperPlayerDef.PlayerState.PLAYING
                 || mSuperPlayerView.getPlayerState() == SuperPlayerDef.PlayerState.PAUSE) {
             Log.i(TAG, "onResume state :" + mSuperPlayerView.getPlayerState());
-            if (!mSuperPlayerView.isShowingVipView()) {
+            if (!mSuperPlayerView.isShowingVipView() && !mIsManualPause) {
                 mSuperPlayerView.onResume();
             }
             if (mSuperPlayerView.getPlayerMode() == SuperPlayerDef.PlayerMode.FLOAT) {
@@ -539,6 +539,7 @@ public class SuperPlayerActivity extends Activity implements View.OnClickListene
                 decorView.setSystemUiVisibility(uiOptions);
             }
         }
+        mSuperPlayerView.setNeedToPause(false);
     }
 
     @Override
@@ -546,7 +547,14 @@ public class SuperPlayerActivity extends Activity implements View.OnClickListene
         super.onPause();
         Log.i(TAG, "onPause state :" + mSuperPlayerView.getPlayerState());
         if (mSuperPlayerView.getPlayerMode() != SuperPlayerDef.PlayerMode.FLOAT) {
+            // 有手动暂停
+            if (mSuperPlayerView.getPlayerState() == SuperPlayerDef.PlayerState.PAUSE) {
+                mIsManualPause = true;
+            } else {
+                mIsManualPause = false;
+            }
             mSuperPlayerView.onPause();
+            mSuperPlayerView.setNeedToPause(true);
         }
     }
 

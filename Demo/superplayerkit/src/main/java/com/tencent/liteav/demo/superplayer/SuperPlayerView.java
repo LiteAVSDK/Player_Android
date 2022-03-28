@@ -809,6 +809,10 @@ public class SuperPlayerView extends RelativeLayout {
         return true;
     }
 
+    public void setNeedToPause(boolean value) {
+        mSuperPlayer.setNeedToPause(value);
+    }
+
     /**
      * SuperPlayerView的回调接口
      */
