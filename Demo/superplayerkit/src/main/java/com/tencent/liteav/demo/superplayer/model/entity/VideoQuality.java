@@ -8,9 +8,11 @@ package com.tencent.liteav.demo.superplayer.model.entity;
 
 public class VideoQuality implements Comparable<VideoQuality> {
 
+    public int    height;
+    public int    width;
     public int    index;
     public int    bitrate;
-    public String name;
+    // 清晰度列表的清晰度和dp值
     public String title;
     public String url;
 

@@ -368,7 +368,7 @@ public class PlayInfoParserV2 implements IPlayInfoParser {
         //无主播放信息、转码信息，从源视频信息中解析出播放信息
         if (mSourceStream != null) {
             if (mDefaultVideoClassification != null) {
-                mDefaultVideoQuality = VideoQualityUtils.convertToVideoQuality(mSourceStream, mDefaultVideoClassification);
+                mDefaultVideoQuality = VideoQualityUtils.convertToVideoQuality(mSourceStream);
                 mVideoQualityList = new ArrayList<>();
                 mVideoQualityList.add(mDefaultVideoQuality);
             }

@@ -1,7 +1,9 @@
 package com.tencent.liteav.demo.superplayer.model.utils;
 
+import android.content.Context;
 import android.util.Log;
 
+import com.tencent.liteav.demo.superplayer.R;
 import com.tencent.liteav.demo.superplayer.model.entity.PlayInfoStream;
 import com.tencent.liteav.demo.superplayer.model.entity.ResolutionName;
 import com.tencent.liteav.demo.superplayer.model.entity.VideoQuality;
@@ -27,74 +29,13 @@ public class VideoQualityUtils {
      * @param bitrateItem
      * @return
      */
-    public static VideoQuality convertToVideoQuality(TXBitrateItem bitrateItem, int index) {
+    public static VideoQuality convertToVideoQuality(Context context, TXBitrateItem bitrateItem) {
         VideoQuality quality = new VideoQuality();
         quality.bitrate = bitrateItem.bitrate;
         quality.index = bitrateItem.index;
-        switch (index) {
-            case 0:
-                quality.name = "FLU";
-                quality.title = "流畅";
-                break;
-            case 1:
-                quality.name = "SD";
-                quality.title = "标清";
-                break;
-            case 2:
-                quality.name = "HD";
-                quality.title = "高清";
-                break;
-            case 3:
-                quality.name = "FHD";
-                quality.title = "超清";
-                break;
-            case 4:
-                quality.name = "2K";
-                quality.title = "2K";
-                break;
-            case 5:
-                quality.name = "4K";
-                quality.title = "4K";
-                break;
-            case 6:
-                quality.name = "8K";
-                quality.title = "8K";
-                break;
-        }
-        return quality;
-    }
-
-    /**
-     * 从源视频信息与视频类别信息转换为清晰度信息
-     *
-     * @param sourceStream
-     * @param classification
-     * @return
-     */
-    public static VideoQuality convertToVideoQuality(PlayInfoStream sourceStream, String classification) {
-        VideoQuality quality = new VideoQuality();
-        quality.bitrate = sourceStream.getBitrate();
-        if (classification.equals("FLU")) {
-            quality.name = "FLU";
-            quality.title = "流畅";
-        } else if (classification.equals("SD")) {
-            quality.name = "SD";
-            quality.title = "标清";
-        } else if (classification.equals("HD")) {
-            quality.name = "HD";
-            quality.title = "高清";
-        } else if (classification.equals("FHD")) {
-            quality.name = "FHD";
-            quality.title = "全高清";
-        } else if (classification.equals("2K")) {
-            quality.name = "2K";
-            quality.title = "2K";
-        } else if (classification.equals("4K")) {
-            quality.name = "4K";
-            quality.title = "4K";
-        }
-        quality.url = sourceStream.url;
-        quality.index = -1;
+        quality.height = bitrateItem.height;
+        quality.width = bitrateItem.width;
+        formatVideoQuality(context, quality);
         return quality;
     }
 
@@ -107,7 +48,6 @@ public class VideoQualityUtils {
     public static VideoQuality convertToVideoQuality(PlayInfoStream stream) {
         VideoQuality qulity = new VideoQuality();
         qulity.bitrate = stream.getBitrate();
-        qulity.name = stream.id;
         qulity.title = stream.name;
         qulity.url = stream.url;
         qulity.index = -1;
@@ -129,29 +69,36 @@ public class VideoQualityUtils {
         return videoQualities;
     }
 
-    /**
-     * 根据视频清晰度别名表从码率信息转换为视频清晰度
-     *
-     * @param bitrateItem     码率
-     * @param resolutionNames 清晰度别名表
-     * @return
-     */
-    public static VideoQuality convertToVideoQuality(TXBitrateItem bitrateItem, List<ResolutionName> resolutionNames) {
-        VideoQuality quality = new VideoQuality();
-        quality.bitrate = bitrateItem.bitrate;
-        quality.index = bitrateItem.index;
-        boolean getName = false;
-        for (ResolutionName resolutionName : resolutionNames) {
-            if (((resolutionName.width == bitrateItem.width && resolutionName.height == bitrateItem.height) || (resolutionName.width == bitrateItem.height && resolutionName.height == bitrateItem.width))
-                    && "video".equalsIgnoreCase(resolutionName.type)) {
-                quality.title = resolutionName.name;
-                getName = true;
-                break;
+    private static void formatVideoQuality(Context context, VideoQuality quality) {
+        int minValue = Math.min(quality.width, quality.height);
+        if (minValue == 240 || minValue == 180) {
+            quality.title = context.getString(R.string.superplayer_resolution_name, context.getString(R.string.superplayer_flu), minValue);
+        } else if (minValue == 480 || minValue == 360) {
+            quality.title = context.getString(R.string.superplayer_resolution_name, context.getString(R.string.superplayer_sd), minValue);
+        } else if (minValue == 540) {
+            quality.title = context.getString(R.string.superplayer_resolution_name, context.getString(R.string.superplayer_fsd), minValue);
+        } else if (minValue == 720) {
+            quality.title = context.getString(R.string.superplayer_resolution_name, context.getString(R.string.superplayer_hd), minValue);
+        } else if (minValue == 1080) {
+            quality.title = context.getString(R.string.superplayer_resolution_name, context.getString(R.string.superplayer_fhd2), minValue);
+        } else if (minValue == 1440) {
+            quality.title = context.getString(R.string.superplayer_resolution_name, context.getString(R.string.superplayer_2k), minValue);
+        } else if (minValue == 2160) {
+            quality.title = context.getString(R.string.superplayer_resolution_name, context.getString(R.string.superplayer_4k), minValue);
+        } else {
+            quality.title = context.getString(R.string.superplayer_resolution_name, "", minValue);
+        }
+    }
+
+    public static String transformToQualityName(String title) {
+        String qualityName = title;
+        if (title.contains("(")) {
+            if (title.charAt(0) == ' ' && title.contains(")")) {
+                qualityName = title.substring(title.indexOf('(') + 1, title.indexOf(')'));
+            } else {
+                qualityName = title.substring(0, title.indexOf('('));
             }
         }
-        if (!getName) {
-            Log.i(TAG, "error: could not get quality name!");
-        }
-        return quality;
+        return qualityName;
     }
 }

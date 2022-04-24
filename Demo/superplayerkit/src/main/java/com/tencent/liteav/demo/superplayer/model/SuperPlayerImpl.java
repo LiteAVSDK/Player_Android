@@ -71,7 +71,6 @@ public class SuperPlayerImpl implements SuperPlayer, ITXVodPlayListener, ITXLive
     private boolean                    mIsAutoPlay          = true;      // 是否自动播放
     private boolean                    mIsMultiBitrateStream;  // 是否是多码流url播放
     private boolean                    mIsPlayWithFileId;      // 是否是腾讯云fileId播放
-    private boolean                    mDefaultQualitySet;     // 标记播放多码流url时是否设置过默认画质
     private boolean                    mChangeHWAcceleration;  // 切换硬解后接收到第一个关键帧前的标记位
     private String                     mFileId;
     private int                        mAppId;
@@ -79,7 +78,6 @@ public class SuperPlayerImpl implements SuperPlayer, ITXVodPlayListener, ITXLive
     private boolean                    isPrepared           = false;
     private boolean                    isNeedResume         = false;
     private boolean                    mNeedToPause         = false;
-
 
     public SuperPlayerImpl(Context context, TXCloudVideoView videoView) {
         initialize(context, videoView);
@@ -239,23 +237,10 @@ public class SuperPlayerImpl implements SuperPlayer, ITXVodPlayListener, ITXLive
             if (bitrateItemSize > 0) {
                 Collections.sort(bitrateItems); //masterPlaylist多清晰度，按照码率排序，从低到高
                 List<VideoQuality> videoQualities = new ArrayList<>();
-                List<ResolutionName> resolutionNames = (mCurrentProtocol != null)
-                        ? mCurrentProtocol.getResolutionNameList() : null;
                 for (int i = 0; i < bitrateItemSize; i++) {
                     TXBitrateItem bitrateItem = bitrateItems.get(i);
-                    VideoQuality quality;
-                    if (resolutionNames != null) {
-                        quality = VideoQualityUtils.convertToVideoQuality(bitrateItem
-                                , mCurrentProtocol.getResolutionNameList());
-                    } else {
-                        quality = VideoQualityUtils.convertToVideoQuality(bitrateItem, i);
-                    }
+                    VideoQuality quality = VideoQualityUtils.convertToVideoQuality(mContext,bitrateItem);
                     videoQualities.add(quality);
-                }
-                if (!mDefaultQualitySet) {
-                    mVodPlayer.getDuration();
-                    mVodPlayer.setBitrateIndex(bitrateItems.get(bitrateItems.size() - 1).index); //默认播放码率最高的
-                    mDefaultQualitySet = true;
                 }
                 int bitrateIndex = mVodPlayer.getBitrateIndex();   //获取默认码率的index
                 VideoQuality defaultQuality = null;
@@ -310,6 +295,7 @@ public class SuperPlayerImpl implements SuperPlayer, ITXVodPlayListener, ITXLive
         if (sdcardDir != null) {
             mVodPlayConfig.setCacheFolderPath(sdcardDir.getPath() + "/txcache");
         }
+        mVodPlayConfig.setPreferredResolution(TXLiveConstants.VIDEO_RESOLUTION_720X1280);
         mVodPlayConfig.setMaxCacheItems(config.maxCacheItem);
         mVodPlayConfig.setHeaders(config.headers);
         mVodPlayer.setConfig(mVodPlayConfig);
@@ -531,7 +517,6 @@ public class SuperPlayerImpl implements SuperPlayer, ITXVodPlayListener, ITXLive
             mIsMultiBitrateStream = false;
         }
         if (mVodPlayer != null) {
-            mDefaultQualitySet = false;
             mVodPlayer.setStartTime(mStartPos);
             mVodPlayer.setAutoPlay(mIsAutoPlay);
             if (mPlayAction == PLAY_ACTION_AUTO_PLAY || mPlayAction == PLAY_ACTION_MANUAL_PLAY) {
@@ -825,12 +810,20 @@ public class SuperPlayerImpl implements SuperPlayer, ITXVodPlayListener, ITXLive
 
     @Override
     public void stop() {
+        // 重置overlayKey和overlayIv配置
+        if (mVodPlayConfig != null) {
+            setOverlayKeyIv(null, null);
+        }
         resetPlayer();
         updatePlayerState(SuperPlayerDef.PlayerState.END);
     }
 
     @Override
     public void reset() {
+        // 重置overlayKey和overlayIv配置
+        if (mVodPlayConfig != null) {
+            setOverlayKeyIv(null, null);
+        }
         resetPlayer();
         updatePlayerState(SuperPlayerDef.PlayerState.INIT);
     }
@@ -847,10 +840,6 @@ public class SuperPlayerImpl implements SuperPlayer, ITXVodPlayListener, ITXLive
             mLivePlayer.setPlayListener(null);
             mLivePlayer.stopPlay(false);
             mVideoView.removeVideoView();
-        }
-        // 重置overlayKey和overlayIv配置
-        if (mVodPlayConfig != null) {
-            setOverlayKeyIv(null, null);
         }
         reportPlayTime();
     }

@@ -24,6 +24,7 @@ import com.tencent.liteav.demo.superplayer.model.entity.PlayImageSpriteInfo;
 import com.tencent.liteav.demo.superplayer.model.entity.PlayKeyFrameDescInfo;
 import com.tencent.liteav.demo.superplayer.model.net.LogReport;
 import com.tencent.liteav.demo.superplayer.model.utils.VideoGestureDetector;
+import com.tencent.liteav.demo.superplayer.model.utils.VideoQualityUtils;
 import com.tencent.liteav.demo.superplayer.ui.view.PointSeekBar;
 import com.tencent.liteav.demo.superplayer.ui.view.VideoProgressLayout;
 import com.tencent.liteav.demo.superplayer.model.entity.VideoQuality;
@@ -590,7 +591,7 @@ public class FullScreenPlayer extends AbsPlayer implements View.OnClickListener,
         }
         mDefaultVideoQuality = videoQuality;
         if (mTvQuality != null) {
-            mTvQuality.setText(videoQuality.title);
+            mTvQuality.setText(VideoQualityUtils.transformToQualityName(videoQuality.title));
         }
         if (mVideoQualityList != null && mVideoQualityList.size() != 0) {
             for (int i = 0; i < mVideoQualityList.size(); i++) {

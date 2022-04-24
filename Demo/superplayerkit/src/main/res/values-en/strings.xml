@@ -16,4 +16,13 @@
     <string name="superplayer_vipwatch_endwatch_tip">The trial is over, VIP members can watch the full video</string>
     <string name="superplayer_vipwatch_open_vip_tip">Open VIP membership</string>
     <string name="superplayer_vipwatch_retry_tip">Try again</string>
+    <string name="superplayer_resolution_name">%1$s (%2$dp)</string>
+    <string name="superplayer_flu">FLU</string>
+    <string name="superplayer_sd">SD</string>
+    <string name="superplayer_hd">HD</string>
+    <string name="superplayer_fsd">FSD</string>
+    <string name="superplayer_fhd">FHD</string>
+    <string name="superplayer_fhd2">FHD</string>
+    <string name="superplayer_2k">2K</string>
+    <string name="superplayer_4k">4K</string>
 </resources>

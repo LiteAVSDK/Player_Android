@@ -72,7 +72,7 @@ public interface Player {
     void updateTitle(String title);
 
     /**
-     * 更新是屁播放进度
+     * 更新视频播放进度
      *
      * @param current  当前进度(秒)
      * @param duration 视频总时长(秒)
