@@ -92,7 +92,7 @@ public class VideoQualityUtils {
 
     public static String transformToQualityName(String title) {
         String qualityName = title;
-        if (title.contains("(")) {
+        if (title != null && title.contains("(")) {
             if (title.charAt(0) == ' ' && title.contains(")")) {
                 qualityName = title.substring(title.indexOf('(') + 1, title.indexOf(')'));
             } else {
