@@ -16,6 +16,11 @@
     <string name="superplayer_vipwatch_endwatch_tip">试看结束，VIP会员可观看完整视频</string>
     <string name="superplayer_vipwatch_open_vip_tip">开通VIP会员</string>
     <string name="superplayer_vipwatch_retry_tip">重新试看</string>
+    <string name="superplayer_current_quality">当前清晰度：</string>
+    <string name="superplayer_view_cache_list">查看缓存列表</string>
+    <string name="superplayer_start_download">开始下载视频%1$s</string>
+    <string name="superplayer_download_failed">下载视频%1$s失败</string>
+    <string name="superplayer_download_quality_invalid">视频不存在该清晰度，下载失败，请尝试更换清晰度下载</string>
     <string name="superplayer_resolution_name">%1$s (%2$dp)</string>
     <string name="superplayer_flu">流畅</string>
     <string name="superplayer_sd">标清</string>

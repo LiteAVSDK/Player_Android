@@ -24,5 +24,7 @@ public interface FeedPlayer {
 
     void setFeedPlayerCallBack(FeedPlayerView.FeedPlayerCallBack callBack);
 
+    boolean isEnd();
+
     FeedPlayerView.FeedPlayerCallBack getFeedPlayerCallBack();
 }

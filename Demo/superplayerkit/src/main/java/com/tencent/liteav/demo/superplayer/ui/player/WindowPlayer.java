@@ -6,6 +6,7 @@ import android.graphics.Bitmap;
 import android.graphics.drawable.BitmapDrawable;
 import android.os.Build;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.view.GestureDetector;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
@@ -110,12 +111,6 @@ public class WindowPlayer extends AbsPlayer implements View.OnClickListener,
                     removeCallbacks(mHideViewRunnable);
                     postDelayed(mHideViewRunnable, 7000);
                 }
-                return true;
-            }
-
-            @Override
-            public boolean onSingleTapConfirmed(MotionEvent e) {
-                toggle();
                 return true;
             }
 
@@ -232,7 +227,8 @@ public class WindowPlayer extends AbsPlayer implements View.OnClickListener,
 
         mSeekBarProgress.setOnSeekBarChangeListener(this);
 
-        mGestureVolumeBrightnessProgressLayout = (VolumeBrightnessProgressLayout) findViewById(R.id.superplayer_gesture_progress);
+        mGestureVolumeBrightnessProgressLayout =
+                (VolumeBrightnessProgressLayout) findViewById(R.id.superplayer_gesture_progress);
 
         mGestureVideoProgressLayout = (VideoProgressLayout) findViewById(R.id.superplayer_video_progress_layout);
 
@@ -583,6 +579,10 @@ public class WindowPlayer extends AbsPlayer implements View.OnClickListener,
         });
     }
 
+    @Override
+    public void setVideoQualityVisible(boolean isShow) {
+    }
+
     /**
      * 重写触摸事件监听，实现手势调节亮度、音量以及播放进度
      */
@@ -590,6 +590,10 @@ public class WindowPlayer extends AbsPlayer implements View.OnClickListener,
     public boolean onTouchEvent(MotionEvent event) {
         if (mIsOpenGesture && mGestureDetector != null) {
             mGestureDetector.onTouchEvent(event);
+        }
+
+        if (event.getAction() == MotionEvent.ACTION_DOWN) {
+            toggle();
         }
 
         boolean isCall = event.getAction() == MotionEvent.ACTION_CANCEL || event.getAction() == MotionEvent.ACTION_UP;

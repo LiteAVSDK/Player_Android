@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:gravity="center"
+    android:background="@drawable/common_dialog_shape_bg"
+    android:padding="10dp"
+    android:orientation="vertical">
+
+    <ProgressBar
+        android:id="@+id/common_content_loading_pb"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:indeterminateDrawable="@drawable/common_dialog_loading_anim"  />
+
+    <TextView
+        android:id="@+id/common_content_loading_tv"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
+        android:gravity="center"
+        android:textColor="#fff"
+        android:text="正在结束通话" />
+</LinearLayout>

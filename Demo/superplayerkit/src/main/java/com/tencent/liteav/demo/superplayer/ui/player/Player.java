@@ -2,9 +2,9 @@ package com.tencent.liteav.demo.superplayer.ui.player;
 
 
 import android.graphics.Bitmap;
-import android.view.View;
 
 import com.tencent.liteav.demo.superplayer.SuperPlayerDef;
+import com.tencent.liteav.demo.superplayer.SuperPlayerModel;
 import com.tencent.liteav.demo.superplayer.model.entity.PlayImageSpriteInfo;
 import com.tencent.liteav.demo.superplayer.model.entity.PlayKeyFrameDescInfo;
 import com.tencent.liteav.demo.superplayer.model.entity.VideoQuality;
@@ -74,7 +74,7 @@ public interface Player {
     /**
      * 更新视频播放进度
      *
-     * @param current  当前进度(秒)
+     * @param current 当前进度(秒)
      * @param duration 视频总时长(秒)
      */
     void updateVideoProgress(long current, long duration);
@@ -125,6 +125,11 @@ public interface Player {
      * @param list 关键帧信息列表
      */
     void updateKeyFrameDescInfo(List<PlayKeyFrameDescInfo> list);
+
+    /**
+     * 是否显示清晰度，默认显示
+     */
+    void setVideoQualityVisible(boolean isShow);
 
     /**
      * 播放控制回调接口
@@ -246,5 +251,20 @@ public interface Player {
         void onCloseVipTip();
 
         void playNext();
+
+        /**
+         * 获得当前剧集播放列表
+         */
+        List<SuperPlayerModel> getPlayList();
+
+        /**
+         * 获得当前正在播放的视频
+         */
+        SuperPlayerModel getPlayingVideoModel();
+
+        /**
+         * 全屏页面点击了缓存菜单的前往缓存列表按钮
+         */
+        void onShowDownloadList();
     }
 }

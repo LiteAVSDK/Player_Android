@@ -94,7 +94,7 @@ public class PlayInfoParserV2 implements IPlayInfoParser {
                 mTranscodePlayList = parseTranscodePlayList(videoInfo);
             }
             JSONObject coverInfo = mResponse.optJSONObject("coverInfo");
-            if(coverInfo != null) {
+            if (coverInfo != null) {
                 mCoverUrl = coverInfo.optString("coverUrl");
             }
             parseVideoInfo();
@@ -412,7 +412,7 @@ public class PlayInfoParserV2 implements IPlayInfoParser {
     }
 
     public int getDuration() {
-        if(null != mSourceStream) {
+        if (null != mSourceStream) {
             return mSourceStream.duration;
         }
         return 0;

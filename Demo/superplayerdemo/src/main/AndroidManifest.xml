@@ -3,6 +3,7 @@
     package="com.tencent.liteav.demo.player">
 
     <application android:theme="@style/AppTheme">
+        <activity android:name=".demo.VideoDownloadListActivity"></activity>
         <activity
             android:name=".demo.SuperPlayerActivity"
             android:configChanges="orientation|keyboardHidden|screenSize"
@@ -17,32 +18,30 @@
                 <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
         </activity>
-        <activity android:name=".demo.shortvideo.base.AbsBaseActivity"/>
-        <activity android:name=".demo.shortvideo.view.ShortVideoActivity"
+        <activity android:name=".demo.shortvideo.base.AbsBaseActivity" />
+        <activity
+            android:name=".demo.shortvideo.view.ShortVideoActivity"
             android:configChanges="orientation|keyboardHidden|screenSize"
             android:launchMode="singleTask"
             android:screenOrientation="portrait"
-            android:windowSoftInputMode="stateHidden"
             android:theme="@style/Theme.AppCompat.Light.NoActionBar"
-            />
+            android:windowSoftInputMode="stateHidden" />
         <activity
             android:name=".demo.QRCodeScanActivity"
             android:screenOrientation="portrait" />
-
-        <activity android:name=".demo.VodPlayerActivity"/>
-        <activity android:name=".demo.FeedActivity"
+        <activity android:name=".demo.VodPlayerActivity" />
+        <activity
+            android:name=".demo.FeedActivity"
             android:configChanges="keyboardHidden|orientation|screenSize"
             android:launchMode="singleTask"
             android:screenOrientation="portrait"
-            android:windowSoftInputMode="stateHidden"
-            />
+            android:windowSoftInputMode="stateHidden" />
 
         <receiver android:name=".expand.webdata.reveiver.WebDataReceiver">
             <intent-filter>
                 <action android:name="com.tencent.liteav.action.WED_DATA" />
             </intent-filter>
         </receiver>
-
     </application>
 
 </manifest>

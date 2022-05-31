@@ -59,6 +59,11 @@ public class PointSeekBar extends RelativeLayout {
     private List<PointParams>           mPointList;             // 打点信息的列表
     private OnSeekBarPointClickListener mPointClickListener;    // 打点view点击回调
     private boolean                     mIsChangePointViews;    // 打点信息是否更新过
+    private LayoutParams                mLayoutParams;
+    private LayoutParams                mThumbViewParams;
+    private LayoutParams                mTcPointViewLayoutParams;
+    private RectF                       mRectF;
+    private RectF                       mPRectF;
 
     public PointSeekBar(Context context) {
         super(context);
@@ -151,20 +156,24 @@ public class PointSeekBar extends RelativeLayout {
                 addThumbView();
             }
         });
+        mRectF = new RectF();
+        mPRectF = new RectF();
+        mTcPointViewLayoutParams = new LayoutParams(mThumbDrawable.getIntrinsicWidth(),
+                mThumbDrawable.getIntrinsicWidth());
+        mThumbView = new TCThumbView(getContext(), mThumbDrawable);
+        mThumbViewParams = new LayoutParams(mThumbDrawable.getIntrinsicHeight(), mThumbDrawable.getIntrinsicHeight());
     }
 
 
     private void changeThumbPos() {
-        LayoutParams params = (LayoutParams) mThumbView.getLayoutParams();
-        params.leftMargin = (int) mThumbLeft;
-        params.topMargin = (int) mThumbTop;
-        mThumbView.setLayoutParams(params);
+        mLayoutParams.leftMargin = (int) mThumbLeft;
+        mLayoutParams.topMargin = (int) mThumbTop;
+        mThumbView.setLayoutParams(mLayoutParams);
     }
 
     private void addThumbView() {
-        mThumbView = new TCThumbView(getContext(), mThumbDrawable);
-        LayoutParams thumbParams = new LayoutParams(mThumbDrawable.getIntrinsicHeight(), mThumbDrawable.getIntrinsicHeight());
-        mThumbView.setLayoutParams(thumbParams);
+        mThumbView.setLayoutParams(mThumbViewParams);
+        mLayoutParams = (LayoutParams) mThumbView.getLayoutParams();
         addView(mThumbView);
     }
 
@@ -188,8 +197,7 @@ public class PointSeekBar extends RelativeLayout {
     }
 
     private void calProgressDis() {
-        float dis = (mSeekBarRight - mSeekBarLeft) * (mCurrentProgress * 1.0f / mMaxProgress);
-        mThumbLeft = dis;
+        mThumbLeft = (mSeekBarRight - mSeekBarLeft) * (mCurrentProgress * 1.0f / mMaxProgress);
         mLastX = mThumbLeft;
         mCurrentLeftOffset = 0;
         calculatePointerRect();
@@ -204,8 +212,7 @@ public class PointSeekBar extends RelativeLayout {
                     PointSeekBar.this.removeAllViews();
                     if (mPointList != null) {
                         for (int i = 0; i < mPointList.size(); i++) {
-                            PointParams params = mPointList.get(i);
-                            addPoint(params, i);
+                            addPoint(mPointList.get(i), i);
                         }
                     }
                     addThumbView();
@@ -224,20 +231,18 @@ public class PointSeekBar extends RelativeLayout {
     protected void onDraw(Canvas canvas) {
         super.onDraw(canvas);
         //draw  bg
-        RectF rectF = new RectF();
-        rectF.left = mSeekBarLeft;
-        rectF.right = mSeekBarRight;
-        rectF.top = mBgTop;
-        rectF.bottom = mBgBottom;
-        canvas.drawRoundRect(rectF, mRoundSize, mRoundSize, mNormalPaint);
+        mRectF.left = mSeekBarLeft;
+        mRectF.right = mSeekBarRight;
+        mRectF.top = mBgTop;
+        mRectF.bottom = mBgBottom;
+        canvas.drawRoundRect(mRectF, mRoundSize, mRoundSize, mNormalPaint);
 
         //draw progress
-        RectF pRecf = new RectF();
-        pRecf.left = mSeekBarLeft;
-        pRecf.top = mBgTop;
-        pRecf.right = mThumbRight - mHalfDrawableWidth;
-        pRecf.bottom = mBgBottom;
-        canvas.drawRoundRect(pRecf,
+        mPRectF.left = mSeekBarLeft;
+        mPRectF.top = mBgTop;
+        mPRectF.right = mThumbRight - mHalfDrawableWidth;
+        mPRectF.bottom = mBgBottom;
+        canvas.drawRoundRect(mPRectF,
                 mRoundSize, mRoundSize, mProgressPaint);
 
         addThumbAndPointViews();
@@ -250,20 +255,15 @@ public class PointSeekBar extends RelativeLayout {
      * @param index
      */
     public void addPoint(PointParams pointParams, final int index) {
-        float percent = pointParams.progress * 1.0f / mMaxProgress;
-        int pointSize = mBgBottom - mBgTop;
-        float leftMargin = percent * (mSeekBarRight - mSeekBarLeft);
-
-        float rectLeft = (mThumbDrawable.getIntrinsicWidth() - pointSize) / 2;
-        float rectTop = mBgTop;
-        float rectBottom = mBgBottom;
-        float rectRight = rectLeft + pointSize;
-
         final TCPointView view = new TCPointView(getContext());
-        LayoutParams params = new LayoutParams(mThumbDrawable.getIntrinsicWidth(), mThumbDrawable.getIntrinsicWidth());
-        params.leftMargin = (int) leftMargin;
-        view.setDrawRect(rectLeft, rectTop, rectBottom, rectRight);
-        view.setLayoutParams(params);
+        mTcPointViewLayoutParams = new LayoutParams(mThumbDrawable.getIntrinsicWidth(),
+                mThumbDrawable.getIntrinsicWidth());
+        mTcPointViewLayoutParams.leftMargin = (int)
+                ((pointParams.progress * 1.0f / mMaxProgress) * (mSeekBarRight - mSeekBarLeft));
+        view.setDrawRect((mThumbDrawable.getIntrinsicWidth() - (mBgBottom - mBgTop)) / 2,
+                mBgTop, mBgBottom,
+                ((mThumbDrawable.getIntrinsicWidth() - (mBgBottom - mBgTop)) / 2) + (mBgBottom - mBgTop));
+        view.setLayoutParams(mTcPointViewLayoutParams);
         view.setColor(pointParams.color);
         view.setOnClickListener(new OnClickListener() {
             @Override
@@ -275,6 +275,7 @@ public class PointSeekBar extends RelativeLayout {
         });
         addView(view);
     }
+
 
     @Override
     public boolean onTouchEvent(MotionEvent event) {
@@ -377,17 +378,10 @@ public class PointSeekBar extends RelativeLayout {
 
     private void calculatePointerRect() {
         //draw pointer
-        float pointerLeft = getPointerLeft(mCurrentLeftOffset);
-        float pointerRight = pointerLeft + mThumbDrawable.getIntrinsicWidth();
-        mThumbLeft = pointerLeft;
-        mThumbRight = pointerRight;
+        mThumbLeft = mThumbLeft + mCurrentLeftOffset;
+        mThumbRight = mThumbLeft + mCurrentLeftOffset + mThumbDrawable.getIntrinsicWidth();
         mThumbTop = 0;
         mThumbBottom = mHeight;
-    }
-
-
-    private float getPointerLeft(float offset) {
-        return mThumbLeft + offset;
     }
 
     private OnSeekBarChangeListener mListener;
@@ -437,7 +431,7 @@ public class PointSeekBar extends RelativeLayout {
      */
     public static class PointParams {
         int progress = 0;       // 视频进度值(秒)
-        int color    = Color.RED;  // 打点view的颜色
+        int color = Color.RED;  // 打点view的颜色
 
         public PointParams(int progress, int color) {
             this.progress = progress;
@@ -449,7 +443,7 @@ public class PointSeekBar extends RelativeLayout {
      * 打点view
      */
     private static class TCPointView extends View {
-        private int   mColor = Color.WHITE; // view颜色
+        private int mColor = Color.WHITE; // view颜色
         private Paint mPaint;               // 画笔
         private RectF mRectF;               // 打点view的位置信息(矩形)
 
@@ -512,8 +506,8 @@ public class PointSeekBar extends RelativeLayout {
      * 拖动块view
      */
     private static class TCThumbView extends View {
-        private Paint    mPaint;        // 画笔
-        private Rect     mRect;         // 位置信息(矩形)
+        private Paint mPaint;        // 画笔
+        private Rect mRect;         // 位置信息(矩形)
         private Drawable mThumbDrawable;// thumb图片
 
         public TCThumbView(Context context, Drawable drawable) {

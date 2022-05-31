@@ -147,12 +147,6 @@ public class VodPlayerActivity extends Activity implements ITXVodPlayListener {
             }
         });
         mButtonScan.setEnabled(true);
-    }
-
-    public void setContentView() {
-        super.setContentView(R.layout.superplayer_activity_vod);
-        initView();
-
         mLinearRootView = (LinearLayout) findViewById(R.id.root);
         if (mVodPlayer == null) {
             mVodPlayer = new TXVodPlayer(this);
@@ -213,6 +207,7 @@ public class VodPlayerActivity extends Activity implements ITXVodPlayListener {
         });
 
         mButtonLog = (Button) findViewById(R.id.btnLog);
+        mButtonLog.setVisibility(View.GONE);
         mButtonLog.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -283,8 +278,14 @@ public class VodPlayerActivity extends Activity implements ITXVodPlayListener {
                 mButtonMute.setBackgroundResource(mEnableMute ? R.drawable.superplayer_mic_disable : R.drawable.superplayer_mic_enable);
             }
         });
+    }
 
-
+    /**
+     * 加载布局和初始化view
+     */
+    private void setContentView() {
+        super.setContentView(R.layout.superplayer_activity_vod);
+        initView();
         //硬件解码
         mButtonHWDecode = (Button) findViewById(R.id.btnHWDecode);
         mButtonHWDecode.getBackground().setAlpha(mHWDecode ? 255 : 100);
@@ -313,7 +314,6 @@ public class VodPlayerActivity extends Activity implements ITXVodPlayListener {
                 }
             }
         });
-
         mSeekBar = (SeekBar) findViewById(R.id.seekbar);
         mSeekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             @Override

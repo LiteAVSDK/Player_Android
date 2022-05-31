@@ -25,4 +25,9 @@
     <string name="superplayer_fhd2">FHD</string>
     <string name="superplayer_2k">2K</string>
     <string name="superplayer_4k">4K</string>
+    <string name="superplayer_current_quality">quality:</string>
+    <string name="superplayer_view_cache_list">video download list</string>
+    <string name="superplayer_start_download">start downloading video %1$s</string>
+    <string name="superplayer_download_failed">downloading video %1$s failed</string>
+    <string name="superplayer_download_quality_invalid">this video quality is invalid,download failed,please download video by others quality</string>
 </resources>

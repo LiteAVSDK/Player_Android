@@ -1,0 +1,116 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/superplayer_cache_menu_root"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/superplayer_transparent">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/superplayer_rl_cache_menu_container"
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:layout_alignParentEnd="true"
+        android:clickable="true"
+        android:focusable="true"
+        android:background="@color/superplayer_super_vod_vtt_bg">
+
+        <TextView
+            android:id="@+id/superplayer_tv_quality_label"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="@color/superplayer_white"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            android:text="@string/superplayer_current_quality"
+            android:paddingTop="30dp"
+            android:paddingBottom="5dp"
+            android:layout_marginStart="15dp"
+            android:textSize="12sp" />
+
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/superplayer_cl_current_quality_container"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:paddingEnd="30dp"
+            android:paddingBottom="5dp"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintStart_toEndOf="@id/superplayer_tv_quality_label">
+
+            <TextView
+                android:id="@+id/superplayer_tv_current_quality"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                android:paddingStart="10dp"
+                android:paddingTop="30dp"
+                android:layout_marginEnd="15dp"
+                tools:text="标清"
+                android:textColor="@color/superplayer_cache_btn_color"
+                android:textSize="12sp"
+                />
+
+            <ImageView
+                android:id="@+id/superplayer_iv_current_quality"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                app:layout_constraintStart_toEndOf="@id/superplayer_tv_current_quality"
+                app:layout_constraintBottom_toBottomOf="@id/superplayer_tv_current_quality"
+                android:src="@drawable/superplayer_cache_menu_quality_ic"/>
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+        <Button
+            android:id="@+id/superplayer_bt_show_cache_list"
+            style="?attr/borderlessButtonStyle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            android:background="@drawable/superplayer_round_blue_bt_bg"
+            android:paddingStart="60dp"
+            android:paddingEnd="60dp"
+            android:paddingTop="15dp"
+            android:paddingBottom="15dp"
+            android:layout_marginBottom="10dp"
+            android:layout_marginEnd="15dp"
+            android:layout_marginStart="15dp"
+            android:text="@string/superplayer_view_cache_list"
+            android:textColor="@color/superplayer_white"
+            android:textSize="16sp" />
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/superplayer_rv_cache_list"
+            android:layout_width="wrap_content"
+            android:layout_height="0dp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/superplayer_tv_quality_label"
+            app:layout_constraintBottom_toTopOf="@id/superplayer_bt_show_cache_list"
+            android:layout_marginTop="5dp"
+            android:layout_marginBottom="10dp"
+            android:orientation="vertical"
+            app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager" />
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/superplayer_rv_quality_list"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/superplayer_tv_quality_label"
+            app:layout_constraintBottom_toBottomOf="parent"
+            android:background="@color/superplayer_cache_quality_list_bg"
+            android:layout_marginTop="5dp"
+            android:paddingBottom="10dp"
+            android:orientation="vertical"
+            android:visibility="gone"
+            app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+</RelativeLayout>

@@ -174,13 +174,13 @@ public class FeedListItemView extends RelativeLayout {
 
     private final RecyclerView.OnScrollListener onScrollListener =
             new RecyclerView.OnScrollListener() {
-        @Override
-        public void onScrollStateChanged(@NonNull RecyclerView recyclerView, int newState) {
-            if(newState == RecyclerView.SCROLL_STATE_IDLE && null != feedPlayerView) {
-                feedPlayerView.preLoad();
-            }
-        }
-    };
+                @Override
+                public void onScrollStateChanged(@NonNull RecyclerView recyclerView, int newState) {
+                    if (newState == RecyclerView.SCROLL_STATE_IDLE && null != feedPlayerView) {
+                        feedPlayerView.preLoad();
+                    }
+                }
+            };
 
     public void registerScrollListener(RecyclerView recyclerView) {
         recyclerView.addOnScrollListener(onScrollListener);

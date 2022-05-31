@@ -4,7 +4,9 @@ package com.tencent.liteav.demo.superplayer;
 import com.tencent.liteav.demo.superplayer.model.VipWatchModel;
 import com.tencent.liteav.demo.superplayer.model.entity.DynamicWaterConfig;
 import com.tencent.liteav.demo.superplayer.model.entity.SuperPlayerVideoIdV2;
+import com.tencent.liteav.demo.superplayer.model.entity.VideoQuality;
 
+import java.util.ArrayList;
 import java.util.List;
 
 
@@ -33,6 +35,7 @@ public class SuperPlayerModel {
      * 预加载
      */
     public static final int PLAY_ACTION_PRELOAD = 2;
+
     public int appId;              // AppId 用于腾讯云点播 File ID 播放及腾讯云直播时移功能
 
     /**
@@ -53,6 +56,8 @@ public class SuperPlayerModel {
      * ------------------------------------------------------------------
      */
     public List<SuperPlayerURL> multiURLs;
+
+    public List<VideoQuality> videoQualityList = new ArrayList<>();  // 清晰度列表
 
     public int playDefaultIndex; // 指定多码率情况下，默认播放的连接Index
 
@@ -85,12 +90,15 @@ public class SuperPlayerModel {
     public String coverPictureUrl;
 
     public VipWatchModel vipWatchMode = null;
+
     /**
      * 动态水印配置
      */
     public DynamicWaterConfig dynamicWaterConfig = null;
 
     public int duration;
+
+    public boolean isEnableCache = false; // 是否开启缓存能力,默认关闭
 
     public static class SuperPlayerURL {
         public SuperPlayerURL(String url, String qualityName) {

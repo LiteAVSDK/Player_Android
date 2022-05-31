@@ -198,7 +198,7 @@ public class FeedListView extends FrameLayout implements FeedListItemView.FeedLi
         }
         feedListItemView.removeFeedPlayFromItem();
         addView(feedListItemView.getFeedPlayerView(), new FrameLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
-        if (!feedListItemView.getFeedPlayerView().isPlaying()) {
+        if (!feedListItemView.getFeedPlayerView().isPlaying() && !feedListItemView.getFeedPlayerView().isEnd()) {
             feedPlayerManager.setPlayingFeedPlayerView(feedListItemView.getFeedPlayerView(), position);
             feedListItemView.resume();
         }

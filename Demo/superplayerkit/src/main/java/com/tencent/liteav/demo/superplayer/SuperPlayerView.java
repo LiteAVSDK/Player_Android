@@ -105,7 +105,7 @@ public class SuperPlayerView extends RelativeLayout {
     private boolean                    isCallResume = false;            //resume方法时候被调用，在预加载模式使用
     private LinearLayout               mDynamicWatermarkLayout;
     private DynamicWatermarkView       mDynamicWatermarkView;
-    private ISuperPlayerListener mSuperPlayerListener;
+    private ISuperPlayerListener       mSuperPlayerListener;
 
     public SuperPlayerView(Context context) {
         super(context);
@@ -142,7 +142,6 @@ public class SuperPlayerView extends RelativeLayout {
         mSuperPlayerModelList = new ArrayList<>();
         mDynamicWatermarkLayout = mRootView.findViewById(R.id.superplayer_dynamic_watermark_layout);
         mDynamicWatermarkView = mRootView.findViewById(R.id.superplayer_dynamic_watermark);
-
 
         mVodControllerWindowParams = new LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT);
         mVodControllerFullScreenParams = new LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT);
@@ -259,6 +258,9 @@ public class SuperPlayerView extends RelativeLayout {
         mFullScreenPlayer.preparePlayVideo(model);
         mWindowPlayer.preparePlayVideo(model);
 
+        // 播放本地缓存视频的时候/视频没有fileId的时候(不支持url视频)，右上角不显示下载菜单
+        boolean isShowDownloadView = model.isEnableCache && (model.videoId != null || model.videoIdV2 != null);
+        mFullScreenPlayer.updateDownloadViewShow(isShowDownloadView);
         mFullScreenPlayer.setVipWatchModel(model.vipWatchMode);
         mWindowPlayer.setVipWatchModel(model.vipWatchMode);
         mFloatPlayer.setVipWatchModel(model.vipWatchMode);
@@ -280,6 +282,7 @@ public class SuperPlayerView extends RelativeLayout {
 
     /**
      * 设置动态水印的配置信息
+     *
      * @param dynamicWaterConfig
      */
     public void setDynamicWatermarkConfig(DynamicWaterConfig dynamicWaterConfig) {
@@ -319,6 +322,10 @@ public class SuperPlayerView extends RelativeLayout {
         }
         mSuperPlayer.resume();
         isCallResume = true;
+        // 更新缓存列表
+        if (null != mFullScreenPlayer) {
+            mFullScreenPlayer.checkIsNeedRefreshCacheMenu();
+        }
     }
 
     /**
@@ -481,7 +488,7 @@ public class SuperPlayerView extends RelativeLayout {
             if (mLayoutParamWindowMode == null) {
                 return;
             }
-            WindowManager.LayoutParams attrs =  ((Activity) getContext()).getWindow().getAttributes();
+            WindowManager.LayoutParams attrs = ((Activity) getContext()).getWindow().getAttributes();
             attrs.flags &= (~WindowManager.LayoutParams.FLAG_FULLSCREEN);
             ((Activity) getContext()).getWindow().setAttributes(attrs);
             ((Activity) getContext()).getWindow().clearFlags(WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS);
@@ -617,20 +624,7 @@ public class SuperPlayerView extends RelativeLayout {
 
         @Override
         public void onResume() {
-            if (mSuperPlayer.getPlayerState() == SuperPlayerDef.PlayerState.LOADING
-                    && mPlayAction == PLAY_ACTION_PRELOAD) {
-                mSuperPlayer.resume();
-            } else if (mSuperPlayer.getPlayerState() == SuperPlayerDef.PlayerState.INIT) {
-                if (mPlayAction == PLAY_ACTION_PRELOAD) {
-                    mSuperPlayer.resume();
-                } else if (mPlayAction == PLAY_ACTION_MANUAL_PLAY) {
-                    mSuperPlayer.play(mCurrentSuperPlayerModel);
-                }
-            } else if (mSuperPlayer.getPlayerState() == SuperPlayerDef.PlayerState.END) { //重播
-                mSuperPlayer.reStart();
-            } else if (mSuperPlayer.getPlayerState() == SuperPlayerDef.PlayerState.PAUSE) { //继续播放
-                mSuperPlayer.resume();
-            }
+            handleResume();
         }
 
 
@@ -733,7 +727,46 @@ public class SuperPlayerView extends RelativeLayout {
         public void playNext() {
             playNextVideo();
         }
+
+        @Override
+        public List<SuperPlayerModel> getPlayList() {
+            if (null == mSuperPlayerModelList || mSuperPlayerModelList.isEmpty()) {
+                return new ArrayList<SuperPlayerModel>() {{
+                    add(mCurrentSuperPlayerModel);
+                }};
+            }
+            return mSuperPlayerModelList;
+        }
+
+        @Override
+        public SuperPlayerModel getPlayingVideoModel() {
+            return mCurrentSuperPlayerModel;
+        }
+
+        @Override
+        public void onShowDownloadList() {
+            if (null != mPlayerViewCallback) {
+                mPlayerViewCallback.onShowCacheListClick();
+            }
+        }
     };
+
+    private void handleResume() {
+        if (mSuperPlayer.getPlayerState() == SuperPlayerDef.PlayerState.LOADING
+                && mPlayAction == PLAY_ACTION_PRELOAD) {
+            mSuperPlayer.resume();
+        } else if (mSuperPlayer.getPlayerState() == SuperPlayerDef.PlayerState.INIT) {
+            if (mPlayAction == PLAY_ACTION_PRELOAD) {
+                mSuperPlayer.resume();
+            } else if (mPlayAction == PLAY_ACTION_MANUAL_PLAY) {
+                mSuperPlayer.play(mCurrentSuperPlayerModel);
+            }
+        } else if (mSuperPlayer.getPlayerState() == SuperPlayerDef.PlayerState.END) { //重播
+            mSuperPlayer.reStart();
+        } else if (mSuperPlayer.getPlayerState() == SuperPlayerDef.PlayerState.PAUSE) { //继续播放
+            mSuperPlayer.resume();
+        }
+    }
 
     private void playNextVideo() {
         if (!mIsLoopPlayList && (mPlayIndex == mSuperPlayerModelList.size() - 1)) {
@@ -809,10 +842,6 @@ public class SuperPlayerView extends RelativeLayout {
         return true;
     }
 
-    public void setNeedToPause(boolean value) {
-        mSuperPlayer.setNeedToPause(value);
-    }
-
     /**
      * SuperPlayerView的回调接口
      */
@@ -859,6 +888,11 @@ public class SuperPlayerView extends RelativeLayout {
          * @param code
          */
         void onError(int code);
+
+        /**
+         * 下载页面，点击了缓存列表按钮
+         */
+        void onShowCacheListClick();
     }
 
     public void release() {
@@ -1177,6 +1211,19 @@ public class SuperPlayerView extends RelativeLayout {
         }
     }
 
+    /**
+     * 设置是否显示清晰度，默认显示
+     */
+    public void setQualityVisible(boolean isShow) {
+        if (null != mFullScreenPlayer) {
+            mFullScreenPlayer.setVideoQualityVisible(isShow);
+        }
+    }
+
+    public void setNeedToPause(boolean value) {
+        mSuperPlayer.setNeedToPause(value);
+    }
+
     public void setIsAutoPlay(boolean b) {
         mSuperPlayer.setAutoPlay(b);
     }
@@ -1188,5 +1235,4 @@ public class SuperPlayerView extends RelativeLayout {
     public void setLoop(boolean b) {
         mSuperPlayer.setLoop(b);
     }
-
 }

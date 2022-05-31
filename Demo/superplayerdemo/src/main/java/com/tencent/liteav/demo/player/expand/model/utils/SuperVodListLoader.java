@@ -1,5 +1,7 @@
 package com.tencent.liteav.demo.player.expand.model.utils;
 
+import static com.tencent.liteav.demo.superplayer.SuperPlayerModel.PLAY_ACTION_MANUAL_PLAY;
+
 import android.content.Context;
 import android.graphics.Color;
 import android.os.Handler;
@@ -8,11 +10,13 @@ import android.text.TextUtils;
 import android.util.Log;
 
 import com.tencent.liteav.demo.player.R;
+import com.tencent.liteav.demo.player.expand.model.entity.VideoListModel;
+import com.tencent.liteav.demo.player.expand.model.entity.VideoModel;
 import com.tencent.liteav.demo.superplayer.model.VipWatchModel;
 import com.tencent.liteav.demo.superplayer.model.entity.DynamicWaterConfig;
-import com.tencent.liteav.demo.superplayer.model.entity.PlayInfoStream;
-import com.tencent.liteav.demo.player.expand.model.entity.VideoModel;
-import com.tencent.liteav.demo.superplayer.model.entity.PlayInfoStream;
+import com.tencent.liteav.demo.superplayer.model.entity.VideoQuality;
+import com.tencent.liteav.demo.superplayer.model.protocol.PlayInfoParserV2;
+import com.tencent.liteav.demo.superplayer.model.protocol.PlayInfoParserV4;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -31,15 +35,14 @@ import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
 
-import static com.tencent.liteav.demo.superplayer.SuperPlayerModel.PLAY_ACTION_AUTO_PLAY;
-import static com.tencent.liteav.demo.superplayer.SuperPlayerModel.PLAY_ACTION_MANUAL_PLAY;
-
 /**
  * Created by liyuejiao on 2018/7/3.
  * 获取点播信息
  */
 
 public class SuperVodListLoader {
+
+    private static final String M3U8_SUFFIX = ".m3u8";
 
     private static final String                TAG       = "SuperVodListLoader";
     private              Handler               mHandler;
@@ -112,7 +115,6 @@ public class SuperVodListLoader {
 
     public ArrayList<VideoModel> loadCircleVodList() {
         VideoModel model = new VideoModel();
-        model = new VideoModel();
         model.appid = 1252463788;
         model.fileid = "4564972819219071568";
         ArrayList<VideoModel> list = new ArrayList<>();
@@ -130,10 +132,50 @@ public class SuperVodListLoader {
         return list;
     }
 
-    public void getBatchVodList(final ArrayList<VideoModel> videoModels, final OnListLoadListener listener) {
-        if (videoModels == null || videoModels.size() == 0) {
-            return;
-        }
+    public ArrayList<VideoModel> loadCacheVodList() {
+        VideoModel model = new VideoModel();
+        model.appid = 1500005830;
+        model.fileid = "387702299773851453";
+        model.isEnableCache = true;
+        ArrayList<VideoModel> list = new ArrayList<>();
+        list.add(model);
+
+        model = new VideoModel();
+        model.appid = 1500005830;
+        model.fileid = "387702299774155981";
+        model.isEnableCache = true;
+        list.add(model);
+
+        model = new VideoModel();
+        model.appid = 1500005830;
+        model.fileid = "387702299773830943";
+        model.isEnableCache = true;
+        list.add(model);
+
+        model = new VideoModel();
+        model.appid = 1500005830;
+        model.fileid = "387702299773823860";
+        model.isEnableCache = true;
+        list.add(model);
+
+        model = new VideoModel();
+        model.appid = 1500005830;
+        model.fileid = "387702299774156604";
+        model.isEnableCache = true;
+        list.add(model);
+        return list;
+    }
+
+    public void getBatchVodList(final OnVodListLoadListener listener) {
+        ArrayList<VideoModel> circleModels = loadCircleVodList();
+        ArrayList<VideoModel> cacheModels = loadCacheVodList();
+
+        getVideoListInfo(circleModels, false, listener);
+        getVideoListInfo(cacheModels, true, listener);
+    }
+
+    private void getVideoListInfo(final ArrayList<VideoModel> videoModels, final boolean isCacheModel,
+                                  final OnVodListLoadListener listener) {
         mHandler.post(new Runnable() {
             @Override
             public void run() {
@@ -145,7 +187,10 @@ public class SuperVodListLoader {
                         public void onSuccess(VideoModel videoModel) {
                             integer.getAndAdd(1);
                             if (integer.get() == loadSize) {
-                                listener.onSuccess(videoModels);
+                                VideoListModel videoListModel = new VideoListModel();
+                                videoListModel.videoModelList = videoModels;
+                                videoListModel.isEnableCache = isCacheModel;
+                                listener.onSuccess(videoListModel);
                             }
                         }
 
@@ -167,34 +212,6 @@ public class SuperVodListLoader {
         for (VideoModel model : videoModels) {
             getVodByFileId(model, listener);
         }
-    }
-
-    public void getVodJsonByFieId(final VideoModel model, final OnVodJsonLoadListener listener) {
-        mHandler.post(new Runnable() {
-            @Override
-            public void run() {
-                String urlStr = makeUrlString(model.appid, model.fileid, model.pSign);
-                Request request = new Request.Builder().url(urlStr).build();
-                Call call = mHttpClient.newCall(request);
-                call.enqueue(new Callback() {
-                    @Override
-                    public void onFailure(Call call, IOException e) {
-                        //获取请求信息失败
-                        if(null != listener) {
-                            listener.onFail(-1);
-                        }
-                    }
-
-                    @Override
-                    public void onResponse(Call call, Response response) throws IOException {
-                        String content = response.body().string();
-                        if(null != listener) {
-                            listener.onSuccess(content);
-                        }
-                    }
-                });
-            }
-        });
     }
 
     public void getVodByFileId(final VideoModel model, final OnVodInfoLoadListener listener) {
@@ -293,6 +310,7 @@ public class SuperVodListLoader {
             Log.e(TAG, "parseJson err, content is empty!");
             return;
         }
+
         try {
             JSONObject jsonObject = new JSONObject(content);
             int code = jsonObject.getInt("code");
@@ -302,37 +320,47 @@ public class SuperVodListLoader {
                 Log.e(TAG, message);
                 return;
             }
+
             int version = jsonObject.getInt("version");
-            // 解析视频基础信息，雪碧图，视频名称，播放时长等
             if (version == 2) {
-                PlayInfoResponseParser playInfoResponse = new PlayInfoResponseParser(jsonObject);
-                videoModel.placeholderImage = playInfoResponse.coverURL();
-                PlayInfoStream stream = playInfoResponse.getSource();
-                if (stream != null) {
-                    videoModel.duration = stream.getDuration();
+                PlayInfoParserV2 parserV2 = new PlayInfoParserV2(jsonObject);
+
+                videoModel.placeholderImage = parserV2.getCoverUrl();
+                videoModel.duration = parserV2.getDuration();
+                upDataTitle(videoModel, parserV2.getName());
+
+                String url = parserV2.getURL();
+                if ((url != null && url.contains(M3U8_SUFFIX)) || parserV2.getVideoQualityList().isEmpty()) {
+                    videoModel.videoURL = url;
+                    if (videoModel.multiVideoURLs != null) {
+                        videoModel.multiVideoURLs.clear();
+                    }
+                } else {
+                    videoModel.videoURL = null;
+                    videoModel.multiVideoURLs = new ArrayList<>();
+                    List<VideoQuality> videoQualityList = parserV2.getVideoQualityList();
+                    Collections.sort(videoQualityList); // 码率从高到底排序
+                    for (int i = 0; i < videoQualityList.size(); i++) {
+                        VideoQuality videoQuality = videoQualityList.get(i);
+                        videoModel.multiVideoURLs.add(
+                                new VideoModel.VideoPlayerURL(videoQuality.title, videoQuality.url));
+                    }
                 }
-                String title = playInfoResponse.description();
-                if (TextUtils.isEmpty(title)) {
-                    title = playInfoResponse.name();
-                }
-                upDataTitle(videoModel, title);
                 listener.onSuccess(videoModel);
             } else if (version == 4) {
-                JSONObject media = jsonObject.getJSONObject("media");
-                if (media != null) {
-                    JSONObject basicInfo = media.optJSONObject("basicInfo");
-                    if (basicInfo != null) {
-                        String title = basicInfo.optString("description");
-                        if (TextUtils.isEmpty(title)) {
-                            title = basicInfo.optString("name");
-                        }
-                        upDataTitle(videoModel, title);
-                        videoModel.placeholderImage = basicInfo.optString("coverUrl");
-                        videoModel.duration = basicInfo.optInt("duration");
-                    }
-                    listener.onSuccess(videoModel);
-                    return;
+                PlayInfoParserV4 parserV4 = new PlayInfoParserV4(jsonObject);
+                if (TextUtils.isEmpty(parserV4.getDRMType())) {
+                    videoModel.videoURL = parserV4.getURL();
                 }
+                String title = parserV4.getDescription();
+                if (TextUtils.isEmpty(title)) {
+                    title = parserV4.getName();
+                }
+                upDataTitle(videoModel, title);
+                videoModel.placeholderImage = parserV4.getCoverUrl();
+                videoModel.duration = parserV4.getDuration();
+
+                listener.onSuccess(videoModel);
             }
         } catch (JSONException e) {
             e.printStackTrace();
@@ -395,14 +423,16 @@ public class SuperVodListLoader {
         void onFail(int errCode);
     }
 
-    public interface OnVodJsonLoadListener {
-        void onSuccess(String content);
+
+    public interface OnListLoadListener {
+        void onSuccess(List<VideoModel> videoModels);
 
         void onFail(int errCode);
     }
 
-    public interface OnListLoadListener {
-        void onSuccess(List<VideoModel> videoModels);
+
+    public interface OnVodListLoadListener {
+        void onSuccess(VideoListModel videoListModel);
 
         void onFail(int errCode);
     }

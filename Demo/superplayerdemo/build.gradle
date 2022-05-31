@@ -36,7 +36,7 @@ dependencies {
     implementation 'androidx.multidex:multidex:2.0.0'
     implementation 'androidx.cardview:cardview:1.0.0'
     implementation 'com.google.code.gson:gson:2.3.1'
-    implementation('com.blankj:utilcode:1.25.9', {
+    implementation('com.blankj:utilcode:1.30.7', {
         exclude group: 'com.google.code.gson', module: 'gson'
     })
 

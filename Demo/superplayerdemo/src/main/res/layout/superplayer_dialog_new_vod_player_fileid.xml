@@ -61,4 +61,13 @@
         android:textColor="@color/superplayer_white"
         android:textSize="14dp" />
 
+    <CheckBox
+        android:id="@+id/superplayer_cb_cache_switch"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
+        android:checked="false"
+        android:text="是否开启缓存功能"/>
+
+
 </LinearLayout>

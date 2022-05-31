@@ -25,6 +25,7 @@ public class TXVodPlayerWrapper implements ITXVodPlayListener {
     private String mUrl;
     private boolean mStartOnPrepare;
     private TXVodPlayConfig mTXVodPlayConfig;
+    private int mBitRateIndex;
 
     public TXVodPlayerWrapper(Context context) {
         mVodPlayer = new TXVodPlayer(context);
@@ -33,6 +34,7 @@ public class TXVodPlayerWrapper implements ITXVodPlayListener {
         mTXVodPlayConfig.setProgressInterval(1);
         mTXVodPlayConfig.setSmoothSwitchBitrate(true);
         mTXVodPlayConfig.setMaxBufferSize(5);
+        mTXVodPlayConfig.setMaxCacheItems(8);
         File sdcardDir = context.getExternalFilesDir(null);
         if (sdcardDir != null) {
             mTXVodPlayConfig.setCacheFolderPath(sdcardDir.getPath() + "/txcache");
@@ -81,13 +83,21 @@ public class TXVodPlayerWrapper implements ITXVodPlayListener {
 
 
     public void resumePlay() {
+        Log.i(TAG, "[resumePlay] , startOnPrepare， " + mStartOnPrepare
+                + " mVodPlayer " + mVodPlayer.hashCode() + " url " + mUrl);
+        if (mStatus == TxVodStatus.TX_VIDEO_PLAYER_STATUS_STOPPED) {
+            mVodPlayer.setAutoPlay(true);
+            mVodPlayer.setBitrateIndex(mBitRateIndex);
+            mVodPlayer.startPlay(mUrl);
+            playerStatusChanged(TxVodStatus.TX_VIDEO_PLAYER_STATUS_PLAYING);
+            return;
+        }
         if (mStatus == TxVodStatus.TX_VIDEO_PLAYER_STATUS_PREPARED || mStatus == TxVodStatus.TX_VIDEO_PLAYER_STATUS_PAUSED) {
             mVodPlayer.resume();
             playerStatusChanged(TxVodStatus.TX_VIDEO_PLAYER_STATUS_PLAYING);
         } else {
             mStartOnPrepare = true;
         }
-        Log.i(TAG, "[resumePlay] , startOnPrepare， " + mStartOnPrepare + " mVodPlayer " + mVodPlayer.hashCode() + " url " + mUrl);
     }
 
 
@@ -104,11 +114,13 @@ public class TXVodPlayerWrapper implements ITXVodPlayListener {
     public void stopForPlaying() {
         if (mStatus == TxVodStatus.TX_VIDEO_PLAYER_STATUS_PLAYING) {
             mVodPlayer.stopPlay(true);
+            playerStatusChanged(TxVodStatus.TX_VIDEO_PLAYER_STATUS_STOPPED);
         }
     }
 
     public void stopPlay() {
         mVodPlayer.stopPlay(true);
+        playerStatusChanged(TxVodStatus.TX_VIDEO_PLAYER_STATUS_STOPPED);
     }
 
     public void setPlayerView(TXCloudVideoView txCloudVideoView) {
@@ -118,6 +130,7 @@ public class TXVodPlayerWrapper implements ITXVodPlayListener {
 
     public void preStartPlay(ShortVideoBean bean) {
         this.mUrl = bean.videoURL;
+        this.mBitRateIndex = bean.bitRateIndex;
         this.mStatus = TxVodStatus.TX_VIDEO_PLAYER_STATUS_UNLOAD;
         mStartOnPrepare = false;
         mVodPlayer.setLoop(true);
@@ -145,6 +158,7 @@ public class TXVodPlayerWrapper implements ITXVodPlayListener {
         TX_VIDEO_PLAYER_STATUS_PLAYING,     // 播放中
         TX_VIDEO_PLAYER_STATUS_PAUSED,      // 暂停
         TX_VIDEO_PLAYER_STATUS_ENDED,       // 播放完成
+        TX_VIDEO_PLAYER_STATUS_STOPPED      // 手动停止播放
     }
 
     public interface ISeekBarChangeListener {

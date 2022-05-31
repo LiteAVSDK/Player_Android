@@ -106,11 +106,8 @@ public class SuperShortVideoView extends RelativeLayout {
                         View view = mSnapHelper.findSnapView(mLayoutManager);
                         int position = recyclerView.getChildAdapterPosition(view);
                         Log.i(TAG, "[SCROLL_STATE_IDLE] mLastPositionInIDLE " + mLastPositionInIDLE + " position " + position);
-                        if (mLastPositionInIDLE != position) {
-                            onPageSelectedMethod(position);
-                            mLastPositionInIDLE = position;
-                            Log.i(TAG, "[SCROLL_STATE_IDLE] into [startPlay] ");
-                        }
+                        onPageSelectedMethod(position);
+                        mLastPositionInIDLE = position;
                         break;
                     case RecyclerView.SCROLL_STATE_DRAGGING://拖动
                         break;
@@ -122,15 +119,18 @@ public class SuperShortVideoView extends RelativeLayout {
     }
 
     private void onPageSelectedMethod(int position) {
-        View view = mSnapHelper.findSnapView(mLayoutManager);
-        mBaseItemView = (TXVideoBaseView) view.findViewById(R.id.baseItemView);
-        Log.i(TAG, "onPageSelected " + position);
-        List<ShortVideoBean> tempUrlList = initUrlList(position, MAX_PLAYER_COUNT_ON_PASS);
-        PlayerManager.getInstance(getContext()).updateManager(tempUrlList);
-        TXVodPlayerWrapper txVodPlayerWrapper = PlayerManager.getInstance(getContext()).getPlayer(mUrlList.get(position));
-        Log.i(TAG, "txVodPlayerWrapper " + txVodPlayerWrapper + "url-- " + mUrlList.get(position).videoURL);
-        Log.i(TAG, "txVodPlayerWrapper " + txVodPlayerWrapper);
-        mBaseItemView.setTXVodPlayer(txVodPlayerWrapper);
+        if (mLastPositionInIDLE != position) {
+            View view = mSnapHelper.findSnapView(mLayoutManager);
+            mBaseItemView = (TXVideoBaseView) view.findViewById(R.id.baseItemView);
+            Log.i(TAG, "onPageSelected " + position);
+            List<ShortVideoBean> tempUrlList = initUrlList(position, MAX_PLAYER_COUNT_ON_PASS);
+            PlayerManager.getInstance(getContext()).updateManager(tempUrlList);
+            TXVodPlayerWrapper txVodPlayerWrapper = PlayerManager.getInstance(getContext())
+                    .getPlayer(mUrlList.get(position));
+            Log.i(TAG, "txVodPlayerWrapper " + txVodPlayerWrapper + "url-- " + mUrlList.get(position).videoURL);
+            Log.i(TAG, "txVodPlayerWrapper " + txVodPlayerWrapper);
+            mBaseItemView.setTXVodPlayer(txVodPlayerWrapper);
+        }
         mBaseItemView.startPlay();
     }
 

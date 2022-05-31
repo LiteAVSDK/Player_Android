@@ -26,4 +26,17 @@ public final class SuperPlayerConstants {
         public static final int CODE_REQUEST_ERR      = 1;    // 请求错误
         public static final int CODE_PARSE_ERR        = 2;    // 解析json错误
     }
+
+    public static class SuperPlayerIntent {
+        public static final String KEY_FROM          = "from";
+        public static final String FROM_URL          = "url";
+        public static final String FROM_SUPERPLAYER  = "superplayer";
+        public static final String FROM_CACHE        = "cache";
+        public static final String KEY_URL           = "url";
+        public static final String KEY_APP_ID        = "appId";
+        public static final String KEY_FILE_ID       = "fileId";
+        public static final String KEY_P_SIGN        = "psign";
+        public static final String KEY_TITLE         = "title";
+        public static final String KEY_COVER_IMG     = "coverImg";
+    }
 }

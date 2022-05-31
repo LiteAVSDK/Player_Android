@@ -124,7 +124,7 @@ public class VodMoreView extends RelativeLayout implements RadioGroup.OnCheckedC
         params.screenBrightness = getActivityBrightness((Activity) mContext);
         window.setAttributes(params);
         if (params.screenBrightness == -1) {
-            mSeekBarLight.setProgress(100);
+            updateBrightProgress(100);
             return;
         }
         mSeekBarLight.setProgress((int) (params.screenBrightness * 100));

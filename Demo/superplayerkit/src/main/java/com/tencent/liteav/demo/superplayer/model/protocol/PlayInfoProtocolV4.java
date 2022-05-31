@@ -104,8 +104,6 @@ public class PlayInfoProtocolV4 implements IPlayInfoProtocol {
             if (code == 0) {
                 int version = jsonObject.getInt("version");
                 if (version == 2) {
-                    mParams.videoId.overlayKey = null;
-                    mParams.videoId.overlayIv = null;
                     mParser = new PlayInfoParserV2(jsonObject);
                 } else if (version == 4) {
                     mParser = new PlayInfoParserV4(jsonObject);
@@ -167,25 +165,6 @@ public class PlayInfoProtocolV4 implements IPlayInfoProtocol {
 
         if (!TextUtils.isEmpty(psign)) {
             str.append("psign=" + psign + "&");
-            // 生成临时密钥并加密，跟psign一起写到请求云点播的querystring中
-            if (mParams.videoId != null) {
-                String keyId = "";
-                mParams.videoId.overlayKey = genRandomHexString();
-                mParams.videoId.overlayIv = genRandomHexString();
-                Log.i(TAG, "V4 protocol send request fileId : " + mParams.fileId +
-                        " | overlayKey: " + mParams.videoId.overlayKey +
-                        " | overlayIv: " + mParams.videoId.overlayIv);
-                String cipheredOverlayKey = TXVodPlayer.getEncryptedPlayKey(mParams.videoId.overlayKey);
-                String cipheredOverlayIv = TXVodPlayer.getEncryptedPlayKey(mParams.videoId.overlayIv);
-                if (!TextUtils.isEmpty(cipheredOverlayKey) && !TextUtils.isEmpty(cipheredOverlayIv)) {
-                    keyId = "1";
-                }
-                if (!TextUtils.isEmpty(keyId)) {
-                    str.append("cipheredOverlayKey=").append(cipheredOverlayKey).append("&");
-                    str.append("cipheredOverlayIv=").append(cipheredOverlayIv).append("&");
-                    str.append("keyId=").append(keyId).append("&");
-                }
-            }
         }
 
         if (!TextUtils.isEmpty(content)) {

@@ -1,5 +1,8 @@
 package com.tencent.liteav.demo.player.demo;
 
+import static android.view.View.GONE;
+import static android.view.View.VISIBLE;
+
 import android.app.Activity;
 import android.app.ActivityManager;
 import android.app.AlertDialog;
@@ -10,10 +13,6 @@ import android.graphics.Color;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
-import androidx.annotation.Nullable;
-import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -21,6 +20,7 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
+import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ImageView;
@@ -28,31 +28,31 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.annotation.Nullable;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
+
 import com.tencent.liteav.demo.common.utils.IntentUtils;
-
+import com.tencent.liteav.demo.player.R;
+import com.tencent.liteav.demo.player.expand.model.GetVideoInfoListListener;
+import com.tencent.liteav.demo.player.expand.model.SuperPlayerConstants;
+import com.tencent.liteav.demo.player.expand.model.VideoDataMgr;
+import com.tencent.liteav.demo.player.expand.model.entity.VideoInfo;
 import com.tencent.liteav.demo.player.expand.model.entity.VideoListModel;
-
+import com.tencent.liteav.demo.player.expand.model.entity.VideoModel;
+import com.tencent.liteav.demo.player.expand.model.utils.SuperVodListLoader;
+import com.tencent.liteav.demo.player.expand.ui.TCVodPlayerListAdapter;
 import com.tencent.liteav.demo.superplayer.SuperPlayerDef;
 import com.tencent.liteav.demo.superplayer.SuperPlayerGlobalConfig;
 import com.tencent.liteav.demo.superplayer.SuperPlayerModel;
 import com.tencent.liteav.demo.superplayer.SuperPlayerVideoId;
 import com.tencent.liteav.demo.superplayer.SuperPlayerView;
-import com.tencent.liteav.demo.player.R;
-import com.tencent.liteav.demo.player.expand.model.SuperPlayerConstants;
-import com.tencent.liteav.demo.player.expand.model.GetVideoInfoListListener;
-import com.tencent.liteav.demo.player.expand.model.VideoDataMgr;
-import com.tencent.liteav.demo.player.expand.model.entity.VideoInfo;
-import com.tencent.liteav.demo.player.expand.model.utils.SuperVodListLoader;
-import com.tencent.liteav.demo.player.expand.ui.TCVodPlayerListAdapter;
-import com.tencent.liteav.demo.player.expand.model.entity.VideoModel;
 import com.tencent.rtmp.TXLiveBase;
 import com.tencent.rtmp.TXLiveConstants;
 
 import java.util.ArrayList;
 import java.util.List;
-
-import static android.view.View.GONE;
-import static android.view.View.VISIBLE;
 
 /**
  * Created by liyuejiao on 2018/7/3.
@@ -104,7 +104,9 @@ public class SuperPlayerActivity extends Activity implements View.OnClickListene
     private boolean                  mVideoHasPlay;
     private boolean                  mDefaultVideo;
     private String                   mVideoId;
+
     private boolean                  mIsManualPause = false;
+    private boolean                  mUseLocalLiveData = true;
 
     private static class ListTabItem {
         public ListTabItem(int type, TextView textView, ImageView imageView, View.OnClickListener listener) {
@@ -139,7 +141,14 @@ public class SuperPlayerActivity extends Activity implements View.OnClickListene
         setIntent(intent);
         String from = intent.getStringExtra("from");
         if (!TextUtils.isEmpty(from)) {
-            playExternalVideo();
+            if (TextUtils.equals(from, SuperPlayerConstants.SuperPlayerIntent.FROM_URL)) {
+                String url = intent.getStringExtra(SuperPlayerConstants.SuperPlayerIntent.KEY_URL);
+                playNewVideo(url);
+            } else if (TextUtils.equals(from, SuperPlayerConstants.SuperPlayerIntent.FROM_CACHE)) {
+                playExternalDownloadVideo();
+            } else {
+                playExternalVideo();
+            }
         }
     }
 
@@ -325,51 +334,68 @@ public class SuperPlayerActivity extends Activity implements View.OnClickListene
 
     private void updateLiveList() {
         mLiveList.clear();
-        mSuperVodListLoader.getLiveList(new SuperVodListLoader.OnListLoadListener() {
-            @Override
-            public void onSuccess(final List<VideoModel> superPlayerModelList) {
-
-                SuperPlayerActivity.this.runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        if (mDataType != LIST_TYPE_LIVE) return;
-                        mVodPlayerListAdapter.clear();
-                        for (VideoModel videoModel :
-                                superPlayerModelList) {
-                            addVideoModelIntoVodPlayerListAdapter(videoModel);
-                            mLiveList.add(videoModel);
-                        }
-                        if (!mVideoHasPlay && !mLiveList.isEmpty()) {
-                            if (mLiveList.get(0).appid > 0) {
-                                TXLiveBase.setAppID("" + mLiveList.get(0).appid);
-                            }
-                            String from = getIntent().getStringExtra("from");
-                            if (TextUtils.isEmpty(from)) {
-                                playVideoModel(mLiveList.get(0));
-                            } else {
-                                playExternalVideo();
-                            }
-                            mVideoHasPlay = true;
-                        }
-                        mVodPlayerListAdapter.notifyDataSetChanged();
-
-                        mSwipeRefreshLayout.setRefreshing(false);
-                    }
-                });
+        if (mUseLocalLiveData) {
+            VideoModel liveModel = new VideoModel();
+            liveModel.title = getResources().getString(R.string.superplayer_test_video);
+            liveModel.placeholderImage = "http://1500005830.vod2.myqcloud.com/6c9a5118vodcq1500005830/66bc542f387702300661648850/0RyP1rZfkdQA.png";
+            liveModel.videoURL =  "http://liteavapp.qcloud.com/live/liteavdemoplayerstreamid.flv";
+            liveModel.coverPictureUrl = "http://1500005830.vod2.myqcloud.com/6c9a5118vodcq1500005830/66bc542f387702300661648850/0RyP1rZfkdQA.png";
+            addVideoModelIntoVodPlayerListAdapter(liveModel);
+            mLiveList.add(liveModel);
+            if (!mVideoHasPlay) {
+                TXLiveBase.setAppID(String.valueOf(DEFAULT_APPID));
+                playVideoModel(mLiveList.get(0));
+                mVideoHasPlay = true;
             }
+        } else {
+            mSuperVodListLoader.getLiveList(new SuperVodListLoader.OnListLoadListener() {
+                @Override
+                public void onSuccess(final List<VideoModel> superPlayerModelList) {
 
-            @Override
-            public void onFail(int errCode) {
-                Log.e(TAG, "updateLiveList error");
-                runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        mSwipeRefreshLayout.setRefreshing(false);
-                    }
-                });
-            }
-        });
-        mVodPlayerListAdapter.notifyDataSetChanged();
+                    SuperPlayerActivity.this.runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            if (mDataType != LIST_TYPE_LIVE) {
+                                return;
+                            }
+                            mVodPlayerListAdapter.clear();
+                            for (VideoModel videoModel :
+                                    superPlayerModelList) {
+                                addVideoModelIntoVodPlayerListAdapter(videoModel);
+                                mLiveList.add(videoModel);
+                            }
+                            if (!mVideoHasPlay && !mLiveList.isEmpty()) {
+                                if (mLiveList.get(0).appid > 0) {
+                                    TXLiveBase.setAppID("" + mLiveList.get(0).appid);
+                                }
+                                String from = getIntent().getStringExtra("from");
+                                if (TextUtils.isEmpty(from)) {
+                                    playVideoModel(mLiveList.get(0));
+                                } else {
+                                    playExternalVideo();
+                                }
+                                mVideoHasPlay = true;
+                            }
+                            mVodPlayerListAdapter.notifyDataSetChanged();
+
+                            mSwipeRefreshLayout.setRefreshing(false);
+                        }
+                    });
+                }
+
+                @Override
+                public void onFail(int errCode) {
+                    Log.e(TAG, "updateLiveList error");
+                    runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            mSwipeRefreshLayout.setRefreshing(false);
+                        }
+                    });
+                }
+            });
+            mVodPlayerListAdapter.notifyDataSetChanged();
+        }
     }
 
     private void onGetVodInfoOnebyOneOnSuccess(final VideoModel videoModel) {
@@ -402,21 +428,14 @@ public class SuperPlayerActivity extends Activity implements View.OnClickListene
 
                 }
             });
-            ArrayList<VideoModel> circleModels = mSuperVodListLoader.loadCircleVodList();
-            mSuperVodListLoader.getBatchVodList(circleModels, new SuperVodListLoader.OnListLoadListener() {
+            mSuperVodListLoader.getBatchVodList(new SuperVodListLoader.OnVodListLoadListener() {
                 @Override
-                public void onSuccess(List<VideoModel> videoModels) {
-                    final VideoListModel videoListModel = new VideoListModel();
-                    videoListModel.videoModelList = videoModels;
-                    videoListModel.title = "视频列表轮播演示";
-                    videoListModel.icon = "http://1500005830.vod2.myqcloud.com/6c9a5118vodcq1500005830/f817e7c8387702291186401215/gk5EbAYcy10A.png";
-                    runOnUiThread(new Runnable() {
-                        @Override
-                        public void run() {
-                            mVodPlayerListAdapter.addSuperPlayerModel(videoListModel);
-                        }
-                    });
-                    mVodList.add(videoListModel);
+                public void onSuccess(VideoListModel videoModels) {
+                    if (videoModels.isEnableCache) {
+                        addCacheVideo(videoModels);
+                    } else {
+                        addCircleVideo(videoModels);
+                    }
                 }
 
                 @Override
@@ -446,16 +465,16 @@ public class SuperPlayerActivity extends Activity implements View.OnClickListene
                             if (videoModels != null && videoModels.size() != 0) {
                                 mSuperVodListLoader.getVodInfoOneByOne(videoModels,
                                         new SuperVodListLoader.OnVodInfoLoadListener() {
-                                    @Override
-                                    public void onSuccess(VideoModel videoModel) {
-                                        onGetVodInfoOnebyOneOnSuccess(videoModel);
-                                    }
+                                            @Override
+                                            public void onSuccess(VideoModel videoModel) {
+                                                onGetVodInfoOnebyOneOnSuccess(videoModel);
+                                            }
 
-                                    @Override
-                                    public void onFail(int errCode) {
+                                            @Override
+                                            public void onFail(int errCode) {
 
-                                    }
-                                });
+                                            }
+                                        });
                             }
                         }
                     });
@@ -478,6 +497,30 @@ public class SuperPlayerActivity extends Activity implements View.OnClickListene
             mBtnScan.setVisibility(GONE);
             mImageAdd.setVisibility(GONE);
         }
+    }
+
+    private void addCircleVideo(final VideoListModel videoListModel) {
+        videoListModel.title = getString(R.string.superplayer_carousel_list_title);
+        videoListModel.icon = "http://1500005830.vod2.myqcloud.com/6c9a5118vodcq1500005830/f817e7c8387702291186401215/gk5EbAYcy10A.png";
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                mVodPlayerListAdapter.addSuperPlayerModel(videoListModel);
+            }
+        });
+        mVodList.add(videoListModel);
+    }
+
+    private void addCacheVideo(final VideoListModel videoListModel) {
+        videoListModel.title = getString(R.string.superplayer_offline_cache_title);
+        videoListModel.icon = "http://1500005830.vod2.myqcloud.com/6c9a5118vodcq1500005830/f817e7c8387702291186401215/gk5EbAYcy10A.png";
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                mVodPlayerListAdapter.addSuperPlayerModel(videoListModel);
+            }
+        });
+        mVodList.add(videoListModel);
     }
 
     private void playDefaultVideo(int appid, String fileid) {
@@ -547,7 +590,6 @@ public class SuperPlayerActivity extends Activity implements View.OnClickListene
         super.onPause();
         Log.i(TAG, "onPause state :" + mSuperPlayerView.getPlayerState());
         if (mSuperPlayerView.getPlayerMode() != SuperPlayerDef.PlayerMode.FLOAT) {
-            // 有手动暂停
             if (mSuperPlayerView.getPlayerState() == SuperPlayerDef.PlayerState.PAUSE) {
                 mIsManualPause = true;
             } else {
@@ -585,10 +627,12 @@ public class SuperPlayerActivity extends Activity implements View.OnClickListene
         for (VideoModel videoModel : videoModelArrayList) {
             superPlayerModelList.add(videoModel.convertToSuperPlayerModel());
         }
+        mSuperPlayerView.setQualityVisible(true);
         mSuperPlayerView.playWithModelList(superPlayerModelList, true, 0);
     }
 
     private void playVideoModel(VideoModel videoModel) {
+        mSuperPlayerView.setQualityVisible(true);
         final SuperPlayerModel superPlayerModelV3 = new SuperPlayerModel();
         superPlayerModelV3.appId = videoModel.appid;
         superPlayerModelV3.vipWatchMode = videoModel.vipWatchModel;
@@ -610,7 +654,8 @@ public class SuperPlayerActivity extends Activity implements View.OnClickListene
                     }
                 }
             }
-        } else if (!TextUtils.isEmpty(videoModel.fileid)) {
+        }
+        if (!TextUtils.isEmpty(videoModel.fileid)) {
             superPlayerModelV3.videoId = new SuperPlayerVideoId();
             superPlayerModelV3.videoId.fileId = videoModel.fileid;
             superPlayerModelV3.videoId.pSign = videoModel.pSign;
@@ -620,10 +665,13 @@ public class SuperPlayerActivity extends Activity implements View.OnClickListene
         superPlayerModelV3.placeholderImage = videoModel.placeholderImage;
         superPlayerModelV3.coverPictureUrl = videoModel.coverPictureUrl;
         superPlayerModelV3.duration = videoModel.duration;
+        superPlayerModelV3.videoQualityList = videoModel.videoQualityList;
+        superPlayerModelV3.isEnableCache = videoModel.isEnableCache;
         mSuperPlayerView.playWithModel(superPlayerModelV3);
     }
 
     private boolean playSuperPlayerVideo(VideoModel videoModel) {
+        mSuperPlayerView.setQualityVisible(true);
         final SuperPlayerModel model = new SuperPlayerModel();
         String videoUrl = videoModel.videoURL;
         String appIdStr = getValueByName(videoUrl, "appId");
@@ -802,6 +850,7 @@ public class SuperPlayerActivity extends Activity implements View.OnClickListene
         final EditText etAppId = (EditText) dialogView.findViewById(R.id.superplayer_et_appid);
         final EditText etFileId = (EditText) dialogView.findViewById(R.id.superplayer_et_fileid);
         final EditText etPSign = (EditText) dialogView.findViewById(R.id.superplayer_et_psign);
+        final CheckBox cbCache = dialogView.findViewById(R.id.superplayer_cb_cache_switch);
 
         if (mDataType == LIST_TYPE_VOD) {
             dialog.setTitle(getString(R.string.superplayer_set_appid_fileid));
@@ -811,15 +860,16 @@ public class SuperPlayerActivity extends Activity implements View.OnClickListene
             dialogView.findViewById(R.id.superplayer_tv_fileid_text).setVisibility(GONE);
             etFileId.setVisibility(GONE);
             etPSign.setVisibility(GONE);
+            cbCache.setVisibility(GONE);
         }
 
-        dialog.setNegativeButton(getString(R.string.superplayer_cancel), new DialogInterface.OnClickListener() {
+        dialog.setPositiveButton(getString(R.string.superplayer_cancel), new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 dialog.dismiss();
             }
         });
-        dialog.setPositiveButton(getString(R.string.superplayer_ok),
+        dialog.setNegativeButton(getString(R.string.superplayer_ok),
                 new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
@@ -849,6 +899,7 @@ public class SuperPlayerActivity extends Activity implements View.OnClickListene
                             videoModel.appid = appid;
                             videoModel.fileid = fileId;
                             videoModel.pSign = pSign;
+                            videoModel.isEnableCache = cbCache.isChecked();
 
                             // 尝试请求fileid信息
                             SuperVodListLoader loader = new SuperVodListLoader();
@@ -868,7 +919,8 @@ public class SuperPlayerActivity extends Activity implements View.OnClickListene
                                     runOnUiThread(new Runnable() {
                                         @Override
                                         public void run() {
-                                            Toast.makeText(mContext, getString(R.string.superplayer_request_fail), Toast.LENGTH_SHORT).show();
+                                            Toast.makeText(mContext, getString(R.string.superplayer_request_fail),
+                                                    Toast.LENGTH_SHORT).show();
                                         }
                                     });
                                 }
@@ -881,7 +933,13 @@ public class SuperPlayerActivity extends Activity implements View.OnClickListene
 
                                 @Override
                                 public void onFail(int errCode) {
-
+                                    runOnUiThread(new Runnable() {
+                                        @Override
+                                        public void run() {
+                                            Toast.makeText(mContext, getString(R.string.superplayer_request_fail),
+                                                    Toast.LENGTH_SHORT).show();
+                                        }
+                                    });
                                 }
                             });
                         } else {
@@ -922,8 +980,11 @@ public class SuperPlayerActivity extends Activity implements View.OnClickListene
             TXLiveBase.setAppID("1253131631");
             videoModel.multiVideoURLs = new ArrayList<>(3);
             videoModel.multiVideoURLs.add(new VideoModel.VideoPlayerURL(getString(R.string.superplayer_definition_super), videoModel.videoURL));
-            videoModel.multiVideoURLs.add(new VideoModel.VideoPlayerURL(getString(R.string.superplayer_definition_high), videoModel.videoURL.replace(".flv", "_900.flv")));
-            videoModel.multiVideoURLs.add(new VideoModel.VideoPlayerURL(getString(R.string.superplayer_definition_standard), videoModel.videoURL.replace(".flv", "_550.flv")));
+            videoModel.multiVideoURLs.add(new VideoModel.VideoPlayerURL(getString(R.string.superplayer_definition_high),
+                    videoModel.videoURL.replace(".flv", "_900.flv")));
+            videoModel.multiVideoURLs.add(
+                    new VideoModel.VideoPlayerURL(getString(R.string.superplayer_definition_standard),
+                            videoModel.videoURL.replace(".flv", "_550.flv")));
         }
         if (!TextUtils.isEmpty(videoModel.videoURL) && videoModel.videoURL.contains("3891.liveplay.myqcloud.com")) {
             videoModel.appid = 1252463788;
@@ -953,14 +1014,38 @@ public class SuperPlayerActivity extends Activity implements View.OnClickListene
     }
 
     /**
+     * 播放外部传入的缓存视频
+     */
+    private void playExternalDownloadVideo() {
+        final SuperPlayerModel videoModel = new SuperPlayerModel();
+
+        Intent data = getIntent();
+        videoModel.title = data.getStringExtra(SuperPlayerConstants.SuperPlayerIntent.KEY_TITLE);
+        if (TextUtils.isEmpty(videoModel.title)) {
+            videoModel.title = getString(R.string.superplayer_test_video) + mVideoCount;
+        }
+
+        videoModel.placeholderImage = data.getStringExtra(SuperPlayerConstants.SuperPlayerIntent.KEY_COVER_IMG);
+        videoModel.appId = data.getIntExtra(SuperPlayerConstants.SuperPlayerIntent.KEY_APP_ID, 0);
+        videoModel.videoId = new SuperPlayerVideoId();
+        videoModel.videoId.fileId = data.getStringExtra(SuperPlayerConstants.SuperPlayerIntent.KEY_FILE_ID);
+        videoModel.videoId.pSign = data.getStringExtra(SuperPlayerConstants.SuperPlayerIntent.KEY_P_SIGN);
+        videoModel.url = data.getStringExtra(SuperPlayerConstants.SuperPlayerIntent.KEY_URL);
+
+        // offline video play not support quality show
+        mSuperPlayerView.setQualityVisible(false);
+        mSuperPlayerView.playWithModel(videoModel);
+    }
+
+    /**
      * 播放外部传入的视频
      * 通过Intent传入的数据
      */
     private void playExternalVideo() {
         Intent intent = getIntent();
-        String appId = intent.getStringExtra("appId");
-        String fileId = intent.getStringExtra("fileId");
-        String psign = intent.getStringExtra("psign");
+        String appId = intent.getStringExtra(SuperPlayerConstants.SuperPlayerIntent.KEY_APP_ID);
+        String fileId = intent.getStringExtra(SuperPlayerConstants.SuperPlayerIntent.KEY_FILE_ID);
+        String psign = intent.getStringExtra(SuperPlayerConstants.SuperPlayerIntent.KEY_P_SIGN);
         playExternalVideo(appId, fileId, psign);
     }
 
@@ -1055,6 +1140,12 @@ public class SuperPlayerActivity extends Activity implements View.OnClickListene
     @Override
     public void onError(int code) {
 
+    }
+
+    @Override
+    public void onShowCacheListClick() {
+        Intent intent = new Intent(this, VideoDownloadListActivity.class);
+        IntentUtils.safeStartActivity(this, intent);
     }
 
     @Override

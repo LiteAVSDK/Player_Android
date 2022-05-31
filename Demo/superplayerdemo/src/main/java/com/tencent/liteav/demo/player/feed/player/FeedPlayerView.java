@@ -21,14 +21,12 @@ import com.tencent.liteav.demo.superplayer.SuperPlayerView;
  */
 public class FeedPlayerView extends FrameLayout implements FeedPlayer {
 
-
     private SuperPlayerView    superPlayerView        = null;
     private FeedPlayerCallBack feedPlayerCallBack     = null;
     private FeedPlayerManager  feedPlayerManager      = null;
     private int                position               = -1;
     private VideoModel         videoModel             = null;
     private boolean            playWithModelIsSuccess = false;
-
 
     public FeedPlayerView(@NonNull Context context) {
         super(context);
@@ -101,6 +99,11 @@ public class FeedPlayerView extends FrameLayout implements FeedPlayer {
                     feedPlayerManager.removePlayingFeedPlayerView(position);
                 }
             }
+
+            @Override
+            public void onShowCacheListClick() {
+
+            }
         });
         addView(superPlayerView);
     }
@@ -143,7 +146,7 @@ public class FeedPlayerView extends FrameLayout implements FeedPlayer {
     }
 
     public void preLoad() {
-        if(null != videoModel && position > 0 && !playWithModelIsSuccess) {
+        if (null != videoModel && position > 0 && !playWithModelIsSuccess) {
             SuperPlayerModel playerModel = FeedVodListLoader.conversionModel(videoModel);
             playerModel.playAction = SuperPlayerModel.PLAY_ACTION_PRELOAD;
             playWithModelIsSuccess = true;
@@ -163,7 +166,7 @@ public class FeedPlayerView extends FrameLayout implements FeedPlayer {
     }
 
     @Override
-        public void resume() {
+    public void resume() {
         if (superPlayerView != null) {
             if (playWithModelIsSuccess) {
                 superPlayerView.onResume();
@@ -208,7 +211,7 @@ public class FeedPlayerView extends FrameLayout implements FeedPlayer {
 
     @Override
     public boolean isPlaying() {
-        return  superPlayerView.getPlayerState() == SuperPlayerDef.PlayerState.PLAYING;
+        return superPlayerView.getPlayerState() == SuperPlayerDef.PlayerState.PLAYING;
     }
 
     @Override
@@ -219,6 +222,11 @@ public class FeedPlayerView extends FrameLayout implements FeedPlayer {
     @Override
     public void setWindowPlayMode() {
         superPlayerView.switchPlayMode(SuperPlayerDef.PlayerMode.WINDOW);
+    }
+
+    @Override
+    public boolean isEnd() {
+        return superPlayerView.getPlayerState() == SuperPlayerDef.PlayerState.END;
     }
 
     public int getPosition() {

@@ -57,7 +57,6 @@ public class TXVideoBaseView extends RelativeLayout implements View.OnClickListe
     public void setTXVodPlayer(TXVodPlayerWrapper TXVodPlayerWrapper) {
         mTXVodPlayerWrapper = TXVodPlayerWrapper;
         mTXVodPlayerWrapper.setPlayerView(mTXCloudVideoView);
-        mTXVodPlayerWrapper.setVodChangeListener(this);
         Log.i(TAG, "[setTXVodPlayer] , PLAY_EVT_PLAY_PROGRESS，" + mTXVodPlayerWrapper.getVodPlayer().hashCode() + " url " + TXVodPlayerWrapper.getUrl());
     }
 
@@ -170,6 +169,7 @@ public class TXVideoBaseView extends RelativeLayout implements View.OnClickListe
     public void startPlay() {
         if (mTXVodPlayerWrapper != null) {
             mPauseImageView.setVisibility(View.GONE);
+            mTXVodPlayerWrapper.setVodChangeListener(this);
             mTXVodPlayerWrapper.resumePlay();
             Log.i(TAG, "[startPlay] mTXVodPlayerWrapper.url " + mTXVodPlayerWrapper.getUrl());
         }
@@ -178,6 +178,7 @@ public class TXVideoBaseView extends RelativeLayout implements View.OnClickListe
     public void stopPlayer() {
         if (mTXVodPlayerWrapper != null) {
             mTXVodPlayerWrapper.stopPlay();
+            mTXVodPlayerWrapper.setVodChangeListener(null);
             Log.i(TAG, "[stopPlayer] mTXVodPlayerWrapper.url " + mTXVodPlayerWrapper.getUrl());
             mPauseImageView.setVisibility(View.GONE);
         }
@@ -186,6 +187,7 @@ public class TXVideoBaseView extends RelativeLayout implements View.OnClickListe
     public void stopForPlaying() {
         if (mTXVodPlayerWrapper != null) {
             mTXVodPlayerWrapper.stopForPlaying();
+            mTXVodPlayerWrapper.setVodChangeListener(null);
             Log.i(TAG, "[stopForPlaying] mTXVodPlayerWrapper.url " + mTXVodPlayerWrapper.getUrl());
             mPauseImageView.setVisibility(View.GONE);
         }

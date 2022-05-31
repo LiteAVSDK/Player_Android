@@ -8,7 +8,7 @@
     <color name="superplayer_biz_audio_progress_first">#ffffff</color>
     <color name="superplayer_biz_audio_progress_second">#6b6666</color>
 
-    <color name="superplayer_super_vod_vtt_bg">#7E000000</color>
+    <color name="superplayer_super_vod_vtt_bg">#BB000000</color>
 
 
     <color name="superplayer_default_bg">#aa000000</color>
@@ -27,4 +27,7 @@
     <color name="superplayer_default_progress_color">#FF4081</color>
     <color name="superplayer_default_progress_background_color">#BBBBBB</color>
     <color name="superplayer_vipwatch_yellow_color">#F4E096</color>
+
+    <color name="superplayer_cache_btn_color">#2065DA</color>
+    <color name="superplayer_cache_quality_list_bg">#ED000000</color>
 </resources>

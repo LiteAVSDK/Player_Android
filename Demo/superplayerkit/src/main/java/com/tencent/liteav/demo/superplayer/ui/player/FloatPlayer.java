@@ -38,7 +38,6 @@ public class FloatPlayer extends AbsPlayer implements View.OnClickListener, VipW
     private SuperPlayerDef.PlayerType mPlayType;        // 当前播放视频类型
     private LinearLayout              dynamicWatermarkLayout;   //存放动态水印的layout
 
-
     public FloatPlayer(Context context) {
         super(context);
         initView(context);
@@ -141,6 +140,10 @@ public class FloatPlayer extends AbsPlayer implements View.OnClickListener, VipW
     }
 
     @Override
+    public void setVideoQualityVisible(boolean isShow) {
+    }
+
+    @Override
     public void updateVideoProgress(long current, long duration) {
         if (mPlayType == SuperPlayerDef.PlayerType.VOD) {
             mVipWatchView.setCurrentTime(current);
@@ -216,5 +219,4 @@ public class FloatPlayer extends AbsPlayer implements View.OnClickListener, VipW
             mControllerCallback.onCloseVipTip();
         }
     }
-
 }
