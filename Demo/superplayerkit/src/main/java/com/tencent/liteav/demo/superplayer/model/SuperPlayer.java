@@ -14,7 +14,7 @@ public interface SuperPlayer {
     /**
      * 开始播放
      *
-     * @param model 超级播放器模型
+     * @param model 播放器组件模型
      */
     void play(SuperPlayerModel model);
 
@@ -119,7 +119,7 @@ public interface SuperPlayer {
     void setObserver(SuperPlayerObserver observer);
 
     /**
-     * 设置超级播放器中点播事件和直播事件的回调
+     * 设置播放器组件中点播事件和直播事件的回调
      * @param superPlayerListener
      */
     void setSuperPlayerListener(ISuperPlayerListener superPlayerListener);

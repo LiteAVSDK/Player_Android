@@ -17,7 +17,7 @@ import java.util.Map;
  * URI 格式如下：
  * liteav://com.tencent.liteav.demo?from=wechat&target=superplayer&protocol=v4vodplay&data={"appId":"1400295357","fileId":"5285890803757278095","psign":"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9"}
  * from： 来源，例如：微信、浏览器等；暂时不用，防止以后需要确定调起方
- * target： 目标页面，主要用于跳转对应页面，例如：超级播放器页，直播等；
+ * target： 目标页面，主要用于跳转对应页面，例如：播放器组件页，直播等；
  * data： 数据，目标页面所需数据，具体字段按目标页面所使用字段为准，以上仅为事例，最终会透传给目标页面
  */
 public class WebDataParser {

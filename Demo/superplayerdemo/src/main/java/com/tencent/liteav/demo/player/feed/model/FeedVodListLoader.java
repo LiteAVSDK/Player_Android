@@ -28,7 +28,7 @@ public class FeedVodListLoader {
         model.appid = 1252463788;
         model.fileid = "5285890781763144364";
         model.playAction = PLAY_ACTION_PRELOAD;
-        model.videoDescription = "现有超级播放器demo-点播列表-腾讯云";
+        model.videoDescription = "现有播放器组件demo-点播列表-腾讯云";
         model.videoMoreDescription = "腾讯多年技术沉淀，300+ 款产品共筑腾讯云产品矩阵，从基础设施到行业应用领域，腾讯云提供完善的产品体系，助力您的业务腾飞。";
         list.add(model);
 

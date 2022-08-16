@@ -28,7 +28,7 @@
             android:paddingLeft="2dp"
             android:paddingRight="2dp"
             android:singleLine="true"
-            android:text="超级播放器"
+            android:text="播放器组件"
             android:textColor="@color/superplayer_white"
             android:textSize="16dp" />
 
@@ -62,7 +62,7 @@
             android:visibility="gone" />
     </RelativeLayout>
 
-    <!-- 超级播放器-->
+    <!-- 播放器组件-->
     <RelativeLayout
         android:id="@+id/superplayer_rl_player"
         android:layout_width="match_parent"

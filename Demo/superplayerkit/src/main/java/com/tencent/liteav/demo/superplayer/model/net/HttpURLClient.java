@@ -14,7 +14,7 @@ import java.net.URLConnection;
 /**
  * Created by hans on 2018/9/11.
  * <p>
- * 超级播放器模块由于涉及查询视频信息，所以需要有一个内置的HTTP请求模块
+ * 播放器组件模块由于涉及查询视频信息，所以需要有一个内置的HTTP请求模块
  * <p>
  * 为了不引入额外的网络请求库，这里使用原生的Java HTTPURLConnection实现
  * <p>

@@ -42,7 +42,7 @@
     <string name="app_item_xiao_zhi_bo">小直播</string>
     <string name="app_item_mlvb">直播推流</string>
 
-    <string name="app_item_super_player">超级播放器</string>
+    <string name="app_item_super_player">播放器组件</string>
     <string name="app_item_player">播放器</string>
     <string name="app_item_shortvideo_player">短视频播放</string>
 
@@ -62,7 +62,7 @@
     <string name="app_tv_main_version">version = 1.0</string>
     <string name="app_tv_main_bottom_hint">本APP用于展示腾讯视频云终端产品的各类功能</string>
 
-    <string name="app_tv_super_player_version">超级播放器版本 v%s</string>
+    <string name="app_tv_super_player_version">播放器组件版本 v%s</string>
 
     <string name="app_tv_trtc_version">腾讯云 TRTC v%s</string>
     <string name="app_tv_video_conferencing_tips">语音自动降噪、视频画质超高清，适用于在线会议、远程培训、小班课等场景。</string>

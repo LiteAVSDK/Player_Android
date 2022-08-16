@@ -56,7 +56,7 @@ import java.util.List;
 
 /**
  * Created by liyuejiao on 2018/7/3.
- * 超级播放器主Activity
+ * 播放器组件主Activity
  */
 
 public class SuperPlayerActivity extends Activity implements View.OnClickListener,
@@ -535,7 +535,7 @@ public class SuperPlayerActivity extends Activity implements View.OnClickListene
     }
 
     /**
-     * 初始化超级播放器全局配置
+     * 初始化播放器组件全局配置
      */
     private void initSuperVodGlobalSetting() {
         SuperPlayerGlobalConfig prefs = SuperPlayerGlobalConfig.getInstance();

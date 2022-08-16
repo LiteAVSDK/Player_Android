@@ -64,7 +64,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * 超级播放器view
+ * 播放器组件view
  * <p>
  * 具备播放器基本功能，此外还包括横竖屏切换、悬浮窗播放、画质切换、硬件加速、倍速播放、镜像播放、手势控制等功能，同时支持直播与点播
  * 使用方式极为简单，只需要在布局文件中引入并获取到该控件，通过{@link #playWithModel(SuperPlayerModel)}传入{@link SuperPlayerModel}即可实现视频播放
@@ -93,7 +93,7 @@ public class SuperPlayerView extends RelativeLayout {
     private WindowManager.LayoutParams mWindowParams;                   // 悬浮窗布局参数
     private OnSuperPlayerViewCallback  mPlayerViewCallback;             // SuperPlayerView回调
     private NetWatcher                 mWatcher;                        // 网络质量监视器
-    private SuperPlayer                mSuperPlayer;                    // 超级播放器
+    private SuperPlayer                mSuperPlayer;                    // 播放器组件
     private SuperPlayerModel           mCurrentSuperPlayerModel;        // 当前正在播放的SuperPlayerModel
     private int                        mPlayAction;                     // 播放模式
     private int                        mPlayIndex;                      // 正在播放model的索引
@@ -380,7 +380,7 @@ public class SuperPlayerView extends RelativeLayout {
     }
 
     /**
-     * 设置超级播放器的回掉
+     * 设置播放器组件的回掉
      *
      * @param callback
      */
@@ -389,7 +389,7 @@ public class SuperPlayerView extends RelativeLayout {
     }
 
     /**
-     * 设置超级播放器中点播播放器和直播播放器的回调
+     * 设置播放器组件中点播播放器和直播播放器的回调
      *
      * @param superPlayerListener
      */

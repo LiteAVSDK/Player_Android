@@ -8,7 +8,7 @@ import java.util.Map;
 /**
  * Created by yuejiaoli on 2018/7/4.
  * <p>
- * 超级播放器全局配置类
+ * 播放器组件全局配置类
  */
 
 public class SuperPlayerGlobalConfig {

@@ -7,10 +7,10 @@
 本目录包含 Android 版 播放器(Player) SDK 的Demo 源代码，主要演示接口如何调用以及最基本的功能。
 
 ```
-├─ LiteAVDemo(Player) // 超级播放器Demo，包括音视频播放，后台播放，变速播放，直播、点播秒开，清晰度无缝切换
+├─ LiteAVDemo(Player) // 播放器组件Demo，包括音视频播放，后台播放，变速播放，直播、点播秒开，清晰度无缝切换
 |  ├─ app                   // 程序入口界面
-|  ├─ superplayerkit        // 超级播放器组件
-|  ├─ superplayerdemo       // 超级播放器 Demo
+|  ├─ superplayerkit        // 播放器组件
+|  ├─ superplayerdemo       // 播放器组件 Demo
 |  ├─ common                // common工具类
 |
 ├─ SDK 
@@ -38,7 +38,7 @@
 - [Player SDK 集成指引](https://cloud.tencent.com/document/product/881/20216#sdk.E9.9B.86.E6.88.90)
 - [Player SDK 能力清单](https://cloud.tencent.com/document/product/881/61375)
 - [常见移动端播放问题](https://cloud.tencent.com/document/product/881/73976)
-- Player SDK 常见功能描述和使用说明，[请点击这里](https://cloud.tencent.com/document/product/881/20216#.E5.8A.9F.E8.83.BD.E4.BD.BF.E7.94.A8)。在Player SDK的基础上，我们提供了[超级播放器组件](https://cloud.tencent.com/document/product/266/7938)，集质量监控、视频加密、极速高清、清晰度切换、小窗播放等功能于一体，适用于所有点播、直播播放场景。封装了完整功能并提供上层 UI，可帮助您在短时间内，打造一个媲美市面上各种流行视频 App 的播放软件。
+- Player SDK 常见功能描述和使用说明，[请点击这里](https://cloud.tencent.com/document/product/881/20216#.E5.8A.9F.E8.83.BD.E4.BD.BF.E7.94.A8)。在Player SDK的基础上，我们提供了[播放器组件](https://cloud.tencent.com/document/product/266/7938)，集质量监控、视频加密、极速高清、清晰度切换、小窗播放等功能于一体，适用于所有点播、直播播放场景。封装了完整功能并提供上层 UI，可帮助您在短时间内，打造一个媲美市面上各种流行视频 App 的播放软件。
 - [SDK 的 API 文档](https://cloud.tencent.com/document/product/881/67113)
 - [SDK 的版本更新历史](https://cloud.tencent.com/document/product/881/62169)
 - [SDK 的官方体验 App](https://cloud.tencent.com/document/product/881/20204)

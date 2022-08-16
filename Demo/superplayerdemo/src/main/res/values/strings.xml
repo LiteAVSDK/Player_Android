@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="superplayer_app_name">超级播放器</string>
+    <string name="superplayer_app_name">播放器组件</string>
     <string name="superplayer_cache_name">离线缓存</string>
 
     <string name="superplayer_cancel">取消</string>
