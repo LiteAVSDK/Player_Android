@@ -85,7 +85,7 @@ public class VideoModel {
     /**
      * 是否启用缓存下载能力
      */
-    public boolean isEnableCache = false;
+    public boolean isEnableDownload = false;
 
 
     public static class VideoPlayerURL {
@@ -152,7 +152,7 @@ public class VideoModel {
         superPlayerModel.duration = duration;
         superPlayerModel.title = title;
         superPlayerModel.videoQualityList = videoQualityList;
-        superPlayerModel.isEnableCache = isEnableCache;
+        superPlayerModel.isEnableCache = isEnableDownload;
 
         return superPlayerModel;
     }

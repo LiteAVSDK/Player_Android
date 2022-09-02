@@ -31,7 +31,8 @@ public class VideoDownloadListAdapter extends RecyclerView.Adapter<VideoDownload
     public VideoDownloadViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         if (null == mVideoDownloadHelper) {
             mVideoDownloadHelper =
-                    new VideoDownloadHelper(parent.getContext().getString(R.string.superplayer_cache_progress));
+                    new VideoDownloadHelper(parent.getContext()
+                            .getString(R.string.superplayer_cache_progress),parent.getContext());
         }
         VideoDownloadItemView videoDownloadItemView = new VideoDownloadItemView(parent.getContext());
         videoDownloadItemView.setVideoCacheHelper(mVideoDownloadHelper);

@@ -49,7 +49,7 @@ public class PlayInfoParserV4 implements IPlayInfoParser {
         if (substreams != null && substreams.length() > 0) {
             mResolutionNameList = new ArrayList<>();
             for (int i = 0; i < substreams.length(); i++) {
-                JSONObject jsonObject = substreams.getJSONObject(i);
+                JSONObject jsonObject = substreams.optJSONObject(i);
                 ResolutionName resolutionName = new ResolutionName();
                 int width = jsonObject.optInt("width");
                 int height = jsonObject.optInt("height");
@@ -67,7 +67,7 @@ public class PlayInfoParserV4 implements IPlayInfoParser {
      */
     private void parsePlayInfo() {
         try {
-            JSONObject media = mResponse.getJSONObject("media");
+            JSONObject media = mResponse.optJSONObject("media");
             if (media != null) {
                 //解析视频名称
                 JSONObject basicInfo = media.optJSONObject("basicInfo");
@@ -80,7 +80,7 @@ public class PlayInfoParserV4 implements IPlayInfoParser {
                 String audioVideoType = media.optString("audioVideoType");
                 if (TextUtils.equals(audioVideoType, "AdaptiveDynamicStream")) { // 多码率视频信息
                     //解析视频播放url
-                    JSONObject streamingInfo = media.getJSONObject("streamingInfo");
+                    JSONObject streamingInfo = media.optJSONObject("streamingInfo");
                     if (streamingInfo != null) {
                         JSONObject plainoutObj = streamingInfo.optJSONObject("plainOutput");//未加密的输出
                         if (plainoutObj != null) {
@@ -146,15 +146,13 @@ public class PlayInfoParserV4 implements IPlayInfoParser {
             if (keyFrameDescList != null && keyFrameDescList.length() > 0) {
                 for (int i = 0; i < keyFrameDescList.length(); i++) {
                     JSONObject jsonObject = null;
-                    try {
-                        jsonObject = keyFrameDescList.getJSONObject(i);
-                    } catch (JSONException e) {
-                        e.printStackTrace();
-                    }
+                    jsonObject = keyFrameDescList.optJSONObject(i);
                     PlayKeyFrameDescInfo info = new PlayKeyFrameDescInfo();
-                    info.time = jsonObject.optLong("timeOffset");
-                    info.content = jsonObject.optString("content");
-                    mKeyFrameDescInfo.add(info);
+                    if (jsonObject != null) {
+                        info.time = jsonObject.optLong("timeOffset");
+                        info.content = jsonObject.optString("content");
+                        mKeyFrameDescInfo.add(info);
+                    }
                 }
             }
         }

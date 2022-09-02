@@ -160,7 +160,9 @@ public class FeedListItemView extends RelativeLayout {
      * 从item中移除播放器
      */
     public void removeFeedPlayFromItem() {
-        removeView(feedPlayerView);
+        if (feedPlayerView.getParent() != null) {
+            ((ViewGroup)feedPlayerView.getParent()).removeView(feedPlayerView);
+        }
     }
 
     /**

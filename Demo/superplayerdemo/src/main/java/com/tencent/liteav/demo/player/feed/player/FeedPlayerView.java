@@ -242,4 +242,7 @@ public class FeedPlayerView extends FrameLayout implements FeedPlayer {
 
     }
 
+    public void onRequestPermissionsResult(int requestCode, @NonNull int[] grantResults) {
+        superPlayerView.onRequestPermissionsResult(requestCode,grantResults);
+    }
 }

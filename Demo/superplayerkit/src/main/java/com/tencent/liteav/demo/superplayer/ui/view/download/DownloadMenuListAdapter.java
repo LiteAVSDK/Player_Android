@@ -1,6 +1,7 @@
 package com.tencent.liteav.demo.superplayer.ui.view.download;
 
 import android.content.res.Resources;
+import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -148,7 +149,8 @@ public class DownloadMenuListAdapter extends RecyclerView.Adapter<DownloadMenuLi
         }
 
         public void setVideoModel(SuperPlayerModel videoModel) {
-            mTvVideoName.setText(videoModel.title);
+            String title = getFileNameNoEx(videoModel.title);
+            mTvVideoName.setText(title);
 
             handleDownloadFlag(mIvIsCache, videoModel, mCurrentQualityId);
 
@@ -161,6 +163,16 @@ public class DownloadMenuListAdapter extends RecyclerView.Adapter<DownloadMenuLi
                 itemView.setBackgroundResource(R.color.superplayer_transparent);
             }
         }
+    }
+
+    public String getFileNameNoEx(String filename) {
+        if (!TextUtils.isEmpty(filename)) {
+            int dot = filename.lastIndexOf('.');
+            if ((dot > -1) && (dot < (filename.length()))) {
+                return filename.substring(0, dot);
+            }
+        }
+        return filename;
     }
 
     public void clearMediaInfoCache() {

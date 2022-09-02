@@ -44,10 +44,18 @@
         android:visibility="gone">
 
         <ImageView
+            android:tint="@color/superplayer_white"
             android:id="@+id/superplayer_iv_replay"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_width="25dp"
+            android:layout_height="25dp"
             android:src="@drawable/superplayer_ic_replay" />
+
+        <TextView
+            android:textColor="@color/superplayer_white"
+            android:text="@string/superplayer_replay"
+            android:textSize="12sp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"/>
 
     </LinearLayout>
 

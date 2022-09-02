@@ -124,7 +124,7 @@ public class PlayInfoParserV2 implements IPlayInfoParser {
         JSONArray videoClassificationArray = playerInfo.getJSONArray("videoClassification");
         if (videoClassificationArray != null) {
             for (int i = 0; i < videoClassificationArray.length(); i++) {
-                JSONObject object = videoClassificationArray.getJSONObject(i);
+                JSONObject object = videoClassificationArray.optJSONObject(i);
 
                 VideoClassification classification = new VideoClassification();
                 classification.setId(object.getString("id"));
@@ -154,7 +154,7 @@ public class PlayInfoParserV2 implements IPlayInfoParser {
     private PlayImageSpriteInfo parseImageSpriteInfo(JSONObject imageSpriteInfo) throws JSONException {
         JSONArray imageSpriteList = imageSpriteInfo.getJSONArray("imageSpriteList");
         if (imageSpriteList != null) {
-            JSONObject spriteJSONObject = imageSpriteList.getJSONObject(imageSpriteList.length() - 1); //获取最后一个来解析
+            JSONObject spriteJSONObject = imageSpriteList.optJSONObject(imageSpriteList.length() - 1); //获取最后一个来解析
             PlayImageSpriteInfo info = new PlayImageSpriteInfo();
             info.webVttUrl = spriteJSONObject.getString("webVttUrl");
             JSONArray jsonArray = spriteJSONObject.getJSONArray("imageUrls");
@@ -180,8 +180,8 @@ public class PlayInfoParserV2 implements IPlayInfoParser {
         if (jsonArr != null) {
             List<PlayKeyFrameDescInfo> infoList = new ArrayList<>();
             for (int i = 0; i < jsonArr.length(); i++) {
-                String content = jsonArr.getJSONObject(i).getString("content");
-                long time = jsonArr.getJSONObject(i).getLong("timeOffset");
+                String content = jsonArr.optJSONObject(i).getString("content");
+                long time = jsonArr.optJSONObject(i).getLong("timeOffset");
                 float timeS = (float) (time / 1000.0);//转换为秒
                 PlayKeyFrameDescInfo info = new PlayKeyFrameDescInfo();
                 try {
@@ -206,7 +206,7 @@ public class PlayInfoParserV2 implements IPlayInfoParser {
      * @throws JSONException
      */
     private String parseName(JSONObject videoInfo) throws JSONException {
-        JSONObject basicInfo = videoInfo.getJSONObject("basicInfo");
+        JSONObject basicInfo = videoInfo.optJSONObject("basicInfo");
         if (basicInfo != null) {
             return basicInfo.getString("name");
         }
@@ -220,7 +220,7 @@ public class PlayInfoParserV2 implements IPlayInfoParser {
      * @return 源视频流信息对象
      */
     private PlayInfoStream parseSourceStream(JSONObject videoInfo) throws JSONException {
-        JSONObject sourceVideo = videoInfo.getJSONObject("sourceVideo");
+        JSONObject sourceVideo = videoInfo.optJSONObject("sourceVideo");
         if (sourceVideo != null) {
             PlayInfoStream stream = new PlayInfoStream();
             stream.url = sourceVideo.getString("url");
@@ -243,7 +243,7 @@ public class PlayInfoParserV2 implements IPlayInfoParser {
     private PlayInfoStream parseMasterPlayList(JSONObject videoInfo) throws JSONException {
         if (!videoInfo.has("masterPlayList"))
             return null;
-        JSONObject masterPlayList = videoInfo.getJSONObject("masterPlayList");
+        JSONObject masterPlayList = videoInfo.optJSONObject("masterPlayList");
         if (masterPlayList != null) {
             PlayInfoStream stream = new PlayInfoStream();
             stream.url = masterPlayList.getString("url");
@@ -309,7 +309,7 @@ public class PlayInfoParserV2 implements IPlayInfoParser {
         JSONArray transcodeList = videoInfo.optJSONArray("transcodeList");
         if (transcodeList != null) {
             for (int i = 0; i < transcodeList.length(); i++) {
-                JSONObject transcode = transcodeList.getJSONObject(i);
+                JSONObject transcode = transcodeList.optJSONObject(i);
                 PlayInfoStream stream = new PlayInfoStream();
                 stream.url = transcode.getString("url");
                 stream.duration = transcode.getInt("duration");

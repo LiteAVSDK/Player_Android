@@ -24,5 +24,6 @@ dependencies {
         exclude group: 'com.google.code.gson', module: 'gson'
     })
     implementation 'me.dm7.barcodescanner:zxing:1.8.4'
+    implementation 'androidx.constraintlayout:constraintlayout:2.1.3'
 }
 

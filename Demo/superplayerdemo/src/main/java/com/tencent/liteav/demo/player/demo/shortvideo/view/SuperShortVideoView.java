@@ -16,9 +16,10 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.tencent.liteav.demo.player.R;
 import com.tencent.liteav.demo.player.demo.shortvideo.adapter.ShortVideoPlayAdapter;
-import com.tencent.liteav.demo.player.demo.shortvideo.bean.ShortVideoBean;
+
 import com.tencent.liteav.demo.player.demo.shortvideo.core.PlayerManager;
 import com.tencent.liteav.demo.player.demo.shortvideo.core.TXVodPlayerWrapper;
+import com.tencent.liteav.demo.player.expand.model.entity.VideoModel;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -30,7 +31,7 @@ public class SuperShortVideoView extends RelativeLayout {
     private View                  mRootView;
     private RecyclerView          mRecyclerView;
     private ShortVideoPlayAdapter mAdapter;
-    private List<ShortVideoBean>  mUrlList;
+    private List<VideoModel>      mUrlList;
     private LinearLayoutManager   mLayoutManager;
     private PagerSnapHelper       mSnapHelper;
     private int                   mLastPositionInIDLE = -1;
@@ -70,14 +71,14 @@ public class SuperShortVideoView extends RelativeLayout {
             public void handleMessage(@NonNull Message msg) {
                 super.handleMessage(msg);
                 mUrlList.clear();
-                mUrlList.addAll((List<ShortVideoBean>) msg.obj);
+                mUrlList.addAll((List<VideoModel>) msg.obj);
                 mAdapter.notifyDataSetChanged();
             }
         };
         addListener();
     }
 
-    public void setDataSource(final List<ShortVideoBean> dataSource) {
+    public void setDataSource(final List<VideoModel> dataSource) {
         Log.i(TAG, "[setDataSource]");
         Message message = new Message();
         message.obj = dataSource;
@@ -107,7 +108,6 @@ public class SuperShortVideoView extends RelativeLayout {
                         int position = recyclerView.getChildAdapterPosition(view);
                         Log.i(TAG, "[SCROLL_STATE_IDLE] mLastPositionInIDLE " + mLastPositionInIDLE + " position " + position);
                         onPageSelectedMethod(position);
-                        mLastPositionInIDLE = position;
                         break;
                     case RecyclerView.SCROLL_STATE_DRAGGING://拖动
                         break;
@@ -123,15 +123,18 @@ public class SuperShortVideoView extends RelativeLayout {
             View view = mSnapHelper.findSnapView(mLayoutManager);
             mBaseItemView = (TXVideoBaseView) view.findViewById(R.id.baseItemView);
             Log.i(TAG, "onPageSelected " + position);
-            List<ShortVideoBean> tempUrlList = initUrlList(position, MAX_PLAYER_COUNT_ON_PASS);
+            List<VideoModel> tempUrlList = initUrlList(position, MAX_PLAYER_COUNT_ON_PASS);
             PlayerManager.getInstance(getContext()).updateManager(tempUrlList);
             TXVodPlayerWrapper txVodPlayerWrapper = PlayerManager.getInstance(getContext())
                     .getPlayer(mUrlList.get(position));
             Log.i(TAG, "txVodPlayerWrapper " + txVodPlayerWrapper + "url-- " + mUrlList.get(position).videoURL);
             Log.i(TAG, "txVodPlayerWrapper " + txVodPlayerWrapper);
             mBaseItemView.setTXVodPlayer(txVodPlayerWrapper);
+            mLastPositionInIDLE = position;
         }
-        mBaseItemView.startPlay();
+        if (mBaseItemView != null) {
+            mBaseItemView.startPlay();
+        }
     }
 
     /**
@@ -141,7 +144,7 @@ public class SuperShortVideoView extends RelativeLayout {
      * @param maxCount   传递的urlList的数目
      * @return
      */
-    private List<ShortVideoBean> initUrlList(int startIndex, int maxCount) {
+    private List<VideoModel> initUrlList(int startIndex, int maxCount) {
 
         int i = startIndex - 1;
         if (i + maxCount > mUrlList.size()) {
@@ -151,7 +154,7 @@ public class SuperShortVideoView extends RelativeLayout {
             i = 0;
         }
         int addedCount = 0;
-        List<ShortVideoBean> cacheList = new ArrayList<>();
+        List<VideoModel> cacheList = new ArrayList<>();
         while (i < mUrlList.size() && addedCount < maxCount) {
             cacheList.add(mUrlList.get(i));
             addedCount++;

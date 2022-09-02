@@ -7,12 +7,14 @@ import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.viewpager.widget.ViewPager;
 
+import com.blankj.utilcode.util.ToastUtils;
 import com.tencent.liteav.demo.player.R;
 import com.tencent.liteav.demo.player.demo.shortvideo.adapter.ShortVideoListAdapter;
 import com.tencent.liteav.demo.player.demo.shortvideo.adapter.ShortVideoPageAdapter;
 import com.tencent.liteav.demo.player.demo.shortvideo.base.AbsBaseActivity;
-import com.tencent.liteav.demo.player.demo.shortvideo.bean.ShortVideoBean;
 import com.tencent.liteav.demo.player.demo.shortvideo.core.ShortVideoModel;
+import com.tencent.liteav.demo.player.expand.model.entity.VideoModel;
+
 
 import java.util.ArrayList;
 import java.util.List;
@@ -41,7 +43,7 @@ public class ShortVideoActivity extends AbsBaseActivity implements ViewPager.OnP
 
     @Override
     protected void initView() {
-        ShortVideoModel.getInstance().setOnDataLoadFullListener(this);
+        ShortVideoModel.getInstance(this).setOnDataLoadFullListener(this);
         mViewPager = findViewById(R.id.viewpager_short_video);
     }
 
@@ -56,8 +58,8 @@ public class ShortVideoActivity extends AbsBaseActivity implements ViewPager.OnP
         mViewPager.setAdapter(new ShortVideoPageAdapter(getSupportFragmentManager(), mFragmentList));
         mViewPager.addOnPageChangeListener(this);
         mViewPager.setCurrentItem(PLAY_FRAGMENT);
-        ShortVideoModel.getInstance().loadDefaultVideo();
-        ShortVideoModel.getInstance().getVideoByFileId();
+        ShortVideoModel.getInstance(this).loadDefaultVideo();
+        ShortVideoModel.getInstance(this).getVideoByFileId();
     }
 
 
@@ -95,9 +97,19 @@ public class ShortVideoActivity extends AbsBaseActivity implements ViewPager.OnP
     }
 
     @Override
-    public void onLoaded(List<ShortVideoBean> videoBeanList) {
+    public void onLoadedSuccess(List<VideoModel> videoBeanList) {
         mListFragment.onLoaded(videoBeanList);
         mPlayFragment.onLoaded(videoBeanList);
-        ShortVideoModel.getInstance().release();
+        ShortVideoModel.getInstance(this).release();
+    }
+
+    @Override
+    public void onLoadedFailed(int errCode) {
+        ToastUtils.showLong(getString(R.string.short_video_get_data_failed) + errCode);
+    }
+
+    protected void onDestroy() {
+        mListFragment.onDestroy();
+        super.onDestroy();
     }
 }

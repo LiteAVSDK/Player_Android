@@ -50,9 +50,9 @@ public class VideoDownloadHelper {
     private long    lastShowErrorTime = 0L;
 
     // 只能包内实例化
-    VideoDownloadHelper(String mProgressFormatter) {
+    VideoDownloadHelper(String mProgressFormatter,Context context) {
         this.mProgressFormatter = mProgressFormatter;
-        loader = new SuperVodListLoader();
+        loader = new SuperVodListLoader(context);
     }
 
     public int getProgressStateTextRes(int downloadState) {

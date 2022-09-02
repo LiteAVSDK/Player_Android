@@ -10,22 +10,23 @@ import androidx.annotation.NonNull;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.tencent.liteav.demo.player.R;
-import com.tencent.liteav.demo.player.demo.shortvideo.bean.ShortVideoBean;
 import com.tencent.liteav.demo.player.demo.shortvideo.view.TXVideoBaseView;
+import com.tencent.liteav.demo.player.expand.model.entity.VideoModel;
 import com.tencent.rtmp.ui.TXCloudVideoView;
 
 import java.util.List;
 
-public class ShortVideoPlayAdapter extends AbsPlayerRecyclerViewAdapter<ShortVideoBean, ShortVideoPlayAdapter.VideoViewHolder> {
+public class ShortVideoPlayAdapter extends AbsPlayerRecyclerViewAdapter<VideoModel,
+        ShortVideoPlayAdapter.VideoViewHolder> {
 
     private static final String TAG = "ShortVideoDemo:ShortVideoPlayAdapter";
 
-    public ShortVideoPlayAdapter(List<ShortVideoBean> list) {
+    public ShortVideoPlayAdapter(List<VideoModel> list) {
         super(list);
     }
 
     @Override
-    public void onHolder(VideoViewHolder holder, ShortVideoBean bean, int position) {
+    public void onHolder(VideoViewHolder holder, VideoModel bean, int position) {
         ViewGroup.LayoutParams layoutParams = holder.itemView.getLayoutParams();
         layoutParams.height = ViewGroup.LayoutParams.MATCH_PARENT;
         if (bean != null && bean.placeholderImage != null) {

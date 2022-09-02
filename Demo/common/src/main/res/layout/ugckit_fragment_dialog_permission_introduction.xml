@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_marginLeft="25dp"
+    android:layout_height="wrap_content"
+    android:layout_marginRight="25dp"
+    android:layout_marginTop="12dp"
+    android:layout_marginBottom="20dp"
+    android:background="@drawable/app_bg_confirm_dialog">
+
+    <TextView
+        android:id="@+id/tv_title"
+        android:text="@string/permission_introduction_title"
+        android:layout_width="wrap_content"
+        android:layout_height="50dp"
+        android:textColor="#030303"
+        android:layout_marginTop="20dp"
+        android:textStyle="bold"
+        android:textSize="20sp"
+        android:layout_marginLeft="20dp"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        />
+
+    <TextView
+        android:id="@+id/tv_message"
+        android:paddingRight="20dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="40dp"
+        android:textColor="#030303 "
+        android:textStyle="normal"
+        android:fontFamily="Arial"
+        android:textSize="15sp"
+        android:paddingBottom="15dp"
+        app:layout_constraintTop_toBottomOf="@id/tv_title"
+        app:layout_constraintLeft_toLeftOf="parent"
+        android:paddingLeft="20dp"
+        app:layout_constraintBaseline_toBottomOf="@id/tv_title" />
+
+    <View
+           android:layout_width="1dp"
+           android:id="@+id/view"
+           android:layout_height="30dp"
+           android:layout_marginTop="5dp"
+           android:layout_marginBottom="5dp"
+           android:background="@color/ugckit_actionsheet_gray"
+           app:layout_constraintTop_toBottomOf="@id/tv_message"
+           app:layout_constraintLeft_toLeftOf="parent"
+           app:layout_constraintRight_toRightOf="parent" />
+
+       <androidx.constraintlayout.widget.ConstraintLayout
+           android:id="@+id/cl_button_panel"
+           android:layout_width="match_parent"
+           android:layout_height="wrap_content"
+           app:layout_constraintTop_toBottomOf="@id/tv_message"
+           >
+
+           <Button
+               android:id="@+id/btn_negative"
+               android:layout_width="0dp"
+               android:layout_height="wrap_content"
+               android:background="@android:color/transparent"
+               android:text="@string/btn_forbit"
+               android:textColor="@color/ugckit_black"
+               android:textSize="17sp"
+               app:layout_constraintBottom_toBottomOf="@id/cl_button_panel"
+               app:layout_constraintHorizontal_weight="1"
+               app:layout_constraintLeft_toLeftOf="@id/cl_button_panel"
+               app:layout_constraintRight_toLeftOf="@+id/btn_positive" />
+
+           <Button
+               android:id="@+id/btn_positive"
+               android:layout_width="0dp"
+               android:layout_height="wrap_content"
+               android:background="@android:color/transparent"
+               android:text="@string/permission_always_allow"
+               android:textColor="@color/ugckit_btn_blue"
+               android:textSize="17sp"
+               app:layout_constraintBottom_toBottomOf="@id/cl_button_panel"
+               app:layout_constraintHorizontal_weight="1"
+               app:layout_constraintLeft_toRightOf="@id/btn_negative"
+               app:layout_constraintRight_toRightOf="@id/cl_button_panel" />
+
+       </androidx.constraintlayout.widget.ConstraintLayout>
+
+</androidx.constraintlayout.widget.ConstraintLayout>
+

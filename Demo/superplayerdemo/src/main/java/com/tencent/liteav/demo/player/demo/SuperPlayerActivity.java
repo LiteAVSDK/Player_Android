@@ -28,7 +28,10 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.core.app.ActivityCompat;
+import androidx.fragment.app.FragmentActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
@@ -59,8 +62,9 @@ import java.util.List;
  * 超级播放器主Activity
  */
 
-public class SuperPlayerActivity extends Activity implements View.OnClickListener,
+public class SuperPlayerActivity extends FragmentActivity implements View.OnClickListener,
          SuperPlayerView.OnSuperPlayerViewCallback,
+        ActivityCompat.OnRequestPermissionsResultCallback,
         TCVodPlayerListAdapter.OnItemClickListener, SwipeRefreshLayout.OnRefreshListener {
 
     private static final String TAG                   = "SuperPlayerActivity";
@@ -315,7 +319,7 @@ public class SuperPlayerActivity extends Activity implements View.OnClickListene
         mLiveList = new ArrayList<>();
         mVodList = new ArrayList<>();
         mDefaultVideo = getIntent().getBooleanExtra(SuperPlayerConstants.PLAYER_DEFAULT_VIDEO, true);
-        mSuperVodListLoader = new SuperVodListLoader();
+        mSuperVodListLoader = new SuperVodListLoader(this);
 
         initSuperVodGlobalSetting();
 
@@ -333,20 +337,22 @@ public class SuperPlayerActivity extends Activity implements View.OnClickListene
     }
 
     private void updateLiveList() {
-        mLiveList.clear();
         if (mUseLocalLiveData) {
-            VideoModel liveModel = new VideoModel();
-            liveModel.title = getResources().getString(R.string.superplayer_test_video);
-            liveModel.placeholderImage = "http://1500005830.vod2.myqcloud.com/6c9a5118vodcq1500005830/66bc542f387702300661648850/0RyP1rZfkdQA.png";
-            liveModel.videoURL =  "http://liteavapp.qcloud.com/live/liteavdemoplayerstreamid.flv";
-            liveModel.coverPictureUrl = "http://1500005830.vod2.myqcloud.com/6c9a5118vodcq1500005830/66bc542f387702300661648850/0RyP1rZfkdQA.png";
-            addVideoModelIntoVodPlayerListAdapter(liveModel);
-            mLiveList.add(liveModel);
+            if (mLiveList.isEmpty()) {
+                VideoModel liveModel = new VideoModel();
+                liveModel.title = getResources().getString(R.string.superplayer_test_video);
+                liveModel.placeholderImage = "http://1500005830.vod2.myqcloud.com/6c9a5118vodcq1500005830/66bc542f387702300661648850/0RyP1rZfkdQA.png";
+                liveModel.videoURL =  "http://liteavapp.qcloud.com/live/liteavdemoplayerstreamid.flv";
+                liveModel.coverPictureUrl = "http://1500005830.vod2.myqcloud.com/6c9a5118vodcq1500005830/66bc542f387702300661648850/0RyP1rZfkdQA.png";
+                addVideoModelIntoVodPlayerListAdapter(liveModel);
+                mLiveList.add(liveModel);
+            }
             if (!mVideoHasPlay) {
                 TXLiveBase.setAppID(String.valueOf(DEFAULT_APPID));
                 playVideoModel(mLiveList.get(0));
                 mVideoHasPlay = true;
             }
+            mSwipeRefreshLayout.setRefreshing(false);
         } else {
             mSuperVodListLoader.getLiveList(new SuperVodListLoader.OnListLoadListener() {
                 @Override
@@ -431,7 +437,7 @@ public class SuperPlayerActivity extends Activity implements View.OnClickListene
             mSuperVodListLoader.getBatchVodList(new SuperVodListLoader.OnVodListLoadListener() {
                 @Override
                 public void onSuccess(VideoListModel videoModels) {
-                    if (videoModels.isEnableCache) {
+                    if (videoModels.isEnableDownload) {
                         addCacheVideo(videoModels);
                     } else {
                         addCircleVideo(videoModels);
@@ -501,7 +507,7 @@ public class SuperPlayerActivity extends Activity implements View.OnClickListene
 
     private void addCircleVideo(final VideoListModel videoListModel) {
         videoListModel.title = getString(R.string.superplayer_carousel_list_title);
-        videoListModel.icon = "http://1500005830.vod2.myqcloud.com/6c9a5118vodcq1500005830/f817e7c8387702291186401215/gk5EbAYcy10A.png";
+        videoListModel.icon = "http://1500005830.vod2.myqcloud.com/6c9a5118vodcq1500005830/6f443f33387702302226773793/2luyOg7pOR0A.png";
         runOnUiThread(new Runnable() {
             @Override
             public void run() {
@@ -513,7 +519,7 @@ public class SuperPlayerActivity extends Activity implements View.OnClickListene
 
     private void addCacheVideo(final VideoListModel videoListModel) {
         videoListModel.title = getString(R.string.superplayer_offline_cache_title);
-        videoListModel.icon = "http://1500005830.vod2.myqcloud.com/6c9a5118vodcq1500005830/f817e7c8387702291186401215/gk5EbAYcy10A.png";
+        videoListModel.icon = "http://1500005830.vod2.myqcloud.com/6c9a5118vodcq1500005830/ae6444ab387702302227194724/n6SJb2ORhQMA.png";
         runOnUiThread(new Runnable() {
             @Override
             public void run() {
@@ -666,7 +672,7 @@ public class SuperPlayerActivity extends Activity implements View.OnClickListene
         superPlayerModelV3.coverPictureUrl = videoModel.coverPictureUrl;
         superPlayerModelV3.duration = videoModel.duration;
         superPlayerModelV3.videoQualityList = videoModel.videoQualityList;
-        superPlayerModelV3.isEnableCache = videoModel.isEnableCache;
+        superPlayerModelV3.isEnableCache = videoModel.isEnableDownload;
         mSuperPlayerView.playWithModel(superPlayerModelV3);
     }
 
@@ -899,10 +905,10 @@ public class SuperPlayerActivity extends Activity implements View.OnClickListene
                             videoModel.appid = appid;
                             videoModel.fileid = fileId;
                             videoModel.pSign = pSign;
-                            videoModel.isEnableCache = cbCache.isChecked();
+                            videoModel.isEnableDownload = cbCache.isChecked();
 
                             // 尝试请求fileid信息
-                            SuperVodListLoader loader = new SuperVodListLoader();
+                            SuperVodListLoader loader = new SuperVodListLoader(SuperPlayerActivity.this);
                             loader.setOnVodInfoLoadListener(new SuperVodListLoader.OnVodInfoLoadListener() {
                                 @Override
                                 public void onSuccess(final VideoModel videoModel) {
@@ -1168,5 +1174,11 @@ public class SuperPlayerActivity extends Activity implements View.OnClickListene
 
     private boolean getBoolean(String key) {
         return getSharedPreferences(SHARE_PREFERENCE_NAME, Context.MODE_PRIVATE).getBoolean(key, false);
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions,
+                                           @NonNull int[] grantResults) {
+        mSuperPlayerView.onRequestPermissionsResult(requestCode, grantResults);
     }
 }

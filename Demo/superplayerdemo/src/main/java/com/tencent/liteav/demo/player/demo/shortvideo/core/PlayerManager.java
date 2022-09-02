@@ -3,7 +3,7 @@ package com.tencent.liteav.demo.player.demo.shortvideo.core;
 import android.content.Context;
 import android.util.Log;
 
-import com.tencent.liteav.demo.player.demo.shortvideo.bean.ShortVideoBean;
+import com.tencent.liteav.demo.player.expand.model.entity.VideoModel;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -13,9 +13,9 @@ import java.util.Map;
 public class PlayerManager {
     private static final String TAG = "ShortVideoDemo:PlayerManager";
     private final static int sMaxPlayerSize = 10;
-    private Map<ShortVideoBean, TXVodPlayerWrapper> mUrlPlayerMap;
+    private Map<VideoModel, TXVodPlayerWrapper> mUrlPlayerMap;
 
-    private ShortVideoBean mLastPlayedVideoBean;
+    private VideoModel mLastPlayedVideoBean;
     private Context mContext;
     private volatile static PlayerManager mInstance;
 
@@ -36,7 +36,7 @@ public class PlayerManager {
         return mInstance;
     }
 
-    public void updateManager(List<ShortVideoBean> shortVideoBeanList) {
+    public void updateManager(List<VideoModel> shortVideoBeanList) {
         if (shortVideoBeanList == null || shortVideoBeanList.isEmpty()) {
             return;
         }
@@ -44,13 +44,13 @@ public class PlayerManager {
             throw new IllegalArgumentException("shortVideoBeanList is larger than sMaxPlayerSize");
         }
 
-        List<ShortVideoBean> lastBeanList = playedShortVideoBean();
+        List<VideoModel> lastBeanList = playedVideoModel();
         Log.i(TAG, " [updateManager]" + ",urlList = " + shortVideoBeanList.toString() + ",lastBeanList = " + lastBeanList.toString());
 
         //找到 lastUrlList中不包含urlList的 lastUrlList为上次传进来的urlList urlList为这次传进来的urlList
-        List<ShortVideoBean> exprList = findDiffBeanList(shortVideoBeanList, lastBeanList);
+        List<VideoModel> exprList = findDiffBeanList(shortVideoBeanList, lastBeanList);
         //找到 urlList中不包含lastUrlList的
-        List<ShortVideoBean> newList = findDiffBeanList(lastBeanList, shortVideoBeanList);
+        List<VideoModel> newList = findDiffBeanList(lastBeanList, shortVideoBeanList);
         if (exprList != null) {
             for (int i = 0; i < exprList.size(); i++) {
                 Log.i(TAG, "[updateManager] exprUrl " + exprList.get(i).videoURL);
@@ -94,14 +94,14 @@ public class PlayerManager {
         }
     }
 
-    public TXVodPlayerWrapper getPlayer(ShortVideoBean bean) {
+    public TXVodPlayerWrapper getPlayer(VideoModel bean) {
         mLastPlayedVideoBean = bean;
         return mUrlPlayerMap.get(bean);
     }
 
 
-    private List<ShortVideoBean> findDiffBeanList(List<ShortVideoBean> playUrlList, List<ShortVideoBean> lastPlayUrlList) {
-        List<ShortVideoBean> exprList = new ArrayList<>();
+    private List<VideoModel> findDiffBeanList(List<VideoModel> playUrlList, List<VideoModel> lastPlayUrlList) {
+        List<VideoModel> exprList = new ArrayList<>();
         for (int i = 0; i < lastPlayUrlList.size(); i++) {
             if (!playUrlList.contains(lastPlayUrlList.get(i))) {
                 exprList.add(lastPlayUrlList.get(i));
@@ -118,9 +118,9 @@ public class PlayerManager {
         mInstance = null;
     }
 
-    private List<ShortVideoBean> playedShortVideoBean() {
-        List<ShortVideoBean> urlList = new ArrayList<>();
-        for (ShortVideoBean bean : mUrlPlayerMap.keySet()) {
+    private List<VideoModel> playedVideoModel() {
+        List<VideoModel> urlList = new ArrayList<>();
+        for (VideoModel bean : mUrlPlayerMap.keySet()) {
             urlList.add(bean);
         }
         return urlList;

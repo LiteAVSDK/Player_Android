@@ -24,7 +24,7 @@ public class PlayInfoResponseParser {
      */
     public String coverURL() {
         try {
-            JSONObject coverInfo = response.getJSONObject("coverInfo");
+            JSONObject coverInfo = response.optJSONObject("coverInfo");
             if (coverInfo != null) {
                 return coverInfo.getString("coverUrl");
             }
@@ -36,7 +36,7 @@ public class PlayInfoResponseParser {
 
     public PlayInfoStream getSource() {
         try {
-            JSONObject sourceVideo = response.getJSONObject("videoInfo").getJSONObject("sourceVideo");
+            JSONObject sourceVideo = response.optJSONObject("videoInfo").optJSONObject("sourceVideo");
             PlayInfoStream stream = new PlayInfoStream();
             stream.url = sourceVideo.getString("url");
             stream.duration = sourceVideo.getInt("duration");
@@ -58,7 +58,7 @@ public class PlayInfoResponseParser {
      */
     public String name() {
         try {
-            JSONObject basicInfo = response.getJSONObject("videoInfo").getJSONObject("basicInfo");
+            JSONObject basicInfo = response.optJSONObject("videoInfo").optJSONObject("basicInfo");
             if (basicInfo != null) {
                 return basicInfo.getString("name");
             }
@@ -75,7 +75,7 @@ public class PlayInfoResponseParser {
      */
     public String description() {
         try {
-            JSONObject basicInfo = response.getJSONObject("videoInfo").getJSONObject("basicInfo");
+            JSONObject basicInfo = response.optJSONObject("videoInfo").optJSONObject("basicInfo");
             if (basicInfo != null) {
                 return basicInfo.getString("description");
             }

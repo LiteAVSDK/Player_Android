@@ -3,7 +3,9 @@
     package="com.tencent.liteav.demo.player">
 
     <application android:theme="@style/AppTheme">
-        <activity android:name=".demo.VideoDownloadListActivity"></activity>
+        <activity android:name=".demo.VideoDownloadListActivity"
+            android:screenOrientation="portrait"
+            />
         <activity
             android:name=".demo.SuperPlayerActivity"
             android:configChanges="orientation|keyboardHidden|screenSize"
@@ -29,7 +31,9 @@
         <activity
             android:name=".demo.QRCodeScanActivity"
             android:screenOrientation="portrait" />
-        <activity android:name=".demo.VodPlayerActivity" />
+        <activity
+            android:screenOrientation="portrait"
+            android:name=".demo.VodPlayerActivity" />
         <activity
             android:name=".demo.FeedActivity"
             android:configChanges="keyboardHidden|orientation|screenSize"

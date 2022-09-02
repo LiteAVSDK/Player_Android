@@ -238,4 +238,10 @@ public class FeedListView extends FrameLayout implements FeedListItemView.FeedLi
             return false;
         }
     }
+
+    public void onRequestPermissionsResult(int requestCode, @NonNull int[] grantResults) {
+        if (feedPlayerManager != null) {
+            feedPlayerManager.onRequestPermissionsResult(requestCode,grantResults);
+        }
+    }
 }

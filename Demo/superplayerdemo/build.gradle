@@ -26,7 +26,7 @@ android {
 dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
 //    implementation project(':liteav_sdk')
-    implementation project(':common')
+    implementation project(':deprecatedcommon')
     implementation rootProject.ext.liteavSdk
     implementation project(':superplayerkit')
     implementation 'androidx.appcompat:appcompat:1.0.0'

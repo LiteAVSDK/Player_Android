@@ -12,7 +12,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.tencent.liteav.demo.player.R;
-import com.tencent.liteav.demo.player.demo.shortvideo.bean.ShortVideoBean;
+import com.tencent.liteav.demo.player.expand.model.entity.VideoModel;
 
 import java.util.List;
 
@@ -22,10 +22,11 @@ import java.util.List;
 public class ShortVideoListAdapter extends RecyclerView.Adapter<ShortVideoListAdapter.ViewHolder> {
     private static final String TAG = "ShortVideoDemo:ShortVideoListAdapter";
     private Context mContext;
-    private List<ShortVideoBean> mPlayerModelList;
+    private List<VideoModel> mPlayerModelList;
     private IOnItemClickListener mIOnItemClickListener;
 
-    public ShortVideoListAdapter(Context context, IOnItemClickListener onItemClickListener, List<ShortVideoBean> shortVideoBeanList) {
+    public ShortVideoListAdapter(Context context, IOnItemClickListener onItemClickListener,
+                                 List<VideoModel> shortVideoBeanList) {
         mContext = context;
         mIOnItemClickListener = onItemClickListener;
         mPlayerModelList = shortVideoBeanList;
@@ -39,7 +40,7 @@ public class ShortVideoListAdapter extends RecyclerView.Adapter<ShortVideoListAd
 
     @Override
     public void onBindViewHolder(final ViewHolder holder, final int pos) {
-        final ShortVideoBean videoModel = mPlayerModelList.get(pos);
+        final VideoModel videoModel = mPlayerModelList.get(pos);
         Glide.with(mContext).load(videoModel.placeholderImage).
                 diskCacheStrategy(DiskCacheStrategy.ALL).centerCrop()
                 .placeholder(R.color.superplayer_color_gray)
@@ -93,6 +94,10 @@ public class ShortVideoListAdapter extends RecyclerView.Adapter<ShortVideoListAd
 
     public interface IOnItemClickListener {
         void onItemClick(int position);
+    }
+
+    public void setOnItemClickListener(IOnItemClickListener listener) {
+        mIOnItemClickListener = listener;
     }
 
     /**

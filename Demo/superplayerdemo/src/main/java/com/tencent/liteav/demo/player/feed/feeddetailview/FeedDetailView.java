@@ -12,6 +12,7 @@ import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -44,6 +45,7 @@ public class FeedDetailView extends FrameLayout implements FeedDetailListClickLi
     private int                               playerViewHeight       = 0;   //PlayerView 的在窗口模式时的高度
     private FeedPlayerView.FeedPlayerCallBack feedPlayerCallBack     = null;   //用于存放之前给FeedPlayerView设置的callBack对象
     private RelativeLayout                    detailLayout           = null;  //详情页面用于展示视频介绍和视频列表的布局
+    private boolean                           isDestroy              = false;
 
     public FeedDetailView(Context context) {
         super(context);
@@ -91,7 +93,9 @@ public class FeedDetailView extends FrameLayout implements FeedDetailListClickLi
      */
     private void setVideoDescription(VideoModel videoModel) {
         RequestOptions options = RequestOptions.bitmapTransform(new CircleCrop());
-        Glide.with(headImg.getContext()).load(videoModel.placeholderImage).apply(options).into(headImg);
+        if (!isDestroy) {
+            Glide.with(headImg.getContext()).load(videoModel.placeholderImage).apply(options).into(headImg);
+        }
         titleTxt.setText(videoModel.title);
         descriptionTxt.setText(videoModel.videoDescription);
         detailDescriptionTxt.setText(videoModel.videoMoreDescription);
@@ -208,6 +212,7 @@ public class FeedDetailView extends FrameLayout implements FeedDetailListClickLi
      * 对页面数据进行清除
      */
     public void destroy() {
+        isDestroy = true;
         //清理描述信息
         headImg.setImageResource(0);
         titleTxt.setText("");
@@ -227,5 +232,11 @@ public class FeedDetailView extends FrameLayout implements FeedDetailListClickLi
     protected void onDetachedFromWindow() {
         super.onDetachedFromWindow();
         destroy();
+    }
+
+    public void onRequestPermissionsResult(int requestCode, @NonNull int[] grantResults) {
+        if (feedPlayerView != null) {
+            feedPlayerView.onRequestPermissionsResult(requestCode,grantResults);
+        }
     }
 }

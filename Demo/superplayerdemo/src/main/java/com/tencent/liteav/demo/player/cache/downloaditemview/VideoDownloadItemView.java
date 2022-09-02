@@ -78,7 +78,7 @@ public class VideoDownloadItemView extends RelativeLayout implements VideoDonwlo
     public void setVideoInfo(TXVodDownloadMediaInfo mediaInfo) {
         this.mMediaInfo = mediaInfo;
         VideoModel videoModel = new VideoModel();
-        videoModel.isEnableCache = true;
+        videoModel.isEnableDownload = true;
         if (null != mediaInfo.getDataSource()) {
             TXVodDownloadDataSource dataSource = mediaInfo.getDataSource();
             videoModel.appid = dataSource.getAppId();
@@ -97,7 +97,8 @@ public class VideoDownloadItemView extends RelativeLayout implements VideoDonwlo
                             mVideoDownloadHelper.updateRequestStatus();
                             int duration = videoModel.duration;
                             mTvVideoDurationView.setText(mVideoDownloadHelper.formattedTime(duration));
-                            mTvVideoNameView.setText(videoModel.title);
+                            String title = getFileNameNoEx(videoModel.title);
+                            mTvVideoNameView.setText(title);
                             if (TextUtils.isEmpty(videoModel.placeholderImage)) {
                                 Glide.with(getContext()).load(R.drawable.superplayer_default_cover_thumb)
                                         .into(mIvVideoCoverView);
@@ -122,6 +123,16 @@ public class VideoDownloadItemView extends RelativeLayout implements VideoDonwlo
         }
         updateDownloadState(mediaInfo);
         this.mVideoModel = videoModel;
+    }
+
+    public String getFileNameNoEx(String filename) {
+        if (!TextUtils.isEmpty(filename)) {
+            int dot = filename.lastIndexOf('.');
+            if ((dot > -1) && (dot < (filename.length()))) {
+                return filename.substring(0, dot);
+            }
+        }
+        return filename;
     }
 
     private void updateDownloadState(TXVodDownloadMediaInfo mediaInfo) {

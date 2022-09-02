@@ -51,4 +51,57 @@
     <string name="superplayer_delete_failed">删除失败</string>
     <string name="superplayer_cahche_empty">暂无数据</string>
     <string name="superplayer_net_error">网络异常，请稍后重试</string>
+    <string name="superplayer_live_list">直播列表</string>
+    <string name="superplayer_vod_list">点播列表</string>
+
+
+    <string name="tencent_cloud_audio_and_video_achievements_title">腾讯云音视频成就</string>
+    <string name="tencent_cloud_audio_and_video_achievements_introduction">自2018年以来，腾讯云音视频取得“四连冠”</string>
+    <string name="tencent_cloud_audio_and_video_achievements_detail">在TRTC、音视频编解码、RT-ONE音视频融合网络、腾讯云视立方音视频终端等做出杰出成绩。</string>
+
+    <string name="tencent_cloud_audio_and_video_steady_title">腾讯云音视频——稳</string>
+    <string name="tencent_cloud_audio_and_video_steady_introduction">腾讯云音视频就是稳，根本不会卡。</string>
+    <string name="tencent_cloud_audio_and_video_steady_detail">超21年技术沉淀，“三合一”RT-ONE音视频通信网络，腾讯云音视频就是稳。</string>
+
+    <string name="tencent_cloud_audio_and_video_real_title">腾讯云音视频——真</string>
+    <string name="tencent_cloud_audio_and_video_real_introduction">腾讯云音视频就是真</string>
+    <string name="tencent_cloud_audio_and_video_real_detail">试听效果真，场景还原真，互动体验真，腾讯云音视频就是真。</string>
+
+    <string name="tencent_cloud_audio_and_video_complete_title">腾讯云音视频——全</string>
+    <string name="tencent_cloud_audio_and_video_complete_introduction">腾讯云视立方解决方案就是全</string>
+    <string name="tencent_cloud_audio_and_video_complete_detail">产品矩阵全，解决方案全，场景覆盖全，腾讯云音视频就是全。</string>
+
+    <string name="tencent_cloud_business_introduction_title">腾讯云业务介绍</string>
+    <string name="tencent_cloud_business_introduction_introduction">腾讯云，值得信赖的产业数据化助手</string>
+    <string name="tencent_cloud_business_introduction_detail">腾讯云与您共建数字新基建，助力数字经济新发展。</string>
+
+    <string name="what_are_numbers_title">数字是什么</string>
+    <string name="what_are_numbers_introduction">在未来，你关注的数字是什么？</string>
+    <string name="what_are_numbers_detail">在未来，数字创造数字，腾讯云，值得信赖的产业数据化助手。</string>
+    
+    <string name="simplify_complexity_and_build_big_from_small_title">化繁为简，以小建大</string>
+    <string name="simplify_complexity_and_build_big_from_small_introduction">腾讯云提出“化繁为简，以小建大”的品牌理念。</string>
+    <string name="simplify_complexity_and_build_big_from_small_detail">繁复的数字化过程“简单化”，用小巧的模块助力企业实现“大梦想”。</string>
+
+    <string name="tencent_cloud_audio_and_video_title">腾讯云音视频</string>
+    <string name="tencent_cloud_audio_and_video_introduction">开启全真互联新时代</string>
+    <string name="tencent_cloud_audio_and_video_detail">腾讯云音视频提供坚实的Paas能力，和亿万用户共创共赢。</string>
+
+    <string name="short_video_get_data_failed">数据请求失败</string>
+    <string name="short_video_play_back">短视频播放</string>
+    <string name="short_video_list">视频列表</string>
+
+    <string name="vod_player">点播播放器</string>
+    <string name="short_video_i_know">我知道了</string>
+    <string name="short_video_view_more_videos">上下查看更多视频</string>
+    <string name="short_video_pause_video">点击可暂停视频播放</string>
+    <string name="short_video_go_to_list">左滑进入视频列表</string>
+    <string name="short_video_move_seeek">拖拽进度条快速查看视频</string>
+    <string name="super_player_up_and_down_bright">上下滑动调节屏幕明暗</string>
+    <string name="super_player_left_and_right">左右滑动快进/倒退</string>
+    <string name="super_player_up_and_down_volumn">上下滑动调节音量大小</string>
+    <string name="super_player_move_left_to_see_before">向左拖动可观看先前直播内容</string>
+    <string name="super_player_cache_video_title">不只是音视频 %1d</string>
+    <string name="super_player_tv_screen_auto">自适应</string>
+
 </resources>

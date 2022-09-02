@@ -4,7 +4,7 @@ import android.content.Context;
 import android.os.Bundle;
 import android.util.Log;
 
-import com.tencent.liteav.demo.player.demo.shortvideo.bean.ShortVideoBean;
+import com.tencent.liteav.demo.player.expand.model.entity.VideoModel;
 import com.tencent.rtmp.ITXVodPlayListener;
 import com.tencent.rtmp.TXVodPlayConfig;
 import com.tencent.rtmp.TXVodPlayer;
@@ -25,7 +25,6 @@ public class TXVodPlayerWrapper implements ITXVodPlayListener {
     private String mUrl;
     private boolean mStartOnPrepare;
     private TXVodPlayConfig mTXVodPlayConfig;
-    private int mBitRateIndex;
 
     public TXVodPlayerWrapper(Context context) {
         mVodPlayer = new TXVodPlayer(context);
@@ -34,6 +33,7 @@ public class TXVodPlayerWrapper implements ITXVodPlayListener {
         mTXVodPlayConfig.setProgressInterval(1);
         mTXVodPlayConfig.setSmoothSwitchBitrate(true);
         mTXVodPlayConfig.setMaxBufferSize(5);
+        mTXVodPlayConfig.setPreferredResolution(1080 * 1920);
         mTXVodPlayConfig.setMaxCacheItems(8);
         File sdcardDir = context.getExternalFilesDir(null);
         if (sdcardDir != null) {
@@ -87,7 +87,6 @@ public class TXVodPlayerWrapper implements ITXVodPlayListener {
                 + " mVodPlayer " + mVodPlayer.hashCode() + " url " + mUrl);
         if (mStatus == TxVodStatus.TX_VIDEO_PLAYER_STATUS_STOPPED) {
             mVodPlayer.setAutoPlay(true);
-            mVodPlayer.setBitrateIndex(mBitRateIndex);
             mVodPlayer.startPlay(mUrl);
             playerStatusChanged(TxVodStatus.TX_VIDEO_PLAYER_STATUS_PLAYING);
             return;
@@ -128,16 +127,14 @@ public class TXVodPlayerWrapper implements ITXVodPlayListener {
     }
 
 
-    public void preStartPlay(ShortVideoBean bean) {
+    public void preStartPlay(VideoModel bean) {
         this.mUrl = bean.videoURL;
-        this.mBitRateIndex = bean.bitRateIndex;
         this.mStatus = TxVodStatus.TX_VIDEO_PLAYER_STATUS_UNLOAD;
         mStartOnPrepare = false;
         mVodPlayer.setLoop(true);
         mVodPlayer.stopPlay(true);
         Log.i(TAG, "[preStartPlay] , startOnPrepare ，" + mStartOnPrepare + "， mVodPlayer " + mVodPlayer.hashCode());
         mVodPlayer.setAutoPlay(false);
-        mVodPlayer.setBitrateIndex(bean.bitRateIndex);
         mVodPlayer.startPlay(bean.videoURL);
     }
 

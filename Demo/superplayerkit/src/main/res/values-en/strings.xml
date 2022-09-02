@@ -30,4 +30,6 @@
     <string name="superplayer_start_download">start downloading video %1$s</string>
     <string name="superplayer_download_failed">downloading video %1$s failed</string>
     <string name="superplayer_download_quality_invalid">this video quality is invalid,download failed,please download video by others quality</string>
+    <string name="superplayer_danmu">Comment</string>
+    <string name="superplayer_replay">Replay</string>
 </resources>

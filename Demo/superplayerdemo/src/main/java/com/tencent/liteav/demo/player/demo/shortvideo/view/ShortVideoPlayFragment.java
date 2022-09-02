@@ -12,7 +12,8 @@ import androidx.annotation.Nullable;
 
 import com.tencent.liteav.demo.player.R;
 import com.tencent.liteav.demo.player.demo.shortvideo.base.AbsBaseFragment;
-import com.tencent.liteav.demo.player.demo.shortvideo.bean.ShortVideoBean;
+import com.tencent.liteav.demo.player.expand.model.entity.VideoModel;
+
 
 import java.util.List;
 
@@ -183,7 +184,7 @@ public class ShortVideoPlayFragment extends AbsBaseFragment implements View.OnCl
         mSuperShortVideoView.onListPageScrolled();
     }
 
-    public void onLoaded(List<ShortVideoBean> shortVideoBeanList) {
+    public void onLoaded(List<VideoModel> shortVideoBeanList) {
         if (mSuperShortVideoView != null) {
             mSuperShortVideoView.setDataSource(shortVideoBeanList);
         }

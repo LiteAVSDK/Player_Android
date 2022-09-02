@@ -4,6 +4,8 @@ import android.content.Context;
 import android.util.AttributeSet;
 import android.widget.FrameLayout;
 
+import androidx.annotation.NonNull;
+
 import com.tencent.liteav.demo.player.expand.model.entity.VideoModel;
 import com.tencent.liteav.demo.player.feed.feeddetailview.FeedDetailView;
 import com.tencent.liteav.demo.player.feed.feeddetailview.FeedDetailViewCallBack;
@@ -226,5 +228,14 @@ public class FeedView extends FrameLayout implements FeedListCallBack, FeedDetai
         }
     }
 
+    public void onRequestPermissionsResult(int requestCode, @NonNull int[] grantResults) {
+        if (feedListView != null) {
+            feedListView.onRequestPermissionsResult(requestCode,grantResults);
+        }
+
+        if (feedDetailView != null) {
+            feedDetailView.onRequestPermissionsResult(requestCode,grantResults);
+        }
+    }
 
 }

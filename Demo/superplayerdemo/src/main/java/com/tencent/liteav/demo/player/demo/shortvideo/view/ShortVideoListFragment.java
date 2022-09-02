@@ -11,7 +11,8 @@ import androidx.recyclerview.widget.StaggeredGridLayoutManager;
 import com.tencent.liteav.demo.player.R;
 import com.tencent.liteav.demo.player.demo.shortvideo.adapter.ShortVideoListAdapter;
 import com.tencent.liteav.demo.player.demo.shortvideo.base.AbsBaseFragment;
-import com.tencent.liteav.demo.player.demo.shortvideo.bean.ShortVideoBean;
+import com.tencent.liteav.demo.player.expand.model.entity.VideoModel;
+
 
 import java.util.ArrayList;
 import java.util.List;
@@ -27,7 +28,7 @@ public class ShortVideoListFragment extends AbsBaseFragment {
 
     private ShortVideoListAdapter.IOnItemClickListener mIOnItemClickListener;
 
-    private List<ShortVideoBean> mShortVideoBeanList;
+    private List<VideoModel> mVideoModelList;
 
     public ShortVideoListFragment() {
     }
@@ -43,7 +44,7 @@ public class ShortVideoListFragment extends AbsBaseFragment {
 
     @Override
     protected void initViews(@Nullable Bundle savedInstanceState) {
-        mShortVideoBeanList = new ArrayList<>();
+        mVideoModelList = new ArrayList<>();
         mBackList = getActivity().findViewById(R.id.ib_back);
         mRecyclerView = getActivity().findViewById(R.id.recycler_view_short_video_list);
         mBackList.setOnClickListener(new View.OnClickListener() {
@@ -62,13 +63,16 @@ public class ShortVideoListFragment extends AbsBaseFragment {
 
     @Override
     public void onDestroy() {
+        if (mAdapter != null) {
+            mAdapter.setOnItemClickListener(null);
+        }
         super.onDestroy();
     }
 
 
-    public void onLoaded(List<ShortVideoBean> shortVideoBeanList) {
-        mShortVideoBeanList = shortVideoBeanList;
-        mAdapter = new ShortVideoListAdapter(getContext(), mIOnItemClickListener, mShortVideoBeanList);
+    public void onLoaded(List<VideoModel> shortVideoBeanList) {
+        mVideoModelList = shortVideoBeanList;
+        mAdapter = new ShortVideoListAdapter(getContext(), mIOnItemClickListener, mVideoModelList);
         final RecyclerView.LayoutManager layoutManager = new StaggeredGridLayoutManager(2, StaggeredGridLayoutManager.VERTICAL);
         if (getActivity() != null) {
             getActivity().runOnUiThread(new Runnable() {

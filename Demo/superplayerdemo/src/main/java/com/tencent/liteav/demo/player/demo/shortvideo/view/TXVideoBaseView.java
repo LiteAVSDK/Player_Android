@@ -57,6 +57,7 @@ public class TXVideoBaseView extends RelativeLayout implements View.OnClickListe
     public void setTXVodPlayer(TXVodPlayerWrapper TXVodPlayerWrapper) {
         mTXVodPlayerWrapper = TXVodPlayerWrapper;
         mTXVodPlayerWrapper.setPlayerView(mTXCloudVideoView);
+        mTXCloudVideoView.requestLayout();
         Log.i(TAG, "[setTXVodPlayer] , PLAY_EVT_PLAY_PROGRESS，" + mTXVodPlayerWrapper.getVodPlayer().hashCode() + " url " + TXVodPlayerWrapper.getUrl());
     }
 

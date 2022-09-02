@@ -42,9 +42,9 @@ import okhttp3.Response;
 
 public class SuperVodListLoader {
 
-    private static final String M3U8_SUFFIX = ".m3u8";
-
+    private static final String                M3U8_SUFFIX = ".m3u8";
     private static final String                TAG       = "SuperVodListLoader";
+    private              Context               mContext;
     private              Handler               mHandler;
     private              HandlerThread         mHandlerThread;
     private              boolean               mIsHttps  = true;
@@ -52,12 +52,13 @@ public class SuperVodListLoader {
     private final        String                BASE_URLS = "https://playvideo.qcloud.com/getplayinfo/v4";
     private              OnVodInfoLoadListener mOnVodInfoLoadListener;
     private              OkHttpClient          mHttpClient;
+    private              int                   mAppId    = 1500005830;
 
-    public SuperVodListLoader() {
+    public SuperVodListLoader(Context context) {
         mHandlerThread = new HandlerThread("SuperVodListLoader");
         mHandlerThread.start();
         mHandler = new Handler(mHandlerThread.getLooper());
-
+        mContext = context;
         mHttpClient = new OkHttpClient();
         mHttpClient.newBuilder().connectTimeout(5, TimeUnit.SECONDS);
     }
@@ -69,42 +70,37 @@ public class SuperVodListLoader {
     public ArrayList<VideoModel> loadDefaultVodList(Context applicationContext) {
         ArrayList<VideoModel> list = new ArrayList<>();
         VideoModel model = new VideoModel();
-        model.appid = 1252463788;
-        model.fileid = "5285890781763144364";
+        model.appid = mAppId;
+        model.fileid = "387702299774251236";
         list.add(model);
 
         model = new VideoModel();
-        model.appid = 1252463788;
-        model.fileid = "4564972819220421305";
+        model.appid = mAppId;
+        model.fileid = "387702299774390972";
         model.title = applicationContext.getString(R.string.superplayer_dynamic_watermark_title);
         String tipStr = applicationContext.getString(R.string.superplayer_dynamic_watermark_tip);
         model.dynamicWaterConfig = new DynamicWaterConfig(tipStr, 30, Color.parseColor("#80FFFFFF"));
         list.add(model);
 
         model = new VideoModel();
-        model.appid = 1252463788;
-        model.fileid = "4564972819219071568";
+        model.appid = mAppId;
+        model.fileid = "387702299774253670";
         list.add(model);
 
         model = new VideoModel();
-        model.appid = 1252463788;
-        model.fileid = "4564972819219071668";
+        model.appid = mAppId;
+        model.fileid = "387702299774574470";
         list.add(model);
 
         model = new VideoModel();
-        model.appid = 1252463788;
-        model.fileid = "4564972819219071679";
-        list.add(model);
-
-        model = new VideoModel();
-        model.appid = 1252463788;
-        model.fileid = "4564972819219081699";
+        model.appid = mAppId;
+        model.fileid = "387702299774545556";
         model.title = applicationContext.getString(R.string.superplayer_vip_title);
         model.vipWatchModel = new VipWatchModel(applicationContext.getString(R.string.superplayer_vip_watch_tip), 15);
         list.add(model);
 
         model = new VideoModel();
-        model.appid = 1500005830;
+        model.appid = mAppId;
         model.playAction = PLAY_ACTION_MANUAL_PLAY;
         model.fileid = "8602268011437356984";
         model.title = applicationContext.getString(R.string.superplayer_cover_title);
@@ -114,20 +110,21 @@ public class SuperVodListLoader {
     }
 
     public ArrayList<VideoModel> loadCircleVodList() {
-        VideoModel model = new VideoModel();
-        model.appid = 1252463788;
-        model.fileid = "4564972819219071568";
+        VideoModel model;
+        model = new VideoModel();
+        model.appid = mAppId;
+        model.fileid = "387702299774211080";
         ArrayList<VideoModel> list = new ArrayList<>();
         list.add(model);
 
         model = new VideoModel();
-        model.appid = 1252463788;
-        model.fileid = "4564972819219071679";
+        model.appid = mAppId;
+        model.fileid = "387702299774644824";
         list.add(model);
 
         model = new VideoModel();
-        model.appid = 1252463788;
-        model.fileid = "4564972819219071668";
+        model.appid = mAppId;
+        model.fileid = "387702299774544650";
         list.add(model);
         return list;
     }
@@ -136,32 +133,32 @@ public class SuperVodListLoader {
         VideoModel model = new VideoModel();
         model.appid = 1500005830;
         model.fileid = "387702299773851453";
-        model.isEnableCache = true;
+        model.isEnableDownload = true;
         ArrayList<VideoModel> list = new ArrayList<>();
         list.add(model);
 
         model = new VideoModel();
         model.appid = 1500005830;
         model.fileid = "387702299774155981";
-        model.isEnableCache = true;
+        model.isEnableDownload = true;
         list.add(model);
 
         model = new VideoModel();
         model.appid = 1500005830;
         model.fileid = "387702299773830943";
-        model.isEnableCache = true;
+        model.isEnableDownload = true;
         list.add(model);
 
         model = new VideoModel();
         model.appid = 1500005830;
         model.fileid = "387702299773823860";
-        model.isEnableCache = true;
+        model.isEnableDownload = true;
         list.add(model);
 
         model = new VideoModel();
         model.appid = 1500005830;
         model.fileid = "387702299774156604";
-        model.isEnableCache = true;
+        model.isEnableDownload = true;
         list.add(model);
         return list;
     }
@@ -174,8 +171,8 @@ public class SuperVodListLoader {
         getVideoListInfo(cacheModels, true, listener);
     }
 
-    private void getVideoListInfo(final ArrayList<VideoModel> videoModels, final boolean isCacheModel,
-                                  final OnVodListLoadListener listener) {
+    public void getVideoListInfo(final ArrayList<VideoModel> videoModels, final boolean isCacheModel,
+                                 final OnVodListLoadListener listener) {
         mHandler.post(new Runnable() {
             @Override
             public void run() {
@@ -189,7 +186,7 @@ public class SuperVodListLoader {
                             if (integer.get() == loadSize) {
                                 VideoListModel videoListModel = new VideoListModel();
                                 videoListModel.videoModelList = videoModels;
-                                videoListModel.isEnableCache = isCacheModel;
+                                videoListModel.isEnableDownload = isCacheModel;
                                 listener.onSuccess(videoListModel);
                             }
                         }
@@ -271,11 +268,11 @@ public class SuperVodListLoader {
                                 Log.e(TAG, message);
                                 return;
                             }
-                            JSONObject data = jsonObject.getJSONObject("data");
+                            JSONObject data = jsonObject.optJSONObject("data");
                             JSONArray liveList = data.getJSONArray("list");
                             ArrayList<VideoModel> modelList = new ArrayList<>();
                             for (int i = 0; i < liveList.length(); i++) {
-                                JSONObject playItem = liveList.getJSONObject(i);
+                                JSONObject playItem = liveList.optJSONObject(i);
                                 VideoModel model = new VideoModel();
                                 model.appid = playItem.optInt("appId", 0);
                                 model.title = playItem.optString("name", "");
@@ -284,9 +281,9 @@ public class SuperVodListLoader {
                                 if (urlList.length() > 0) {
                                     model.multiVideoURLs = new ArrayList<>(urlList.length());
                                     model.playDefaultIndex = 0;
-                                    model.videoURL = urlList.getJSONObject(model.playDefaultIndex).optString("url", "");
+                                    model.videoURL = urlList.optJSONObject(model.playDefaultIndex).optString("url", "");
                                     for (int j = 0; j < urlList.length(); j++) {
-                                        JSONObject urlItem = urlList.getJSONObject(j);
+                                        JSONObject urlItem = urlList.optJSONObject(j);
                                         model.multiVideoURLs.add(new VideoModel.VideoPlayerURL(urlItem.optString("title", ""), urlItem.optString("url", "")));
                                     }
                                 }
@@ -346,7 +343,6 @@ public class SuperVodListLoader {
                                 new VideoModel.VideoPlayerURL(videoQuality.title, videoQuality.url));
                     }
                 }
-                listener.onSuccess(videoModel);
             } else if (version == 4) {
                 PlayInfoParserV4 parserV4 = new PlayInfoParserV4(jsonObject);
                 if (TextUtils.isEmpty(parserV4.getDRMType())) {
@@ -359,12 +355,66 @@ public class SuperVodListLoader {
                 upDataTitle(videoModel, title);
                 videoModel.placeholderImage = parserV4.getCoverUrl();
                 videoModel.duration = parserV4.getDuration();
-
-                listener.onSuccess(videoModel);
             }
+            videoModel.title = getTitleByFileId(videoModel.fileid);
+            listener.onSuccess(videoModel);
         } catch (JSONException e) {
             e.printStackTrace();
         }
+    }
+
+    /**
+     * 根据视频ID 获取视频标题
+     *
+     * @param fileId
+     * @return
+     */
+    private String getTitleByFileId(String fileId) {
+        String title = "";
+        switch (fileId) {
+            case "387702299774251236":
+                title = mContext.getString(R.string.tencent_cloud_audio_and_video_achievements_title);
+                break;
+            case "387702299774544650":
+                title = mContext.getString(R.string.tencent_cloud_audio_and_video_steady_title);
+                break;
+            case "387702299774644824":
+                title = mContext.getString(R.string.tencent_cloud_audio_and_video_real_title);
+                break;
+            case "387702299774211080":
+                title = mContext.getString(R.string.tencent_cloud_audio_and_video_complete_title);
+                break;
+            case "387702299774545556":
+                title = mContext.getString(R.string.tencent_cloud_business_introduction_title);
+                break;
+            case "387702299774574470":
+                title = mContext.getString(R.string.what_are_numbers_title);
+                break;
+            case "387702299774253670":
+                title = mContext.getString(R.string.simplify_complexity_and_build_big_from_small_title);
+                break;
+            case "387702299774390972":
+                title = mContext.getString(R.string.tencent_cloud_audio_and_video_title);
+                break;
+            case "387702299773851453":
+                title = String.format(mContext.getString(R.string.super_player_cache_video_title),1);
+                break;
+            case "387702299774155981":
+                title = String.format(mContext.getString(R.string.super_player_cache_video_title),2);
+                break;
+            case "387702299773830943":
+                title = String.format(mContext.getString(R.string.super_player_cache_video_title),3);
+                break;
+            case "387702299773823860":
+                title = String.format(mContext.getString(R.string.super_player_cache_video_title),4);
+                break;
+            case "387702299774156604":
+                title = String.format(mContext.getString(R.string.super_player_cache_video_title),5);
+                break;
+            default:
+                break;
+        }
+        return title;
     }
 
     private void upDataTitle(VideoModel videoModel, String newTitle) {

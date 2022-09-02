@@ -1,5 +1,7 @@
 package com.tencent.liteav.demo.player.feed;
 
+import androidx.annotation.NonNull;
+
 import com.tencent.liteav.demo.player.feed.player.FeedPlayerView;
 
 public class FeedPlayerManager {
@@ -93,5 +95,8 @@ public class FeedPlayerManager {
         return false;
     }
 
+    public void onRequestPermissionsResult(int requestCode, @NonNull int[] grantResults) {
+        feedPlayerView.onRequestPermissionsResult(requestCode,grantResults);
+    }
 
 }

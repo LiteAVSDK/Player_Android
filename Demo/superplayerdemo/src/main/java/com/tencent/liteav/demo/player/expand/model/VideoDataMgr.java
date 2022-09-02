@@ -89,11 +89,11 @@ public class VideoDataMgr {
                 notifyGetVideoListFail(code);
                 return;
             }
-            JSONObject dataObj = resObject.getJSONObject("data");
+            JSONObject dataObj = resObject.optJSONObject("data");
             JSONArray list = dataObj.getJSONArray("list");
             List<VideoInfo> videoInfoList = new ArrayList<>();
             for (int i = 0; i < list.length(); i++) {
-                JSONObject videoInfoJSONObject = list.getJSONObject(i);
+                JSONObject videoInfoJSONObject = list.optJSONObject(i);
                 VideoInfo videoInfo = new VideoInfo();
                 videoInfo.fileId = videoInfoJSONObject.optString("fileId");
                 videoInfo.name = videoInfoJSONObject.optString("name");

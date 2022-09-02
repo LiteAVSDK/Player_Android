@@ -9,7 +9,7 @@ android {
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
         versionCode 24
-        versionName "10.1.0.2225"
+        versionName "10.6.0.2314"
 
         multiDexEnabled true
         ndk {
@@ -43,13 +43,17 @@ android {
         javaMaxHeapSize "4g"
     }
 
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
 }
 
 dependencies {
 
     implementation fileTree(dir: 'libs', include: ['*.jar'])
     implementation rootProject.ext.liteavSdk
-    implementation project(':common')
+    implementation project(':deprecatedcommon')
     implementation project(':superplayerdemo')
 
     implementation 'androidx.appcompat:appcompat:1.0.0'

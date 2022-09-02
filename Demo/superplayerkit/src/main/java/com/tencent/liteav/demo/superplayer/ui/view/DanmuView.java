@@ -9,6 +9,8 @@ import android.os.Message;
 import android.util.AttributeSet;
 import android.util.Log;
 
+import com.tencent.liteav.demo.superplayer.R;
+
 import java.util.Random;
 
 import master.flame.danmaku.controller.DrawHandler;
@@ -177,7 +179,7 @@ public class DanmuView extends DanmakuView {
 
         private void sendDanmu() {
             int time = new Random().nextInt(300);
-            String content = "弹幕" + time + time;
+            String content = getContext().getResources().getString(R.string.superplayer_danmu) + time + time;
             addDanmaku(content, false);
         }
     }

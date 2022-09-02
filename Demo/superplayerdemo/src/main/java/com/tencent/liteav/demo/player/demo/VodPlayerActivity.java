@@ -29,19 +29,24 @@ import com.blankj.utilcode.constant.PermissionConstants;
 import com.blankj.utilcode.util.PermissionUtils;
 import com.tencent.liteav.demo.common.utils.IntentUtils;
 import com.tencent.liteav.demo.player.R;
-import com.tencent.liteav.demo.player.view.BitrateView;
+import com.tencent.liteav.demo.superplayer.model.entity.VideoQuality;
+import com.tencent.liteav.demo.superplayer.model.utils.VideoQualityUtils;
+import com.tencent.liteav.demo.superplayer.ui.view.VodQualityView;
 import com.tencent.rtmp.ITXVodPlayListener;
+import com.tencent.rtmp.TXBitrateItem;
 import com.tencent.rtmp.TXLiveConstants;
 import com.tencent.rtmp.TXVodPlayConfig;
 import com.tencent.rtmp.TXVodPlayer;
 import com.tencent.rtmp.ui.TXCloudVideoView;
 
 import java.lang.ref.WeakReference;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class VodPlayerActivity extends Activity implements ITXVodPlayListener {
+public class VodPlayerActivity extends Activity implements ITXVodPlayListener, VodQualityView.Callback {
     private static final String TAG                   = "VodPlayerActivity";
     private static final String WEBRTC_LINK_URL       = "https://cloud.tencent.com/document/product/454/12148";
     private static final String DEFAULT_PLAY_URL      = "http://200024424.vod.myqcloud.com/200024424_709ae516bdf811e6ad39991f76a4df69.f20.mp4";
@@ -83,6 +88,13 @@ public class VodPlayerActivity extends Activity implements ITXVodPlayListener {
     private boolean         mVideoPlay;
     private boolean         mIsLogShow   = false;
     private float           mPlayRate    = 1.0f;
+    private VodQualityView  mVodQualityView;
+    private List<VideoQuality>             mVideoQualityList;                      // 画质列表
+    private VideoQuality    mDefaultVideoQuality;
+    private boolean         mFirstShowQuality = false;
+    private boolean         mIsStopped;
+    private String          mUrl;
+
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -99,13 +111,40 @@ public class VodPlayerActivity extends Activity implements ITXVodPlayListener {
                 finish();
             }
         });
-        TextView titleTV = (TextView) findViewById(R.id.title_tv);
-        titleTV.setText(getIntent().getStringExtra("TITLE"));
         checkPublishPermission();
         registerForContextMenu(findViewById(R.id.btnPlay));
         getWindow().addFlags(WindowManager.LayoutParams.
                 FLAG_KEEP_SCREEN_ON);
     }
+
+    /**
+     * 显示画质列表弹窗
+     */
+    private void showQualityView() {
+        if (mVideoQualityList == null || mVideoQualityList.size() == 0) {
+            return;
+        }
+        if (mVideoQualityList.size() == 1 && (mVideoQualityList.get(0) == null || TextUtils.isEmpty(mVideoQualityList.get(0).title))) {
+            return;
+        }
+        if (mVideoQualityList.size() == 2 && !mUrl.endsWith(".mpd")) {
+            return;
+        }
+        // 设置默认显示分辨率文字
+        mVodQualityView.setVisibility(View.VISIBLE);
+        if (!mFirstShowQuality && mDefaultVideoQuality != null) {
+            for (int i = 0; i < mVideoQualityList.size(); i++) {
+                VideoQuality quality = mVideoQualityList.get(i);
+                if (quality != null && quality.title != null && quality.title.equals(mDefaultVideoQuality.title)) {
+                    mVodQualityView.setDefaultSelectedQuality(i);
+                    break;
+                }
+            }
+            mFirstShowQuality = true;
+        }
+        mVodQualityView.setVideoQualityList(mVideoQualityList);
+    }
+
 
     @Override
     public void onBackPressed() {
@@ -193,6 +232,7 @@ public class VodPlayerActivity extends Activity implements ITXVodPlayListener {
         mButtonStop.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                mVodQualityView.setVisibility(View.GONE);
                 stopPlayVod();
                 mVideoPlay = false;
                 mVideoPause = false;
@@ -381,6 +421,9 @@ public class VodPlayerActivity extends Activity implements ITXVodPlayListener {
             }
         });
 
+        mVodQualityView = findViewById(R.id.vod_quality_view);
+        mVodQualityView.setCallback(this);
+
         findViewById(R.id.webrtc_link_button).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -457,6 +500,7 @@ public class VodPlayerActivity extends Activity implements ITXVodPlayListener {
     private boolean startPlayVod() {
 
         String playUrl = mEditRtmpUrlView.getText().toString();
+        mUrl = playUrl;
         if (TextUtils.isEmpty(playUrl)) {
             Toast.makeText(getApplicationContext(), getString(R.string.superplayer_not_play_url), Toast.LENGTH_SHORT).show();
             return false;
@@ -486,6 +530,7 @@ public class VodPlayerActivity extends Activity implements ITXVodPlayListener {
         mVodPlayer.setConfig(mPlayConfig);
         mVodPlayer.setAutoPlay(true);
         int result = mVodPlayer.startPlay(playUrl);
+        mIsStopped = false;
         if (result != 0) {
             mButtonPlay.setBackgroundResource(R.drawable.superplayer_play_start);
             mLinearRootView.setBackgroundResource(R.drawable.superplayer_content_bg);
@@ -495,8 +540,7 @@ public class VodPlayerActivity extends Activity implements ITXVodPlayListener {
         enableQRCodeBtn(false);
         mStartPlayTS = System.currentTimeMillis();
         findViewById(R.id.playerHeaderView).setVisibility(View.VISIBLE);
-        BitrateView view = (BitrateView) findViewById(R.id.bitrate_view);
-        view.setSelectedIndex(0);
+
         return true;
     }
 
@@ -522,19 +566,42 @@ public class VodPlayerActivity extends Activity implements ITXVodPlayListener {
 
         if (event == TXLiveConstants.PLAY_EVT_VOD_PLAY_PREPARED || event == TXLiveConstants.PLAY_EVT_VOD_LOADING_END) {
             stopLoadingAnimation();
+        }
 
-
+        if (event == TXLiveConstants.PLAY_EVT_VOD_LOADING_END) {
+            mIsStopped = true;
         }
 
         if (event == TXLiveConstants.PLAY_EVT_VOD_PLAY_PREPARED) {
-            BitrateView view = (BitrateView) findViewById(R.id.bitrate_view);
-            view.setDataSource(mVodPlayer.getSupportedBitrates());
-            view.setListener(new BitrateView.OnSelectBitrateListener() {
-                @Override
-                public void onBitrateIndex(int index) {
-                    mVodPlayer.setBitrateIndex(index);
+            List<TXBitrateItem> bitrateItems = mVodPlayer.getSupportedBitrates();
+            int bitrateItemSize = bitrateItems != null ? bitrateItems.size() : 0;
+            if (bitrateItemSize > 0) {
+                Collections.sort(bitrateItems); //masterPlaylist多清晰度，按照码率排序，从低到高
+                List<VideoQuality> videoQualities = new ArrayList<>();
+                for (int i = 0; i < bitrateItemSize; i++) {
+                    TXBitrateItem bitrateItem = bitrateItems.get(i);
+                    VideoQuality quality = VideoQualityUtils.convertToVideoQuality(this, bitrateItem);
+                    videoQualities.add(quality);
                 }
-            });
+                int bitrateIndex = mVodPlayer.getBitrateIndex();   //获取默认码率的index
+                VideoQuality defaultQuality = null;
+                for (VideoQuality quality : videoQualities) {
+                    if (quality.index == bitrateIndex) {
+                        defaultQuality = quality;
+                    }
+                }
+                mVideoQualityList = videoQualities;
+                if (!mUrl.endsWith(".mpd")) {
+                    VideoQuality videoQuality = new VideoQuality();
+                    videoQuality.index = -1;
+                    videoQuality.title = getResources().getString(R.string.super_player_tv_screen_auto);
+                    mVideoQualityList.add(videoQuality);
+                }
+                updateVideoQuality(defaultQuality);
+            }
+            if (mVideoQualityList != null && mVideoQualityList.size() > 2) {
+                showQualityView();
+            }
         }
 
         if (event == TXLiveConstants.PLAY_EVT_PLAY_BEGIN) {
@@ -718,4 +785,40 @@ public class VodPlayerActivity extends Activity implements ITXVodPlayListener {
     }
 
     private TXPhoneStateListener mPhoneListener = null;
+
+    @Override
+    public void onQualitySelect(VideoQuality quality) {
+        updateVideoQuality(quality);
+        if (mVodPlayer != null) {
+            if (quality.url != null) { // br!=0;index=-1;url!=null   //br=0;index!=-1;url!=null
+                // 说明是非多bitrate的m3u8子流，需要手动seek
+                if (!mIsStopped) {
+                    float currentTime = mVodPlayer.getCurrentPlaybackTime();
+                    mVodPlayer.stopPlay(true);
+                    Log.i(TAG, "onQualitySelect quality.url:" + quality.url);
+                    mVodPlayer.setStartTime(currentTime);
+                    mVodPlayer.startPlay(quality.url);
+                }
+            } else { //br!=0;index!=-1;url=null
+                Log.i(TAG, "setBitrateIndex quality.index:" + quality.index);
+                // 说明是多bitrate的m3u8子流，会自动无缝seek
+                mVodPlayer.setBitrateIndex(quality.index);
+            }
+        }
+    }
+
+
+    public void updateVideoQuality(VideoQuality videoQuality) {
+        mDefaultVideoQuality = videoQuality;
+        if (mVideoQualityList != null && mVideoQualityList.size() != 0) {
+            for (int i = 0; i < mVideoQualityList.size(); i++) {
+                VideoQuality quality = mVideoQualityList.get(i);
+                if (quality != null && quality.title != null && mDefaultVideoQuality != null
+                        && quality.title.equals(mDefaultVideoQuality.title)) {
+                    mVodQualityView.setDefaultSelectedQuality(i);
+                    break;
+                }
+            }
+        }
+    }
 }

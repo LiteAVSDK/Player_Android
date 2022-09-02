@@ -28,7 +28,7 @@
             android:paddingLeft="2dp"
             android:paddingRight="2dp"
             android:singleLine="true"
-            android:text="超级播放器"
+            android:text="@string/superplayer_app_name"
             android:textColor="@color/superplayer_white"
             android:textSize="16dp" />
 
@@ -101,7 +101,7 @@
                 android:paddingTop="5dp"
                 android:paddingRight="15dp"
                 android:paddingBottom="5dp"
-                android:text="我知道了"
+                android:text="@string/short_video_i_know"
                 android:textColor="@color/superplayer_white"
                 android:textSize="12sp" />
 
@@ -125,7 +125,7 @@
                         android:layout_height="wrap_content"
                         android:layout_alignParentBottom="true"
                         android:layout_centerHorizontal="true"
-                        android:text="上下滑动调节屏幕明暗"
+                        android:text="@string/super_player_up_and_down_bright"
                         android:textSize="10sp" />
 
                     <ImageView
@@ -150,7 +150,7 @@
                         android:layout_height="wrap_content"
                         android:layout_alignParentBottom="true"
                         android:layout_centerHorizontal="true"
-                        android:text="左右滑动快进/倒退"
+                        android:text="@string/super_player_left_and_right"
                         android:textSize="10sp" />
 
                     <ImageView
@@ -175,7 +175,7 @@
                         android:layout_height="wrap_content"
                         android:layout_alignParentBottom="true"
                         android:layout_centerHorizontal="true"
-                        android:text="上下滑动调节音量大小"
+                        android:text="@string/super_player_up_and_down_volumn"
                         android:textSize="10sp" />
 
                     <ImageView
@@ -216,7 +216,7 @@
                 android:paddingTop="5dp"
                 android:paddingRight="15dp"
                 android:paddingBottom="5dp"
-                android:text="我知道了"
+                android:text="@string/short_video_i_know"
                 android:textColor="@color/superplayer_white"
                 android:textSize="12sp" />
 
@@ -265,9 +265,9 @@
                     android:layout_height="wrap_content"
                     android:layout_above="@id/superplayer_small_iv_pointer"
                     android:layout_toLeftOf="@id/superplayer_small_iv_pointer"
-                    android:text="向左拖动可观看先前直播内容"
+                    android:text="@string/super_player_move_left_to_see_before"
                     android:textColor="@color/superplayer_white"
-                    android:textSize="10sp" />
+                    android:textSize="10sp"/>
 
             </RelativeLayout>
         </RelativeLayout>
@@ -301,7 +301,7 @@
                     android:layout_marginBottom="1dp"
                     android:layout_weight="1"
                     android:gravity="center"
-                    android:text="直播列表"
+                    android:text="@string/superplayer_live_list"
                     android:textColor="@color/superplayer_white"
                     android:textSize="16sp" />
             </FrameLayout>
@@ -321,7 +321,7 @@
                     android:layout_marginBottom="1dp"
                     android:layout_weight="1"
                     android:gravity="center"
-                    android:text="点播列表"
+                    android:text="@string/superplayer_vod_list"
                     android:textColor="@color/superplayer_color_gray"
                     android:textSize="16sp" />
             </FrameLayout>

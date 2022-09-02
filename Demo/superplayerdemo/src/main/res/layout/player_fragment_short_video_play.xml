@@ -34,7 +34,7 @@
             android:layout_height="wrap_content"
             android:layout_centerHorizontal="true"
             android:layout_marginTop="455dp"
-            android:text="上下查看更多视频"
+            android:text="@string/short_video_view_more_videos"
             android:textColor="@color/superplayer_white"
             android:textSize="16sp" />
 
@@ -61,7 +61,7 @@
             android:paddingTop="5dp"
             android:paddingRight="15dp"
             android:paddingBottom="5dp"
-            android:text="我知道了"
+            android:text="@string/short_video_i_know"
             android:textColor="@color/superplayer_white"
             android:textSize="12sp" />
     </RelativeLayout>
@@ -86,7 +86,7 @@
             android:layout_centerHorizontal="true"
             android:layout_marginTop="455dp"
             android:gravity="center"
-            android:text="点击可暂停视频播放"
+            android:text="@string/short_video_pause_video"
             android:textColor="@color/superplayer_white"
             android:textSize="16sp" />
 
@@ -112,7 +112,7 @@
             android:paddingTop="5dp"
             android:paddingRight="15dp"
             android:paddingBottom="5dp"
-            android:text="我知道了"
+            android:text="@string/short_video_i_know"
             android:textColor="@color/superplayer_white"
             android:textSize="12sp" />
     </RelativeLayout>
@@ -136,7 +136,7 @@
             android:layout_height="wrap_content"
             android:layout_centerHorizontal="true"
             android:layout_marginTop="455dp"
-            android:text="左滑进入视频列表"
+            android:text="@string/short_video_go_to_list"
             android:textColor="@color/superplayer_white"
             android:textSize="16sp" />
 
@@ -162,7 +162,7 @@
             android:paddingTop="5dp"
             android:paddingRight="15dp"
             android:paddingBottom="5dp"
-            android:text="我知道了"
+            android:text="@string/short_video_i_know"
             android:textColor="@color/superplayer_white"
             android:textSize="12sp" />
     </RelativeLayout>
@@ -186,7 +186,7 @@
             android:layout_height="22dp"
             android:layout_centerHorizontal="true"
             android:layout_marginTop="580dp"
-            android:text="拖拽进度条快速查看视频"
+            android:text="@string/short_video_move_seeek"
             android:textColor="@color/superplayer_white"
             android:textSize="16sp" />
 
@@ -212,7 +212,7 @@
             android:paddingTop="5dp"
             android:paddingRight="15dp"
             android:paddingBottom="5dp"
-            android:text="我知道了"
+            android:text="@string/short_video_i_know"
             android:textColor="@color/superplayer_white"
             android:textSize="12sp" />
     </RelativeLayout>
@@ -233,7 +233,7 @@
         android:layout_height="wrap_content"
         android:layout_centerHorizontal="true"
         android:paddingTop="14dp"
-        android:text="短视频播放"
+        android:text="@string/short_video_play_back"
         android:textColor="@color/superplayer_white"
         android:textSize="18sp" />
 </RelativeLayout>

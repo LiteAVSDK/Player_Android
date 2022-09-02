@@ -9,7 +9,10 @@ import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.core.app.ActivityCompat;
+import androidx.fragment.app.FragmentActivity;
 
 import com.tencent.liteav.demo.player.R;
 import com.tencent.liteav.demo.player.expand.model.entity.VideoModel;
@@ -20,7 +23,8 @@ import com.tencent.liteav.demo.player.feed.model.FeedVodListLoader;
 import java.util.List;
 
 
-public class FeedActivity extends Activity {
+public class FeedActivity extends FragmentActivity implements
+        ActivityCompat.OnRequestPermissionsResultCallback {
 
     private Button            backBtn           = null;
     private FeedView          feedView          = null;
@@ -81,7 +85,7 @@ public class FeedActivity extends Activity {
                 onBackPressed();
             }
         });
-        feedVodListLoader = new FeedVodListLoader();
+        feedVodListLoader = new FeedVodListLoader(this);
         loadData(false);
 
     }
@@ -197,5 +201,11 @@ public class FeedActivity extends Activity {
             super.onBackPressed();
         }
 
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions,
+                                           @NonNull int[] grantResults) {
+        feedView.onRequestPermissionsResult(requestCode, grantResults);
     }
 }

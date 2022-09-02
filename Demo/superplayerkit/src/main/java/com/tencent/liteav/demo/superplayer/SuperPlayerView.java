@@ -32,7 +32,10 @@ import android.widget.PopupWindow;
 import android.widget.RelativeLayout;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
+
 import com.cloud.tencent.liteav.demo.comon.TUIBuild;
+import com.tencent.liteav.demo.common.manager.PermissionManager;
 import com.tencent.liteav.demo.common.utils.IntentUtils;
 import com.tencent.liteav.demo.superplayer.model.ISuperPlayerListener;
 import com.tencent.liteav.demo.superplayer.model.SuperPlayer;
@@ -74,7 +77,8 @@ import java.util.List;
  * 3、controller回调实现{@link #mControllerCallback}
  * 4、退出播放释放内存{@link #resetPlayer()}
  */
-public class SuperPlayerView extends RelativeLayout {
+public class SuperPlayerView extends RelativeLayout
+        implements PermissionManager.OnStoragePermissionGrantedListener {
     private static final String TAG                    = "SuperPlayerView";
     private final        int    OP_SYSTEM_ALERT_WINDOW = 24;                      // 支持TYPE_TOAST悬浮窗的最高API版本
 
@@ -106,6 +110,7 @@ public class SuperPlayerView extends RelativeLayout {
     private LinearLayout               mDynamicWatermarkLayout;
     private DynamicWatermarkView       mDynamicWatermarkView;
     private ISuperPlayerListener       mSuperPlayerListener;
+    private PermissionManager          mStoragePermissionManager;
 
     public SuperPlayerView(Context context) {
         super(context);
@@ -161,6 +166,8 @@ public class SuperPlayerView extends RelativeLayout {
         addView(mTXCloudVideoView);
         addView(mDynamicWatermarkLayout);
         addView(mDanmuView);
+        mStoragePermissionManager = new PermissionManager(getContext(), PermissionManager.PermissionType.STORAGE);
+        mStoragePermissionManager.setOnStoragePermissionGrantedListener(this);
     }
 
     private void initPlayer() {
@@ -647,16 +654,7 @@ public class SuperPlayerView extends RelativeLayout {
 
         @Override
         public void onSnapshot() {
-            mSuperPlayer.snapshot(new TXLivePlayer.ITXSnapshotListener() {
-                @Override
-                public void onSnapshot(Bitmap bitmap) {
-                    if (bitmap != null) {
-                        showSnapshotWindow(bitmap);
-                    } else {
-                        showToast(R.string.superplayer_screenshot_fail);
-                    }
-                }
-            });
+            mStoragePermissionManager.checkoutIfShowPermissionIntroductionDialog();
         }
 
         @Override
@@ -1235,4 +1233,24 @@ public class SuperPlayerView extends RelativeLayout {
     public void setLoop(boolean b) {
         mSuperPlayer.setLoop(b);
     }
+
+    @Override
+    public void onStoragePermissionGranted() {
+        mSuperPlayer.snapshot(new TXLivePlayer.ITXSnapshotListener() {
+            @Override
+            public void onSnapshot(Bitmap bitmap) {
+                if (bitmap != null) {
+                    showSnapshotWindow(bitmap);
+                } else {
+                    showToast(R.string.superplayer_screenshot_fail);
+                }
+            }
+        });
+    }
+
+    public void onRequestPermissionsResult(int requestCode, @NonNull int[] grantResults) {
+        mStoragePermissionManager.onRequestPermissionsResult(requestCode, grantResults);
+    }
+
+
 }

@@ -33,6 +33,7 @@ import com.tencent.rtmp.TXLiveConstants;
 import com.tencent.rtmp.TXLivePlayConfig;
 import com.tencent.rtmp.TXLivePlayer;
 import com.tencent.rtmp.TXPlayInfoParams;
+import com.tencent.rtmp.TXVodConstants;
 import com.tencent.rtmp.TXVodPlayConfig;
 import com.tencent.rtmp.TXVodPlayer;
 import com.tencent.rtmp.ui.TXCloudVideoView;
@@ -79,6 +80,7 @@ public class SuperPlayerImpl implements SuperPlayer, ITXVodPlayListener, ITXLive
     private boolean                    isPrepared           = false;
     private boolean                    isNeedResume         = false;
     private boolean                    mNeedToPause         = false;
+    private int                        mCurrentIndex        = -1;
 
     public SuperPlayerImpl(Context context, TXCloudVideoView videoView) {
         initialize(context, videoView);
@@ -179,6 +181,13 @@ public class SuperPlayerImpl implements SuperPlayer, ITXVodPlayListener, ITXLive
             Log.d(TAG, playEventLog);
         }
         switch (event) {
+            case TXVodConstants.VOD_PLAY_EVT_GET_PLAYINFO_SUCC:
+                mCurrentPlayVideoURL = param.getString(TXVodConstants.EVT_PLAY_URL);
+                PlayImageSpriteInfo playImageSpriteInfo = new PlayImageSpriteInfo();
+                playImageSpriteInfo.imageUrls = param.getStringArrayList(TXVodConstants.EVT_IMAGESPRIT_IMAGEURL_LIST);
+                playImageSpriteInfo.webVttUrl = param.getString(TXVodConstants.EVT_IMAGESPRIT_WEBVTTURL);
+                updateVideoImageSpriteAndKeyFrame(playImageSpriteInfo,null);
+                break;
             case TXLiveConstants.PLAY_EVT_VOD_PLAY_PREPARED://视频播放开始
                 onVodPlayPrepared();
                 break;
@@ -340,6 +349,7 @@ public class SuperPlayerImpl implements SuperPlayer, ITXVodPlayListener, ITXLive
                 || (model.multiURLs != null
                  && !model.multiURLs.isEmpty())) {
             playWithUrl(model);
+            sendRequestToUpdateVideoImageSpriteAndKeyFrame(model);
         } else if (model.videoId != null) {
             playWithFileId(model);
         } else if (model.videoIdV2 != null) {
@@ -387,6 +397,10 @@ public class SuperPlayerImpl implements SuperPlayer, ITXVodPlayListener, ITXLive
     }
 
     private void playWithUrl(SuperPlayerModel model) {
+        mAppId = model.appId;
+        if (model.videoId != null) {
+            mFileId = model.videoId.fileId;
+        }
         String videoURL = null;
         List<VideoQuality> videoQualities = new ArrayList<>();
         VideoQuality defaultVideoQuality = null;
@@ -547,6 +561,9 @@ public class SuperPlayerImpl implements SuperPlayer, ITXVodPlayListener, ITXLive
             } else {
                 mVodPlayer.setToken(null);
             }
+            if (mCurrentIndex != -1) {
+                mVodPlayer.setBitrateIndex(mCurrentIndex);
+            }
             if (!TextUtils.isEmpty(mFileId) && mAppId != 0 && isVersionSupportAppendUrl()) {
                 Uri uri = Uri.parse(url);
                 String query = uri.getQuery();
@@ -567,6 +584,32 @@ public class SuperPlayerImpl implements SuperPlayer, ITXVodPlayListener, ITXLive
             }
         }
         mIsPlayWithFileId = false;
+    }
+
+    private void sendRequestToUpdateVideoImageSpriteAndKeyFrame(SuperPlayerModel model) {
+        PlayInfoParams params = new PlayInfoParams();
+        params.appId = mCurrentModel.appId;
+        if (model.videoId != null) {
+            params.fileId = mCurrentModel.videoId.fileId;
+            params.videoId = mCurrentModel.videoId;
+            mCurrentProtocol = new PlayInfoProtocolV4(params);
+            mCurrentProtocol.sendRequest(new IPlayInfoRequestCallback() {
+                @Override
+                public void onSuccess(IPlayInfoProtocol protocol, PlayInfoParams param) {
+                    IPlayInfoProtocol tmpProtocol = mCurrentProtocol;
+                    if (tmpProtocol == null) {
+                        return;
+                    }
+                    updateVideoImageSpriteAndKeyFrame(tmpProtocol.getImageSpriteInfo(),
+                            tmpProtocol.getKeyFrameDescInfo());
+                }
+
+                @Override
+                public void onError(int errCode, String message) {
+
+                }
+            });
+        }
     }
 
     private boolean isVersionSupportAppendUrl() {
@@ -824,12 +867,14 @@ public class SuperPlayerImpl implements SuperPlayer, ITXVodPlayListener, ITXLive
 
     @Override
     public void stop() {
+        mCurrentIndex = -1;
         resetPlayer();
         updatePlayerState(SuperPlayerDef.PlayerState.END);
     }
 
     @Override
     public void reset() {
+        mCurrentIndex = -1;
         resetPlayer();
         updatePlayerState(SuperPlayerDef.PlayerState.INIT);
     }
@@ -983,6 +1028,7 @@ public class SuperPlayerImpl implements SuperPlayer, ITXVodPlayListener, ITXLive
                     Log.i(TAG, "setBitrateIndex quality.index:" + quality.index);
                     // 说明是多bitrate的m3u8子流，会自动无缝seek
                     mVodPlayer.setBitrateIndex(quality.index);
+                    mCurrentIndex = quality.index;
                 }
                 updateStreamStartStatus(true, SuperPlayerDef.PlayerType.VOD, quality);
             }

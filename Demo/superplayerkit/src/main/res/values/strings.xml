@@ -30,4 +30,6 @@
     <string name="superplayer_fhd2">超清</string>
     <string name="superplayer_2k">2K</string>
     <string name="superplayer_4k">4K</string>
+    <string name="superplayer_danmu">弹幕</string>
+    <string name="superplayer_replay">重播</string>
 </resources>
