@@ -70,9 +70,9 @@ import java.util.List;
  * 超级播放器view
  * <p>
  * 具备播放器基本功能，此外还包括横竖屏切换、悬浮窗播放、画质切换、硬件加速、倍速播放、镜像播放、手势控制等功能，同时支持直播与点播
- * 使用方式极为简单，只需要在布局文件中引入并获取到该控件，通过{@link #playWithModel(SuperPlayerModel)}传入{@link SuperPlayerModel}即可实现视频播放
+ * 使用方式极为简单，只需要在布局文件中引入并获取到该控件，通过{@link #playWithModelNeedLicence(SuperPlayerModel)}传入{@link SuperPlayerModel}即可实现视频播放
  * <p>
- * 1、播放视频{@link #playWithModel(SuperPlayerModel)}
+ * 1、播放视频{@link #playWithModelNeedLicence(SuperPlayerModel)}
  * 2、设置回调{@link #setPlayerViewCallback(OnSuperPlayerViewCallback)}
  * 3、controller回调实现{@link #mControllerCallback}
  * 4、退出播放释放内存{@link #resetPlayer()}
@@ -214,7 +214,7 @@ public class SuperPlayerView extends RelativeLayout
      * @param isLoopPlayList 是否循环
      * @param index 开始播放的视频索引
      */
-    public void playWithModelList(List<SuperPlayerModel> models, boolean isLoopPlayList, int index) {
+    public void playWithModelListNeedLicense(List<SuperPlayerModel> models, boolean isLoopPlayList, int index) {
         mSuperPlayerModelList = models;
         mIsLoopPlayList = isLoopPlayList;
         playModelInList(index);
@@ -241,7 +241,7 @@ public class SuperPlayerView extends RelativeLayout
      *
      * @param model
      */
-    public void playWithModel(SuperPlayerModel model) {
+    public void playWithModelNeedLicence(SuperPlayerModel model) {
         isCallResume = false;
         mIsPlayInit = false;
         mSuperPlayer.stop();

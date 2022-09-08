@@ -467,7 +467,7 @@ public class SuperPlayerImpl implements SuperPlayer, ITXVodPlayListener, ITXLive
             }
             mVodPlayer.setVodListener(this);
             TXPlayInfoParams params = new TXPlayInfoParams(model.appId, model.videoId.fileId, model.videoId.pSign);
-            mVodPlayer.startPlay(params);
+            mVodPlayer.startVodPlay(params);
         }
         mIsPlayWithFileId = true;
         updatePlayerType(SuperPlayerDef.PlayerType.VOD);
@@ -518,7 +518,7 @@ public class SuperPlayerImpl implements SuperPlayer, ITXVodPlayListener, ITXLive
         if (mLivePlayer != null) {
             mLivePlayer.setPlayListener(this);
             mLivePlayer.setPlayerView(mVideoView);
-            int result = mLivePlayer.startPlay(url, playType); // result返回值：0 success;  -1 empty url; -2 invalid url; -3 invalid playType;
+            int result = mLivePlayer.startVodPlay(url, playType); // result返回值：0 success;  -1 empty url; -2 invalid url; -3 invalid playType;
             if (result != 0) {
                 Log.e(TAG, "playLiveURL videoURL:" + url + ",result:" + result);
             } else {
@@ -578,9 +578,9 @@ public class SuperPlayerImpl implements SuperPlayer, ITXVodPlayListener, ITXLive
                 query += "spfileid=" + mFileId + "&spdrmtype=" + drmType + "&spappid=" + mAppId;
                 Uri newUri = uri.buildUpon().query(query).build();
                 Log.i(TAG, "playVodURL: newurl = " + Uri.decode(newUri.toString()) + " ;url= " + url);
-                mVodPlayer.startPlay(Uri.decode(newUri.toString()));
+                mVodPlayer.startVodPlay(Uri.decode(newUri.toString()));
             } else {
-                mVodPlayer.startPlay(url);
+                mVodPlayer.startVodPlay(url);
             }
         }
         mIsPlayWithFileId = false;
@@ -1022,7 +1022,7 @@ public class SuperPlayerImpl implements SuperPlayer, ITXVodPlayListener, ITXLive
                         mVodPlayer.stopPlay(true);
                         Log.i(TAG, "onQualitySelect quality.url:" + quality.url);
                         mVodPlayer.setStartTime(currentTime);
-                        mVodPlayer.startPlay(quality.url);
+                        mVodPlayer.startVodPlay(quality.url);
                     }
                 } else { //br!=0;index!=-1;url=null
                     Log.i(TAG, "setBitrateIndex quality.index:" + quality.index);

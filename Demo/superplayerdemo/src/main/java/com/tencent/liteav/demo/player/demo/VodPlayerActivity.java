@@ -529,7 +529,7 @@ public class VodPlayerActivity extends Activity implements ITXVodPlayListener, V
         mPlayConfig.setHeaders(header);
         mVodPlayer.setConfig(mPlayConfig);
         mVodPlayer.setAutoPlay(true);
-        int result = mVodPlayer.startPlay(playUrl);
+        int result = mVodPlayer.startVodPlay(playUrl);
         mIsStopped = false;
         if (result != 0) {
             mButtonPlay.setBackgroundResource(R.drawable.superplayer_play_start);
@@ -797,7 +797,7 @@ public class VodPlayerActivity extends Activity implements ITXVodPlayListener, V
                     mVodPlayer.stopPlay(true);
                     Log.i(TAG, "onQualitySelect quality.url:" + quality.url);
                     mVodPlayer.setStartTime(currentTime);
-                    mVodPlayer.startPlay(quality.url);
+                    mVodPlayer.startVodPlay(quality.url);
                 }
             } else { //br!=0;index!=-1;url=null
                 Log.i(TAG, "setBitrateIndex quality.index:" + quality.index);

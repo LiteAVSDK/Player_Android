@@ -87,7 +87,7 @@ public class TXVodPlayerWrapper implements ITXVodPlayListener {
                 + " mVodPlayer " + mVodPlayer.hashCode() + " url " + mUrl);
         if (mStatus == TxVodStatus.TX_VIDEO_PLAYER_STATUS_STOPPED) {
             mVodPlayer.setAutoPlay(true);
-            mVodPlayer.startPlay(mUrl);
+            mVodPlayer.startVodPlay(mUrl);
             playerStatusChanged(TxVodStatus.TX_VIDEO_PLAYER_STATUS_PLAYING);
             return;
         }
@@ -135,7 +135,7 @@ public class TXVodPlayerWrapper implements ITXVodPlayListener {
         mVodPlayer.stopPlay(true);
         Log.i(TAG, "[preStartPlay] , startOnPrepare ，" + mStartOnPrepare + "， mVodPlayer " + mVodPlayer.hashCode());
         mVodPlayer.setAutoPlay(false);
-        mVodPlayer.startPlay(bean.videoURL);
+        mVodPlayer.startVodPlay(bean.videoURL);
     }
 
     private void playerStatusChanged(TxVodStatus status) {
