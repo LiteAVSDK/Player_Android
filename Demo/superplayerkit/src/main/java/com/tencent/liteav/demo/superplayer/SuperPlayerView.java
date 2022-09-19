@@ -17,8 +17,10 @@ import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Binder;
 import android.os.Build;
+import android.os.Environment;
 import android.provider.MediaStore;
 import android.provider.Settings;
+import android.text.format.DateUtils;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.view.Gravity;
@@ -58,11 +60,14 @@ import com.tencent.rtmp.TXLivePlayer;
 import com.tencent.rtmp.ui.TXCloudVideoView;
 
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Method;
+import java.sql.Date;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -70,9 +75,9 @@ import java.util.List;
  * 超级播放器view
  * <p>
  * 具备播放器基本功能，此外还包括横竖屏切换、悬浮窗播放、画质切换、硬件加速、倍速播放、镜像播放、手势控制等功能，同时支持直播与点播
- * 使用方式极为简单，只需要在布局文件中引入并获取到该控件，通过{@link #playWithModel(SuperPlayerModel)}传入{@link SuperPlayerModel}即可实现视频播放
+ * 使用方式极为简单，只需要在布局文件中引入并获取到该控件，通过{@link #playWithModelNeedLicence(SuperPlayerModel)}传入{@link SuperPlayerModel}即可实现视频播放
  * <p>
- * 1、播放视频{@link #playWithModel(SuperPlayerModel)}
+ * 1、播放视频{@link #playWithModelNeedLicence(SuperPlayerModel)}
  * 2、设置回调{@link #setPlayerViewCallback(OnSuperPlayerViewCallback)}
  * 3、controller回调实现{@link #mControllerCallback}
  * 4、退出播放释放内存{@link #resetPlayer()}
@@ -210,14 +215,36 @@ public class SuperPlayerView extends RelativeLayout
     /**
      * 播放视频列表
      *
+     * 注意：10.7版本开始，需要通过{@link com.tencent.rtmp.TXLiveBase#setLicence} 设置 License后方可成功播放， 否则将播放失败（黑屏），全局仅设置一次即可。
+     * 直播License、短视频Licence和视频播放Licence均可使用，若您暂未获取上述Licence，可<a href="https://cloud.tencent.com/act/event/License">快速免费申请Licence</a>以正常播放
      * @param models superPlayerModel列表
      * @param isLoopPlayList 是否循环
      * @param index 开始播放的视频索引
      */
-    public void playWithModelList(List<SuperPlayerModel> models, boolean isLoopPlayList, int index) {
+    public void playWithModelListNeedLicence(List<SuperPlayerModel> models, boolean isLoopPlayList, int index) {
         mSuperPlayerModelList = models;
         mIsLoopPlayList = isLoopPlayList;
         playModelInList(index);
+    }
+
+    /**
+     * 播放视频
+     * 注意：10.7版本开始，需要通过{@link com.tencent.rtmp.TXLiveBase#setLicence} 设置 Licence后方可成功播放， 否则将播放失败（黑屏），全局仅设置一次即可。
+     * 直播License、短视频Licence和视频播放Licence均可使用，若您暂未获取上述Licence，可<a href="https://cloud.tencent.com/act/event/License">快速免费申请Licence</a>以正常播放
+     * @param model
+     */
+    public void playWithModelNeedLicence(SuperPlayerModel model) {
+        isCallResume = false;
+        mIsPlayInit = false;
+        mSuperPlayer.stop();
+        mIsLoopPlayList = false;
+        mWindowPlayer.setPlayNextButtonVisibility(false);
+        mFullScreenPlayer.setPlayNextButtonVisibility(false);
+        //防止点击循环列表后再次回到其他列表后依然循环
+        mSuperPlayerModelList.clear();
+        mCurrentSuperPlayerModel = model;
+        playWithModelInner(mCurrentSuperPlayerModel);
+        mIsPlayInit = true;
     }
 
     private void playModelInList(int index) {
@@ -232,25 +259,6 @@ public class SuperPlayerView extends RelativeLayout
             mFullScreenPlayer.setPlayNextButtonVisibility(false);
         }
         mCurrentSuperPlayerModel = mSuperPlayerModelList.get(mPlayIndex);
-        playWithModelInner(mCurrentSuperPlayerModel);
-        mIsPlayInit = true;
-    }
-
-    /**
-     * 播放视频
-     *
-     * @param model
-     */
-    public void playWithModel(SuperPlayerModel model) {
-        isCallResume = false;
-        mIsPlayInit = false;
-        mSuperPlayer.stop();
-        mIsLoopPlayList = false;
-        mWindowPlayer.setPlayNextButtonVisibility(false);
-        mFullScreenPlayer.setPlayNextButtonVisibility(false);
-        //防止点击循环列表后再次回到其他列表后依然循环
-        mSuperPlayerModelList.clear();
-        mCurrentSuperPlayerModel = model;
         playWithModelInner(mCurrentSuperPlayerModel);
         mIsPlayInit = true;
     }
@@ -792,7 +800,11 @@ public class SuperPlayerView extends RelativeLayout
         AsyncTask.execute(new Runnable() {
             @Override
             public void run() {
-                save2MediaStore(mContext, bmp);
+                if (Build.VERSION.SDK_INT >= 30) {
+                    save2MediaStoreForAndroidQAbove(mContext, bmp);
+                } else {
+                    save2MediaStore(mContext, bmp);
+                }
             }
         });
         postDelayed(new Runnable() {
@@ -1135,67 +1147,65 @@ public class SuperPlayerView extends RelativeLayout
     }
 
     public static void save2MediaStore(Context context, Bitmap image) {
-        File sdcardDir = context.getExternalFilesDir(null);
-        if (sdcardDir == null) {
-            Log.e(TAG, "sdcardDir is null");
+        File file;
+        long dateSeconds = System.currentTimeMillis() / 1000;
+        String bitName = dateSeconds + ".jpg";
+        File externalStorageDirectory = Environment.getExternalStorageDirectory();
+        if (externalStorageDirectory == null) {
+            Log.e(TAG, "getExternalStorageDirectory is null");
             return;
         }
-        File appDir = new File(sdcardDir, "superplayer");
+        File appDir = new File(externalStorageDirectory.getPath(), "superplayer");
         if (!appDir.exists()) {
             appDir.mkdir();
         }
-
-        long dateSeconds = System.currentTimeMillis() / 1000;
-        String fileName = dateSeconds + ".jpg";
-        File file = new File(appDir, fileName);
-
-        String filePath = file.getAbsolutePath();
-
-        File f = new File(filePath);
-        if (f.exists()) {
-            f.delete();
-        }
-        FileOutputStream fos = null;
+        file = new File(appDir, bitName);
+        FileOutputStream out;
         try {
-            fos = new FileOutputStream(f);
-            image.compress(Bitmap.CompressFormat.JPEG, 100, fos);
-            fos.flush();
+            out = new FileOutputStream(file);
+            if (image.compress(Bitmap.CompressFormat.JPEG, 100, out)) {
+                out.flush();
+                out.close();
+            }
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
         } catch (IOException e) {
             e.printStackTrace();
-        } finally {
-            if (fos != null) {
-                try {
-                    fos.close();
-                } catch (IOException e) {
-                    e.printStackTrace();
+        }
+        // 发送广播，通知刷新图库的显示
+        Intent intent = new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE);
+        Uri uri = Uri.fromFile(file);
+        intent.setData(uri);
+        context.sendBroadcast(intent);
+    }
+
+    private void save2MediaStoreForAndroidQAbove(Context context, Bitmap image) {
+        long dateSeconds = System.currentTimeMillis();
+        String fileName = dateSeconds + ".jpg";
+
+        final ContentValues values = new ContentValues();
+        values.put(MediaStore.MediaColumns.RELATIVE_PATH, Environment.DIRECTORY_PICTURES);
+        values.put(MediaStore.MediaColumns.DISPLAY_NAME, fileName);
+        values.put(MediaStore.MediaColumns.MIME_TYPE, "image/png");
+        values.put(MediaStore.MediaColumns.DATE_ADDED, dateSeconds / 1000);
+        values.put(MediaStore.MediaColumns.DATE_MODIFIED, dateSeconds / 1000);
+        values.put(MediaStore.MediaColumns.DATE_EXPIRES, (dateSeconds + DateUtils.DAY_IN_MILLIS) / 1000);
+        values.put(MediaStore.MediaColumns.IS_PENDING, 1);
+
+        ContentResolver resolver = context.getContentResolver();
+        final Uri uri = resolver.insert(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, values);
+        try {
+            try (OutputStream out = resolver.openOutputStream(uri)) {
+                if (!image.compress(Bitmap.CompressFormat.PNG, 100, out)) {
+                    throw new IOException("Failed to compress");
                 }
             }
-        }
-        try {
-            // Save the screenshot to the MediaStore
-            ContentValues values = new ContentValues();
-            ContentResolver resolver = context.getContentResolver();
-            values.put(MediaStore.Images.ImageColumns.DATA, filePath);
-            values.put(MediaStore.Images.ImageColumns.TITLE, fileName);
-            values.put(MediaStore.Images.ImageColumns.DISPLAY_NAME, fileName);
-            values.put(MediaStore.Images.ImageColumns.DATE_ADDED, dateSeconds);
-            values.put(MediaStore.Images.ImageColumns.DATE_MODIFIED, dateSeconds);
-            values.put(MediaStore.Images.ImageColumns.MIME_TYPE, "image/jpeg");
-            values.put(MediaStore.Images.ImageColumns.WIDTH, image.getWidth());
-            values.put(MediaStore.Images.ImageColumns.HEIGHT, image.getHeight());
-            Uri uri = resolver.insert(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, values);
-
-            OutputStream out = resolver.openOutputStream(uri);
-            image.compress(Bitmap.CompressFormat.JPEG, 100, out);
-            out.flush();
-            out.close();
-
-            // update file size in the database
             values.clear();
-            values.put(MediaStore.Images.ImageColumns.SIZE, new File(filePath).length());
+            values.put(MediaStore.MediaColumns.IS_PENDING, 0);
+            values.putNull(MediaStore.MediaColumns.DATE_EXPIRES);
             resolver.update(uri, values, null, null);
 
-        } catch (Exception e) {
+        } catch (IOException e) {
             Log.e(TAG, Log.getStackTraceString(e));
         }
     }

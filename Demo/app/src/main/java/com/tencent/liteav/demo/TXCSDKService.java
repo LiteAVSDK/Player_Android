@@ -5,6 +5,7 @@ import android.content.Context;
 import com.tencent.rtmp.TXLiveBase;
 import com.tencent.rtmp.TXLiveBaseListener;
 
+
 public class TXCSDKService {
     private static final String TAG        = "TXCSDKService";
     // 如何获取License? 请参考官网指引 https://cloud.tencent.com/document/product/454/34750

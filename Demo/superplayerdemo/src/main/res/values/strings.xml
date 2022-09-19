@@ -103,5 +103,7 @@
     <string name="super_player_move_left_to_see_before">向左拖动可观看先前直播内容</string>
     <string name="super_player_cache_video_title">不只是音视频 %1d</string>
     <string name="super_player_tv_screen_auto">自适应</string>
+    <string name="super_player_tv_vod_self">点播自适应</string>
+    <string name="super_player_tv_live_self">直播自适应</string>
 
 </resources>

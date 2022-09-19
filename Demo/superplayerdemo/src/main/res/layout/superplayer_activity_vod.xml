@@ -34,12 +34,23 @@
             android:layout_marginBottom="110dp"
             android:visibility="invisible" />
 
+        <TextView
+            android:id="@+id/tv_vod_adaptive"
+            android:layout_marginBottom="140dp"
+            android:layout_gravity="bottom|right"
+            android:text="@string/super_player_tv_vod_self"
+            android:gravity="center"
+            android:background="@color/superplayer_color_gray"
+            android:layout_width="100dp"
+            android:layout_height="30dp"/>
+
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_gravity="bottom"
             android:layout_marginBottom="70dp"
             android:orientation="vertical">
+
 
             <LinearLayout
                 android:layout_width="match_parent"

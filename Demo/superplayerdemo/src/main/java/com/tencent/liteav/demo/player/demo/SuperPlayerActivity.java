@@ -634,7 +634,7 @@ public class SuperPlayerActivity extends FragmentActivity implements View.OnClic
             superPlayerModelList.add(videoModel.convertToSuperPlayerModel());
         }
         mSuperPlayerView.setQualityVisible(true);
-        mSuperPlayerView.playWithModelList(superPlayerModelList, true, 0);
+        mSuperPlayerView.playWithModelListNeedLicence(superPlayerModelList, true, 0);
     }
 
     private void playVideoModel(VideoModel videoModel) {
@@ -673,7 +673,7 @@ public class SuperPlayerActivity extends FragmentActivity implements View.OnClic
         superPlayerModelV3.duration = videoModel.duration;
         superPlayerModelV3.videoQualityList = videoModel.videoQualityList;
         superPlayerModelV3.isEnableCache = videoModel.isEnableDownload;
-        mSuperPlayerView.playWithModel(superPlayerModelV3);
+        mSuperPlayerView.playWithModelNeedLicence(superPlayerModelV3);
     }
 
     private boolean playSuperPlayerVideo(VideoModel videoModel) {
@@ -688,7 +688,7 @@ public class SuperPlayerActivity extends FragmentActivity implements View.OnClic
             videoId.fileId = getValueByName(videoUrl, "fileId");
             videoId.pSign = getValueByName(videoUrl, "psign");
             model.videoId = videoId;
-            mSuperPlayerView.playWithModel(model);
+            mSuperPlayerView.playWithModelNeedLicence(model);
         } catch (Exception e) {
             Toast.makeText(getApplicationContext(), R.string.superplayer_scancode_tip, Toast.LENGTH_SHORT).show();
             rst = false;
@@ -1040,7 +1040,7 @@ public class SuperPlayerActivity extends FragmentActivity implements View.OnClic
 
         // offline video play not support quality show
         mSuperPlayerView.setQualityVisible(false);
-        mSuperPlayerView.playWithModel(videoModel);
+        mSuperPlayerView.playWithModelNeedLicence(videoModel);
     }
 
     /**

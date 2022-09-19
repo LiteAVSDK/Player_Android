@@ -356,7 +356,7 @@ public class SuperVodListLoader {
                 videoModel.placeholderImage = parserV4.getCoverUrl();
                 videoModel.duration = parserV4.getDuration();
             }
-            videoModel.title = getTitleByFileId(videoModel.fileid);
+            videoModel.title = getTitleByFileId(videoModel);
             listener.onSuccess(videoModel);
         } catch (JSONException e) {
             e.printStackTrace();
@@ -366,10 +366,11 @@ public class SuperVodListLoader {
     /**
      * 根据视频ID 获取视频标题
      *
-     * @param fileId
+     * @param model
      * @return
      */
-    private String getTitleByFileId(String fileId) {
+    private String getTitleByFileId(VideoModel model) {
+        String fileId = model.fileid;
         String title = "";
         switch (fileId) {
             case "387702299774251236":
@@ -412,6 +413,7 @@ public class SuperVodListLoader {
                 title = String.format(mContext.getString(R.string.super_player_cache_video_title),5);
                 break;
             default:
+                title = model.title;
                 break;
         }
         return title;

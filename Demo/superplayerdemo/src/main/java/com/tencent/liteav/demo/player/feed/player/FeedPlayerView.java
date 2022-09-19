@@ -141,7 +141,7 @@ public class FeedPlayerView extends FrameLayout implements FeedPlayer {
         if (playerModel != null && superPlayerView != null) {
             playerModel.playAction = SuperPlayerModel.PLAY_ACTION_MANUAL_PLAY;
             playWithModelIsSuccess = false;
-            superPlayerView.playWithModel(playerModel);
+            superPlayerView.playWithModelNeedLicence(playerModel);
         }
     }
 
@@ -150,7 +150,7 @@ public class FeedPlayerView extends FrameLayout implements FeedPlayer {
             SuperPlayerModel playerModel = FeedVodListLoader.conversionModel(videoModel);
             playerModel.playAction = SuperPlayerModel.PLAY_ACTION_PRELOAD;
             playWithModelIsSuccess = true;
-            superPlayerView.playWithModel(playerModel);
+            superPlayerView.playWithModelNeedLicence(playerModel);
         }
     }
 
@@ -160,7 +160,7 @@ public class FeedPlayerView extends FrameLayout implements FeedPlayer {
         if (playerModel != null && superPlayerView != null) {
             playerModel.playAction = SuperPlayerModel.PLAY_ACTION_PRELOAD;
             playWithModelIsSuccess = true;
-            superPlayerView.playWithModel(playerModel);
+            superPlayerView.playWithModelNeedLicence(playerModel);
             superPlayerView.onResume();
         }
     }

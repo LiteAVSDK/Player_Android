@@ -101,4 +101,6 @@
     <string name="super_player_move_left_to_see_before">Drag left to watch previous live content</string>
     <string name="super_player_cache_video_title">Not just audio and video %1d</string>
     <string name="super_player_tv_screen_auto">Auto</string>
+    <string name="super_player_tv_vod_self">Vod Adaptive</string>
+    <string name="super_player_tv_live_self">Live Adaptive</string>
 </resources>

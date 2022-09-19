@@ -35,9 +35,11 @@ import com.tencent.liteav.demo.superplayer.ui.view.VodQualityView;
 import com.tencent.rtmp.ITXVodPlayListener;
 import com.tencent.rtmp.TXBitrateItem;
 import com.tencent.rtmp.TXLiveConstants;
+import com.tencent.rtmp.TXVodConstants;
 import com.tencent.rtmp.TXVodPlayConfig;
 import com.tencent.rtmp.TXVodPlayer;
 import com.tencent.rtmp.ui.TXCloudVideoView;
+import com.tencent.thumbplayer.api.TPCommonEnum;
 
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
@@ -94,6 +96,7 @@ public class VodPlayerActivity extends Activity implements ITXVodPlayListener, V
     private boolean         mFirstShowQuality = false;
     private boolean         mIsStopped;
     private String          mUrl;
+    private TextView        mMediaType;
 
 
     @Override
@@ -102,6 +105,7 @@ public class VodPlayerActivity extends Activity implements ITXVodPlayListener, V
         mCurrentRenderMode = TXLiveConstants.RENDER_MODE_ADJUST_RESOLUTION;
         mCurrentRenderRotation = TXLiveConstants.RENDER_ROTATION_PORTRAIT;
         mPlayConfig = new TXVodPlayConfig();
+        mPlayConfig.setMediaType(TXVodConstants.MEDIA_TYPE_HLS_VOD);
         setContentView();
         LinearLayout backLL = (LinearLayout) findViewById(R.id.back_ll);
         backLL.setOnClickListener(new View.OnClickListener() {
@@ -124,7 +128,8 @@ public class VodPlayerActivity extends Activity implements ITXVodPlayListener, V
         if (mVideoQualityList == null || mVideoQualityList.size() == 0) {
             return;
         }
-        if (mVideoQualityList.size() == 1 && (mVideoQualityList.get(0) == null || TextUtils.isEmpty(mVideoQualityList.get(0).title))) {
+        if (mVideoQualityList.size() == 1 && (mVideoQualityList.get(0) == null
+                || TextUtils.isEmpty(mVideoQualityList.get(0).title))) {
             return;
         }
         if (mVideoQualityList.size() == 2 && !mUrl.endsWith(".mpd")) {
@@ -355,6 +360,19 @@ public class VodPlayerActivity extends Activity implements ITXVodPlayListener, V
             }
         });
         mSeekBar = (SeekBar) findViewById(R.id.seekbar);
+        mMediaType = (TextView) findViewById(R.id.tv_vod_adaptive);
+        mMediaType.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (mMediaType.getText().equals(getString(R.string.super_player_tv_vod_self))) {
+                    mMediaType.setText(getString(R.string.super_player_tv_live_self));
+                    mPlayConfig.setMediaType(TXVodConstants.MEDIA_TYPE_HLS_LIVE);
+                } else {
+                    mMediaType.setText(getString(R.string.super_player_tv_vod_self));
+                    mPlayConfig.setMediaType(TXVodConstants.MEDIA_TYPE_HLS_VOD);
+                }
+            }
+        });
         mSeekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             @Override
             public void onProgressChanged(SeekBar seekBar, int progress, boolean bFromUser) {
@@ -517,7 +535,6 @@ public class VodPlayerActivity extends Activity implements ITXVodPlayListener, V
         mVodPlayer.enableHardwareDecode(mHWDecode);
         mVodPlayer.setRenderRotation(mCurrentRenderRotation);
         mVodPlayer.setRenderMode(mCurrentRenderMode);
-
         if (mEnableCache) {
             mPlayConfig.setCacheFolderPath(getInnerSDCardPath() + "/txcache");
             mPlayConfig.setMaxCacheItems(1);
@@ -529,7 +546,7 @@ public class VodPlayerActivity extends Activity implements ITXVodPlayListener, V
         mPlayConfig.setHeaders(header);
         mVodPlayer.setConfig(mPlayConfig);
         mVodPlayer.setAutoPlay(true);
-        int result = mVodPlayer.startPlay(playUrl);
+        int result = mVodPlayer.startVodPlay(playUrl);
         mIsStopped = false;
         if (result != 0) {
             mButtonPlay.setBackgroundResource(R.drawable.superplayer_play_start);
@@ -797,7 +814,7 @@ public class VodPlayerActivity extends Activity implements ITXVodPlayListener, V
                     mVodPlayer.stopPlay(true);
                     Log.i(TAG, "onQualitySelect quality.url:" + quality.url);
                     mVodPlayer.setStartTime(currentTime);
-                    mVodPlayer.startPlay(quality.url);
+                    mVodPlayer.startVodPlay(quality.url);
                 }
             } else { //br!=0;index!=-1;url=null
                 Log.i(TAG, "setBitrateIndex quality.index:" + quality.index);
