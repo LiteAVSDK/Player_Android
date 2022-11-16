@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<TextView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:paddingLeft="15dp"
+    android:text="下拉列表项样式"
+    android:textColor="@color/superplayer_color_tint_red"
+    android:textSize="14dp"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:gravity="center_vertical"
+    android:background="@drawable/superplayer_setting_button"
+    android:drawableRight="@drawable/superplayer_dropdown"
+    android:drawableTint="@color/superplayer_white"
+    android:singleLine="true"
+    android:ellipsize="marquee"/>

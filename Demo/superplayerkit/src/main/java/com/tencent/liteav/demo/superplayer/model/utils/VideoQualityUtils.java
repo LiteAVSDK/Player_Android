@@ -119,6 +119,9 @@ public class VideoQualityUtils {
     }
 
     public static String transformToQualityName(String title) {
+        if (title == null) {
+            return "";
+        }
         String qualityName = title;
         if (title.contains("(")) {
             if (title.charAt(0) == ' ' && title.contains(")")) {

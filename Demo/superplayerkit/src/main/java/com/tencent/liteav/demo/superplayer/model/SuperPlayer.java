@@ -4,9 +4,12 @@ import com.tencent.liteav.demo.superplayer.SuperPlayerDef;
 import com.tencent.liteav.demo.superplayer.SuperPlayerModel;
 import com.tencent.liteav.demo.superplayer.model.entity.VideoQuality;
 import com.tencent.rtmp.TXLivePlayer;
+import com.tencent.rtmp.TXTrackInfo;
 import com.tencent.rtmp.ui.TXCloudVideoView;
+import com.tencent.rtmp.ui.TXSubtitleView;
 
 import java.util.List;
+import java.util.Map;
 
 public interface SuperPlayer {
 
@@ -143,4 +146,12 @@ public interface SuperPlayer {
     void setAutoPlay(boolean isAutoPlay);
 
     void setNeedToPause(boolean value);
+
+    void onClickSoundTrackItem(TXTrackInfo clickInfo);
+
+    void onClickSubTitleItem(TXTrackInfo clickInfo);
+
+    void setSubTitleView(TXSubtitleView subTitleView);
+
+    void onSubtitleSettingDone(Map map);
 }

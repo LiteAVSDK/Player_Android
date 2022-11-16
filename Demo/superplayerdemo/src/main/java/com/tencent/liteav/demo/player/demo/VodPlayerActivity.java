@@ -19,6 +19,7 @@ import android.view.View;
 import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.SeekBar;
@@ -27,19 +28,22 @@ import android.widget.Toast;
 
 import com.blankj.utilcode.constant.PermissionConstants;
 import com.blankj.utilcode.util.PermissionUtils;
+
 import com.tencent.liteav.demo.common.utils.IntentUtils;
 import com.tencent.liteav.demo.player.R;
+import com.tencent.liteav.demo.player.common.ConfigBean;
 import com.tencent.liteav.demo.superplayer.model.entity.VideoQuality;
 import com.tencent.liteav.demo.superplayer.model.utils.VideoQualityUtils;
 import com.tencent.liteav.demo.superplayer.ui.view.VodQualityView;
 import com.tencent.rtmp.ITXVodPlayListener;
 import com.tencent.rtmp.TXBitrateItem;
+import com.tencent.rtmp.TXLiveBase;
 import com.tencent.rtmp.TXLiveConstants;
+import com.tencent.rtmp.TXPlayerGlobalSetting;
 import com.tencent.rtmp.TXVodConstants;
 import com.tencent.rtmp.TXVodPlayConfig;
 import com.tencent.rtmp.TXVodPlayer;
 import com.tencent.rtmp.ui.TXCloudVideoView;
-import com.tencent.thumbplayer.api.TPCommonEnum;
 
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
@@ -49,9 +53,10 @@ import java.util.List;
 import java.util.Map;
 
 public class VodPlayerActivity extends Activity implements ITXVodPlayListener, VodQualityView.Callback {
+    public static  final int    REQUEST_CODE_CONFIG          = 101;
     private static final String TAG                   = "VodPlayerActivity";
     private static final String WEBRTC_LINK_URL       = "https://cloud.tencent.com/document/product/454/12148";
-    private static final String DEFAULT_PLAY_URL      = "http://200024424.vod.myqcloud.com/200024424_709ae516bdf811e6ad39991f76a4df69.f20.mp4";
+    private static final String DEFAULT_PLAY_URL      = "http://1500005830.vod2.myqcloud.com/43843ec0vodtranscq1500005830/48d0f1f9387702299774251236/adp.10.m3u8";
     private static final String SPEED_FORMAT_TEMPLATE = "%.2f";
     private static final int    MILLS_PER_SECOND      = 1000;
     private static final int    MILLS_PER_MINUTE      = 60000;
@@ -91,21 +96,20 @@ public class VodPlayerActivity extends Activity implements ITXVodPlayListener, V
     private boolean         mIsLogShow   = false;
     private float           mPlayRate    = 1.0f;
     private VodQualityView  mVodQualityView;
-    private List<VideoQuality>             mVideoQualityList;                      // 画质列表
+    private List<VideoQuality> mVideoQualityList;                      // 画质列表
     private VideoQuality    mDefaultVideoQuality;
     private boolean         mFirstShowQuality = false;
     private boolean         mIsStopped;
     private String          mUrl;
     private TextView        mMediaType;
-
+    private ImageView       mIBSetting;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         mCurrentRenderMode = TXLiveConstants.RENDER_MODE_ADJUST_RESOLUTION;
         mCurrentRenderRotation = TXLiveConstants.RENDER_ROTATION_PORTRAIT;
-        mPlayConfig = new TXVodPlayConfig();
-        mPlayConfig.setMediaType(TXVodConstants.MEDIA_TYPE_HLS_VOD);
+        mPlayConfig = ConfigBean.sPlayConfig;
         setContentView();
         LinearLayout backLL = (LinearLayout) findViewById(R.id.back_ll);
         backLL.setOnClickListener(new View.OnClickListener() {
@@ -221,9 +225,11 @@ public class VodPlayerActivity extends Activity implements ITXVodPlayListener, V
                         mVodPlayer.resume();
                         mButtonPlay.setBackgroundResource(R.drawable.superplayer_play_pause);
                         mLinearRootView.setBackgroundColor(0xff000000);
+                        enableQRCodeBtn(false);
                     } else {
                         mVodPlayer.pause();
                         mButtonPlay.setBackgroundResource(R.drawable.superplayer_play_start);
+                        enableQRCodeBtn(true);
                     }
                     mVideoPause = !mVideoPause;
                 } else {
@@ -399,6 +405,14 @@ public class VodPlayerActivity extends Activity implements ITXVodPlayListener, V
             }
         });
 
+        mIBSetting = (ImageView) findViewById(R.id.superplayer_vod_setting);
+        mIBSetting.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(VodPlayerActivity.this, PlayerSettingActivity.class);
+                startActivityForResult(intent,REQUEST_CODE_CONFIG);
+            }
+        });
         mTextSpeed = (TextView) findViewById(R.id.text_speed);
         mSeekBarSpeed = (SeekBar) findViewById(R.id.seek_bar_speed);
         mTextSpeed.setText(String.format(SPEED_FORMAT_TEMPLATE, mPlayRate));
@@ -535,15 +549,6 @@ public class VodPlayerActivity extends Activity implements ITXVodPlayListener, V
         mVodPlayer.enableHardwareDecode(mHWDecode);
         mVodPlayer.setRenderRotation(mCurrentRenderRotation);
         mVodPlayer.setRenderMode(mCurrentRenderMode);
-        if (mEnableCache) {
-            mPlayConfig.setCacheFolderPath(getInnerSDCardPath() + "/txcache");
-            mPlayConfig.setMaxCacheItems(1);
-        } else {
-            mPlayConfig.setCacheFolderPath(null);
-        }
-        Map<String, String> header = new HashMap<>();
-        mPlayConfig.setProgressInterval(200);
-        mPlayConfig.setHeaders(header);
         mVodPlayer.setConfig(mPlayConfig);
         mVodPlayer.setAutoPlay(true);
         int result = mVodPlayer.startVodPlay(playUrl);
@@ -706,6 +711,15 @@ public class VodPlayerActivity extends Activity implements ITXVodPlayListener, V
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if (requestCode == REQUEST_CODE_CONFIG) {
+            if (ConfigBean.sIsEnableSelfAdaption) {
+                mVodPlayer.setBitrateIndex(-1);
+            }
+            if (ConfigBean.sIsEnableHardWareDecode) {
+                mVodPlayer.enableHardwareDecode(true);
+            }
+            mPlayConfig = ConfigBean.sPlayConfig;
+        }
         if (requestCode != 100 || data == null || data.getExtras() == null || TextUtils.isEmpty(data.getExtras().getString("result"))) {
             return;
         }

@@ -106,6 +106,12 @@ public class SuperVodListLoader {
         model.title = applicationContext.getString(R.string.superplayer_cover_title);
         model.coverPictureUrl = "http://1500005830.vod2.myqcloud.com/6c9a5118vodcq1500005830/cc1e28208602268011087336518/MXUW1a5I9TsA.png";
         list.add(model);
+
+        model = new VideoModel();
+        model.appid = 1252463788;
+        model.fileid = "5285890781763144364";
+        list.add(model);
+
         return list;
     }
 
@@ -341,6 +347,10 @@ public class SuperVodListLoader {
                         VideoQuality videoQuality = videoQualityList.get(i);
                         videoModel.multiVideoURLs.add(
                                 new VideoModel.VideoPlayerURL(videoQuality.title, videoQuality.url));
+                    }
+                    videoModel.videoQualityList.addAll(videoQualityList);
+                    if (parserV2.getDefaultVideoQuality() != null &&  parserV2.getDefaultVideoQuality().index >= 0) {
+                        videoModel.playDefaultIndex = parserV2.getDefaultVideoQuality().index;
                     }
                 }
             } else if (version == 4) {

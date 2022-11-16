@@ -32,4 +32,9 @@
     <string name="superplayer_4k">4K</string>
     <string name="superplayer_danmu">弹幕</string>
     <string name="superplayer_replay">重播</string>
+    <string name="superplayer_subtitle">字幕</string>
+    <string name="superplayer_audio_tracks">音轨</string>
+    <string name="superplayer_off">关闭</string>
+    <string name="superplayer_audio_track">音轨 </string>
+
 </resources>

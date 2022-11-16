@@ -30,4 +30,12 @@
 
     <color name="superplayer_cache_btn_color">#2065DA</color>
     <color name="superplayer_cache_quality_list_bg">#ED000000</color>
+    <color name="white">#ffffff</color>
+    <color name="black">#000000</color>
+    <color name="red">#ff0000</color>
+    <color name="blue">#87ceeb</color>
+    <color name="green">#90ee90</color>
+    <color name="yellow">#ffff00</color>
+    <color name="megenta">#cd5c5c</color>
+    <color name="cyan">#e0ffff</color>
 </resources>

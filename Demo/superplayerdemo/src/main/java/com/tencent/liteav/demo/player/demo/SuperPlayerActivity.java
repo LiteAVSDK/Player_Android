@@ -3,7 +3,6 @@ package com.tencent.liteav.demo.player.demo;
 import static android.view.View.GONE;
 import static android.view.View.VISIBLE;
 
-import android.app.Activity;
 import android.app.ActivityManager;
 import android.app.AlertDialog;
 import android.content.Context;
@@ -46,13 +45,16 @@ import com.tencent.liteav.demo.player.expand.model.entity.VideoListModel;
 import com.tencent.liteav.demo.player.expand.model.entity.VideoModel;
 import com.tencent.liteav.demo.player.expand.model.utils.SuperVodListLoader;
 import com.tencent.liteav.demo.player.expand.ui.TCVodPlayerListAdapter;
+import com.tencent.liteav.demo.superplayer.SubtitleSourceModel;
 import com.tencent.liteav.demo.superplayer.SuperPlayerDef;
 import com.tencent.liteav.demo.superplayer.SuperPlayerGlobalConfig;
 import com.tencent.liteav.demo.superplayer.SuperPlayerModel;
 import com.tencent.liteav.demo.superplayer.SuperPlayerVideoId;
 import com.tencent.liteav.demo.superplayer.SuperPlayerView;
+import com.tencent.liteav.demo.superplayer.model.entity.VideoQuality;
 import com.tencent.rtmp.TXLiveBase;
 import com.tencent.rtmp.TXLiveConstants;
+import com.tencent.rtmp.TXVodConstants;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -420,14 +422,57 @@ public class SuperPlayerActivity extends FragmentActivity implements View.OnClic
         });
     }
 
+    private List<VideoModel> getSubtitleVideoData() {
+        VideoModel model = null;
+        model = new VideoModel();
+        model.placeholderImage = "http://1500005830.vod2.myqcloud.com/43843ec0vodtranscq1500005830/dc455d1d387702306937256938/coverBySnapshot_10_0.jpg";
+        model.videoURL = "http://1500005830.vod2.myqcloud.com/43843ec0vodtranscq1500005830/dc455d1d387702306937256938/adp.10.m3u8";
+        SubtitleSourceModel subtitleSourceModel = null;
+        subtitleSourceModel = new SubtitleSourceModel();
+        subtitleSourceModel.name = "ex-cn-srt";
+        subtitleSourceModel.url = "https://mediacloud-76607.gzc.vod.tencent-cloud.com/DemoResource/TED-CN.srt";
+        subtitleSourceModel.mimeType = TXVodConstants.VOD_PLAY_MIMETYPE_TEXT_SRT;
+        model.subtitleSourceModelList.add(subtitleSourceModel);
+
+        subtitleSourceModel = new SubtitleSourceModel();
+        subtitleSourceModel.name = "ex-in-srt";
+        subtitleSourceModel.url = "https://mediacloud-76607.gzc.vod.tencent-cloud.com/DemoResource/TED-IN.srt";
+        subtitleSourceModel.mimeType = TXVodConstants.VOD_PLAY_MIMETYPE_TEXT_SRT;
+
+        model.subtitleSourceModelList.add(subtitleSourceModel);
+
+        subtitleSourceModel = new SubtitleSourceModel();
+        subtitleSourceModel.name = "ex-en-vtt";
+        subtitleSourceModel.url = "https://mediacloud-76607.gzc.vod.tencent-cloud.com/DemoResource/TED-EN.vtt";
+        subtitleSourceModel.mimeType = TXVodConstants.VOD_PLAY_MIMETYPE_TEXT_VTT;
+        model.subtitleSourceModelList.add(subtitleSourceModel);
+        model.title = getResources().getString(R.string.super_player_multi_subtitle_video);
+        List<VideoModel> list = new ArrayList<>();
+        list.add(model);
+
+        model = new VideoModel();
+        model.placeholderImage = "http://1500005830.vod2.myqcloud.com/6c9a5118vodcq1500005830/3a76d6ac387702303793151471/387702307093360124.png";
+        model.videoURL = "http://1500005830.vod2.myqcloud.com/6c9a5118vodcq1500005830/3a76d6ac387702303793151471/iP3rnDdxMH4A.mov";
+        model.title = getResources().getString(R.string.super_player_multi_sound_track_video);
+        list.add(model);
+
+        return list;
+    }
+
     private void updateVodList() {
         if (mDefaultVideo) {
             ArrayList<VideoModel> superPlayerModels = mSuperVodListLoader.loadDefaultVodList(this.getApplicationContext());
-            mSuperVodListLoader.getVodInfoOneByOne(superPlayerModels, new SuperVodListLoader.OnVodInfoLoadListener() {
-                @Override
-                public void onSuccess(VideoModel videoModel) {
-                    onGetVodInfoOnebyOneOnSuccess(videoModel);
-                }
+            mSuperVodListLoader.getVideoListInfo(superPlayerModels, false,
+                    new SuperVodListLoader.OnVodListLoadListener() {
+                        @Override
+                        public void onSuccess(VideoListModel videoListModel) {
+                            for (VideoModel videoModel : videoListModel.videoModelList) {
+                                onGetVodInfoOnebyOneOnSuccess(videoModel);
+                            }
+                            for (VideoModel model : getSubtitleVideoData()) {
+                                onGetVodInfoOnebyOneOnSuccess(model);
+                            }
+                        }
 
                 @Override
                 public void onFail(int errCode) {
@@ -652,20 +697,22 @@ public class SuperPlayerActivity extends FragmentActivity implements View.OnClic
             } else {
                 superPlayerModelV3.title = videoModel.title;
                 superPlayerModelV3.url = videoModel.videoURL;
-
-                superPlayerModelV3.multiURLs = new ArrayList<>();
-                if (videoModel.multiVideoURLs != null) {
-                    for (VideoModel.VideoPlayerURL modelURL : videoModel.multiVideoURLs) {
-                        superPlayerModelV3.multiURLs.add(new SuperPlayerModel.SuperPlayerURL(modelURL.url, modelURL.title));
-                    }
-                }
             }
         }
+        if (videoModel.multiVideoURLs != null && videoModel.multiVideoURLs.size() > 0) {
+            superPlayerModelV3.multiURLs = new ArrayList<>();
+            for (VideoModel.VideoPlayerURL modelURL : videoModel.multiVideoURLs) {
+                superPlayerModelV3.multiURLs.add(new SuperPlayerModel.SuperPlayerURL(modelURL.url, modelURL.title));
+            }
+        }
+
         if (!TextUtils.isEmpty(videoModel.fileid)) {
             superPlayerModelV3.videoId = new SuperPlayerVideoId();
             superPlayerModelV3.videoId.fileId = videoModel.fileid;
             superPlayerModelV3.videoId.pSign = videoModel.pSign;
         }
+        superPlayerModelV3.playDefaultIndex = videoModel.playDefaultIndex;
+        superPlayerModelV3.subtitleSourceModelList = videoModel.subtitleSourceModelList;
         superPlayerModelV3.title = videoModel.title;
         superPlayerModelV3.playAction = videoModel.playAction;
         superPlayerModelV3.placeholderImage = videoModel.placeholderImage;
@@ -909,31 +956,10 @@ public class SuperPlayerActivity extends FragmentActivity implements View.OnClic
 
                             // 尝试请求fileid信息
                             SuperVodListLoader loader = new SuperVodListLoader(SuperPlayerActivity.this);
-                            loader.setOnVodInfoLoadListener(new SuperVodListLoader.OnVodInfoLoadListener() {
-                                @Override
-                                public void onSuccess(final VideoModel videoModel) {
-                                    runOnUiThread(new Runnable() {
-                                        @Override
-                                        public void run() {
-                                            addVideoModelIntoVodPlayerListAdapter(videoModel);
-                                        }
-                                    });
-                                }
-
-                                @Override
-                                public void onFail(int errCode) {
-                                    runOnUiThread(new Runnable() {
-                                        @Override
-                                        public void run() {
-                                            Toast.makeText(mContext, getString(R.string.superplayer_request_fail),
-                                                    Toast.LENGTH_SHORT).show();
-                                        }
-                                    });
-                                }
-                            });
                             loader.getVodByFileId(videoModel, new SuperVodListLoader.OnVodInfoLoadListener() {
                                 @Override
                                 public void onSuccess(VideoModel videoModel) {
+                                    videoModel.videoURL = "";
                                     onGetVodInfoOnebyOneOnSuccess(videoModel);
                                 }
 

@@ -32,4 +32,8 @@
     <string name="superplayer_download_quality_invalid">this video quality is invalid,download failed,please download video by others quality</string>
     <string name="superplayer_danmu">Comment</string>
     <string name="superplayer_replay">Replay</string>
+    <string name="superplayer_subtitle">Subtitles</string>
+    <string name="superplayer_audio_tracks">Audio Tracks</string>
+    <string name="superplayer_off">Off</string>
+    <string name="superplayer_audio_track">Audio Track </string>
 </resources>

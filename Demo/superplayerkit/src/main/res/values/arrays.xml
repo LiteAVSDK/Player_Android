@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string-array name="font_color">
+        <item>White</item>
+        <item>Black</item>
+        <item>Red</item>
+        <item>Blue</item>
+        <item>Green</item>
+        <item>Yellow</item>
+        <item>Magenta</item>
+        <item>Cyan</item>
+    </string-array>
+
+    <string-array name="font_size">
+        <item>Normal</item>
+        <item>BoldFace</item>
+    </string-array>
+
+    <string-array name="outline_width" >
+        <item>50%</item>
+        <item>75%</item>
+        <item>100%</item>
+        <item>125%</item>
+        <item>150%</item>
+        <item>175%</item>
+        <item>200%</item>
+        <item>300%</item>
+        <item>400%</item>
+    </string-array>
+
+    <string-array name="outline_color" >
+        <item>Black</item>
+        <item>White</item>
+        <item>Red</item>
+        <item>Blue</item>
+        <item>Green</item>
+        <item>Yellow</item>
+        <item>Magenta</item>
+        <item>Cyan</item>
+    </string-array>
+
+</resources>

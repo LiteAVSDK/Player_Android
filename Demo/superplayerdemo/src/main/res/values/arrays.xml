@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string-array name="player_media_type">
+        <item>MEDIA_TYPE_AUTO</item>
+        <item>MEDIA_TYPE_HLS_VOD</item>
+        <item>MEDIA_TYPE_HLS_LIVE</item>
+    </string-array>
+
+    <string-array name="decoding_strategy" translatable="false">
+        <item>优先硬解</item>
+        <item>优先软解</item>
+    </string-array>
+
+    <string-array name="log_level" translatable="false">
+        <item>LOG_LEVEL_VERBOSE</item>
+        <item>LOG_LEVEL_DEBUG</item>
+        <item>LOG_LEVEL_INFO</item>
+        <item>LOG_LEVEL_WARN</item>
+        <item>LOG_LEVEL_ERROR</item>
+        <item>LOG_LEVEL_FATAL</item>
+        <item>LOG_LEVEL_NULL</item>
+    </string-array>
+
+    <string-array name="video_type" translatable="false">
+        <item>HLS</item>
+        <item>DASH</item>
+    </string-array>
+
+</resources>

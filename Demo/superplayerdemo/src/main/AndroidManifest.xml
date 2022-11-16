@@ -3,6 +3,9 @@
     package="com.tencent.liteav.demo.player">
 
     <application android:theme="@style/AppTheme">
+        <activity
+            android:theme="@style/Theme.AppCompat.DayNight.NoActionBar"
+            android:name=".demo.PlayerSettingActivity"/>
         <activity android:name=".demo.VideoDownloadListActivity"
             android:screenOrientation="portrait"
             />

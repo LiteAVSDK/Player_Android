@@ -105,5 +105,8 @@
     <string name="super_player_tv_screen_auto">自适应</string>
     <string name="super_player_tv_vod_self">点播自适应</string>
     <string name="super_player_tv_live_self">直播自适应</string>
-
+    <string name="super_player_multi_subtitle_video">多字幕视频</string>
+    <string name="super_player_multi_sound_track_video">多音轨视频</string>
+    <string name="super_player_save_succeed">保存配置成功！</string>
+    <string name="super_player_reset_succeed">重置配置成功！</string>
 </resources>

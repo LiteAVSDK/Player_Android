@@ -10,6 +10,7 @@ import android.os.Bundle;
 import android.text.TextUtils;
 import android.util.Log;
 
+import com.tencent.liteav.demo.superplayer.SubtitleSourceModel;
 import com.tencent.liteav.demo.superplayer.SuperPlayerCode;
 import com.tencent.liteav.demo.superplayer.SuperPlayerDef;
 import com.tencent.liteav.demo.superplayer.SuperPlayerGlobalConfig;
@@ -33,15 +34,18 @@ import com.tencent.rtmp.TXLiveConstants;
 import com.tencent.rtmp.TXLivePlayConfig;
 import com.tencent.rtmp.TXLivePlayer;
 import com.tencent.rtmp.TXPlayInfoParams;
+import com.tencent.rtmp.TXTrackInfo;
 import com.tencent.rtmp.TXVodConstants;
 import com.tencent.rtmp.TXVodPlayConfig;
 import com.tencent.rtmp.TXVodPlayer;
 import com.tencent.rtmp.ui.TXCloudVideoView;
+import com.tencent.rtmp.ui.TXSubtitleView;
 
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 
 public class SuperPlayerImpl implements SuperPlayer, ITXVodPlayListener, ITXLivePlayListener {
 
@@ -71,7 +75,6 @@ public class SuperPlayerImpl implements SuperPlayer, ITXVodPlayListener, ITXLive
     private long                       mReportVodStartTime  = -1;  // 点播开始时间，用于上报使用时长
     private long                       mMaxLiveProgressTime;      // 观看直播的最大时长
     private boolean                    mIsAutoPlay          = true;      // 是否自动播放
-    private boolean                    mIsMultiBitrateStream;  // 是否是多码流url播放
     private boolean                    mIsPlayWithFileId;      // 是否是腾讯云fileId播放
     private boolean                    mChangeHWAcceleration;  // 切换硬解后接收到第一个关键帧前的标记位
     private String                     mFileId;
@@ -81,6 +84,8 @@ public class SuperPlayerImpl implements SuperPlayer, ITXVodPlayListener, ITXLive
     private boolean                    isNeedResume         = false;
     private boolean                    mNeedToPause         = false;
     private int                        mCurrentIndex        = -1;
+    private TXTrackInfo                mSelectedSoundTrackInfo;
+    private TXTrackInfo                mSelectedSubtitleTrackInfo;
 
     public SuperPlayerImpl(Context context, TXCloudVideoView videoView) {
         initialize(context, videoView);
@@ -186,10 +191,27 @@ public class SuperPlayerImpl implements SuperPlayer, ITXVodPlayListener, ITXLive
                 PlayImageSpriteInfo playImageSpriteInfo = new PlayImageSpriteInfo();
                 playImageSpriteInfo.imageUrls = param.getStringArrayList(TXVodConstants.EVT_IMAGESPRIT_IMAGEURL_LIST);
                 playImageSpriteInfo.webVttUrl = param.getString(TXVodConstants.EVT_IMAGESPRIT_WEBVTTURL);
-                updateVideoImageSpriteAndKeyFrame(playImageSpriteInfo,null);
+                ArrayList<String> keyFrameContentList =
+                        param.getStringArrayList(TXVodConstants.EVT_KEY_FRAME_CONTENT_LIST);
+                float[] keyFrameTimeArray = param.getFloatArray(TXVodConstants.EVT_KEY_FRAME_TIME_LIST);
+                List<PlayKeyFrameDescInfo> keyFrameDescInfoList = null;
+                if (keyFrameContentList != null && keyFrameTimeArray != null
+                        && keyFrameContentList.size() == keyFrameTimeArray.length) {
+                    keyFrameDescInfoList = new ArrayList<>();
+                    for (int i = 0; i < keyFrameContentList.size(); i++) {
+                        PlayKeyFrameDescInfo frameDescInfo = new PlayKeyFrameDescInfo();
+                        frameDescInfo.content = keyFrameContentList.get(i);
+                        frameDescInfo.time = keyFrameTimeArray[i];
+                        keyFrameDescInfoList.add(frameDescInfo);
+                    }
+                }
+                updateVideoImageSpriteAndKeyFrame(playImageSpriteInfo,keyFrameDescInfoList);
                 break;
             case TXLiveConstants.PLAY_EVT_VOD_PLAY_PREPARED://视频播放开始
                 onVodPlayPrepared();
+                getAudioTrackInfo();
+                getSubTitleTrackInfo();
+                chooseLastTrackInfo();
                 break;
             case TXLiveConstants.PLAY_EVT_RCV_FIRST_I_FRAME:
                 Log.i(TAG, "PLAY_EVT_RCV_FIRST_I_FRAME");
@@ -226,6 +248,12 @@ public class SuperPlayerImpl implements SuperPlayer, ITXVodPlayListener, ITXLive
                 }
                 updatePlayerState(SuperPlayerDef.PlayerState.PLAYING);
                 break;
+            case TXVodConstants.VOD_PLAY_EVT_SELECT_TRACK_COMPLETE:
+                int trackIndex = param.getInt(TXVodConstants.EVT_KEY_SELECT_TRACK_INDEX);
+                int errorCode = param.getInt(TXVodConstants.EVT_KEY_SELECT_TRACK_ERROR_CODE);
+                Log.d(TAG, "receive VOD_PLAY_EVT_SELECT_TRACK_COMPLETE, trackIndex="
+                        + trackIndex + " ,errorCode=" + errorCode);
+                break;
             default:
                 break;
         }
@@ -239,29 +267,43 @@ public class SuperPlayerImpl implements SuperPlayer, ITXVodPlayListener, ITXLive
         }
     }
 
+    private void getAudioTrackInfo() {
+        List<TXTrackInfo> soundTrackInfo = mVodPlayer.getAudioTrackInfo();
+        mObserver.onRcvTrackInformation(soundTrackInfo);
+    }
+
+    private void getSubTitleTrackInfo() {
+        List<TXTrackInfo> subtitleTrackInfo = mVodPlayer.getSubtitleTrackInfo();
+        List<TXTrackInfo> finalSubtitleTrackInfo = new ArrayList<>();
+        for (TXTrackInfo trackInfo : subtitleTrackInfo) {
+            if (!trackInfo.isInternal) {
+                finalSubtitleTrackInfo.add(trackInfo);
+            }
+        }
+        mObserver.onRcvSubTitleTrackInformation(finalSubtitleTrackInfo);
+    }
+
     private void onVodPlayPrepared() {
         Log.i(TAG, "PLAY_EVT_VOD_PLAY_PREPARED");
         isPrepared = true;
-        if (mIsMultiBitrateStream) {
-            List<TXBitrateItem> bitrateItems = mVodPlayer.getSupportedBitrates();
-            int bitrateItemSize = bitrateItems != null ? bitrateItems.size() : 0;
-            if (bitrateItemSize > 0) {
-                Collections.sort(bitrateItems); //masterPlaylist多清晰度，按照码率排序，从低到高
-                List<VideoQuality> videoQualities = new ArrayList<>();
-                for (int i = 0; i < bitrateItemSize; i++) {
-                    TXBitrateItem bitrateItem = bitrateItems.get(i);
-                    VideoQuality quality = VideoQualityUtils.convertToVideoQuality(mContext, bitrateItem);
-                    videoQualities.add(quality);
-                }
-                int bitrateIndex = mVodPlayer.getBitrateIndex();   //获取默认码率的index
-                VideoQuality defaultQuality = null;
-                for (VideoQuality quality : videoQualities) {
-                    if (quality.index == bitrateIndex) {
-                        defaultQuality = quality;
-                    }
-                }
-                updateVideoQualityList(videoQualities, defaultQuality);
+        List<TXBitrateItem> bitrateItems = mVodPlayer.getSupportedBitrates();
+        int bitrateItemSize = bitrateItems != null ? bitrateItems.size() : 0;
+        if (bitrateItemSize > 0) {
+            Collections.sort(bitrateItems); //masterPlaylist多清晰度，按照码率排序，从低到高
+            List<VideoQuality> videoQualities = new ArrayList<>();
+            for (int i = 0; i < bitrateItemSize; i++) {
+                TXBitrateItem bitrateItem = bitrateItems.get(i);
+                VideoQuality quality = VideoQualityUtils.convertToVideoQuality(mContext, bitrateItem);
+                videoQualities.add(quality);
             }
+            int bitrateIndex = mVodPlayer.getBitrateIndex();   //获取默认码率的index
+            VideoQuality defaultQuality = null;
+            for (VideoQuality quality : videoQualities) {
+                if (quality.index == bitrateIndex) {
+                    defaultQuality = quality;
+                }
+            }
+            updateVideoQualityList(videoQualities, defaultQuality);
         }
         if (mNeedToPause) {
             pauseVod();
@@ -363,6 +405,7 @@ public class SuperPlayerImpl implements SuperPlayer, ITXVodPlayListener, ITXLive
             mAppId = params.appId;
             sendRequest(model);
         }
+        addSubtitle();
     }
 
     @Deprecated
@@ -402,7 +445,7 @@ public class SuperPlayerImpl implements SuperPlayer, ITXVodPlayListener, ITXLive
             mFileId = model.videoId.fileId;
         }
         String videoURL = null;
-        List<VideoQuality> videoQualities = new ArrayList<>();
+        List<VideoQuality> videoQualities = model.videoQualityList;
         VideoQuality defaultVideoQuality = null;
         if (model.multiURLs != null && !model.multiURLs.isEmpty()) {    // 多码率URL播放
             int i = 0;
@@ -410,9 +453,10 @@ public class SuperPlayerImpl implements SuperPlayer, ITXVodPlayListener, ITXLive
                 if (i == model.playDefaultIndex) {
                     videoURL = superPlayerURL.url;
                 }
-                videoQualities.add(new VideoQuality(i++, superPlayerURL.qualityName, superPlayerURL.url));
             }
-            defaultVideoQuality = videoQualities.get(model.playDefaultIndex);
+            if (videoQualities != null && model.playDefaultIndex < videoQualities.size()) {
+                defaultVideoQuality = videoQualities.get(model.playDefaultIndex);
+            }
         } else if (!TextUtils.isEmpty(model.url)) { // 传统URL模式播放
             videoURL = model.url;
         }
@@ -451,7 +495,6 @@ public class SuperPlayerImpl implements SuperPlayer, ITXVodPlayListener, ITXLive
         if (model == null || model.videoId == null) {
             return;
         }
-        mIsMultiBitrateStream = true;
         if (mCurrentModel != null && mCurrentModel.playAction != PLAY_ACTION_PRELOAD) {
             mReportVodStartTime = System.currentTimeMillis();
         }
@@ -485,8 +528,6 @@ public class SuperPlayerImpl implements SuperPlayer, ITXVodPlayListener, ITXLive
         List<VideoQuality> videoQualities = protocol.getVideoQualityList();
         List<ResolutionName> resolutionNames = protocol.getResolutionNameList();
         String videoUrl = protocol.getUrl();
-        mIsMultiBitrateStream = resolutionNames != null || videoQualities != null
-                || (videoUrl != null && videoUrl.contains(".m3u8"));
         VideoQuality defaultVideoQuality = protocol.getDefaultVideoQuality();
         updateVideoQualityList(videoQualities, defaultVideoQuality);
     }
@@ -535,11 +576,6 @@ public class SuperPlayerImpl implements SuperPlayer, ITXVodPlayListener, ITXLive
             return;
         }
         mCurrentPlayVideoURL = url;
-        if (url.contains(".m3u8")) {
-            mIsMultiBitrateStream = true;
-        } else {
-            mIsMultiBitrateStream = false;
-        }
         if (mVodPlayer != null) {
             mVodPlayer.setStartTime(mStartPos);
             mVodPlayer.setAutoPlay(mIsAutoPlay);
@@ -564,7 +600,8 @@ public class SuperPlayerImpl implements SuperPlayer, ITXVodPlayListener, ITXLive
             if (mCurrentIndex != -1) {
                 mVodPlayer.setBitrateIndex(mCurrentIndex);
             }
-            if (!TextUtils.isEmpty(mFileId) && mAppId != 0 && isVersionSupportAppendUrl()) {
+            if (url.startsWith("http") && !TextUtils.isEmpty(mFileId) && mAppId != 0 
+                && isVersionSupportAppendUrl()) {
                 Uri uri = Uri.parse(url);
                 String query = uri.getQuery();
                 if (query == null || query.isEmpty()) {
@@ -823,6 +860,25 @@ public class SuperPlayerImpl implements SuperPlayer, ITXVodPlayListener, ITXLive
             } else {
                 playWithModel(mCurrentModel);
             }
+            addSubtitle();
+        }
+    }
+
+    private void chooseLastTrackInfo() {
+        if (mSelectedSoundTrackInfo != null) {
+            onClickSoundTrackItem(mSelectedSoundTrackInfo);
+        }
+        if (mSelectedSubtitleTrackInfo != null) {
+            onClickSubTitleItem(mSelectedSubtitleTrackInfo);
+        }
+    }
+
+    private void addSubtitle() {
+        if (mCurrentModel.subtitleSourceModelList != null) {
+            for (SubtitleSourceModel subtitleSourceModel : mCurrentModel.subtitleSourceModelList) {
+                mVodPlayer.addSubtitleSource(subtitleSourceModel.url,
+                        subtitleSourceModel.name, subtitleSourceModel.mimeType);
+            }
         }
     }
 
@@ -888,7 +944,7 @@ public class SuperPlayerImpl implements SuperPlayer, ITXVodPlayListener, ITXLive
         }
         if (mLivePlayer != null) {
             mLivePlayer.setPlayListener(null);
-            mLivePlayer.stopPlay(false);
+            mLivePlayer.stopPlay(true);
             mVideoView.removeVideoView();
         }
         reportPlayTime();
@@ -1090,4 +1146,54 @@ public class SuperPlayerImpl implements SuperPlayer, ITXVodPlayListener, ITXLive
         this.mIsAutoPlay = isAutoPlay;
         mVodPlayer.setAutoPlay(isAutoPlay);
     }
+
+    @Override
+    public void onClickSoundTrackItem(TXTrackInfo clickInfo) {
+        List<TXTrackInfo> soundTrackInfoList = mVodPlayer.getAudioTrackInfo();
+        if (clickInfo.trackIndex == -1) {
+            for (TXTrackInfo trackInfo : soundTrackInfoList) {
+                mVodPlayer.deselectTrack(trackInfo.trackIndex);
+            }
+        } else {
+            for (TXTrackInfo trackInfo : soundTrackInfoList) {
+                if (trackInfo.trackIndex == clickInfo.trackIndex) {
+                    mVodPlayer.selectTrack(trackInfo.trackIndex);
+                    mSelectedSoundTrackInfo = trackInfo;
+                } else {
+                    mVodPlayer.deselectTrack(trackInfo.trackIndex);
+                }
+            }
+        }
+    }
+
+    @Override
+    public void onClickSubTitleItem(TXTrackInfo clickInfo) {
+        List<TXTrackInfo> subtitleTrackInfoList = mVodPlayer.getSubtitleTrackInfo();
+        if (clickInfo.trackIndex == -1) {
+            for (TXTrackInfo trackInfo : subtitleTrackInfoList) {
+                mVodPlayer.deselectTrack(trackInfo.trackIndex);
+            }
+        } else {
+            for (TXTrackInfo trackInfo : subtitleTrackInfoList) {
+                if (trackInfo.trackIndex == clickInfo.trackIndex) {
+                    mVodPlayer.selectTrack(trackInfo.trackIndex);
+                    mSelectedSubtitleTrackInfo = trackInfo;
+                } else {
+                    mVodPlayer.deselectTrack(trackInfo.trackIndex);
+                }
+            }
+        }
+    }
+
+    @Override
+    public void setSubTitleView(TXSubtitleView subTitleView) {
+        mVodPlayer.setSubtitleView(subTitleView);
+    }
+
+    @Override
+    public void onSubtitleSettingDone(Map map) {
+        mVodPlayConfig.setExtInfo(map);
+        mVodPlayer.setConfig(mVodPlayConfig);
+    }
+
 }

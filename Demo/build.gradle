@@ -3,9 +3,9 @@
 buildscript {
 
     repositories {
+        jcenter()
         google()
         mavenCentral()
-        jcenter()
     }
     dependencies {
         classpath 'com.android.tools.build:gradle:3.5.3'
@@ -18,9 +18,9 @@ allprojects {
             dirs 'libs'
             dirs project(':app').file('libs')
         }
+        jcenter()
         google()
         mavenCentral()
-        jcenter()
     }
 }
 
@@ -37,5 +37,5 @@ ext {
     versionCode = 1
     versionName = "v1.0"
     imSdk = 'com.tencent.imsdk:imsdk:4.9.1'
-    liteavSdk="com.tencent.liteav:LiteAVSDK_Player:10.8.0.13052"
+    liteavSdk="com.tencent.liteav:LiteAVSDK_Player:latest.release"
 }

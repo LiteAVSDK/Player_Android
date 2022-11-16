@@ -40,5 +40,9 @@
         android:id="@+id/superplayer_controller_float"
         android:layout_width="match_parent"
         android:layout_height="match_parent" />
-
+    <com.tencent.rtmp.ui.TXSubtitleView
+        android:layout_alignParentBottom="true"
+        android:id="@+id/subtitle_view"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"/>
 </RelativeLayout>

@@ -126,119 +126,94 @@
             </LinearLayout>
         </LinearLayout>
 
-        <HorizontalScrollView
-            android:layout_width="match_parent"
 
-            android:layout_height="wrap_content"
+
+        <LinearLayout
             android:layout_gravity="bottom"
-            android:layout_marginBottom="10dp">
+            android:layout_marginBottom="10dp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
 
-            <LinearLayout
-                android:layout_width="match_parent"
+
+
+            <Button
+                android:layout_weight="1"
+                android:id="@+id/btnPlay"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:orientation="horizontal">
+                android:background="@drawable/superplayer_play_start" />
 
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1" />
 
-                <Button
-                    android:id="@+id/btnPlay"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:background="@drawable/superplayer_play_start" />
 
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1" />
+            <Button
+                android:id="@+id/btnStop"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
 
-                <Button
-                    android:id="@+id/btnStop"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:background="@drawable/superplayer_close_press" />
+                android:background="@drawable/superplayer_close_press" />
 
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1" />
 
-                <Button
-                    android:id="@+id/btnLog"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:background="@drawable/superplayer_log_show" />
 
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1" />
+            <Button
+                android:id="@+id/btnLog"
+                android:layout_width="0dp"
+                android:layout_weight="1"
+                android:layout_height="wrap_content"
+                android:background="@drawable/superplayer_log_show" />
 
-                <Button
-                    android:id="@+id/btnMute"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:background="@drawable/superplayer_mic_enable" />
 
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1" />
+            <Button
+                android:id="@+id/btnMute"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
 
-                <Button
-                    android:id="@+id/btnHWDecode"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:background="@drawable/superplayer_quick" />
+                android:background="@drawable/superplayer_mic_enable" />
 
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1" />
 
-                <Button
-                    android:id="@+id/btnOrientation"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:background="@drawable/superplayer_landscape" />
 
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1" />
+            <Button
+                android:id="@+id/btnHWDecode"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
 
-                <Button
-                    android:id="@+id/btnRenderMode"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:background="@drawable/superplayer_fill_mode" />
+                android:background="@drawable/superplayer_quick" />
 
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1" />
 
-                <Button
-                    android:id="@+id/btnCache"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:background="@drawable/superplayer_cache"
-                    android:clickable="true"
-                    android:onClick="onClick" />
+            <Button
+                android:id="@+id/btnOrientation"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
 
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1" />
+                android:background="@drawable/superplayer_landscape" />
 
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1" />
-            </LinearLayout>
-        </HorizontalScrollView>
+
+
+            <Button
+                android:id="@+id/btnRenderMode"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+
+                android:background="@drawable/superplayer_fill_mode" />
+
+
+            <Button
+                android:id="@+id/btnCache"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:background="@drawable/superplayer_cache"
+                android:clickable="true"
+                android:onClick="onClick" />
+
+
+        </LinearLayout>
+
 
         <ImageView
             android:id="@+id/loadingImageView"
@@ -255,22 +230,23 @@
             android:layout_width="200dp"
             android:layout_height="350dp" />
 
-        <FrameLayout
+        <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="41dp">
 
             <LinearLayout
+                android:orientation="horizontal"
                 android:id="@+id/back_ll"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_gravity="center_vertical"
+                android:layout_centerVertical="true"
+                android:layout_alignParentLeft="true"
                 android:layout_marginLeft="12dp">
 
                 <ImageView
+                    android:layout_gravity="center_vertical"
                     android:layout_width="16dp"
                     android:layout_height="16dp"
-                    android:layout_gravity="center_vertical"
-                    android:gravity="center"
                     android:src="@drawable/superplayer_btn_back_gray" />
 
                 <TextView
@@ -278,7 +254,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center_vertical"
-                    android:layout_marginLeft="4dp"
+                    android:layout_marginLeft="7dp"
                     android:gravity="center_vertical"
                     android:text="@string/superplayer_back"
                     android:textColor="#ffffff"
@@ -289,7 +265,7 @@
                 android:id="@+id/title_tv"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_gravity="center"
+                android:layout_centerInParent="true"
                 android:text="@string/vod_player"
                 android:textColor="#ffffff"
                 android:textSize="18sp" />
@@ -298,11 +274,21 @@
                 android:id="@+id/webrtc_link_button"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_gravity="right|center_vertical"
+                android:layout_centerVertical="true"
                 android:background="@android:color/transparent"
                 android:padding="10dp"
+                android:layout_toLeftOf="@id/superplayer_vod_setting"
                 android:src="@drawable/superplayer_question_link" />
-        </FrameLayout>
+
+            <ImageView
+                android:id="@+id/superplayer_vod_setting"
+                android:layout_width="20dp"
+                android:layout_height="20dp"
+                android:layout_alignParentRight="true"
+                android:layout_centerVertical="true"
+                android:layout_marginRight="10dp"
+                android:src="@drawable/superplayer_ic_setting" />
+        </RelativeLayout>
 
         <include
             layout="@layout/superplayer_title_bar"

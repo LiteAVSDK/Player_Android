@@ -12,4 +12,6 @@
     <color name="cache_status_pause">#FD7657</color>
     <color name="cache_status_finish">#20C86F</color>
     <color name="cache_empty_text_colo">#6B82A8</color>
+
+    <color name="vod_setting_button">#0099cc</color>
 </resources>

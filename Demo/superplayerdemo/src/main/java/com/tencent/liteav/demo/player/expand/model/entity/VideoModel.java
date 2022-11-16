@@ -5,6 +5,7 @@ import static com.tencent.liteav.demo.superplayer.SuperPlayerModel.PLAY_ACTION_A
 
 import android.text.TextUtils;
 
+import com.tencent.liteav.demo.superplayer.SubtitleSourceModel;
 import com.tencent.liteav.demo.superplayer.SuperPlayerModel;
 import com.tencent.liteav.demo.superplayer.SuperPlayerVideoId;
 import com.tencent.liteav.demo.superplayer.model.VipWatchModel;
@@ -66,6 +67,10 @@ public class VideoModel {
 
     public List<VideoQuality> videoQualityList = new ArrayList<>();
 
+    /**
+     * 外挂字幕
+     */
+    public List<SubtitleSourceModel> subtitleSourceModelList = new ArrayList<>();
 
     /**
      * VIDEO 不同清晰度的URL链接
@@ -145,6 +150,8 @@ public class VideoModel {
             superPlayerModel.videoId.fileId = fileid;
             superPlayerModel.videoId.pSign = pSign;
         }
+
+        superPlayerModel.subtitleSourceModelList = subtitleSourceModelList;
 
         superPlayerModel.playAction = playAction;
         superPlayerModel.placeholderImage = placeholderImage;

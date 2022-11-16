@@ -30,13 +30,18 @@ import com.tencent.liteav.demo.superplayer.ui.view.VideoProgressLayout;
 import com.tencent.liteav.demo.superplayer.ui.view.VipWatchView;
 import com.tencent.liteav.demo.superplayer.ui.view.VodMoreView;
 import com.tencent.liteav.demo.superplayer.ui.view.VodQualityView;
+import com.tencent.liteav.demo.superplayer.ui.view.VodSoundTrackView;
+import com.tencent.liteav.demo.superplayer.ui.view.VodSubtitlesSettingView;
+import com.tencent.liteav.demo.superplayer.ui.view.VodSubtitlesView;
 import com.tencent.liteav.demo.superplayer.ui.view.VolumeBrightnessProgressLayout;
 import com.tencent.liteav.demo.superplayer.ui.view.download.DownloadMenuListView;
 import com.tencent.rtmp.TXImageSprite;
+import com.tencent.rtmp.TXTrackInfo;
 
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 /**
  * 全屏模式播放控件
@@ -62,7 +67,11 @@ import java.util.List;
  * 8、硬件加速监听{@link #onHWAcceleration(boolean)}
  */
 public class FullScreenPlayer extends AbsPlayer implements View.OnClickListener,
-        VodMoreView.Callback, VodQualityView.Callback, PointSeekBar.OnSeekBarChangeListener, PointSeekBar.OnSeekBarPointClickListener, VipWatchView.VipWatchViewClickListener {
+        VodMoreView.Callback, VodQualityView.Callback
+        , PointSeekBar.OnSeekBarChangeListener, PointSeekBar.OnSeekBarPointClickListener
+        , VipWatchView.VipWatchViewClickListener, VodSoundTrackView.OnClickSoundTrackItemListener,
+        VodSubtitlesView.OnClickSubtitlesItemListener, VodSubtitlesView.OnClickSettingListener,
+        VodSubtitlesSettingView.OnClickBackButtonListener {
 
     // UI控件
     private RelativeLayout                 mLayoutTop;                             // 顶部标题栏布局
@@ -75,6 +84,8 @@ public class FullScreenPlayer extends AbsPlayer implements View.OnClickListener,
     private TextView                       mTvCurrent;                             // 当前进度文本
     private TextView                       mTvDuration;                            // 总时长文本
     private ImageView                      mIvPlayNext;                            // 播放下一个按钮
+    private ImageView                      mIvSoundTrack;
+    private ImageView                      mIvSubtitle;
     private PointSeekBar                   mSeekBarProgress;                       // 播放进度条
     private LinearLayout                   mLayoutReplay;                          // 重播按钮所在布局
     private ProgressBar                    mPbLiveLoading;                         // 加载圈
@@ -117,6 +128,9 @@ public class FullScreenPlayer extends AbsPlayer implements View.OnClickListener,
     private boolean                        mFirstShowQuality;                      // 是都是首次显示画质信息
     private boolean                        mIsOpenGesture    = true;                  // 是否开启手势
     private boolean                        isDestroy         = false;              // Activity是否被销毁
+    private VodSoundTrackView mVodSoundTrackView;
+    private VodSubtitlesView  mVodSubtitlesView;
+    private VodSubtitlesSettingView mVodSubtitlesSettingView;
 
     public FullScreenPlayer(Context context) {
         super(context);
@@ -265,6 +279,16 @@ public class FullScreenPlayer extends AbsPlayer implements View.OnClickListener,
         mImageCover = (ImageView) findViewById(R.id.superplayer_cover_view);
         mImageStartAndResume = (ImageView) findViewById(R.id.superplayer_resume);
         mIvPlayNext = (ImageView) findViewById(R.id.superplayer_iv_play_next);
+        mIvSoundTrack = (ImageView) findViewById(R.id.superplayer_iv_sound_track);
+        mIvSubtitle = (ImageView) findViewById(R.id.superplayer_iv_subtitle);
+        mVodSoundTrackView = (VodSoundTrackView) findViewById(R.id.superplayer_vod_selection_sound_track);
+        mVodSoundTrackView.setOnClickSoundTrackItemListener(this);
+        mVodSubtitlesView = (VodSubtitlesView) findViewById(R.id.superplayer_vod_selection_subtitle);
+        mVodSubtitlesView.setOnClickSubtitlesItemListener(this);
+        mVodSubtitlesView.setOnClickSettingListener(this);
+        mVodSubtitlesSettingView = (VodSubtitlesSettingView)
+                findViewById(R.id.superplayer_vod_selection_subtitle_setting);
+        mVodSubtitlesSettingView.setOnClickBackButtonListener(this);
         mDownloadMenuView = findViewById(R.id.superplayer_cml_cache_menu);
 
         mSeekBarProgress = (PointSeekBar) findViewById(R.id.superplayer_seekbar_progress);
@@ -286,6 +310,8 @@ public class FullScreenPlayer extends AbsPlayer implements View.OnClickListener,
         mLayoutReplay.setOnClickListener(this);
         mIvLock.setOnClickListener(this);
         mIvBack.setOnClickListener(this);
+        mIvSoundTrack.setOnClickListener(this);
+        mIvSubtitle.setOnClickListener(this);
         mIvPause.setOnClickListener(this);
         mIvDanmu.setOnClickListener(this);
         mIvDownload.setOnClickListener(this);
@@ -318,6 +344,9 @@ public class FullScreenPlayer extends AbsPlayer implements View.OnClickListener,
             case INIT:
             case PAUSE:
             case END:
+                if (mLockScreen) {
+                    return;
+                }
                 if (mControllerCallback != null) {
                     mControllerCallback.onResume();
                 }
@@ -358,6 +387,9 @@ public class FullScreenPlayer extends AbsPlayer implements View.OnClickListener,
         if (mVodMoreView.getVisibility() == VISIBLE) {
             mVodMoreView.setVisibility(GONE);
         }
+        mVodSoundTrackView.setVisibility(GONE);
+        mVodSubtitlesView.setVisibility(GONE);
+        mVodSubtitlesSettingView.setVisibility(GONE);
     }
 
     private void updateStartUI(boolean isAutoPlay) {
@@ -736,7 +768,21 @@ public class FullScreenPlayer extends AbsPlayer implements View.OnClickListener,
             }
         } else if (i == R.id.superplayer_iv_download) {  // 下载按钮
             showCacheList();
+        } else if (i == R.id.superplayer_iv_sound_track) {
+            showSoundTrackView();
+        } else if (i == R.id.superplayer_iv_subtitle) {
+            showSubTitleView();
         }
+    }
+
+    private void showSoundTrackView() {
+        hide();
+        mVodSoundTrackView.setVisibility(VISIBLE);
+    }
+
+    private void showSubTitleView() {
+        hide();
+        mVodSubtitlesView.setVisibility(VISIBLE);
     }
 
     private void showCacheList() {
@@ -1088,6 +1134,16 @@ public class FullScreenPlayer extends AbsPlayer implements View.OnClickListener,
         mDownloadMenuView.dismiss();
     }
 
+    public void setVodSelectionViewPositionAndData(List<TXTrackInfo> models) {
+        mVodSoundTrackView.setModelList(models);
+        mIvSoundTrack.setVisibility(models.size() == 0 ? GONE : VISIBLE);
+    }
+
+    public void setVodSubtitlesViewPositionAndData(List<TXTrackInfo> models) {
+        mVodSubtitlesView.setModelList(models);
+        mIvSubtitle.setVisibility(models.size() == 0 ? GONE : VISIBLE);
+    }
+
     /**
      * 刷新缓存列表的视频缓存状态
      */
@@ -1095,6 +1151,20 @@ public class FullScreenPlayer extends AbsPlayer implements View.OnClickListener,
         if (mDownloadMenuView.isShowing()) {
             mDownloadMenuView.notifyRefreshCacheState();
         }
+    }
+
+    @Override
+    public void onClickSoundTrackItem(TXTrackInfo clickInfo) {
+        mVodSoundTrackView.setVisibility(GONE);
+        mControllerCallback.onClickSoundTrackItem(clickInfo);
+        hide();
+    }
+
+    @Override
+    public void onClickSubtitlesItem(TXTrackInfo clickInfo) {
+        mVodSubtitlesView.setVisibility(GONE);
+        mControllerCallback.onClickSubtitleItem(clickInfo);
+        hide();
     }
 
     /**
@@ -1113,5 +1183,23 @@ public class FullScreenPlayer extends AbsPlayer implements View.OnClickListener,
                 mWefControllerFullScreen.get().mIvLock.setVisibility(GONE);
             }
         }
+    }
+
+    @Override
+    public void onClickSetting() {
+        mVodSubtitlesView.setVisibility(GONE);
+        mVodSubtitlesSettingView.setVisibility(VISIBLE);
+    }
+
+    @Override
+    public void onClickBackButton() {
+        mVodSubtitlesView.setVisibility(VISIBLE);
+        mVodSubtitlesSettingView.setVisibility(GONE);
+    }
+
+    @Override
+    public void onCLickDoneButton(Map map) {
+        mControllerCallback.onClickSubtitleViewDoneButton(map);
+        onClickBackButton();
     }
 }

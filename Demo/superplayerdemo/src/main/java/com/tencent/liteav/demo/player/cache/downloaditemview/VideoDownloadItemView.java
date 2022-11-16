@@ -77,7 +77,7 @@ public class VideoDownloadItemView extends RelativeLayout implements VideoDonwlo
      */
     public void setVideoInfo(TXVodDownloadMediaInfo mediaInfo) {
         this.mMediaInfo = mediaInfo;
-        VideoModel videoModel = new VideoModel();
+        final VideoModel videoModel = new VideoModel();
         videoModel.isEnableDownload = true;
         if (null != mediaInfo.getDataSource()) {
             TXVodDownloadDataSource dataSource = mediaInfo.getDataSource();
@@ -115,11 +115,19 @@ public class VideoDownloadItemView extends RelativeLayout implements VideoDonwlo
                 }
             });
         } else {
-            int duration = mediaInfo.getDuration();
-            mTvVideoDurationView.setText(mVideoDownloadHelper.formattedTime(duration));
-            Glide.with(getContext()).load(VideoDownloadHelper.DEFAULT_DOWNLOAD_VIDEO_COVER).into(mIvVideoCoverView);
-            mTvVideoNameView.setText(R.string.superplayer_test_video);
-            videoModel.videoURL = mediaInfo.getUrl();
+            VideoDownloadCenter.getInstance()
+                    .getDownloadMediaInfo(mediaInfo.getUrl(), new VideoDownloadCenter.OnMediaInfoFetchListener() {
+                        @Override
+                        public void onReady(TXVodDownloadMediaInfo mediaInfo) {
+                            int duration = mediaInfo.getDuration() / 1000;
+                            mTvVideoDurationView.setText(mVideoDownloadHelper.formattedTime(duration));
+                            Glide.with(getContext())
+                                    .load(VideoDownloadHelper.DEFAULT_DOWNLOAD_VIDEO_COVER)
+                                    .into(mIvVideoCoverView);
+                            mTvVideoNameView.setText(R.string.superplayer_test_video);
+                            videoModel.videoURL = mediaInfo.getUrl();
+                        }
+                    });
         }
         updateDownloadState(mediaInfo);
         this.mVideoModel = videoModel;

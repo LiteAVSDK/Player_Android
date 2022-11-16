@@ -1,0 +1,180 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:paddingBottom="20dp"
+    android:paddingRight="20dp"
+    android:background="@color/superplayer_super_vod_vtt_bg">
+
+
+    <ImageView
+        android:id="@+id/subtitle_setting_back"
+        android:layout_marginTop="20dp"
+        android:layout_marginLeft="20dp"
+        android:src="@drawable/common_ic_back"
+        android:layout_width="15dp"
+        android:layout_height="15dp"/>
+
+    <TextView
+        android:layout_toRightOf="@id/subtitle_setting_back"
+        android:text="Subtitles Setting"
+        android:textColor="@color/superplayer_white"
+        android:id="@+id/subtitle_setting_title"
+        android:layout_marginTop="17dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"/>
+
+    <View
+        android:id="@+id/view_divide"
+        android:layout_below="@id/subtitle_setting_back"
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:layout_marginTop="20dp"
+        android:background="@color/superplayer_color_gray" />
+
+    <RelativeLayout
+        android:layout_marginTop="20dp"
+        android:id="@+id/subtitle_setting_font_color_rv"
+        android:layout_marginLeft="20dp"
+        android:layout_below="@id/view_divide"
+        android:layout_width="match_parent"
+        android:layout_height="40dp">
+        <TextView
+            android:id="@+id/subtitle_setting_font_color_tv"
+            android:text="Font Color"
+            android:textColor="@color/superplayer_white"
+            android:layout_centerVertical="true"
+            android:textSize="14sp"
+            android:layout_width="90dp"
+            android:layout_height="wrap_content"/>
+        <Spinner
+            android:entries="@array/font_color"
+            android:spinnerMode="dialog"
+            android:id="@+id/sp_font_color"
+            android:layout_alignParentRight="true"
+            android:layout_centerVertical="true"
+            android:layout_marginLeft="15dp"
+            android:layout_toRightOf="@id/subtitle_setting_font_color_tv"
+            android:layout_width="match_parent"
+            android:layout_height="60dp"/>
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:layout_marginTop="20dp"
+        android:id="@+id/subtitle_setting_font_size_rv"
+        android:layout_marginLeft="20dp"
+        android:layout_below="@id/subtitle_setting_font_color_rv"
+        android:layout_width="match_parent"
+        android:layout_height="40dp">
+        <TextView
+            android:id="@+id/subtitle_setting_font_size_tv"
+            android:text="Bond Font"
+            android:textColor="@color/superplayer_white"
+            android:textSize="14sp"
+            android:layout_centerVertical="true"
+            android:layout_width="90dp"
+            android:layout_height="wrap_content"/>
+        <Spinner
+            android:entries="@array/font_size"
+            android:id="@+id/sp_font_size"
+            android:layout_centerVertical="true"
+            android:layout_alignParentRight="true"
+            android:layout_toRightOf="@id/subtitle_setting_font_size_tv"
+            android:layout_marginLeft="15dp"
+            android:layout_width="168dp"
+            android:layout_height="40dp"/>
+    </RelativeLayout>
+
+
+    <RelativeLayout
+        android:layout_marginTop="20dp"
+        android:id="@+id/subtitle_setting_outline_width_rv"
+        android:layout_marginLeft="20dp"
+        android:layout_below="@id/subtitle_setting_font_size_rv"
+        android:layout_width="match_parent"
+        android:layout_height="40dp">
+        <TextView
+            android:id="@+id/subtitle_setting_outline_width_tv"
+            android:text="Outline Width"
+            android:textColor="@color/superplayer_white"
+            android:textSize="14sp"
+            android:layout_centerVertical="true"
+            android:layout_width="90dp"
+            android:layout_height="wrap_content"/>
+        <Spinner
+            android:entries="@array/outline_width"
+            android:id="@+id/sp_outline_width"
+            android:layout_alignParentRight="true"
+            android:layout_centerVertical="true"
+            android:layout_toRightOf="@id/subtitle_setting_outline_width_tv"
+            android:layout_marginLeft="15dp"
+            android:layout_width="168dp"
+            android:layout_height="40dp"/>
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:layout_marginTop="20dp"
+        android:id="@+id/subtitle_setting_outline_color_rv"
+        android:layout_marginLeft="20dp"
+        android:layout_below="@id/subtitle_setting_outline_width_rv"
+        android:layout_width="match_parent"
+        android:layout_height="40dp">
+        <TextView
+            android:id="@+id/subtitle_setting_outline_color_tv"
+            android:text="Outline Color"
+            android:textColor="@color/superplayer_white"
+            android:textSize="14sp"
+            android:layout_centerVertical="true"
+            android:layout_width="90dp"
+            android:layout_height="wrap_content"/>
+        <Spinner
+            android:entries="@array/outline_color"
+            android:id="@+id/sp_outline_color"
+            android:layout_alignParentRight="true"
+            android:layout_centerVertical="true"
+            android:layout_toRightOf="@id/subtitle_setting_outline_color_tv"
+            android:layout_marginLeft="15dp"
+            android:layout_width="168dp"
+            android:layout_height="40dp"/>
+    </RelativeLayout>
+x
+    <View
+        android:id="@+id/view_divide_two"
+        android:layout_below="@id/subtitle_setting_outline_color_rv"
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:layout_marginTop="1dp"
+        android:background="@color/superplayer_color_gray" />
+
+    <LinearLayout
+        android:layout_below="@id/view_divide_two"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+    <Button
+        android:layout_marginTop="10dp"
+        android:layout_marginLeft="20dp"
+        android:textColor="@color/superplayer_white"
+        android:text="Done"
+        android:background="@drawable/superplayer_setting_button"
+        android:id="@+id/subtitle_setting_done"
+        android:layout_width="0dp"
+        android:layout_marginRight="10dp"
+        android:layout_weight="1"
+        android:layout_height="24dp"/>
+
+    <Button
+        android:layout_alignParentRight="true"
+        android:textColor="@color/superplayer_white"
+        android:text="Reset"
+        android:layout_marginRight="10dp"
+        android:layout_marginTop="10dp"
+        android:background="@drawable/superplayer_setting_button"
+        android:id="@+id/subtitle_setting_reset"
+        android:layout_width="0dp"
+        android:layout_weight="1"
+        android:layout_height="24dp"/>
+    </LinearLayout>
+
+</RelativeLayout>

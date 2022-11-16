@@ -2,11 +2,14 @@ package com.tencent.liteav.demo.superplayer.ui.view;
 
 import android.app.Activity;
 import android.content.BroadcastReceiver;
+import android.content.ContentResolver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.media.AudioManager;
+import android.provider.Settings;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.Window;
@@ -103,7 +106,7 @@ public class VodMoreView extends RelativeLayout implements RadioGroup.OnCheckedC
 
         mAudioManager = (AudioManager) context.getSystemService(Context.AUDIO_SERVICE);
         updateCurrentVolume();
-        updateCurrentLight();
+        updateCurrentLightProgress();
     }
 
     private void updateCurrentVolume() {
@@ -116,18 +119,14 @@ public class VodMoreView extends RelativeLayout implements RadioGroup.OnCheckedC
         mSeekBarVolume.setProgress(progress);
     }
 
-    private void updateCurrentLight() {
+    private void updateCurrentLightProgress() {
         Activity activity = (Activity) mContext;
-        Window window = activity.getWindow();
-
-        WindowManager.LayoutParams params = window.getAttributes();
-        params.screenBrightness = getActivityBrightness((Activity) mContext);
-        window.setAttributes(params);
-        if (params.screenBrightness == -1) {
-            updateBrightProgress(100);
+        float brightness = getActivityBrightness(activity);
+        if (brightness == -1) {
+            mSeekBarLight.setProgress(100);
             return;
         }
-        mSeekBarLight.setProgress((int) (params.screenBrightness * 100));
+        mSeekBarLight.setProgress((int) (brightness * 100));
     }
 
     /**
@@ -136,10 +135,15 @@ public class VodMoreView extends RelativeLayout implements RadioGroup.OnCheckedC
      * @param activity
      * @return
      */
-    public static float getActivityBrightness(Activity activity) {
-        Window localWindow = activity.getWindow();
-        WindowManager.LayoutParams params = localWindow.getAttributes();
-        return params.screenBrightness;
+    public float getActivityBrightness(Activity activity) {
+        float value = 0;
+        ContentResolver cr = activity.getContentResolver();
+        try {
+            value = ((float) Settings.System.getInt(cr, Settings.System.SCREEN_BRIGHTNESS)) / 255.0f;
+        } catch (Settings.SettingNotFoundException e) {
+            e.printStackTrace();
+        }
+        return value;
     }
 
     private SeekBar.OnSeekBarChangeListener mVolumeChangeListener = new SeekBar.OnSeekBarChangeListener() {
@@ -280,7 +284,7 @@ public class VodMoreView extends RelativeLayout implements RadioGroup.OnCheckedC
         super.setVisibility(visibility);
         if (visibility == View.VISIBLE) {
             updateCurrentVolume();
-            updateCurrentLight();
+            updateCurrentLightProgress();
             SuperPlayerGlobalConfig config = SuperPlayerGlobalConfig.getInstance();
             mSwitchAccelerate.setOnCheckedChangeListener(null);
             mSwitchAccelerate.setChecked(config.enableHWAcceleration);

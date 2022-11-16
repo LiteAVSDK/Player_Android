@@ -57,7 +57,9 @@ import com.tencent.liteav.demo.superplayer.ui.player.WindowPlayer;
 import com.tencent.liteav.demo.superplayer.ui.view.DanmuView;
 import com.tencent.liteav.demo.superplayer.ui.view.DynamicWatermarkView;
 import com.tencent.rtmp.TXLivePlayer;
+import com.tencent.rtmp.TXTrackInfo;
 import com.tencent.rtmp.ui.TXCloudVideoView;
+import com.tencent.rtmp.ui.TXSubtitleView;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -66,10 +68,9 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Method;
-import java.sql.Date;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 /**
  * 超级播放器view
@@ -116,6 +117,7 @@ public class SuperPlayerView extends RelativeLayout
     private DynamicWatermarkView       mDynamicWatermarkView;
     private ISuperPlayerListener       mSuperPlayerListener;
     private PermissionManager          mStoragePermissionManager;
+    private TXSubtitleView             mSubtitleView;
 
     public SuperPlayerView(Context context) {
         super(context);
@@ -148,6 +150,8 @@ public class SuperPlayerView extends RelativeLayout
         mWindowPlayer = (WindowPlayer) mRootView.findViewById(R.id.superplayer_controller_small);
         mFloatPlayer = (FloatPlayer) mRootView.findViewById(R.id.superplayer_controller_float);
         mDanmuView = (DanmuView) mRootView.findViewById(R.id.superplayer_danmuku_view);
+        mSubtitleView = (TXSubtitleView) mRootView.findViewById(R.id.subtitle_view);
+
         //防止stop中空指针异常
         mSuperPlayerModelList = new ArrayList<>();
         mDynamicWatermarkLayout = mRootView.findViewById(R.id.superplayer_dynamic_watermark_layout);
@@ -167,10 +171,12 @@ public class SuperPlayerView extends RelativeLayout
         mRootView.removeView(mFullScreenPlayer);
         mRootView.removeView(mFloatPlayer);
         mRootView.removeView(mDynamicWatermarkLayout);
+        mRootView.removeView(mSubtitleView);
 
         addView(mTXCloudVideoView);
         addView(mDynamicWatermarkLayout);
         addView(mDanmuView);
+        addView(mSubtitleView);
         mStoragePermissionManager = new PermissionManager(getContext(), PermissionManager.PermissionType.STORAGE);
         mStoragePermissionManager.setOnStoragePermissionGrantedListener(this);
     }
@@ -178,7 +184,7 @@ public class SuperPlayerView extends RelativeLayout
     private void initPlayer() {
         mSuperPlayer = new SuperPlayerImpl(mContext, mTXCloudVideoView);
         mSuperPlayer.setObserver(new PlayerObserver());
-
+        mSuperPlayer.setSubTitleView(mSubtitleView);
         if (mSuperPlayer.getPlayerMode() == SuperPlayerDef.PlayerMode.FULLSCREEN) {
             addView(mFullScreenPlayer);
             mFullScreenPlayer.hide();
@@ -755,6 +761,21 @@ public class SuperPlayerView extends RelativeLayout
                 mPlayerViewCallback.onShowCacheListClick();
             }
         }
+
+        @Override
+        public void onClickSoundTrackItem(TXTrackInfo clickInfo) {
+            mSuperPlayer.onClickSoundTrackItem(clickInfo);
+        }
+
+        @Override
+        public void onClickSubtitleItem(TXTrackInfo clickInfo) {
+            mSuperPlayer.onClickSubTitleItem(clickInfo);
+        }
+
+        @Override
+        public void onClickSubtitleViewDoneButton(Map map) {
+            mSuperPlayer.onSubtitleSettingDone(map);
+        }
     };
 
     private void handleResume() {
@@ -1108,6 +1129,19 @@ public class SuperPlayerView extends RelativeLayout
             if (mDynamicWatermarkView != null) {
                 mDynamicWatermarkView.show();
             }
+        }
+
+        @Override
+        public void onRcvTrackInformation(List<TXTrackInfo> infoList) {
+            super.onRcvTrackInformation(infoList);
+            mFullScreenPlayer.setVodSelectionViewPositionAndData(infoList);
+        }
+
+
+        @Override
+        public void onRcvSubTitleTrackInformation(List<TXTrackInfo> infoList) {
+            super.onRcvSubTitleTrackInformation(infoList);
+            mFullScreenPlayer.setVodSubtitlesViewPositionAndData(infoList);
         }
     };
 

@@ -39,6 +39,11 @@ public class SuperPlayerModel {
     public int appId;              // AppId 用于腾讯云点播 File ID 播放及腾讯云直播时移功能
 
     /**
+     * 外挂字幕
+     */
+    public List<SubtitleSourceModel> subtitleSourceModelList = null;
+
+    /**
      * ------------------------------------------------------------------
      * 直接使用URL播放
      * <p>
