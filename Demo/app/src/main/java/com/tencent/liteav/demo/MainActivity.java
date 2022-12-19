@@ -22,6 +22,7 @@ import com.tencent.liteav.demo.common.utils.IntentUtils;
 import com.tencent.liteav.demo.common.widget.expandableadapter.BaseExpandableRecyclerViewAdapter;
 import com.tencent.liteav.demo.player.demo.FeedActivity;
 import com.tencent.liteav.demo.player.demo.SuperPlayerActivity;
+import com.tencent.liteav.demo.player.demo.VodPlayerActivity;
 import com.tencent.liteav.demo.player.demo.shortvideo.view.ShortVideoActivity;
 import com.tencent.rtmp.TXLiveBase;
 
@@ -143,6 +144,7 @@ public class MainActivity extends Activity {
         // 初始化播放器
         List<ChildBean> playerChildList = new ArrayList<>();
         playerChildList.add(new ChildBean(getString(R.string.app_item_super_player), R.drawable.play, 3, SuperPlayerActivity.class));
+        playerChildList.add(new ChildBean(getString(R.string.app_vod_player), R.drawable.play, 3, VodPlayerActivity.class));
         playerChildList.add(new ChildBean(getString(R.string.app_item_shortvideo_player), R.drawable.play, 3, ShortVideoActivity.class));
         playerChildList.add(new ChildBean(getString(R.string.app_feed_player), R.drawable.play, 3, FeedActivity.class));
         if (playerChildList.size() != 0) {
