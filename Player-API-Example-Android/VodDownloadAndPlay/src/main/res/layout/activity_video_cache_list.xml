@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/superplayer_content_bg"
+    tools:context=".demo.VideoDownloadListActivity">
+
+    <RelativeLayout
+        android:id="@+id/superplayer_rl_title"
+        android:layout_width="match_parent"
+        android:layout_height="48dp">
+
+        <ImageView
+            android:id="@+id/superplayer_iv_back"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_centerVertical="true"
+            android:paddingLeft="10dp"
+            android:src="@drawable/superplayer_ic_new_vod_back_normal" />
+
+        <TextView
+            android:id="@+id/superplayer_tv_url"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true"
+            android:layout_gravity="center"
+            android:layout_marginRight="5dp"
+            android:paddingLeft="2dp"
+            android:paddingRight="2dp"
+            android:singleLine="true"
+            android:text="@string/superplayer_cache_name"
+            android:textColor="@color/superplayer_white"
+            android:textSize="16sp" />
+
+        <ImageView
+            android:id="@+id/superplayer_btn_scan"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:layout_alignParentEnd="true"
+            android:layout_marginEnd="10dp"
+            android:src="@drawable/superplayer_ic_qcode" />
+
+
+        <ImageButton
+            android:id="@+id/superplayer_ib_webrtc_link_button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:layout_marginEnd="5dp"
+            android:background="@color/superplayer_transparent"
+            android:layout_toLeftOf="@id/superplayer_btn_scan"
+            android:padding="10dp"
+            android:src="@drawable/superplayer_cache_list_warnning" />
+
+        <View
+            android:id="@+id/superplayer_view_title_mask"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:alpha="0.7"
+            android:background="@color/superplayer_black"
+            android:visibility="gone" />
+    </RelativeLayout>
+
+    <com.tencent.liteav.demo.player.cache.VideoDownloadListView
+        android:id="@+id/cache_vclv_video_list"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginTop="10dp"
+        android:layout_below="@id/superplayer_rl_title"/>
+
+</RelativeLayout>

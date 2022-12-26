@@ -1,0 +1,124 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:background="@color/superplayer_transparent"
+    android:paddingBottom="10dp"
+    android:paddingStart="15dp"
+    android:paddingEnd="15dp">
+
+    <ImageView
+        android:id="@+id/cache_iv_cache_video_cover"
+        android:layout_width="120dp"
+        android:layout_height="68dp"
+        android:scaleType="centerCrop"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        tools:src="@drawable/superplayer_default_cover_thumb"/>
+
+    <TextView
+        android:id="@+id/cache_tv_video_duration"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintEnd_toEndOf="@id/cache_iv_cache_video_cover"
+        app:layout_constraintBottom_toBottomOf="@id/cache_iv_cache_video_cover"
+        android:layout_marginEnd="7dp"
+        android:layout_marginBottom="7dp"
+        android:textColor="@color/superplayer_white"
+        android:textSize="11sp"
+        tools:text="01:00"
+        tools:ignore="SmallSp" />
+
+    <TextView
+        android:id="@+id/cache_tv_video_quality"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintStart_toEndOf="@+id/cache_tv_video_title"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="@id/cache_tv_video_title"
+        app:layout_constraintBottom_toBottomOf="@id/cache_tv_video_title"
+        app:layout_constraintHorizontal_bias="0"
+        app:layout_constraintHorizontal_chainStyle="packed"
+        android:layout_marginStart="3dp"
+        android:paddingTop="1dp"
+        android:paddingBottom="1dp"
+        android:paddingStart="4dp"
+        android:paddingEnd="4dp"
+        android:background="@drawable/superplayer_cache_round_quality_bg"
+        android:textSize="10sp"
+        android:textColor="@color/superplayer_white"
+        android:gravity="center"
+        tools:text="高清"
+        tools:ignore="SmallSp" />
+
+    <TextView
+        android:id="@+id/cache_tv_video_title"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintStart_toEndOf="@id/cache_iv_cache_video_cover"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toTopOf="@+id/cache_tv_cache_progress"
+        app:layout_constraintEnd_toStartOf="@id/cache_tv_video_quality"
+        app:layout_constraintVertical_chainStyle="packed"
+        app:layout_constraintHorizontal_chainStyle="packed"
+        app:layout_constraintHorizontal_bias="0"
+        app:layout_constrainedWidth="true"
+        android:lines="1"
+        android:maxLines="1"
+        android:singleLine="true"
+        android:textSize="15sp"
+        android:textColor="@color/superplayer_white"
+        android:ellipsize="end"
+        android:layout_marginBottom="5dp"
+        android:layout_marginStart="10dp"/>
+
+    <TextView
+        android:id="@id/cache_tv_cache_progress"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintStart_toStartOf="@id/cache_tv_video_title"
+        app:layout_constraintTop_toBottomOf="@id/cache_tv_video_title"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintHorizontal_bias="0"
+        tools:text="@string/superplayer_cache_progress"
+        android:textColor="@color/superplayer_color_gray"
+        android:textSize="12sp"
+        android:layout_marginTop="5dp"/>
+
+
+    <LinearLayout
+        android:id="@+id/cache_ll_status_container"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        app:layout_constraintStart_toEndOf="@id/cache_tv_cache_progress"
+        app:layout_constraintTop_toTopOf="@id/cache_tv_cache_progress"
+        app:layout_constraintBottom_toBottomOf="@id/cache_tv_cache_progress"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="1">
+
+        <View
+            android:id="@+id/cache_v_status_indicator"
+            android:layout_width="6dp"
+            android:layout_height="6dp"
+            android:layout_gravity="center_vertical"
+            android:layout_marginEnd="3dp"
+            android:background="@drawable/superplayer_cache_circle_status_caching"/>
+
+
+        <TextView
+            android:id="@+id/cache_tv_status_text"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="@color/cache_status_text_color"
+            android:layout_gravity="center_vertical"
+            android:textSize="12sp"/>
+
+    </LinearLayout>
+
+
+</androidx.constraintlayout.widget.ConstraintLayout>

@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    package="com.tencent.player.baseplayer">
+
+    <application android:theme="@style/Theme.AppCompat.NoActionBar">
+        <activity
+            android:name=".PlayerSettingActivity"
+            android:exported="false"
+            android:label="@string/title_activity_player_setting"
+            android:theme="@style/NoActionBar" />
+        <activity
+            android:name=".VodPlayerActivity"
+            android:exported="false" />
+        <activity
+            android:name=".QRCodeScanActivity"
+            android:screenOrientation="portrait" />
+    </application>
+
+</manifest>

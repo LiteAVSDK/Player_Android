@@ -1,0 +1,29 @@
+<resources>
+    <string name="app_name">Player-API-Example-Android</string>
+    <string name="title_play_with_txcloud_video_view">Play With TXCloudVideoView</string>
+    <string name="sub_title_play_with_txcloud_video_view">the usage of TXCloudVideoView</string>
+    <string name="title_play_with_surface_view">Play With SurfaceView</string>
+    <string name="sub_title_play_with_surface_view">the usage of SurfaceView</string>
+    <string name="title_play_with_texture_view">Play With TextureView</string>
+    <string name="sub_title_play_with_texture_view">the usage of TextureView</string>
+    <string name="title_vod_preload_demo">Vod Prelaod Demo</string>
+    <string name="sub_title_vod_preload_demo">the usage of TXVodPreloadManager</string>
+    <string name="title_vod_set_auto_play">Vod setAutoPlay Demo</string>
+    <string name="sub_title_vod_set_auto_play">the usage of setAutoPlay</string>
+    <string name="title_vod_process_seek">Vod Playback Progress And Seek Demo</string>
+    <string name="sub_title_vod_process_seek">the usage of progress and seek</string>
+    <string name="video_download">Video Download Demo</string>
+    <string name="sub_title_video_download">the use of video download</string>
+    <string name="begin_download">Begin Download</string>
+    <string name="finish_download">Finish Download</string>
+    <string name="set_preferred_resolution">Set Preferred Resolution</string>
+    <string name="sub_set_preferred_resolution">The Usage Of Set Preferred Resolution</string>
+    <string name="stuck_event">The PlayBack Is Stuck</string>
+    <string name="playback_stuck_monitor">PlayBack Stuck Monitor</string>
+    <string name="sub_playback_stuck_monitor">The Usage Of PlayBack Stuck Monitor</string>
+    <string name="have_no_permission">The app was not allowed to write in your storage</string>
+    <string name="play_next_video">Start play next video</string>
+    <string name="title_vod_download_and_play">Vod Download And Play</string>
+    <string name="sub_title_vod_download_and_play">The usage of Vod Download And Play</string>
+    <string name="basic_function">Basic Function</string>
+</resources>

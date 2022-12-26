@@ -1,0 +1,109 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="superplayer_app_name">Superplayer</string>
+    <string name="superplayer_cache_name">offline download</string>
+    <string name="superplayer_cancel">Cancel</string>
+    <string name="superplayer_ok">OK</string>
+    <string name="superplayer_vod_ffplay">ffplay</string>
+    <string name="superplayer_vod_exo">exo</string>
+    <string name="superplayer_scancode_tip">Invalid playback URL. Check the QR code.</string>
+    <string name="superplayer_small_video_special_effects_editing">UGSV - Special Effects</string>
+    <string name="superplayer_set_appid_fileid">Set AppID, FileID and PSign</string>
+    <string name="superplayer_set_play_url">Set Playback URL</string>
+    <string name="superplayer_input_correct_appid">Enter a valid AppID.</string>
+    <string name="superplayer_input_correct_fileid">Enter a valid FileID.</string>
+    <string name="superplayer_input_correct_play_url">Enter a valid playback URL.</string>
+    <string name="superplayer_request_fail">Failed to request FileID.</string>
+    <string name="superplayer_definition_super">FHD</string>
+    <string name="superplayer_definition_high">HD</string>
+    <string name="superplayer_definition_standard">SD</string>
+    <string name="superplayer_test_video">Test Video</string>
+    <string name="superplayer_fetch_upload_list_video_fail">Failed to obtain the list of uploaded videos.</string>
+    <string name="superplayer_speed_rate">Speed</string>
+    <string name="superplayer_please_scan_qrcode">Enter a playback URL or scan QR code.</string>
+    <string name="superplayer_back">Back</string>
+    <string name="superplayer_resolution_normal">Original</string>
+    <string name="superplayer_resolution_low">Smooth</string>
+    <string name="superplayer_open_hardware_speedup">Hardware acceleration enabled. The playback will restart.</string>
+    <string name="superplayer_close_hardware_speedup">Hardware acceleration disabled. The playback will restart.</string>
+    <string name="superplayer_not_play_url">No playback URL.</string>
+    <string name="superplayer_vip_title">Try function demo </string>
+    <string name="superplayer_vip_watch_tip">You can try it for %ss, open VIP to watch the full video</string>
+    <string name="superplayer_cover_video_name">Custom cover presentation</string>
+    <string name="app_feed_title">Feed stream play</string>
+    <string name="app_feed_detail_title">Video details</string>
+    <string name="superplayer_dynamic_watermark_title">Dynamic watermark demo</string>
+    <string name="superplayer_dynamic_watermark_tip">shipinyun</string>
+    <string name="superplayer_cover_title">Custom cover presentation</string>
+    <string name="superplayer_offline_cache_title">Offline download（Fullscreen）demo</string>
+    <string name="superplayer_carousel_list_title">Video list carousel demo</string>
+
+    <string name="superplayer_cache_progress">download progress：%1$d%%</string>
+    <string name="superplayer_cache_state_cacheing">downloading</string>
+    <string name="superplayer_cache_state_pause">download pause</string>
+    <string name="superplayer_cache_state_finish">download complete</string>
+
+    <string name="superplayer_hint">Tip</string>
+    <string name="superplayer_delete_video_confirm">Are you sure you want to delete this video</string>
+    <string name="superplayer_delete_success">Deleted successfully</string>
+    <string name="superplayer_delete_failed">Deleted failed</string>
+    <string name="superplayer_cahche_empty">No data</string>
+    <string name="superplayer_net_error">The network is abnormal. Please try again later</string>
+
+    <string name="superplayer_live_list">Live</string>
+    <string name="superplayer_vod_list">VOD</string>
+
+    <string name="tencent_cloud_audio_and_video_achievements_title">Tencent Cloud Audio/Video Excellence</string>
+    <string name="tencent_cloud_audio_and_video_achievements_introduction">No. 1 in audio/video cloud since 2018</string>
+    <string name="tencent_cloud_audio_and_video_achievements_detail">Proven track record in audio/video coding, cloud integration (RT-ONE), and SDKs (RT-Cube)</string>
+
+    <string name="tencent_cloud_audio_and_video_steady_title">Tencent Cloud Audio/Video - Smooth</string>
+    <string name="tencent_cloud_audio_and_video_steady_introduction">Smooth and stutter-free playback</string>
+    <string name="tencent_cloud_audio_and_video_steady_detail">Smooth playback guaranteed by Tencent Cloud\'s rich experience and proprietary RT-ONE network</string>
+
+    <string name="tencent_cloud_audio_and_video_real_title">Tencent Cloud Audio/Video - Real</string>
+    <string name="tencent_cloud_audio_and_video_real_introduction">Just like in the real world</string>
+    <string name="tencent_cloud_audio_and_video_real_detail">Listen, talk, and interact like in the real world</string>
+
+    <string name="tencent_cloud_audio_and_video_complete_title">Tencent Cloud Audio/Video - Versatile</string>
+    <string name="tencent_cloud_audio_and_video_complete_introduction">A complete range of solutions</string>
+    <string name="tencent_cloud_audio_and_video_complete_detail">A diverse product portfolio and various solutions for a wide range of application scenarios</string>
+
+    <string name="tencent_cloud_business_introduction_title">Get to Know Tencent Cloud</string>
+    <string name="tencent_cloud_business_introduction_introduction">A trusted partner for your digital journey</string>
+    <string name="tencent_cloud_business_introduction_detail">Join Tencent Cloud to build digital infrastructure and help shape the digital economy</string>
+
+    <string name="what_are_numbers_title">What is Digitization?</string>
+    <string name="what_are_numbers_introduction">What will a digital future look like?</string>
+    <string name="what_are_numbers_detail">Embrace digitization together with Tencent Cloud to boost productivity</string>
+
+    <string name="simplify_complexity_and_build_big_from_small_title">Simpler and Lighter</string>
+    <string name="simplify_complexity_and_build_big_from_small_introduction">Tencent Cloud is dedicated to bringing you simpler and lighter cloud solutions</string>
+    <string name="simplify_complexity_and_build_big_from_small_detail">A simpler digitization process and lighter solutions to help you realize your ambition</string>
+
+    <string name="tencent_cloud_audio_and_video_title">Tencent Cloud Audio/Video</string>
+    <string name="tencent_cloud_audio_and_video_introduction">Online experiences have never been more real</string>
+    <string name="tencent_cloud_audio_and_video_detail">Tencent Cloud offers a robust set of audio/video PaaS capabilities for you to leverage</string>
+
+    <string name="short_video_get_data_failed">Failed to request data</string>
+    <string name="short_video_play_back">Short video playback</string>
+    <string name="short_video_list">Video list</string>
+
+    <string name="vod_player">VOD player</string>
+
+    <string name="superplayer_flu">FLU</string>
+    <string name="superplayer_sd">SD</string>
+    <string name="superplayer_hd">HD</string>
+    <string name="superplayer_fsd">FSD</string>
+    <string name="superplayer_fhd">FHD</string>
+    <string name="superplayer_fhd2">FHD</string>
+    <string name="superplayer_2k">2K</string>
+    <string name="superplayer_4k">4K</string>
+    <string name="superplayer_original_picture">Original</string>
+
+    <string name="superplayer_start_download">start downloading video %1$s</string>
+    <string name="superplayer_download_failed">downloading video %1$s failed</string>
+    <string name="superplayer_download_quality_invalid">this video quality is invalid,download failed,please download video by others quality</string>
+
+
+</resources>

@@ -1,0 +1,302 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/root"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/superplayer_content_bg"
+    android:orientation="vertical">
+
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginTop="0dp">
+
+        <com.tencent.rtmp.ui.TXCloudVideoView
+            android:id="@+id/video_view"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_centerInParent="true"
+            android:visibility="visible" />
+
+        <ImageView
+            android:id="@+id/playerHeaderView"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:src="@drawable/superplayer_content_bg"
+            android:visibility="gone" />
+
+        <SurfaceView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginLeft="10dp"
+            android:layout_marginTop="110dp"
+            android:layout_marginRight="10dp"
+            android:layout_marginBottom="110dp"
+            android:visibility="invisible" />
+
+        <TextView
+            android:id="@+id/tv_vod_adaptive"
+            android:layout_marginBottom="140dp"
+            android:layout_gravity="bottom|right"
+            android:text="@string/super_player_tv_vod_self"
+            android:gravity="center"
+            android:background="@color/superplayer_color_gray"
+            android:layout_width="100dp"
+            android:layout_height="30dp"/>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="bottom"
+            android:layout_marginBottom="70dp"
+            android:orientation="vertical">
+
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:paddingLeft="10dp"
+                android:paddingRight="10dp">
+
+                <TextView
+                    android:layout_width="50dp"
+                    android:layout_height="wrap_content"
+                    android:text="@string/superplayer_speed_rate"
+                    android:textColor="@android:color/white"
+                    android:textSize="16sp" />
+
+                <SeekBar
+                    android:id="@+id/seek_bar_speed"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:maxHeight="2.0dip"
+                    android:minHeight="2.0dip"
+                    android:paddingLeft="10dp"
+                    android:paddingRight="10dp"
+                    android:thumb="@drawable/superplayer_seekbar_icon" />
+
+                <TextView
+                    android:id="@+id/text_speed"
+                    android:layout_width="50dp"
+                    android:layout_height="wrap_content"
+                    android:text="1.00"
+                    android:textColor="@android:color/white"
+                    android:textSize="16sp" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="15dp"
+                android:orientation="horizontal"
+                android:paddingLeft="10dp"
+                android:paddingRight="10dp"
+                android:visibility="visible">
+
+                <TextView
+                    android:id="@+id/play_start"
+                    android:layout_width="50dp"
+                    android:layout_height="wrap_content"
+                    android:text="00:00"
+                    android:textColor="@android:color/white"
+                    android:textSize="16sp" />
+
+                <SeekBar
+                    android:id="@+id/seekbar"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:max="0"
+                    android:maxHeight="2.0dip"
+                    android:minHeight="2.0dip"
+                    android:paddingLeft="10dp"
+                    android:paddingRight="10dp"
+                    android:progress="0"
+                    android:thumb="@drawable/superplayer_seekbar_icon" />
+
+                <TextView
+                    android:id="@+id/duration"
+                    android:layout_width="50dp"
+                    android:layout_height="wrap_content"
+                    android:text="--:--"
+                    android:textColor="@android:color/white"
+                    android:textSize="16sp" />
+            </LinearLayout>
+        </LinearLayout>
+
+
+
+            <LinearLayout
+                android:layout_gravity="bottom"
+                android:layout_marginBottom="10dp"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+
+
+
+                <Button
+                    android:layout_weight="1"
+                    android:id="@+id/btnPlay"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/superplayer_play_start" />
+
+
+
+                <Button
+                    android:id="@+id/btnStop"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+
+                    android:background="@drawable/superplayer_close_press" />
+
+
+
+                <Button
+                    android:id="@+id/btnLog"
+                    android:layout_width="0dp"
+                    android:layout_weight="1"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/superplayer_log_show" />
+
+
+                <Button
+                    android:id="@+id/btnMute"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+
+                    android:background="@drawable/superplayer_mic_enable" />
+
+
+
+                <Button
+                    android:id="@+id/btnHWDecode"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+
+                    android:background="@drawable/superplayer_quick" />
+
+
+                <Button
+                    android:id="@+id/btnOrientation"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+
+                    android:background="@drawable/superplayer_landscape" />
+
+
+
+                <Button
+                    android:id="@+id/btnRenderMode"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+
+                    android:background="@drawable/superplayer_fill_mode" />
+
+
+                <Button
+                    android:id="@+id/btnCache"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:background="@drawable/superplayer_cache"
+                    android:clickable="true"
+                    android:onClick="onClick" />
+
+
+            </LinearLayout>
+
+
+        <ImageView
+            android:id="@+id/loadingImageView"
+            android:layout_width="34dp"
+            android:layout_height="34dp"
+            android:layout_gravity="center"
+            android:src="@drawable/superplayer_loading_animation"
+            android:visibility="gone" />
+
+        <com.tencent.player.baseplayer.VodQualityView
+            android:visibility="gone"
+            android:layout_gravity="right|center_vertical"
+            android:id="@+id/vod_quality_view"
+            android:layout_width="200dp"
+            android:layout_height="350dp" />
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="41dp">
+
+            <LinearLayout
+                android:orientation="horizontal"
+                android:id="@+id/back_ll"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerVertical="true"
+                android:layout_alignParentLeft="true"
+                android:layout_marginLeft="12dp">
+
+                <ImageView
+                    android:layout_gravity="center_vertical"
+                    android:layout_width="16dp"
+                    android:layout_height="16dp"
+                    android:src="@drawable/superplayer_btn_back_gray" />
+
+                <TextView
+                    android:id="@+id/back_tv"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_vertical"
+                    android:layout_marginLeft="7dp"
+                    android:gravity="center_vertical"
+                    android:text="@string/superplayer_back"
+                    android:textColor="#ffffff"
+                    android:textSize="16dp" />
+            </LinearLayout>
+
+            <TextView
+                android:id="@+id/title_tv"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerInParent="true"
+                android:text="@string/vod_player"
+                android:textColor="#ffffff"
+                android:textSize="18sp" />
+
+            <ImageButton
+                android:id="@+id/webrtc_link_button"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerVertical="true"
+                android:background="@android:color/transparent"
+                android:padding="10dp"
+                android:layout_toLeftOf="@id/superplayer_vod_setting"
+                android:src="@drawable/superplayer_question_link" />
+
+            <ImageButton
+                android:id="@+id/superplayer_vod_setting"
+                android:layout_width="20dp"
+                android:layout_height="20dp"
+                android:layout_alignParentRight="true"
+                android:layout_centerVertical="true"
+                android:background="@android:color/transparent"
+                android:layout_marginRight="10dp"
+                android:src="@drawable/superplayer_ic_setting" />
+        </RelativeLayout>
+
+        <include
+            layout="@layout/superplayer_title_bar"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="12dp"
+            android:layout_marginTop="45dp"
+            android:layout_marginRight="12dp" />
+    </FrameLayout>
+</LinearLayout>
