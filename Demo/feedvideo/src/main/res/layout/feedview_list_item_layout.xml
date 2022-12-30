@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="256dp">
+
+
+    <RelativeLayout
+        android:id="@+id/feed_list_item_describe_layout"
+        android:layout_width="match_parent"
+        android:layout_height="56dp"
+        android:layout_alignParentBottom="true">
+
+
+        <ImageView
+            android:id="@+id/feed_list_holder_head_img"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:layout_marginLeft="8dp"
+            android:layout_marginBottom="8dp" />
+
+
+        <TextView
+            android:id="@+id/feed_list_holder_title_txt"
+            android:layout_width="match_parent"
+            android:layout_height="20dp"
+            android:layout_alignTop="@+id/feed_list_holder_head_img"
+            android:layout_marginLeft="8dp"
+            android:layout_toRightOf="@+id/feed_list_holder_head_img"
+            android:ellipsize="end"
+            android:gravity="left"
+            android:lines="1"
+            android:textColor="@color/superplayer_white"
+            android:textSize="14sp" />
+
+        <TextView
+            android:id="@+id/feed_list_holder_describe_txt"
+            android:layout_width="match_parent"
+            android:layout_height="17dp"
+            android:layout_alignBottom="@+id/feed_list_holder_head_img"
+            android:layout_marginLeft="8dp"
+            android:layout_toRightOf="@+id/feed_list_holder_head_img"
+            android:ellipsize="end"
+            android:gravity="left"
+            android:lines="1"
+            android:textColor="#ccffffff"
+            android:textSize="12sp" />
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="8dp"
+            android:layout_alignParentBottom="true"
+            android:background="@color/superplayer_black" />
+    </RelativeLayout>
+
+    <com.tencent.liteav.demo.player.demo.feed.player.FeedPlayerView
+        android:id="@+id/feed_list_item_player"
+        android:layout_width="match_parent"
+        android:layout_height="200dp"
+        android:layout_above="@+id/feed_list_item_describe_layout"
+        android:layout_margin="8dp"
+        android:background="@color/superplayer_black" />
+
+</RelativeLayout>

@@ -4,7 +4,6 @@
     <color name="superplayer_black">#000000</color>
     <color name="superplayer_transparent">#00000000</color>
 
-    <color name="superplayer_biz_audio_progress_bg">#00b2ff</color>
     <color name="superplayer_biz_audio_progress_first">#ffffff</color>
     <color name="superplayer_biz_audio_progress_second">#6b6666</color>
 
@@ -17,7 +16,6 @@
     <color name="superplayer_color_tint_red">#FF4C58</color>
 
     <!--special color-->
-    <color name="superplayer_black_a10_color">#1a000000</color>
 
     <color name="superplayer_shape_vip_tip_color">#88000000</color>
 
@@ -32,10 +30,4 @@
     <color name="superplayer_cache_quality_list_bg">#ED000000</color>
     <color name="white">#ffffff</color>
     <color name="black">#000000</color>
-    <color name="red">#ff0000</color>
-    <color name="blue">#87ceeb</color>
-    <color name="green">#90ee90</color>
-    <color name="yellow">#ffff00</color>
-    <color name="megenta">#cd5c5c</color>
-    <color name="cyan">#e0ffff</color>
 </resources>

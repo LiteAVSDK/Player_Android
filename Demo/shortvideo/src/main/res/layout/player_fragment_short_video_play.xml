@@ -1,0 +1,233 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+    <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+
+
+    </RelativeLayout>
+    <com.tencent.liteav.demo.player.demo.shortvideo.view.SuperShortVideoView
+        android:id="@+id/super_short_video_view_play_fragment"
+        android:layout_height="match_parent"
+        android:layout_width="match_parent"
+        />
+
+    <RelativeLayout
+        android:id="@+id/rl_mask_one"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:visibility="gone">
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:alpha="0.7"
+            android:background="@color/superplayer_black"></RelativeLayout>
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerHorizontal="true"
+            android:layout_marginTop="455dp"
+            android:text="@string/short_video_view_more_videos"
+            android:textColor="@color/superplayer_white"
+            android:textSize="16sp" />
+
+        <ImageView
+            android:layout_width="150dp"
+            android:layout_height="150dp"
+            android:layout_centerHorizontal="true"
+            android:layout_marginTop="275dp"
+            android:layout_marginBottom="5dp"
+            android:scaleType="centerCrop"
+            android:src="@drawable/player_up_move" />
+
+
+        <TextView
+            android:id="@+id/tv_mask_one_i_know"
+            android:layout_width="94dp"
+            android:layout_height="40dp"
+            android:layout_centerHorizontal="true"
+            android:layout_marginTop="507dp"
+            android:layout_marginRight="15dp"
+            android:background="@drawable/superplayer_shape_btn_vod_known"
+            android:gravity="center"
+            android:paddingLeft="15dp"
+            android:paddingTop="5dp"
+            android:paddingRight="15dp"
+            android:paddingBottom="5dp"
+            android:text="@string/short_video_i_know"
+            android:textColor="@color/superplayer_white"
+            android:textSize="12sp" />
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:id="@+id/rl_mask_two"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:visibility="gone">
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:alpha="0.7"
+            android:background="@color/superplayer_black"></RelativeLayout>
+
+        <TextView
+            android:layout_width="144dp"
+            android:layout_height="22dp"
+            android:layout_centerHorizontal="true"
+            android:layout_marginTop="455dp"
+            android:gravity="center"
+            android:text="@string/short_video_pause_video"
+            android:textColor="@color/superplayer_white"
+            android:textSize="16sp" />
+
+        <ImageView
+            android:layout_width="150dp"
+            android:layout_height="150dp"
+            android:layout_centerHorizontal="true"
+            android:layout_marginTop="275dp"
+            android:layout_marginBottom="5dp"
+            android:scaleType="centerCrop"
+            android:src="@drawable/player_point_hit" />
+
+        <TextView
+            android:id="@+id/tv_mask_two_i_know"
+            android:layout_width="94dp"
+            android:layout_height="40dp"
+            android:layout_centerHorizontal="true"
+            android:layout_marginTop="507dp"
+            android:layout_marginRight="15dp"
+            android:background="@drawable/superplayer_shape_btn_vod_known"
+            android:gravity="center"
+            android:paddingLeft="15dp"
+            android:paddingTop="5dp"
+            android:paddingRight="15dp"
+            android:paddingBottom="5dp"
+            android:text="@string/short_video_i_know"
+            android:textColor="@color/superplayer_white"
+            android:textSize="12sp" />
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:id="@+id/rl_mask_three"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:visibility="gone">
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:alpha="0.7"
+            android:background="@color/superplayer_black"></RelativeLayout>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerHorizontal="true"
+            android:layout_marginTop="455dp"
+            android:text="@string/short_video_go_to_list"
+            android:textColor="@color/superplayer_white"
+            android:textSize="16sp" />
+
+        <ImageView
+            android:layout_width="150dp"
+            android:layout_height="150dp"
+            android:layout_centerHorizontal="true"
+            android:layout_marginTop="275dp"
+            android:layout_marginBottom="5dp"
+            android:scaleType="centerCrop"
+            android:src="@drawable/player_left_move" />
+
+        <TextView
+            android:id="@+id/tv_mask_three_i_know"
+            android:layout_width="94dp"
+            android:layout_height="40dp"
+            android:layout_centerHorizontal="true"
+            android:layout_marginTop="507dp"
+            android:layout_marginRight="15dp"
+            android:background="@drawable/superplayer_shape_btn_vod_known"
+            android:gravity="center"
+            android:paddingLeft="15dp"
+            android:paddingTop="5dp"
+            android:paddingRight="15dp"
+            android:paddingBottom="5dp"
+            android:text="@string/short_video_i_know"
+            android:textColor="@color/superplayer_white"
+            android:textSize="12sp" />
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:id="@+id/rl_mask_four"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:visibility="gone">
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:alpha="0.7"
+            android:background="@color/superplayer_black"></RelativeLayout>
+
+        <TextView
+            android:layout_width="176dp"
+            android:layout_height="22dp"
+            android:layout_centerHorizontal="true"
+            android:layout_marginTop="580dp"
+            android:text="@string/short_video_move_seeek"
+            android:textColor="@color/superplayer_white"
+            android:textSize="16sp" />
+
+        <ImageView
+            android:layout_width="200dp"
+            android:layout_height="80dp"
+            android:layout_alignParentBottom="true"
+            android:layout_centerHorizontal="true"
+            android:layout_marginBottom="35dp"
+            android:scaleType="centerCrop"
+            android:src="@drawable/player_pull_move" />
+
+        <TextView
+            android:id="@+id/tv_mask_four_i_know"
+            android:layout_width="94dp"
+            android:layout_height="40dp"
+            android:layout_centerHorizontal="true"
+            android:layout_marginTop="507dp"
+            android:layout_marginRight="15dp"
+            android:background="@drawable/superplayer_shape_btn_vod_known"
+            android:gravity="center"
+            android:paddingLeft="15dp"
+            android:paddingTop="5dp"
+            android:paddingRight="15dp"
+            android:paddingBottom="5dp"
+            android:text="@string/short_video_i_know"
+            android:textColor="@color/superplayer_white"
+            android:textSize="12sp" />
+    </RelativeLayout>
+    <ImageButton
+        android:id="@+id/ib_back_play"
+        android:layout_width="54dp"
+        android:layout_height="54dp"
+        android:background="@android:color/transparent"
+        android:paddingLeft="12dp"
+        android:paddingTop="17dp"
+        android:paddingRight="17dp"
+        android:paddingBottom="17dp"
+        android:src="@drawable/superplayer_ic_back" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:paddingTop="14dp"
+        android:text="@string/short_video_play_back"
+        android:textColor="@color/superplayer_white"
+        android:textSize="18sp" />
+</RelativeLayout>

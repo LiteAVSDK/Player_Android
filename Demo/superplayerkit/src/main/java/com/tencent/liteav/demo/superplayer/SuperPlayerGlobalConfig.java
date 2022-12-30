@@ -1,5 +1,6 @@
 package com.tencent.liteav.demo.superplayer;
 
+import com.tencent.liteav.txcplayer.model.TXSubtitleRenderModel;
 import com.tencent.rtmp.TXLiveConstants;
 
 import java.util.HashMap;
@@ -20,6 +21,12 @@ public class SuperPlayerGlobalConfig {
     public static SuperPlayerGlobalConfig getInstance() {
         return Singleton.sInstance;
     }
+
+    public SuperPlayerGlobalConfig() {
+        txSubtitleRenderModel = createVodDefaultSubtitleRenderModel();
+    }
+
+    public TXSubtitleRenderModel txSubtitleRenderModel;
 
     /**
      * 默认播放填充模式 （ 默认播放模式为 自适应模式 ）
@@ -71,10 +78,24 @@ public class SuperPlayerGlobalConfig {
      */
     public Map<String,String> headers = new HashMap<>();
 
+    public static TXSubtitleRenderModel createVodDefaultSubtitleRenderModel() {
+        TXSubtitleRenderModel model = new TXSubtitleRenderModel();
+        model.canvasWidth = 1920;  // 字幕渲染画布的宽
+        model.canvasHeight = 1080;  // 字幕渲染画布的高
+        model.fontColor = 0xFFFFFFFF; // 设置字幕字体颜色，默认白色不同命
+        model.isBondFontStyle = false;  // 设置字幕字体是否为粗体
+        return model;
+    }
+
     /**
      * 播放速率
      */
     public float playRate = 1.0F;
+
+    /**
+     * 是否开启支持画中画功能
+     */
+    public boolean enablePIP = true;
 
     public final static class TXRect {
         public int x;

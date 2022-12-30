@@ -19,7 +19,6 @@
             android:src="@drawable/superplayer_ic_new_vod_back_normal" />
 
         <TextView
-            android:id="@+id/superplayer_tv_url"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_centerInParent="true"

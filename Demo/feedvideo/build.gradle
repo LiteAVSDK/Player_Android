@@ -1,0 +1,41 @@
+apply plugin: 'com.android.library'
+
+android {
+    compileSdkVersion rootProject.ext.compileSdkVersion
+    buildToolsVersion rootProject.ext.buildToolsVersion
+
+    defaultConfig {
+        minSdkVersion rootProject.ext.minSdkVersion
+        targetSdkVersion rootProject.ext.targetSdkVersion
+        versionCode 1
+        versionName "1.0"
+
+        testInstrumentationRunner 'androidx.test.runner.AndroidJUnitRunner'
+
+    }
+
+    buildTypes {
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+        }
+    }
+
+}
+
+dependencies {
+
+    api 'androidx.appcompat:appcompat:1.0.0'
+    api 'androidx.recyclerview:recyclerview:1.0.0'
+    api 'me.dm7.barcodescanner:zxing:1.8.4'
+    api 'androidx.multidex:multidex:2.0.0'
+    api('com.blankj:utilcode:1.30.7', {
+        exclude group: 'com.google.code.gson', module: 'gson'
+    })
+
+    api project(':vodcommon')
+
+    api  'io.github.scwang90:refresh-layout-kernel:2.0.5'      //核心必须依赖
+    api  'io.github.scwang90:refresh-header-classics:2.0.5'    //经典刷新头
+    api  'io.github.scwang90:refresh-footer-classics:2.0.5'    //经典加载
+}

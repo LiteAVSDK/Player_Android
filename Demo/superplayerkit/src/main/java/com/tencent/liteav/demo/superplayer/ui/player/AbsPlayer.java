@@ -84,7 +84,7 @@ public abstract class AbsPlayer extends RelativeLayout implements Player {
     }
 
     @Override
-    public void updateVideoProgress(long current, long duration) {
+    public void updateVideoProgress(long current, long duration, long playable) {
 
     }
 

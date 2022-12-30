@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="short_video_play_back">短视频播放</string>
+    <string name="short_video_get_data_failed">数据请求失败</string>
+    <string name="short_video_i_know">我知道了</string>
+    <string name="short_video_view_more_videos">上下查看更多视频</string>
+    <string name="short_video_pause_video">点击可暂停视频播放</string>
+    <string name="short_video_go_to_list">左滑进入视频列表</string>
+    <string name="short_video_move_seeek">拖拽进度条快速查看视频</string>
+</resources>

@@ -24,23 +24,10 @@ android {
 }
 
 dependencies {
-    implementation fileTree(dir: 'libs', include: ['*.jar'])
-//    implementation project(':liteav_sdk')
-    implementation project(':deprecatedcommon')
-    implementation rootProject.ext.liteavSdk
-    implementation project(':superplayerkit')
-    implementation 'androidx.appcompat:appcompat:1.0.0'
-    implementation 'androidx.recyclerview:recyclerview:1.0.0'
-    implementation 'me.dm7.barcodescanner:zxing:1.8.4'
-    implementation 'com.squareup.okhttp3:okhttp:3.11.0'
-    implementation 'androidx.multidex:multidex:2.0.0'
-    implementation 'androidx.cardview:cardview:1.0.0'
-    implementation 'com.google.code.gson:gson:2.3.1'
-    implementation('com.blankj:utilcode:1.30.7', {
-        exclude group: 'com.google.code.gson', module: 'gson'
-    })
-
-    implementation  'com.scwang.smart:refresh-layout-kernel:2.0.3'      //核心必须依赖
-    implementation  'com.scwang.smart:refresh-header-classics:2.0.3'    //经典刷新头
-    implementation  'com.scwang.smart:refresh-footer-classics:2.0.3'    //经典加载
+    api 'androidx.appcompat:appcompat:1.0.0'
+    api 'androidx.recyclerview:recyclerview:1.0.0'
+    api 'me.dm7.barcodescanner:zxing:1.8.4'
+    api 'androidx.multidex:multidex:2.0.0'
+    api 'com.google.code.gson:gson:2.3.1'
+    api project(':vodcommon')
 }

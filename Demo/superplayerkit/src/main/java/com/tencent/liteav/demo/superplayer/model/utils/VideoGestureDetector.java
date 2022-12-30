@@ -47,6 +47,10 @@ public class VideoGestureDetector {
         mResolver = context.getContentResolver();
     }
 
+    public int getMaxVolume() {
+        return mMaxVolume;
+    }
+
     /**
      * 设置回调
      *
@@ -118,7 +122,7 @@ public class VideoGestureDetector {
                 }
                 break;
             case VOLUME:
-                int value = height / mMaxVolume;
+                float value = (float) height / (float) mMaxVolume;
                 int newVolume = (int) ((downEvent.getY() - moveEvent.getY()) / value * mSensitivity + mOldVolume);
                 mAudioManager.setStreamVolume(AudioManager.STREAM_MUSIC, newVolume, AudioManager.FLAG_PLAY_SOUND);
 

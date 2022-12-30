@@ -3,8 +3,9 @@ package com.tencent.liteav.demo.player.expand.model;
 import android.text.TextUtils;
 import android.util.Log;
 
-import com.tencent.liteav.demo.player.expand.model.entity.VideoInfo;
-import com.tencent.liteav.demo.player.expand.model.entity.VideoModel;
+import com.tencent.liteav.demo.vodcommon.entity.GetVideoInfoListListener;
+import com.tencent.liteav.demo.vodcommon.entity.VideoInfo;
+import com.tencent.liteav.demo.vodcommon.entity.VideoModel;
 
 import org.json.JSONArray;
 import org.json.JSONException;

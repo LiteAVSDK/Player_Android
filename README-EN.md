@@ -10,6 +10,9 @@ This directory contains the demo source code of the Player SDK for Android, whic
 |  ├─ superplayerkit        // Superplayer component
 |  ├─ superplayerdemo       // Superplayer demo
 |  ├─ common                // Common tool class
+|  ├─ feedvideo             // Feed video component
+|  ├─ shortvideo            // Short video component
+|  ├─ vodcommon             // VOD dommon tool class
 |
 ├─ SDK 
 │  ├─README.md     // Download URL of the Player SDK for Android

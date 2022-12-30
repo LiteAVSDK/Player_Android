@@ -9,7 +9,7 @@ android {
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
         versionCode 24
-        versionName "10.8.0.3039"
+        versionName "10.9.0.3086"
 
         multiDexEnabled true
         ndk {
@@ -56,6 +56,8 @@ dependencies {
     implementation rootProject.ext.liteavSdk
     implementation project(':deprecatedcommon')
     implementation project(':superplayerdemo')
+    implementation project(':feedvideo')
+    implementation project(':shortvideo')
 
     implementation 'androidx.appcompat:appcompat:1.0.0'
     implementation 'androidx.recyclerview:recyclerview:1.0.0'

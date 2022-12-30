@@ -100,8 +100,8 @@
         android:textSize="14sp"
         android:visibility="gone" />
 
-    <com.tencent.liteav.demo.superplayer.ui.view.VodQualityView
-        android:id="@+id/superplayer_vod_quality"
+    <com.tencent.liteav.demo.superplayer.ui.view.VodResolutionView
+        android:id="@+id/superplayer_vod_resolution"
         android:layout_width="300dp"
         android:layout_height="match_parent"
         android:layout_alignParentRight="true"
@@ -134,7 +134,6 @@
 
         <ImageView
             android:tint="@color/superplayer_white"
-            android:id="@+id/superplayer_iv_replay"
             android:layout_width="30dp"
             android:layout_height="30dp"
             android:src="@drawable/superplayer_ic_replay" />

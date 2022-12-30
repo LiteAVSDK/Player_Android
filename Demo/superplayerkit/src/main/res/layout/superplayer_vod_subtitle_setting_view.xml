@@ -20,7 +20,6 @@
         android:layout_toRightOf="@id/subtitle_setting_back"
         android:text="Subtitles Setting"
         android:textColor="@color/superplayer_white"
-        android:id="@+id/subtitle_setting_title"
         android:layout_marginTop="17dp"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"/>

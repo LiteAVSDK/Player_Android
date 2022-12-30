@@ -23,14 +23,12 @@
 
 
         <ImageView
-            android:id="@+id/cache_iv_list_empty_icon"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:src="@drawable/superplayer_cache_list_empty"
             android:layout_gravity="center_horizontal"/>
 
         <TextView
-            android:id="@+id/cache_tv_list_empty_text"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center_horizontal"

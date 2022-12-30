@@ -19,7 +19,6 @@ import android.view.View;
 import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.SeekBar;
@@ -31,10 +30,10 @@ import com.blankj.utilcode.util.PermissionUtils;
 
 import com.tencent.liteav.demo.common.utils.IntentUtils;
 import com.tencent.liteav.demo.player.R;
-import com.tencent.liteav.demo.player.common.ConfigBean;
 import com.tencent.liteav.demo.superplayer.model.entity.VideoQuality;
 import com.tencent.liteav.demo.superplayer.model.utils.VideoQualityUtils;
-import com.tencent.liteav.demo.superplayer.ui.view.VodQualityView;
+import com.tencent.liteav.demo.superplayer.ui.view.VodResolutionView;
+import com.tencent.liteav.demo.vodcommon.entity.ConfigBean;
 import com.tencent.rtmp.ITXVodPlayListener;
 import com.tencent.rtmp.TXBitrateItem;
 import com.tencent.rtmp.TXLiveBase;
@@ -48,11 +47,10 @@ import com.tencent.rtmp.ui.TXCloudVideoView;
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
-public class VodPlayerActivity extends Activity implements ITXVodPlayListener, VodQualityView.Callback {
+public class VodPlayerActivity extends Activity implements ITXVodPlayListener,
+        VodResolutionView.OnClickResolutionItemListener {
     public static  final int    REQUEST_CODE_CONFIG          = 101;
     private static final String TAG                   = "VodPlayerActivity";
     private static final String WEBRTC_LINK_URL       = "https://cloud.tencent.com/document/product/454/12148";
@@ -91,11 +89,11 @@ public class VodPlayerActivity extends Activity implements ITXVodPlayListener, V
     private boolean         mVideoPause  = false;
     private long            mStartPlayTS = 0;
     private TXVodPlayConfig mPlayConfig;
-    private boolean         mEnableCache;
+    private boolean         mEnableCache = false;
     private boolean         mVideoPlay;
     private boolean         mIsLogShow   = false;
     private float           mPlayRate    = 1.0f;
-    private VodQualityView  mVodQualityView;
+    private VodResolutionView  mVodResolutionView;
     private List<VideoQuality> mVideoQualityList;                      // 画质列表
     private VideoQuality    mDefaultVideoQuality;
     private boolean         mFirstShowQuality = false;
@@ -109,8 +107,9 @@ public class VodPlayerActivity extends Activity implements ITXVodPlayListener, V
         super.onCreate(savedInstanceState);
         mCurrentRenderMode = TXLiveConstants.RENDER_MODE_ADJUST_RESOLUTION;
         mCurrentRenderRotation = TXLiveConstants.RENDER_ROTATION_PORTRAIT;
-        mPlayConfig = ConfigBean.sPlayConfig;
+        mPlayConfig = new TXVodPlayConfig();
         setContentView();
+        setConfig();
         LinearLayout backLL = (LinearLayout) findViewById(R.id.back_ll);
         backLL.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -140,18 +139,18 @@ public class VodPlayerActivity extends Activity implements ITXVodPlayListener, V
             return;
         }
         // 设置默认显示分辨率文字
-        mVodQualityView.setVisibility(View.VISIBLE);
+        mVodResolutionView.setVisibility(View.VISIBLE);
         if (!mFirstShowQuality && mDefaultVideoQuality != null) {
             for (int i = 0; i < mVideoQualityList.size(); i++) {
                 VideoQuality quality = mVideoQualityList.get(i);
                 if (quality != null && quality.title != null && quality.title.equals(mDefaultVideoQuality.title)) {
-                    mVodQualityView.setDefaultSelectedQuality(i);
+                    mVodResolutionView.setCurrentPosition(i);
                     break;
                 }
             }
             mFirstShowQuality = true;
         }
-        mVodQualityView.setVideoQualityList(mVideoQualityList);
+        mVodResolutionView.setModelList(mVideoQualityList);
     }
 
 
@@ -243,7 +242,7 @@ public class VodPlayerActivity extends Activity implements ITXVodPlayListener, V
         mButtonStop.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                mVodQualityView.setVisibility(View.GONE);
+                mVodResolutionView.setVisibility(View.GONE);
                 stopPlayVod();
                 mVideoPlay = false;
                 mVideoPause = false;
@@ -449,12 +448,17 @@ public class VodPlayerActivity extends Activity implements ITXVodPlayListener, V
             @Override
             public void onClick(View v) {
                 mEnableCache = !mEnableCache;
+                if (mEnableCache) {
+                    ConfigBean.getInstance().setCacheFolderPath(getInnerSDCardPath() + "/txcache");
+                } else {
+                    ConfigBean.getInstance().setCacheFolderPath(null);
+                }
+                TXPlayerGlobalSetting.setCacheFolderPath(ConfigBean.getInstance().getCacheFolderPath());
                 mButtonCache.getBackground().setAlpha(mEnableCache ? 255 : 100);
             }
         });
-
-        mVodQualityView = findViewById(R.id.vod_quality_view);
-        mVodQualityView.setCallback(this);
+        mVodResolutionView = findViewById(R.id.vod_quality_view);
+        mVodResolutionView.setOnClickResolutionItemListener(this);
 
         findViewById(R.id.webrtc_link_button).setOnClickListener(new View.OnClickListener() {
             @Override
@@ -581,6 +585,10 @@ public class VodPlayerActivity extends Activity implements ITXVodPlayListener, V
 
     @Override
     public void onPlayEvent(TXVodPlayer player, int event, Bundle param) {
+        if (mVodPlayer == null) {
+            return;
+        }
+
         if (event != TXLiveConstants.PLAY_EVT_PLAY_PROGRESS) {
             String playEventLog = "receive event: " + event + ", " + param.getString(TXLiveConstants.EVT_DESCRIPTION);
             Log.d(TAG, playEventLog);
@@ -709,16 +717,34 @@ public class VodPlayerActivity extends Activity implements ITXVodPlayListener, V
         }
     }
 
+    private void setConfig() {
+        if (ConfigBean.getInstance().isEnableSelfAdaption()) {
+            mVodPlayer.setBitrateIndex(-1000);
+        }
+        mPlayConfig.setEnableAccurateSeek(ConfigBean.getInstance().isEnableAccurateSeek());
+        mPlayConfig.setSmoothSwitchBitrate(ConfigBean.getInstance().isSmoothSwitchBitrate());
+        mPlayConfig.setAutoRotate(ConfigBean.getInstance().isAutoRotate());
+        mPlayConfig.setEnableRenderProcess(ConfigBean.getInstance().isEnableRenderProcess());
+        mPlayConfig.setConnectRetryCount(ConfigBean.getInstance().getConnectRetryCount());
+        mPlayConfig.setConnectRetryInterval(ConfigBean.getInstance().getConnectRetryInterval());
+        mPlayConfig.setTimeout(ConfigBean.getInstance().getTimeout());
+        mPlayConfig.setProgressInterval(ConfigBean.getInstance().getProgressInterval());
+        TXPlayerGlobalSetting.setCacheFolderPath(ConfigBean.getInstance().getCacheFolderPath());
+        TXPlayerGlobalSetting.setMaxCacheSize(ConfigBean.getInstance().getMaxCacheItems());
+        mPlayConfig.setMaxBufferSize(ConfigBean.getInstance().getMaxBufferSize());
+        mPlayConfig.setPreferredResolution(ConfigBean.getInstance().getPreferredResolution());
+        mPlayConfig.setMediaType(ConfigBean.getInstance().getMediaType());
+        mVodPlayer.enableHardwareDecode(ConfigBean.getInstance().isEnableHardWareDecode());
+        TXLiveBase.setLogLevel(ConfigBean.getInstance().getLogLevel());
+        String cacheFolderPath = ConfigBean.getInstance().getCacheFolderPath();
+        mEnableCache = (cacheFolderPath != null && !cacheFolderPath.equals(""));
+        mButtonCache.getBackground().setAlpha(mEnableCache ? 255 : 100);
+    }
+
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (requestCode == REQUEST_CODE_CONFIG) {
-            if (ConfigBean.sIsEnableSelfAdaption) {
-                mVodPlayer.setBitrateIndex(-1);
-            }
-            if (ConfigBean.sIsEnableHardWareDecode) {
-                mVodPlayer.enableHardwareDecode(true);
-            }
-            mPlayConfig = ConfigBean.sPlayConfig;
+            setConfig();
         }
         if (requestCode != 100 || data == null || data.getExtras() == null || TextUtils.isEmpty(data.getExtras().getString("result"))) {
             return;
@@ -817,8 +843,9 @@ public class VodPlayerActivity extends Activity implements ITXVodPlayListener, V
 
     private TXPhoneStateListener mPhoneListener = null;
 
+
     @Override
-    public void onQualitySelect(VideoQuality quality) {
+    public void onClickResolutionItem(VideoQuality quality) {
         updateVideoQuality(quality);
         if (mVodPlayer != null) {
             if (quality.url != null) { // br!=0;index=-1;url!=null   //br=0;index!=-1;url!=null
@@ -846,7 +873,7 @@ public class VodPlayerActivity extends Activity implements ITXVodPlayListener, V
                 VideoQuality quality = mVideoQualityList.get(i);
                 if (quality != null && quality.title != null && mDefaultVideoQuality != null
                         && quality.title.equals(mDefaultVideoQuality.title)) {
-                    mVodQualityView.setDefaultSelectedQuality(i);
+                    mVodResolutionView.setCurrentPosition(i);
                     break;
                 }
             }

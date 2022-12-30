@@ -2,5 +2,8 @@ include ':app'
 include ':deprecatedcommon'
 include ':superplayerkit'
 include ':superplayerdemo'
+include ':vodcommon'
+include ':feedvideo'
+include ':shortvideo'
 
 project(':deprecatedcommon').projectDir = new File(settingsDir, './common')

@@ -1,12 +1,14 @@
 package com.tencent.liteav.demo.superplayer.model.entity;
 
+import java.io.Serializable;
+
 /**
  * Created by yuejiaoli on 2018/7/7.
  * <p>
  * 清晰度
  */
 
-public class VideoQuality implements Comparable<VideoQuality> {
+public class VideoQuality implements Comparable<VideoQuality>, Serializable {
 
     public int    height;
     public int    width;

@@ -5,13 +5,16 @@ import static android.view.View.VISIBLE;
 
 import android.app.ActivityManager;
 import android.app.AlertDialog;
+import android.app.KeyguardManager;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.res.Configuration;
 import android.graphics.Color;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.PowerManager;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -29,6 +32,8 @@ import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.annotation.RequiresApi;
+import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.fragment.app.FragmentActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -37,13 +42,14 @@ import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import com.tencent.liteav.demo.common.utils.IntentUtils;
 import com.tencent.liteav.demo.player.R;
-import com.tencent.liteav.demo.player.expand.model.GetVideoInfoListListener;
 import com.tencent.liteav.demo.player.expand.model.SuperPlayerConstants;
 import com.tencent.liteav.demo.player.expand.model.VideoDataMgr;
-import com.tencent.liteav.demo.player.expand.model.entity.VideoInfo;
-import com.tencent.liteav.demo.player.expand.model.entity.VideoListModel;
-import com.tencent.liteav.demo.player.expand.model.entity.VideoModel;
-import com.tencent.liteav.demo.player.expand.model.utils.SuperVodListLoader;
+import com.tencent.liteav.demo.superplayer.helper.PictureInPictureHelper;
+import com.tencent.liteav.demo.vodcommon.entity.GetVideoInfoListListener;
+import com.tencent.liteav.demo.vodcommon.entity.SuperVodListLoader;
+import com.tencent.liteav.demo.vodcommon.entity.VideoInfo;
+import com.tencent.liteav.demo.vodcommon.entity.VideoListModel;
+import com.tencent.liteav.demo.vodcommon.entity.VideoModel;
 import com.tencent.liteav.demo.player.expand.ui.TCVodPlayerListAdapter;
 import com.tencent.liteav.demo.superplayer.SubtitleSourceModel;
 import com.tencent.liteav.demo.superplayer.SuperPlayerDef;
@@ -51,12 +57,12 @@ import com.tencent.liteav.demo.superplayer.SuperPlayerGlobalConfig;
 import com.tencent.liteav.demo.superplayer.SuperPlayerModel;
 import com.tencent.liteav.demo.superplayer.SuperPlayerVideoId;
 import com.tencent.liteav.demo.superplayer.SuperPlayerView;
-import com.tencent.liteav.demo.superplayer.model.entity.VideoQuality;
 import com.tencent.rtmp.TXLiveBase;
 import com.tencent.rtmp.TXLiveConstants;
 import com.tencent.rtmp.TXVodConstants;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -101,11 +107,11 @@ public class SuperPlayerActivity extends FragmentActivity implements View.OnClic
     private int                      DEFAULT_APPID = 1252463788;
     private int                      mDataType     = LIST_TYPE_LIVE;
     private int                      mVideoCount;
-    private SuperVodListLoader       mSuperVodListLoader;
+    private SuperVodListLoader mSuperVodListLoader;
     private TCVodPlayerListAdapter   mVodPlayerListAdapter;
     private GetVideoInfoListListener mGetVideoInfoListListener;
     private ArrayList<VideoModel>    mLiveList;
-    private ArrayList<VideoListModel>    mVodList;
+    private List<VideoListModel>     mVodList;
     private ArrayList<ListTabItem>   mListTabs;
     private boolean                  mVideoHasPlay;
     private boolean                  mDefaultVideo;
@@ -113,6 +119,7 @@ public class SuperPlayerActivity extends FragmentActivity implements View.OnClic
 
     private boolean                  mIsManualPause = false;
     private boolean                  mUseLocalLiveData = true;
+    private boolean                  mIsEnteredPIPMode = false;  // 是否进入了画中画模式
 
     private static class ListTabItem {
         public ListTabItem(int type, TextView textView, ImageView imageView, View.OnClickListener listener) {
@@ -319,7 +326,7 @@ public class SuperPlayerActivity extends FragmentActivity implements View.OnClic
 
     private void initData() {
         mLiveList = new ArrayList<>();
-        mVodList = new ArrayList<>();
+        mVodList = Collections.synchronizedList(new ArrayList());
         mDefaultVideo = getIntent().getBooleanExtra(SuperPlayerConstants.PLAYER_DEFAULT_VIDEO, true);
         mSuperVodListLoader = new SuperVodListLoader(this);
 
@@ -342,9 +349,33 @@ public class SuperPlayerActivity extends FragmentActivity implements View.OnClic
         if (mUseLocalLiveData) {
             if (mLiveList.isEmpty()) {
                 VideoModel liveModel = new VideoModel();
-                liveModel.title = getResources().getString(R.string.superplayer_test_video);
+                liveModel.title = getResources().getString(R.string.superplayer_flv_live_video);
                 liveModel.placeholderImage = "http://1500005830.vod2.myqcloud.com/6c9a5118vodcq1500005830/66bc542f387702300661648850/0RyP1rZfkdQA.png";
                 liveModel.videoURL =  "http://liteavapp.qcloud.com/live/liteavdemoplayerstreamid.flv";
+                liveModel.coverPictureUrl = "http://1500005830.vod2.myqcloud.com/6c9a5118vodcq1500005830/66bc542f387702300661648850/0RyP1rZfkdQA.png";
+                addVideoModelIntoVodPlayerListAdapter(liveModel);
+                mLiveList.add(liveModel);
+
+                liveModel = new VideoModel();
+                liveModel.title = getResources().getString(R.string.superplayer_rtmp_live_video);
+                liveModel.placeholderImage = "http://1500005830.vod2.myqcloud.com/6c9a5118vodcq1500005830/66bc542f387702300661648850/0RyP1rZfkdQA.png";
+                liveModel.videoURL =  "rtmp://liteavapp.qcloud.com/live/liteavdemoplayerstreamid";
+                liveModel.coverPictureUrl = "http://1500005830.vod2.myqcloud.com/6c9a5118vodcq1500005830/66bc542f387702300661648850/0RyP1rZfkdQA.png";
+                addVideoModelIntoVodPlayerListAdapter(liveModel);
+                mLiveList.add(liveModel);
+
+                liveModel = new VideoModel();
+                liveModel.title = getResources().getString(R.string.superplayer_webrtc_live_video);
+                liveModel.placeholderImage = "http://1500005830.vod2.myqcloud.com/6c9a5118vodcq1500005830/66bc542f387702300661648850/0RyP1rZfkdQA.png";
+                liveModel.videoURL =  "webrtc://liteavapp.qcloud.com/live/liteavdemoplayerstreamid";
+                liveModel.coverPictureUrl = "http://1500005830.vod2.myqcloud.com/6c9a5118vodcq1500005830/66bc542f387702300661648850/0RyP1rZfkdQA.png";
+                addVideoModelIntoVodPlayerListAdapter(liveModel);
+                mLiveList.add(liveModel);
+
+                liveModel = new VideoModel();
+                liveModel.title = getResources().getString(R.string.superplayer_hls_live_video);
+                liveModel.placeholderImage = "http://1500005830.vod2.myqcloud.com/6c9a5118vodcq1500005830/66bc542f387702300661648850/0RyP1rZfkdQA.png";
+                liveModel.videoURL =  "http://liteavapp.qcloud.com/live/liteavdemoplayerstreamid.m3u8";
                 liveModel.coverPictureUrl = "http://1500005830.vod2.myqcloud.com/6c9a5118vodcq1500005830/66bc542f387702300661648850/0RyP1rZfkdQA.png";
                 addVideoModelIntoVodPlayerListAdapter(liveModel);
                 mLiveList.add(liveModel);
@@ -609,8 +640,20 @@ public class SuperPlayerActivity extends FragmentActivity implements View.OnClic
     }
 
     @Override
+    protected void onStart() {
+        super.onStart();
+        // 画中画状态下下解锁恢复播放
+        if (PictureInPictureHelper.hasPipPermission(this)
+                && (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.N)
+                && isInPictureInPictureMode()) {
+            mSuperPlayerView.onResume();
+        }
+    }
+
+    @Override
     protected void onResume() {
         super.onResume();
+        mIsEnteredPIPMode = false;
         if (mSuperPlayerView.getPlayerState() == SuperPlayerDef.PlayerState.PLAYING
                 || mSuperPlayerView.getPlayerState() == SuperPlayerDef.PlayerState.PAUSE) {
             Log.i(TAG, "onResume state :" + mSuperPlayerView.getPlayerState());
@@ -640,6 +683,12 @@ public class SuperPlayerActivity extends FragmentActivity implements View.OnClic
     protected void onPause() {
         super.onPause();
         Log.i(TAG, "onPause state :" + mSuperPlayerView.getPlayerState());
+        if (PictureInPictureHelper.hasPipPermission(this)
+                && (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.N)
+                && isInPictureInPictureMode()) {
+            mIsEnteredPIPMode = true;
+            return;
+        }
         if (mSuperPlayerView.getPlayerMode() != SuperPlayerDef.PlayerMode.FLOAT) {
             if (mSuperPlayerView.getPlayerState() == SuperPlayerDef.PlayerState.PAUSE) {
                 mIsManualPause = true;
@@ -649,6 +698,7 @@ public class SuperPlayerActivity extends FragmentActivity implements View.OnClic
             mSuperPlayerView.onPause();
             mSuperPlayerView.setNeedToPause(true);
         }
+
     }
 
     @Override
@@ -751,7 +801,7 @@ public class SuperPlayerActivity extends FragmentActivity implements View.OnClic
         } else if (id == R.id.superplayer_btn_scan) {   // 扫描二维码播放一个视频
             scanQRCode();
         } else if (id == R.id.superplayer_iv_back) {    // 悬浮窗播放
-            showFloatWindow();
+            finish();
         } else if (id == R.id.superplayer_tv_live) {
             mDataType = LIST_TYPE_LIVE;
             updateList(mDataType);
@@ -1138,6 +1188,20 @@ public class SuperPlayerActivity extends FragmentActivity implements View.OnClic
     }
 
     @Override
+    protected void onStop() {
+        super.onStop();
+        if (PictureInPictureHelper.hasPipPermission(this) && mIsEnteredPIPMode) {
+            PowerManager manager = (PowerManager)getSystemService(POWER_SERVICE);
+            if ((android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.N)
+                    && manager.isInteractive()) {
+                finish();
+            } else {
+                mSuperPlayerView.onPause();
+            }
+        }
+    }
+
+    @Override
     public void onClickFloatCloseBtn() {
         // 点击悬浮窗关闭按钮，那么结束整个播放
         mSuperPlayerView.resetPlayer();
@@ -1206,5 +1270,17 @@ public class SuperPlayerActivity extends FragmentActivity implements View.OnClic
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions,
                                            @NonNull int[] grantResults) {
         mSuperPlayerView.onRequestPermissionsResult(requestCode, grantResults);
+    }
+
+    @Override
+    public void onPictureInPictureModeChanged(boolean isInPictureInPictureMode, Configuration newConfig) {
+        super.onPictureInPictureModeChanged(isInPictureInPictureMode, newConfig);
+        if (isInPictureInPictureMode) {
+            mLayoutTitle.setVisibility(GONE);
+            mSuperPlayerView.showPIPIV(false);
+        } else {
+            mLayoutTitle.setVisibility(VISIBLE);
+            mSuperPlayerView.showPIPIV(true);
+        }
     }
 }

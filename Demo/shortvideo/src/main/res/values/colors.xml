@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources xmlns:tools="http://schemas.android.com/tools">
+    <color name="superplayer_white">#ffffff</color>
+    <color name="superplayer_black">#000000</color>
+    <color name="superplayer_transparent">#00000000</color>
+    <color name="superplayer_color_gray">#787878</color>
+    <color name="feed_page_bg">#14233D</color>
+
+    <color name="cache_status_text_color">#A3A8B1</color>
+    <color name="cache_list_item_quality_bg">#33DDDDDD</color>
+    <color name="cache_status_caching">#DD9322</color>
+    <color name="cache_status_pause">#FD7657</color>
+    <color name="cache_status_finish">#20C86F</color>
+    <color name="cache_empty_text_colo">#6B82A8</color>
+</resources>

@@ -11,6 +11,7 @@ import android.util.Log;
 
 import com.tencent.liteav.demo.superplayer.R;
 
+import java.util.HashMap;
 import java.util.Random;
 
 import master.flame.danmaku.controller.DrawHandler;
@@ -81,6 +82,9 @@ public class DanmuView extends DanmakuView {
             }
         });
         mDanmakuContext = DanmakuContext.create();
+        HashMap<Integer, Boolean> overlappingEnablePair = new HashMap<Integer, Boolean>();
+        overlappingEnablePair.put(BaseDanmaku.TYPE_SCROLL_RL, true);
+        mDanmakuContext.preventOverlapping(overlappingEnablePair);
         prepare(mParser, mDanmakuContext);
     }
 

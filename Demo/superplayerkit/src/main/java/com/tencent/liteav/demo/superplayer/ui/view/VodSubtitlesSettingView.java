@@ -11,10 +11,8 @@ import android.widget.RelativeLayout;
 import android.widget.Spinner;
 
 import com.tencent.liteav.demo.superplayer.R;
+import com.tencent.liteav.demo.superplayer.SuperPlayerGlobalConfig;
 import com.tencent.liteav.txcplayer.model.TXSubtitleRenderModel;
-
-import java.util.HashMap;
-import java.util.Map;
 
 public class VodSubtitlesSettingView extends RelativeLayout implements View.OnClickListener {
 
@@ -38,9 +36,13 @@ public class VodSubtitlesSettingView extends RelativeLayout implements View.OnCl
 
     private Button    mDone;
 
-    private int[] colorArray = {R.color.white,R.color.black,R.color.red,
-            R.color.blue,R.color.green,
-            R.color.yellow,R.color.megenta,R.color.cyan};
+    private int[] colorArrayFont = {0xFFFFFFFF, 0xFF000000, 0xFFFF0000,
+            0xFF87CEEB, 0xFF90EE90,
+            0xFFFFFF00, 0xFFCD5C5C, 0xFFE0FFFF};
+
+    private int[] colorArrayOutLine = {0xFF000000,0xFFFFFFFF, 0xFFFF0000,
+            0xFF87CEEB, 0xFF90EE90,
+            0xFFFFFF00, 0xFFCD5C5C, 0xFFE0FFFF};
 
     private float[] outLineWidthArray = {0.5f,0.75f,1.00f,1.25f,1.50f,1.75f,2.00f,3.00f,4.00f};
 
@@ -102,16 +104,14 @@ public class VodSubtitlesSettingView extends RelativeLayout implements View.OnCl
         mSpinnerFontSize.setBackgroundColor(getResources().getColor(R.color.superplayer_transparent));
         mSpinnerOutLineColor.setBackgroundColor(getResources().getColor(R.color.superplayer_transparent));
         mSpinnerOutlineWidth.setBackgroundColor(getResources().getColor(R.color.superplayer_transparent));
-
         reset();
-
     }
 
     public interface OnClickBackButtonListener {
 
         void onClickBackButton();
 
-        void onCLickDoneButton(Map map);
+        void onCLickDoneButton(TXSubtitleRenderModel model);
     }
 
     public void setOnClickBackButtonListener(OnClickBackButtonListener listener) {
@@ -124,9 +124,7 @@ public class VodSubtitlesSettingView extends RelativeLayout implements View.OnCl
         if (id == R.id.subtitle_setting_back) {
             mListener.onClickBackButton();
         } else if (id == R.id.subtitle_setting_done) {
-            Map<String,Object> extMap = new HashMap<>();
-            extMap.put("PARAM_SUBTITLE_RENDER_MODEL",createVodSubtitleRenderModel());
-            mListener.onCLickDoneButton(extMap);
+            mListener.onCLickDoneButton(createVodSubtitleRenderModel());
         } else if (id == R.id.subtitle_setting_reset) {
             reset();
         }
@@ -141,10 +139,12 @@ public class VodSubtitlesSettingView extends RelativeLayout implements View.OnCl
 
     public TXSubtitleRenderModel createVodSubtitleRenderModel() {
         TXSubtitleRenderModel model = new TXSubtitleRenderModel();
-        model.fontColor = colorArray[mSpinnerFontColor.getSelectedItemPosition()];
-        model.isBondFontStyle = mSpinnerFontColor.getSelectedItemPosition() == 1 ? true : false;
+        model.canvasHeight = SuperPlayerGlobalConfig.getInstance().txSubtitleRenderModel.canvasHeight;
+        model.canvasWidth = SuperPlayerGlobalConfig.getInstance().txSubtitleRenderModel.canvasWidth;
+        model.fontColor = colorArrayFont[mSpinnerFontColor.getSelectedItemPosition()];
+        model.isBondFontStyle = mSpinnerFontSize.getSelectedItemPosition() == 1 ? true : false;
         model.outlineWidth = outLineWidthArray[mSpinnerOutlineWidth.getSelectedItemPosition()];
-        model.outlineColor = colorArray[mSpinnerOutLineColor.getSelectedItemPosition()];
+        model.outlineColor = colorArrayOutLine[mSpinnerOutLineColor.getSelectedItemPosition()];
         return model;
     }
 }

@@ -144,7 +144,7 @@ public class FloatPlayer extends AbsPlayer implements View.OnClickListener, VipW
     }
 
     @Override
-    public void updateVideoProgress(long current, long duration) {
+    public void updateVideoProgress(long current, long duration, long playable) {
         if (mPlayType == SuperPlayerDef.PlayerType.VOD) {
             mVipWatchView.setCurrentTime(current);
         }

@@ -1,12 +1,12 @@
 package com.tencent.liteav.demo.superplayer.ui.player;
 
 import android.animation.ValueAnimator;
+import android.app.Activity;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.drawable.BitmapDrawable;
 import android.os.Build;
 import android.util.AttributeSet;
-import android.util.Log;
 import android.view.GestureDetector;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
@@ -19,7 +19,9 @@ import android.widget.TextView;
 import com.bumptech.glide.Glide;
 import com.tencent.liteav.demo.superplayer.R;
 import com.tencent.liteav.demo.superplayer.SuperPlayerDef;
+import com.tencent.liteav.demo.superplayer.SuperPlayerGlobalConfig;
 import com.tencent.liteav.demo.superplayer.SuperPlayerModel;
+import com.tencent.liteav.demo.superplayer.helper.PictureInPictureHelper;
 import com.tencent.liteav.demo.superplayer.model.utils.VideoGestureDetector;
 import com.tencent.liteav.demo.superplayer.ui.view.PointSeekBar;
 import com.tencent.liteav.demo.superplayer.ui.view.VideoProgressLayout;
@@ -63,7 +65,7 @@ public class WindowPlayer extends AbsPlayer implements View.OnClickListener,
     private VolumeBrightnessProgressLayout mGestureVolumeBrightnessProgressLayout; // 音量亮度调节布局
     private VideoProgressLayout            mGestureVideoProgressLayout;            // 手势快进提示布局
     private GestureDetector                mGestureDetector;                       // 手势检测监听器
-    private VideoGestureDetector           mVideoGestureDetector;                      // 手势控制工具
+    private VideoGestureDetector           mVideoGestureDetector;                  // 手势控制工具
     private boolean                        isShowing;                              // 自身是否可见
     private boolean                        mIsChangingSeekBarProgress;             // 进度条是否正在拖动，避免SeekBar由于视频播放的update而跳动
     private SuperPlayerDef.PlayerType      mPlayType         = SuperPlayerDef.PlayerType.VOD;                          // 当前播放视频类型
@@ -76,8 +78,12 @@ public class WindowPlayer extends AbsPlayer implements View.OnClickListener,
     private float                          mWaterMarkBmpX;                         // 水印x坐标
     private float                          mWaterMarkBmpY;                         // 水印y坐标
     private long                           mLastClickTime;                         // 上次点击事件的时间
-    private boolean                        mIsOpenGesture    = true;                  // 是否开启手势
+    private boolean                        mIsOpenGesture    = true;               // 是否开启手势
     private boolean                        isDestroy         = false;              // Activity 是否被销毁
+    private VideoGestureDetector.VideoGestureListener mVideoGestureListener;
+    private ImageView                      mPiPIV;
+    private Context                        mContext;
+    private boolean                        mIsShowPIPIv = true;
 
     public WindowPlayer(Context context) {
         super(context);
@@ -137,7 +143,7 @@ public class WindowPlayer extends AbsPlayer implements View.OnClickListener,
         mGestureDetector.setIsLongpressEnabled(false);
 
         mVideoGestureDetector = new VideoGestureDetector(getContext());
-        mVideoGestureDetector.setVideoGestureListener(new VideoGestureDetector.VideoGestureListener() {
+        mVideoGestureListener = new VideoGestureDetector.VideoGestureListener() {
             @Override
             public void onBrightnessGesture(float newBrightness) {
                 if (mGestureVolumeBrightnessProgressLayout != null) {
@@ -187,7 +193,8 @@ public class WindowPlayer extends AbsPlayer implements View.OnClickListener,
                 if (mSeekBarProgress != null)
                     mSeekBarProgress.setProgress(progress);
             }
-        });
+        };
+        mVideoGestureDetector.setVideoGestureListener(mVideoGestureListener);
     }
 
     /**
@@ -215,6 +222,7 @@ public class WindowPlayer extends AbsPlayer implements View.OnClickListener,
         mImageCover = (ImageView) findViewById(R.id.superplayer_cover_view);
         mImageStartAndResume = (ImageView) findViewById(R.id.superplayer_resume);
         mIvPlayNext = (ImageView) findViewById(R.id.superplayer_iv_play_next);
+        mPiPIV = (ImageView) findViewById(R.id.superplayer_iv_pip);
         mImageStartAndResume.setOnClickListener(this);
 
         mIvBack.setOnClickListener(this);
@@ -224,6 +232,7 @@ public class WindowPlayer extends AbsPlayer implements View.OnClickListener,
         mIvFullScreen.setOnClickListener(this);
         mLayoutTop.setOnClickListener(this);
         mLayoutReplay.setOnClickListener(this);
+        mPiPIV.setOnClickListener(this);
 
         mSeekBarProgress.setOnSeekBarChangeListener(this);
 
@@ -238,6 +247,7 @@ public class WindowPlayer extends AbsPlayer implements View.OnClickListener,
         mIvWatermark = (ImageView) findViewById(R.id.superplayer_small_iv_water_mark);
         mVipWatchView = findViewById(R.id.superplayer_vip_watch_view);
         mVipWatchView.setVipWatchViewClickListener(this);
+        mContext = context;
     }
 
     /**
@@ -285,6 +295,8 @@ public class WindowPlayer extends AbsPlayer implements View.OnClickListener,
     }
 
     private void updateStartUI(boolean isAutoPlay) {
+        mPiPIV.setVisibility((mIsShowPIPIv && PictureInPictureHelper
+                .hasPipPermission((Activity) mContext)) ? VISIBLE : GONE);
         if (isAutoPlay) {
             toggleView(mImageStartAndResume, false);
             toggleView(mPbLiveLoading, true);
@@ -308,7 +320,7 @@ public class WindowPlayer extends AbsPlayer implements View.OnClickListener,
         mLivePushDuration = 0;
         toggleView(mImageCover, true);
         mIvPause.setImageResource(R.drawable.superplayer_ic_vod_play_normal);
-        updateVideoProgress(0, superPlayerModel.duration);
+        updateVideoProgress(0, superPlayerModel.duration,0);
         mSeekBarProgress.setEnabled(superPlayerModel.playAction != SuperPlayerModel.PLAY_ACTION_MANUAL_PLAY);
         updateStartUI(superPlayerModel.playAction == SuperPlayerModel.PLAY_ACTION_AUTO_PLAY);
     }
@@ -439,7 +451,7 @@ public class WindowPlayer extends AbsPlayer implements View.OnClickListener,
      * @param duration 视频总时长(秒)
      */
     @Override
-    public void updateVideoProgress(long current, long duration) {
+    public void updateVideoProgress(long current, long duration, long playable) {
         mProgress = current < 0 ? 0 : current;
         mDuration = duration < 0 ? 0 : duration;
         mTvCurrent.setText(formattedTime(mProgress));
@@ -467,6 +479,22 @@ public class WindowPlayer extends AbsPlayer implements View.OnClickListener,
                 }
             }
             mTvDuration.setText(formattedTime(mDuration));
+        }
+
+        float playAblePercentage = playable > 0 ? ((float) playable / (float) mDuration) : 1.0f;
+        if (playable == 0) {
+            playAblePercentage = 0;
+        }
+
+        if (playAblePercentage >= 0 && playAblePercentage <= 1) {
+            int progress = Math.round(playAblePercentage * mSeekBarProgress.getMax());
+            if (!mIsChangingSeekBarProgress) {
+                if (mPlayType == SuperPlayerDef.PlayerType.VOD) {
+                    mSeekBarProgress.setSecondaryProgress(progress);
+                } else {
+                    mSeekBarProgress.setSecondaryProgress(100);
+                }
+            }
         }
     }
 
@@ -668,6 +696,10 @@ public class WindowPlayer extends AbsPlayer implements View.OnClickListener,
             if (mControllerCallback != null) {
                 mControllerCallback.playNext();
             }
+        } else if (id == R.id.superplayer_iv_pip) {
+            if (mControllerCallback != null) {
+                mControllerCallback.enterPictureInPictureMode();
+            }
         }
     }
 
@@ -772,5 +804,15 @@ public class WindowPlayer extends AbsPlayer implements View.OnClickListener,
         if (mControllerCallback != null) {
             mControllerCallback.onCloseVipTip();
         }
+    }
+
+    public void onVolumeChange(int volume) {
+        mVideoGestureListener.onVolumeGesture((float) volume / (float) mVideoGestureDetector.getMaxVolume() * 100);
+    }
+
+    public void showPIPIV(boolean isShow) {
+        mIsShowPIPIv = isShow;
+        mPiPIV.setVisibility((mIsShowPIPIv) && PictureInPictureHelper
+                .hasPipPermission((Activity) mContext) ? VISIBLE : GONE);
     }
 }

@@ -223,7 +223,7 @@
             android:src="@drawable/superplayer_loading_animation"
             android:visibility="gone" />
 
-        <com.tencent.liteav.demo.superplayer.ui.view.VodQualityView
+        <com.tencent.liteav.demo.superplayer.ui.view.VodResolutionView
             android:visibility="gone"
             android:layout_gravity="right|center_vertical"
             android:id="@+id/vod_quality_view"
@@ -250,7 +250,6 @@
                     android:src="@drawable/superplayer_btn_back_gray" />
 
                 <TextView
-                    android:id="@+id/back_tv"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center_vertical"

@@ -50,7 +50,7 @@ public abstract class SuperPlayerObserver {
      * @param current
      * @param duration
      */
-    public void onPlayProgress(long current, long duration) {
+    public void onPlayProgress(long current, long duration, long playable) {
     }
 
     public void onSeek(int position) {

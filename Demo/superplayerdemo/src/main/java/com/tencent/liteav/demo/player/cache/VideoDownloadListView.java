@@ -13,7 +13,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.tencent.liteav.demo.player.R;
 import com.tencent.liteav.demo.player.cache.adapter.VideoDownloadListAdapter;
-import com.tencent.liteav.demo.player.expand.model.entity.VideoModel;
+import com.tencent.liteav.demo.vodcommon.entity.VideoModel;
 import com.tencent.liteav.demo.player.view.DialogUtils;
 import com.tencent.liteav.demo.superplayer.model.download.VideoDownloadCenter;
 import com.tencent.rtmp.downloader.TXVodDownloadDataSource;

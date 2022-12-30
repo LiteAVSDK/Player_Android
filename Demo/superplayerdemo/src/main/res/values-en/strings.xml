@@ -18,6 +18,10 @@
     <string name="superplayer_definition_high">HD</string>
     <string name="superplayer_definition_standard">SD</string>
     <string name="superplayer_test_video">Test Video</string>
+    <string name="superplayer_flv_live_video">FLV Live Play</string>
+    <string name="superplayer_rtmp_live_video">RTMP Live Play</string>
+    <string name="superplayer_webrtc_live_video">WebRTC Live Play</string>
+    <string name="superplayer_hls_live_video">HLS Live Play</string>
     <string name="superplayer_fetch_upload_list_video_fail">Failed to obtain the list of uploaded videos.</string>
     <string name="superplayer_speed_rate">Speed</string>
     <string name="superplayer_please_scan_qrcode">Enter a playback URL or scan QR code.</string>
@@ -30,8 +34,6 @@
     <string name="superplayer_vip_title">Try function demo </string>
     <string name="superplayer_vip_watch_tip">You can try it for %ss, open VIP to watch the full video</string>
     <string name="superplayer_cover_video_name">Custom cover presentation</string>
-    <string name="app_feed_title">Feed stream play</string>
-    <string name="app_feed_detail_title">Video details</string>
     <string name="superplayer_dynamic_watermark_title">Dynamic watermark demo</string>
     <string name="superplayer_dynamic_watermark_tip">shipinyun</string>
     <string name="superplayer_cover_title">Custom cover presentation</string>
@@ -53,48 +55,8 @@
     <string name="superplayer_live_list">Live</string>
     <string name="superplayer_vod_list">VOD</string>
 
-    <string name="tencent_cloud_audio_and_video_achievements_title">Tencent Cloud Audio/Video Excellence</string>
-    <string name="tencent_cloud_audio_and_video_achievements_introduction">No. 1 in audio/video cloud since 2018</string>
-    <string name="tencent_cloud_audio_and_video_achievements_detail">Proven track record in audio/video coding, cloud integration (RT-ONE), and SDKs (RT-Cube)</string>
-
-    <string name="tencent_cloud_audio_and_video_steady_title">Tencent Cloud Audio/Video - Smooth</string>
-    <string name="tencent_cloud_audio_and_video_steady_introduction">Smooth and stutter-free playback</string>
-    <string name="tencent_cloud_audio_and_video_steady_detail">Smooth playback guaranteed by Tencent Cloud\'s rich experience and proprietary RT-ONE network</string>
-
-    <string name="tencent_cloud_audio_and_video_real_title">Tencent Cloud Audio/Video - Real</string>
-    <string name="tencent_cloud_audio_and_video_real_introduction">Just like in the real world</string>
-    <string name="tencent_cloud_audio_and_video_real_detail">Listen, talk, and interact like in the real world</string>
-
-    <string name="tencent_cloud_audio_and_video_complete_title">Tencent Cloud Audio/Video - Versatile</string>
-    <string name="tencent_cloud_audio_and_video_complete_introduction">A complete range of solutions</string>
-    <string name="tencent_cloud_audio_and_video_complete_detail">A diverse product portfolio and various solutions for a wide range of application scenarios</string>
-
-    <string name="tencent_cloud_business_introduction_title">Get to Know Tencent Cloud</string>
-    <string name="tencent_cloud_business_introduction_introduction">A trusted partner for your digital journey</string>
-    <string name="tencent_cloud_business_introduction_detail">Join Tencent Cloud to build digital infrastructure and help shape the digital economy</string>
-
-    <string name="what_are_numbers_title">What is Digitization?</string>
-    <string name="what_are_numbers_introduction">What will a digital future look like?</string>
-    <string name="what_are_numbers_detail">Embrace digitization together with Tencent Cloud to boost productivity</string>
-
-    <string name="simplify_complexity_and_build_big_from_small_title">Simpler and Lighter</string>
-    <string name="simplify_complexity_and_build_big_from_small_introduction">Tencent Cloud is dedicated to bringing you simpler and lighter cloud solutions</string>
-    <string name="simplify_complexity_and_build_big_from_small_detail">A simpler digitization process and lighter solutions to help you realize your ambition</string>
-
-    <string name="tencent_cloud_audio_and_video_title">Tencent Cloud Audio/Video</string>
-    <string name="tencent_cloud_audio_and_video_introduction">Online experiences have never been more real</string>
-    <string name="tencent_cloud_audio_and_video_detail">Tencent Cloud offers a robust set of audio/video PaaS capabilities for you to leverage</string>
-
-    <string name="short_video_get_data_failed">Failed to request data</string>
-    <string name="short_video_play_back">Short video playback</string>
-    <string name="short_video_list">Video list</string>
-
     <string name="vod_player">VOD player</string>
     <string name="short_video_i_know">I see</string>
-    <string name="short_video_view_more_videos">See more videos up and down</string>
-    <string name="short_video_pause_video">Click to pause video playback</string>
-    <string name="short_video_go_to_list">Swipe left to enter the video list</string>
-    <string name="short_video_move_seeek">Drag the progress bar to quickly view the video</string>
     <string name="super_player_up_and_down_bright">Swipe up and down to adjust screen brightness</string>
     <string name="super_player_left_and_right">Swipe left and right to fast forward/rewind</string>
     <string name="super_player_up_and_down_volumn">Swipe up and down to adjust the volume</string>

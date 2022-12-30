@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="superplayer_app_name">Superplayer</string>
+    <string name="superplayer_cache_name">offline download</string>
+    <string name="superplayer_cancel">Cancel</string>
+    <string name="superplayer_ok">OK</string>
+    <string name="superplayer_vod_ffplay">ffplay</string>
+    <string name="superplayer_vod_exo">exo</string>
+    <string name="superplayer_scancode_tip">Invalid playback URL. Check the QR code.</string>
+    <string name="superplayer_small_video_special_effects_editing">UGSV - Special Effects</string>
+    <string name="superplayer_set_appid_fileid">Set AppID, FileID and PSign</string>
+    <string name="superplayer_set_play_url">Set Playback URL</string>
+    <string name="superplayer_input_correct_appid">Enter a valid AppID.</string>
+    <string name="superplayer_input_correct_fileid">Enter a valid FileID.</string>
+    <string name="superplayer_input_correct_play_url">Enter a valid playback URL.</string>
+    <string name="superplayer_request_fail">Failed to request FileID.</string>
+    <string name="superplayer_definition_super">FHD</string>
+    <string name="superplayer_definition_high">HD</string>
+    <string name="superplayer_definition_standard">SD</string>
+    <string name="superplayer_test_video">Test Video</string>
+    <string name="superplayer_fetch_upload_list_video_fail">Failed to obtain the list of uploaded videos.</string>
+    <string name="superplayer_speed_rate">Speed</string>
+    <string name="superplayer_please_scan_qrcode">Enter a playback URL or scan QR code.</string>
+    <string name="superplayer_back">Back</string>
+    <string name="superplayer_resolution_normal">Original</string>
+    <string name="superplayer_resolution_low">Smooth</string>
+    <string name="superplayer_open_hardware_speedup">Hardware acceleration enabled. The playback will restart.</string>
+    <string name="superplayer_close_hardware_speedup">Hardware acceleration disabled. The playback will restart.</string>
+    <string name="superplayer_not_play_url">No playback URL.</string>
+    <string name="superplayer_vip_watch_tip">You can try it for %ss, open VIP to watch the full video</string>
+    <string name="superplayer_cover_video_name">Custom cover presentation</string>
+    <string name="app_feed_title">Feed stream play</string>
+    <string name="app_feed_detail_title">Video details</string>
+    <string name="superplayer_dynamic_watermark_title">Dynamic watermark demo</string>
+    <string name="superplayer_dynamic_watermark_tip">shipinyun</string>
+    <string name="superplayer_cover_title">Custom cover presentation</string>
+    <string name="superplayer_offline_cache_title">Offline download（Fullscreen）demo</string>
+    <string name="superplayer_carousel_list_title">Video list carousel demo</string>
+
+    <string name="superplayer_cache_progress">download progress：%1$d%%</string>
+    <string name="superplayer_cache_state_cacheing">downloading</string>
+    <string name="superplayer_cache_state_pause">download pause</string>
+    <string name="superplayer_cache_state_finish">download complete</string>
+
+    <string name="superplayer_hint">Tip</string>
+    <string name="superplayer_delete_video_confirm">Are you sure you want to delete this video</string>
+    <string name="superplayer_delete_success">Deleted successfully</string>
+    <string name="superplayer_delete_failed">Deleted failed</string>
+    <string name="superplayer_cahche_empty">No data</string>
+    <string name="superplayer_net_error">The network is abnormal. Please try again later</string>
+</resources>

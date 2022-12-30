@@ -8,6 +8,7 @@ import com.tencent.liteav.demo.superplayer.SuperPlayerModel;
 import com.tencent.liteav.demo.superplayer.model.entity.PlayImageSpriteInfo;
 import com.tencent.liteav.demo.superplayer.model.entity.PlayKeyFrameDescInfo;
 import com.tencent.liteav.demo.superplayer.model.entity.VideoQuality;
+import com.tencent.liteav.txcplayer.model.TXSubtitleRenderModel;
 import com.tencent.rtmp.TXTrackInfo;
 
 import java.util.List;
@@ -79,7 +80,7 @@ public interface Player {
      * @param current 当前进度(秒)
      * @param duration 视频总时长(秒)
      */
-    void updateVideoProgress(long current, long duration);
+    void updateVideoProgress(long current, long duration, long playable);
 
     /**
      * 更新播放类型
@@ -255,6 +256,11 @@ public interface Player {
         void playNext();
 
         /**
+         * 开启画中画
+         */
+        void enterPictureInPictureMode();
+
+        /**
          * 获得当前剧集播放列表
          */
         List<SuperPlayerModel> getPlayList();
@@ -285,6 +291,6 @@ public interface Player {
          * 点击音轨view的设置页面的done按钮
          * @param map
          */
-        void onClickSubtitleViewDoneButton(Map map);
+        void onClickSubtitleViewDoneButton(TXSubtitleRenderModel model);
     }
 }

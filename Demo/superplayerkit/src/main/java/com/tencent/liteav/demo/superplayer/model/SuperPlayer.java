@@ -3,6 +3,7 @@ package com.tencent.liteav.demo.superplayer.model;
 import com.tencent.liteav.demo.superplayer.SuperPlayerDef;
 import com.tencent.liteav.demo.superplayer.SuperPlayerModel;
 import com.tencent.liteav.demo.superplayer.model.entity.VideoQuality;
+import com.tencent.liteav.txcplayer.model.TXSubtitleRenderModel;
 import com.tencent.rtmp.TXLivePlayer;
 import com.tencent.rtmp.TXTrackInfo;
 import com.tencent.rtmp.ui.TXCloudVideoView;
@@ -153,5 +154,5 @@ public interface SuperPlayer {
 
     void setSubTitleView(TXSubtitleView subTitleView);
 
-    void onSubtitleSettingDone(Map map);
+    void onSubtitleSettingDone(TXSubtitleRenderModel model);
 }

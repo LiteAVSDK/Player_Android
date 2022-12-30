@@ -3,9 +3,9 @@ package com.tencent.liteav.demo.player.cache.adapter;
 import android.content.Context;
 
 import com.tencent.liteav.demo.player.R;
-import com.tencent.liteav.demo.player.expand.model.utils.SuperVodListLoader;
 import com.tencent.liteav.demo.player.view.DialogUtils;
 import com.tencent.liteav.demo.superplayer.model.utils.VideoQualityUtils;
+import com.tencent.liteav.demo.vodcommon.entity.SuperVodListLoader;
 import com.tencent.rtmp.downloader.TXVodDownloadMediaInfo;
 
 import java.util.HashMap;

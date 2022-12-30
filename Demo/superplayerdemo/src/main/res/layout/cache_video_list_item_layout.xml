@@ -91,7 +91,6 @@
 
 
     <LinearLayout
-        android:id="@+id/cache_ll_status_container"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:orientation="horizontal"

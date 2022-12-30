@@ -1,7 +1,5 @@
 package com.tencent.liteav.demo.player.demo;
 
-import static com.tencent.liteav.demo.player.common.ConfigBean.resetPlayConfig;
-
 import android.os.Bundle;
 import android.view.View;
 import android.widget.ArrayAdapter;
@@ -16,15 +14,13 @@ import androidx.annotation.Nullable;
 import androidx.fragment.app.FragmentActivity;
 
 import com.tencent.liteav.demo.player.R;
-import com.tencent.liteav.demo.player.common.ConfigBean;
-import com.tencent.rtmp.TXLiveBase;
+
+import com.tencent.liteav.demo.vodcommon.entity.ConfigBean;
+
 import com.tencent.rtmp.TXLiveConstants;
-import com.tencent.rtmp.TXPlayerGlobalSetting;
 import com.tencent.rtmp.TXVodConstants;
-import com.tencent.rtmp.TXVodPlayConfig;
 
 public class PlayerSettingActivity extends FragmentActivity {
-
     public static final int RESULT_CODE = 102;
     private CheckBox mCheckboxAccurateSeek;
     private CheckBox mCheckboxSmoothChange;
@@ -136,70 +132,70 @@ public class PlayerSettingActivity extends FragmentActivity {
     }
 
     private void setConfigView() {
-        mCheckboxAccurateSeek.setChecked(ConfigBean.sPlayConfig.isEnableAccurateSeek());
-        mCheckboxSmoothChange.setChecked(ConfigBean.sPlayConfig.isSmoothSwitchBitrate());
-        mCheckboxAutoRotate.setChecked(ConfigBean.sPlayConfig.isAutoRotate());
-        mCheckboxBitrateIndex.setChecked(ConfigBean.sIsEnableSelfAdaption);
-        mCheckboxDeal.setChecked(ConfigBean.sPlayConfig.isEnableRenderProcess());
-        mEtPlayReconnectTime.setText(String.valueOf(ConfigBean.sPlayConfig.getConnectRetryCount()));
-        mEtPlayReconnectInterval.setText(String.valueOf(ConfigBean.sPlayConfig.getConnectRetryInterval()));
-        mEtConnectOverTime.setText(String.valueOf(ConfigBean.sPlayConfig.getTimeout()));
-        mEtProgressInterval.setText(String.valueOf(ConfigBean.sPlayConfig.getProgressInterval()));
-        mEtCacheFolder.setText(TXPlayerGlobalSetting.getCacheFolderPath());
-        mEtMaxCache.setText(String.valueOf(TXPlayerGlobalSetting.getMaxCacheSize()));
-        mEtPreloadMaxCache.setText(String.valueOf(ConfigBean.sPlayConfig.getMaxPreloadSize()));
-        mEtBufferingMaxTime.setText(String.valueOf(ConfigBean.sPlayConfig.getMaxBufferSize()));
-        mEtPreferredResolution.setText(String.valueOf(ConfigBean.sPlayConfig.getPreferredResolution()));
-        mSpPlayerMediaType.setSelection(ConfigBean.sPlayConfig.getMediaType());
-        mSpDecodingStrategy.setSelection(ConfigBean.sIsEnableHardWareDecode ? 0 : 1);
-        mSpLogLevel.setSelection(ConfigBean.sLogLevel);
-        mSpVideoType.setSelection(ConfigBean.sIsUseDash ? 1 : 0);
+        mCheckboxAccurateSeek.setChecked(ConfigBean.getInstance().isEnableAccurateSeek());
+        mCheckboxSmoothChange.setChecked(ConfigBean.getInstance().isSmoothSwitchBitrate());
+        mCheckboxAutoRotate.setChecked(ConfigBean.getInstance().isAutoRotate());
+        mCheckboxBitrateIndex.setChecked(ConfigBean.getInstance().isEnableSelfAdaption());
+        mCheckboxDeal.setChecked(ConfigBean.getInstance().isEnableRenderProcess());
+        mEtPlayReconnectTime.setText(String.valueOf(ConfigBean.getInstance().getConnectRetryCount()));
+        mEtPlayReconnectInterval.setText(String.valueOf(ConfigBean.getInstance().getConnectRetryInterval()));
+        mEtConnectOverTime.setText(String.valueOf(ConfigBean.getInstance().getTimeout()));
+        mEtProgressInterval.setText(String.valueOf(ConfigBean.getInstance().getProgressInterval()));
+        mEtCacheFolder.setText(ConfigBean.getInstance().getCacheFolderPath());
+        mEtMaxCache.setText(String.valueOf(ConfigBean.getInstance().getMaxCacheItems()));
+        mEtPreloadMaxCache.setText(String.valueOf(ConfigBean.getInstance().getMaxPreloadSize()));
+        mEtBufferingMaxTime.setText(String.valueOf(ConfigBean.getInstance().getMaxBufferSize()));
+        mEtPreferredResolution.setText(String.valueOf(ConfigBean.getInstance().getPreferredResolution()));
+        mSpPlayerMediaType.setSelection(ConfigBean.getInstance().getMediaType());
+        mSpDecodingStrategy.setSelection(ConfigBean.getInstance().isEnableHardWareDecode() ? 0 : 1);
+        mSpLogLevel.setSelection(ConfigBean.getInstance().getLogLevel());
+        mSpVideoType.setSelection(ConfigBean.getInstance().isIsUseDash() ? 1 : 0);
     }
 
     private void resetConfig() {
-        resetPlayConfig();
+        ConfigBean.getInstance().reset();
         setConfigView();
     }
 
     private void saveConfig() {
-        ConfigBean.sPlayConfig.setEnableAccurateSeek(mCheckboxAccurateSeek.isChecked());
-        ConfigBean.sPlayConfig.setSmoothSwitchBitrate(mCheckboxSmoothChange.isChecked());
-        ConfigBean.sPlayConfig.setAutoRotate(mCheckboxAutoRotate.isChecked());
-        ConfigBean.sIsEnableSelfAdaption = mCheckboxBitrateIndex.isChecked();
-        ConfigBean.sPlayConfig.setEnableRenderProcess(mCheckboxDeal.isChecked());
-        ConfigBean.sPlayConfig.setProgressInterval(getIntFromEditText(mEtProgressInterval));
-        ConfigBean.sPlayConfig.setConnectRetryCount(getIntFromEditText(mEtPlayReconnectTime));
-        ConfigBean.sPlayConfig.setConnectRetryInterval(getIntFromEditText(mEtPlayReconnectInterval));
-        ConfigBean.sPlayConfig.setTimeout(getIntFromEditText(mEtConnectOverTime));
-        TXPlayerGlobalSetting.setCacheFolderPath(mEtCacheFolder.getText().toString());
-        TXPlayerGlobalSetting.setMaxCacheSize(getIntFromEditText(mEtMaxCache));
-        ConfigBean.sPlayConfig.setMaxPreloadSize(getIntFromEditText(mEtPreloadMaxCache));
-        ConfigBean.sPlayConfig.setMaxBufferSize(getIntFromEditText(mEtBufferingMaxTime));
-        ConfigBean.sPlayConfig.setPreferredResolution(getLongFromEditText(mEtPreferredResolution));
-        ConfigBean.sPlayConfig.setMediaType(mMediaType[mSpPlayerMediaType.getSelectedItemPosition()]);
-        ConfigBean.sIsEnableHardWareDecode = mSpDecodingStrategy.getSelectedItemPosition() == 0 ? true : false;
-        ConfigBean.sLogLevel = mLogArray[mSpLogLevel.getSelectedItemPosition()];
-        ConfigBean.sIsUseDash = mSpVideoType.getSelectedItemPosition() == 0 ? false : true;
-        TXLiveBase.setLogLevel(ConfigBean.sLogLevel);
+        ConfigBean.getInstance().setEnableAccurateSeek(mCheckboxAccurateSeek.isChecked());
+        ConfigBean.getInstance().setSmoothSwitchBitrate(mCheckboxSmoothChange.isChecked());
+        ConfigBean.getInstance().setAutoRotate(mCheckboxAutoRotate.isChecked());
+        ConfigBean.getInstance().setEnableSelfAdaption(mCheckboxBitrateIndex.isChecked());
+        ConfigBean.getInstance().setEnableRenderProcess(mCheckboxDeal.isChecked());
+        ConfigBean.getInstance().setProgressInterval(getIntFromEditText(mEtProgressInterval));
+        ConfigBean.getInstance().setConnectRetryCount(getIntFromEditText(mEtPlayReconnectTime));
+        ConfigBean.getInstance().setConnectRetryInterval(getIntFromEditText(mEtPlayReconnectInterval));
+        ConfigBean.getInstance().setTimeout(getIntFromEditText(mEtConnectOverTime));
+        ConfigBean.getInstance().setCacheFolderPath(mEtCacheFolder.getText().toString());
+        ConfigBean.getInstance().setMaxCacheItems(getIntFromEditText(mEtMaxCache));
+        ConfigBean.getInstance().setMaxPreloadSize(getIntFromEditText(mEtPreloadMaxCache));
+        ConfigBean.getInstance().setMaxBufferSize(getIntFromEditText(mEtBufferingMaxTime));
+        ConfigBean.getInstance().setPreferredResolution(getLongFromEditText(mEtPreferredResolution));
+        ConfigBean.getInstance().setMediaType(mMediaType[mSpPlayerMediaType.getSelectedItemPosition()]);
+        ConfigBean.getInstance().setEnableHardWareDecode(mSpDecodingStrategy
+                .getSelectedItemPosition() == 0 ? true : false);
+        ConfigBean.getInstance().setLogLevel(mLogArray[mSpLogLevel.getSelectedItemPosition()]);
+        ConfigBean.getInstance().setsIsUseDash(mSpVideoType.getSelectedItemPosition() == 0 ? false : true);
+        ConfigBean.getInstance().setLogLevel(mSpLogLevel.getSelectedItemPosition());
         finish();
     }
 
     private int getIntFromEditText(EditText editText) {
-        int ret = 0;
-        String text = editText.getText().toString();
-        if (!text.equals("")) {
-            ret = Integer.parseInt(text);
+        String text = editText.getText().toString().trim();
+        try {
+            return Integer.parseInt(text);
+        } catch (NumberFormatException e) {
+            return 0;
         }
-        return ret;
     }
 
     private long getLongFromEditText(EditText editText) {
-        long ret = 0;
-        String text = editText.getText().toString();
-        if (!text.equals("")) {
-            ret = Long.parseLong(text);
+        String text = editText.getText().toString().trim();
+        try {
+            return Long.parseLong(text);
+        } catch (NumberFormatException e) {
+            return 0;
         }
-        return ret;
     }
-
 }

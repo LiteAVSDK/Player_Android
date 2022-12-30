@@ -181,9 +181,8 @@
                             android:layout_toRightOf="@+id/tv_cache_folder"
                             android:textSize="10sp"
                             android:gravity="center_vertical"
-                            android:digits="1234567890"
                             android:textColor="@color/superplayer_white"
-                            android:inputType="phone|number"/>
+                            />
                     </RelativeLayout>
                     <RelativeLayout
                         android:layout_width="match_parent"

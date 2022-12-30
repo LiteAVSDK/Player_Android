@@ -16,7 +16,6 @@
         android:src="@drawable/superplayer_ic_back" />
 
     <TextView
-        android:id="@+id/superplayer_title_textview"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_centerHorizontal="true"

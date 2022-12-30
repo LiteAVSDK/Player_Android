@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <!-- Application theme. -->
+    <style name="AppTheme" parent="android:Theme.Black.NoTitleBar"></style>
+
+    <style name="superplayer_dialog_common" parent="android:style/Theme.Dialog">
+        <item name="android:background">@color/superplayer_transparent</item>
+        <item name="android:windowBackground">@android:color/transparent</item>
+    </style>
+
+    <style name="superplayer_tip_common" parent="android:style/Theme.Dialog">
+        <item name="android:backgroundDimEnabled">false</item>
+<!--        <item name="android:backgroundDimAmount">0</item>-->
+<!--        <item name="android:windowIsTranslucent">true</item>-->
+<!--        <item name="android:windowIsFloating">true</item>-->
+        <item name="android:background">@color/superplayer_transparent</item>
+        <item name="android:windowBackground">@android:color/transparent</item>
+    </style>
+
+</resources>

@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    package="com.tencent.liteav.shortvideoplayerdemo">
+    <application android:theme="@style/AppTheme">
+        <activity android:name="com.tencent.liteav.demo.player.demo.shortvideo.base.AbsBaseActivity" />
+        <activity
+            android:name="com.tencent.liteav.demo.player.demo.shortvideo.view.ShortVideoActivity"
+            android:configChanges="orientation|keyboardHidden|screenSize"
+            android:launchMode="singleTask"
+            android:screenOrientation="portrait"
+            android:theme="@style/Theme.AppCompat.Light.NoActionBar"
+            android:windowSoftInputMode="stateHidden" />
+    </application>
+</manifest>

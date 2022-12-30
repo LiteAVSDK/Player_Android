@@ -15,8 +15,8 @@ import androidx.annotation.Nullable;
 import com.bumptech.glide.Glide;
 import com.tencent.liteav.demo.player.R;
 import com.tencent.liteav.demo.player.cache.adapter.VideoDownloadHelper;
-import com.tencent.liteav.demo.player.expand.model.entity.VideoModel;
-import com.tencent.liteav.demo.player.expand.model.utils.SuperVodListLoader;
+import com.tencent.liteav.demo.vodcommon.entity.SuperVodListLoader;
+import com.tencent.liteav.demo.vodcommon.entity.VideoModel;
 import com.tencent.liteav.demo.superplayer.model.download.VideoDonwloadListener;
 import com.tencent.liteav.demo.superplayer.model.download.VideoDownloadCenter;
 import com.tencent.rtmp.downloader.TXVodDownloadDataSource;
@@ -85,7 +85,8 @@ public class VideoDownloadItemView extends RelativeLayout implements VideoDonwlo
             videoModel.fileid = dataSource.getFileId();
             videoModel.pSign = dataSource.getPSign();
 
-            mTvVideoQualityView.setText(mVideoDownloadHelper.getDownloadQualityText(dataSource.getQuality()));
+            mTvVideoQualityView.setText(String
+                    .valueOf(mVideoDownloadHelper.getDownloadQualityText(dataSource.getQuality())));
 
             SuperVodListLoader loader = mVideoDownloadHelper.getLoader();
             loader.getVodByFileId(videoModel, new SuperVodListLoader.OnVodInfoLoadListener() {
@@ -124,7 +125,8 @@ public class VideoDownloadItemView extends RelativeLayout implements VideoDonwlo
                             Glide.with(getContext())
                                     .load(VideoDownloadHelper.DEFAULT_DOWNLOAD_VIDEO_COVER)
                                     .into(mIvVideoCoverView);
-                            mTvVideoNameView.setText(R.string.superplayer_test_video);
+                            mTvVideoNameView.setText(getContext()
+                                    .getResources().getString(R.string.superplayer_test_video));
                             videoModel.videoURL = mediaInfo.getUrl();
                         }
                     });

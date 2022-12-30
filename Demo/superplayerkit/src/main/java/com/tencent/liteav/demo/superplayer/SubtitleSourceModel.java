@@ -3,7 +3,9 @@ package com.tencent.liteav.demo.superplayer;
 import com.tencent.rtmp.TXLiveConstants;
 import com.tencent.rtmp.TXVodConstants;
 
-public class SubtitleSourceModel {
+import java.io.Serializable;
+
+public class SubtitleSourceModel implements Serializable {
 
     /**
      * 外挂字幕名称

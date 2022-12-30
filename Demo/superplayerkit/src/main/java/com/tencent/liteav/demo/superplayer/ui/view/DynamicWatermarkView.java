@@ -216,7 +216,7 @@ public class DynamicWatermarkView extends View {
      */
     public void release() {
         hide();
-        handlerThread.getLooper().quit();
+        handlerThread.quit();
     }
 
 

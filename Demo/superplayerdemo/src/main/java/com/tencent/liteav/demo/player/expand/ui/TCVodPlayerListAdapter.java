@@ -10,8 +10,8 @@ import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
 import com.tencent.liteav.demo.player.R;
-import com.tencent.liteav.demo.player.expand.model.entity.VideoListModel;
-import com.tencent.liteav.demo.player.expand.model.entity.VideoModel;
+import com.tencent.liteav.demo.vodcommon.entity.VideoListModel;
+import com.tencent.liteav.demo.vodcommon.entity.VideoModel;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -38,7 +38,9 @@ public class TCVodPlayerListAdapter extends RecyclerView.Adapter<TCVodPlayerList
 
     @Override
     public void onBindViewHolder(ViewHolder holder, final int position) {
-        if (mVideoListModelList.get(position).videoModelList.size() == 1) {
+        if (position >= 0 && position < mVideoListModelList.size()
+                && mVideoListModelList.get(position) != null
+                && mVideoListModelList.get(position).videoModelList.size() == 1) {
             final VideoModel videoModel = mVideoListModelList.get(position).videoModelList.get(0);
             if (TextUtils.isEmpty(videoModel.placeholderImage)) {
                 Glide.with(mContext).load(R.drawable.superplayer_default_cover_thumb).into(holder.thumb);

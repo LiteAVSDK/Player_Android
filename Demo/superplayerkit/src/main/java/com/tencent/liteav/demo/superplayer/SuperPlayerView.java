@@ -39,6 +39,7 @@ import androidx.annotation.NonNull;
 import com.cloud.tencent.liteav.demo.comon.TUIBuild;
 import com.tencent.liteav.demo.common.manager.PermissionManager;
 import com.tencent.liteav.demo.common.utils.IntentUtils;
+import com.tencent.liteav.demo.superplayer.helper.PictureInPictureHelper;
 import com.tencent.liteav.demo.superplayer.model.ISuperPlayerListener;
 import com.tencent.liteav.demo.superplayer.model.SuperPlayer;
 import com.tencent.liteav.demo.superplayer.model.SuperPlayerImpl;
@@ -50,12 +51,14 @@ import com.tencent.liteav.demo.superplayer.model.entity.PlayKeyFrameDescInfo;
 import com.tencent.liteav.demo.superplayer.model.entity.VideoQuality;
 import com.tencent.liteav.demo.superplayer.model.net.LogReport;
 import com.tencent.liteav.demo.superplayer.model.utils.NetWatcher;
+import com.tencent.liteav.demo.superplayer.ui.helper.VolumeChangeHelper;
 import com.tencent.liteav.demo.superplayer.ui.player.FloatPlayer;
 import com.tencent.liteav.demo.superplayer.ui.player.FullScreenPlayer;
 import com.tencent.liteav.demo.superplayer.ui.player.Player;
 import com.tencent.liteav.demo.superplayer.ui.player.WindowPlayer;
 import com.tencent.liteav.demo.superplayer.ui.view.DanmuView;
 import com.tencent.liteav.demo.superplayer.ui.view.DynamicWatermarkView;
+import com.tencent.liteav.txcplayer.model.TXSubtitleRenderModel;
 import com.tencent.rtmp.TXLivePlayer;
 import com.tencent.rtmp.TXTrackInfo;
 import com.tencent.rtmp.ui.TXCloudVideoView;
@@ -70,7 +73,6 @@ import java.lang.reflect.Constructor;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
 /**
  * 超级播放器view
@@ -84,7 +86,9 @@ import java.util.Map;
  * 4、退出播放释放内存{@link #resetPlayer()}
  */
 public class SuperPlayerView extends RelativeLayout
-        implements PermissionManager.OnStoragePermissionGrantedListener {
+        implements PermissionManager.OnStoragePermissionGrantedListener,
+        PictureInPictureHelper.OnPictureInPictureClickListener,
+        VolumeChangeHelper.VolumeChangeListener  {
     private static final String TAG                    = "SuperPlayerView";
     private final        int    OP_SYSTEM_ALERT_WINDOW = 24;                      // 支持TYPE_TOAST悬浮窗的最高API版本
 
@@ -118,6 +122,9 @@ public class SuperPlayerView extends RelativeLayout
     private ISuperPlayerListener       mSuperPlayerListener;
     private PermissionManager          mStoragePermissionManager;
     private TXSubtitleView             mSubtitleView;
+    private VolumeChangeHelper         mVolumeChangeHelper;
+    private PictureInPictureHelper     mPictureInPictureHelper;
+    private long                       mPlayAble;
 
     public SuperPlayerView(Context context) {
         super(context);
@@ -179,6 +186,9 @@ public class SuperPlayerView extends RelativeLayout
         addView(mSubtitleView);
         mStoragePermissionManager = new PermissionManager(getContext(), PermissionManager.PermissionType.STORAGE);
         mStoragePermissionManager.setOnStoragePermissionGrantedListener(this);
+
+        mPictureInPictureHelper = new PictureInPictureHelper(mContext);
+        mPictureInPictureHelper.setListener(this);
     }
 
     private void initPlayer() {
@@ -216,6 +226,8 @@ public class SuperPlayerView extends RelativeLayout
             mWatcher = new NetWatcher(mContext);
         }
 
+        mVolumeChangeHelper = new VolumeChangeHelper(mContext);
+        mVolumeChangeHelper.registerVolumeChangeListener(this);
     }
 
     /**
@@ -460,9 +472,9 @@ public class SuperPlayerView extends RelativeLayout
     public void showOrHideBackBtn(boolean isShow) {
         if (mWindowPlayer != null) {
             mWindowPlayer.showOrHideBackBtn(isShow);
+            mWindowPlayer.showPIPIV(false);
         }
     }
-
 
     private void onSwitchFullMode(SuperPlayerDef.PlayerMode playerMode) {
         if (mLayoutParamFullScreenMode == null) {
@@ -773,8 +785,13 @@ public class SuperPlayerView extends RelativeLayout
         }
 
         @Override
-        public void onClickSubtitleViewDoneButton(Map map) {
-            mSuperPlayer.onSubtitleSettingDone(map);
+        public void onClickSubtitleViewDoneButton(TXSubtitleRenderModel model) {
+            mSuperPlayer.onSubtitleSettingDone(model);
+        }
+
+        @Override
+        public void enterPictureInPictureMode() {
+            mPictureInPictureHelper.enterPictureInPictureMode(getPlayerState(),mTXCloudVideoView);
         }
     };
 
@@ -927,6 +944,8 @@ public class SuperPlayerView extends RelativeLayout
     }
 
     public void release() {
+        mVolumeChangeHelper.unRegisterVolumeChangeListener();
+        mPictureInPictureHelper.release();
         if (mWindowPlayer != null) {
             mWindowPlayer.release();
         }
@@ -1018,6 +1037,9 @@ public class SuperPlayerView extends RelativeLayout
 
         @Override
         public void onPlayStop() {
+            if (mCurrentSuperPlayerModel != null && mCurrentSuperPlayerModel.dynamicWaterConfig != null) {
+                mDynamicWatermarkView.hide();
+            }
             if (mSuperPlayerModelList.size() >= 1 && mIsPlayInit && mIsLoopPlayList) {
                 playNextVideo();
             } else {
@@ -1049,12 +1071,13 @@ public class SuperPlayerView extends RelativeLayout
         }
 
         @Override
-        public void onPlayProgress(long current, long duration) {
+        public void onPlayProgress(long current, long duration, long playable) {
             mProgress = current;
             mDuration = duration;
-            mWindowPlayer.updateVideoProgress(current, duration);
-            mFullScreenPlayer.updateVideoProgress(current, duration);
-            mFloatPlayer.updateVideoProgress(current, duration);
+            mPlayAble = playable;
+            mWindowPlayer.updateVideoProgress(current, duration,playable);
+            mFullScreenPlayer.updateVideoProgress(current, duration,playable);
+            mFloatPlayer.updateVideoProgress(current, duration,playable);
         }
 
         @Override
@@ -1296,5 +1319,48 @@ public class SuperPlayerView extends RelativeLayout
         mStoragePermissionManager.onRequestPermissionsResult(requestCode, grantResults);
     }
 
+    @Override
+    public void onVolumeChange(int volume) {
+        mWindowPlayer.onVolumeChange(volume);
+        mFullScreenPlayer.onVolumeChange(volume);
+    }
+
+    public long getProgress() {
+        return mProgress;
+    }
+    
+    @Override
+    public void onClickPIPPlay() {
+        mSuperPlayer.resume();
+        mWindowPlayer.updatePlayState(SuperPlayerDef.PlayerState.PLAYING);
+        mFullScreenPlayer.updatePlayState(SuperPlayerDef.PlayerState.PLAYING);
+    }
+
+    @Override
+    public void onClickPIPPause() {
+        mSuperPlayer.pause();
+        mWindowPlayer.updatePlayState(SuperPlayerDef.PlayerState.PAUSE);
+        mFullScreenPlayer.updatePlayState(SuperPlayerDef.PlayerState.PAUSE);
+    }
+
+    @Override
+    public void onClickPIPPlayBackward() {
+        mProgress = mProgress + mPictureInPictureHelper.getTimeShiftInterval();
+        mSuperPlayer.seek((int) mProgress);
+        mWindowPlayer.updateVideoProgress(mProgress, mDuration, mPlayAble);
+        mFullScreenPlayer.updateVideoProgress(mProgress, mDuration, mPlayAble);
+    }
+
+    @Override
+    public void onClickPIPPlayForward() {
+        mProgress = mProgress - mPictureInPictureHelper.getTimeShiftInterval();
+        mSuperPlayer.seek((int) mProgress);
+        mWindowPlayer.updateVideoProgress(mProgress, mDuration, mPlayAble);
+        mFullScreenPlayer.updateVideoProgress(mProgress, mDuration, mPlayAble);
+    }
+
+    public void showPIPIV(boolean isShow) {
+        mWindowPlayer.showPIPIV(isShow);
+    }
 
 }

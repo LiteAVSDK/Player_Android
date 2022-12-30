@@ -45,7 +45,6 @@
 
         <ImageView
             android:tint="@color/superplayer_white"
-            android:id="@+id/superplayer_iv_replay"
             android:layout_width="25dp"
             android:layout_height="25dp"
             android:src="@drawable/superplayer_ic_replay" />
@@ -190,4 +189,14 @@
         android:id="@+id/superplayer_vip_watch_view"
         android:layout_width="match_parent"
         android:layout_height="match_parent" />
+
+    <ImageView
+        android:id="@+id/superplayer_iv_pip"
+        android:layout_width="30dp"
+        android:layout_height="30dp"
+        android:layout_alignParentRight="true"
+        android:layout_centerVertical="true"
+        android:layout_marginRight="10dp"
+        android:visibility="gone"
+        android:src="@drawable/superplayer_pip_play_icon" />
 </RelativeLayout>

@@ -1,7 +1,9 @@
 package com.tencent.liteav.demo.superplayer.model.entity;
 
 
-public class DynamicWaterConfig {
+import java.io.Serializable;
+
+public class DynamicWaterConfig implements Serializable {
     /**
      * 动态水印文本
      */

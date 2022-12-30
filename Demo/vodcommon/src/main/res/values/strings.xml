@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="superplayer_dynamic_watermark_title">动态水印演示</string>
+    <string name="superplayer_dynamic_watermark_tip">shipinyun</string>
+    <string name="superplayer_cover_title">自定义封面演示</string>
+    <string name="superplayer_offline_cache_title">离线缓存（全屏）演示</string>
+    <string name="superplayer_carousel_list_title">视频列表轮播演示</string>
+    
+
+    <string name="tencent_cloud_audio_and_video_achievements_title">腾讯云音视频成就</string>
+    <string name="tencent_cloud_audio_and_video_achievements_introduction">自2018年以来，腾讯云音视频取得“四连冠”</string>
+    <string name="tencent_cloud_audio_and_video_achievements_detail">在TRTC、音视频编解码、RT-ONE音视频融合网络、腾讯云视立方音视频终端等做出杰出成绩。</string>
+
+    <string name="tencent_cloud_audio_and_video_steady_title">腾讯云音视频——稳</string>
+    <string name="tencent_cloud_audio_and_video_steady_introduction">腾讯云音视频就是稳，根本不会卡。</string>
+    <string name="tencent_cloud_audio_and_video_steady_detail">超21年技术沉淀，“三合一”RT-ONE音视频通信网络，腾讯云音视频就是稳。</string>
+
+    <string name="tencent_cloud_audio_and_video_real_title">腾讯云音视频——真</string>
+    <string name="tencent_cloud_audio_and_video_real_introduction">腾讯云音视频就是真</string>
+    <string name="tencent_cloud_audio_and_video_real_detail">试听效果真，场景还原真，互动体验真，腾讯云音视频就是真。</string>
+
+    <string name="tencent_cloud_audio_and_video_complete_title">腾讯云音视频——全</string>
+    <string name="tencent_cloud_audio_and_video_complete_introduction">腾讯云视立方解决方案就是全</string>
+    <string name="tencent_cloud_audio_and_video_complete_detail">产品矩阵全，解决方案全，场景覆盖全，腾讯云音视频就是全。</string>
+
+    <string name="tencent_cloud_business_introduction_title">腾讯云业务介绍</string>
+    <string name="tencent_cloud_business_introduction_introduction">腾讯云，值得信赖的产业数据化助手</string>
+    <string name="tencent_cloud_business_introduction_detail">腾讯云与您共建数字新基建，助力数字经济新发展。</string>
+
+    <string name="what_are_numbers_title">数字是什么</string>
+    <string name="what_are_numbers_introduction">在未来，你关注的数字是什么？</string>
+    <string name="what_are_numbers_detail">在未来，数字创造数字，腾讯云，值得信赖的产业数据化助手。</string>
+    
+    <string name="simplify_complexity_and_build_big_from_small_title">化繁为简，以小建大</string>
+    <string name="simplify_complexity_and_build_big_from_small_introduction">腾讯云提出“化繁为简，以小建大”的品牌理念。</string>
+    <string name="simplify_complexity_and_build_big_from_small_detail">繁复的数字化过程“简单化”，用小巧的模块助力企业实现“大梦想”。</string>
+
+    <string name="tencent_cloud_audio_and_video_introduction">开启全真互联新时代</string>
+    <string name="tencent_cloud_audio_and_video_detail">腾讯云音视频提供坚实的Paas能力，和亿万用户共创共赢。</string>
+    <string name="superplayer_vip_title">试看功能演示</string>
+    <string name="superplayer_vip_watch_tip">可试看%ss，开通VIP观看完整视频</string>
+    <string name="super_player_cache_video_title">不只是音视频 %1d</string>
+
+</resources>

@@ -144,7 +144,8 @@ public class MainActivity extends Activity {
         // 初始化播放器
         List<ChildBean> playerChildList = new ArrayList<>();
         playerChildList.add(new ChildBean(getString(R.string.app_item_super_player), R.drawable.play, 3, SuperPlayerActivity.class));
-        playerChildList.add(new ChildBean(getString(R.string.app_vod_player), R.drawable.play, 3, VodPlayerActivity.class));
+        playerChildList.add(new ChildBean(getString(R.string.app_vod_player), R.drawable.play,
+                3, VodPlayerActivity.class));
         playerChildList.add(new ChildBean(getString(R.string.app_item_shortvideo_player), R.drawable.play, 3, ShortVideoActivity.class));
         playerChildList.add(new ChildBean(getString(R.string.app_feed_player), R.drawable.play, 3, FeedActivity.class));
         if (playerChildList.size() != 0) {
