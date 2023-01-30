@@ -106,7 +106,8 @@ public class DownloadMenuListAdapter extends RecyclerView.Adapter<DownloadMenuLi
                         public void onReady(TXVodDownloadMediaInfo mediaInfo) {
                             updateItemMediaCache(superPlayerModel, qualityId, mediaInfo);
                             if (null != ivIsCache.getTag() && ivIsCache.getTag().equals(superPlayerModel)) {
-                                if (null != mediaInfo) {
+                                if (null != mediaInfo
+                             && mediaInfo.getDownloadState() != TXVodDownloadMediaInfo.STATE_ERROR) {
                                     ivIsCache.setVisibility(View.VISIBLE);
                                 } else {
                                     ivIsCache.setVisibility(View.INVISIBLE);

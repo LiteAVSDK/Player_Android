@@ -25,7 +25,8 @@ import java.util.Locale;
 /**
  * 沉浸式播放组件
  */
-public class TXVideoBaseView extends RelativeLayout implements View.OnClickListener, SeekBar.OnSeekBarChangeListener, TXVodPlayerWrapper.ISeekBarChangeListener {
+public class TXVideoBaseView extends RelativeLayout implements View.OnClickListener,
+        SeekBar.OnSeekBarChangeListener, TXVodPlayerWrapper.OnPlayEventChangedListener {
     private static final String TAG = "TXVideoBaseView";
     private View mRootView;
     private SeekBar mSeekBar;
@@ -194,11 +195,18 @@ public class TXVideoBaseView extends RelativeLayout implements View.OnClickListe
             mTXVodPlayerWrapper.setVodChangeListener(null);
             Log.i(TAG, "[stopForPlaying] mTXVodPlayerWrapper.url " + mTXVodPlayerWrapper.getUrl());
             mPauseImageView.setVisibility(View.GONE);
+            mIvCover.setVisibility(VISIBLE);
         }
     }
 
     @Override
-    public void seekbarChanged(Bundle bundle) {
+    public void onProgress(Bundle bundle) {
         handlePlayProgress(bundle);
+    }
+
+    @Override
+    public void onRcvFirstFrame() {
+        Log.i(TAG,"[onPrepared in TXVideoBaseView]");
+        mIvCover.setVisibility(GONE);
     }
 }

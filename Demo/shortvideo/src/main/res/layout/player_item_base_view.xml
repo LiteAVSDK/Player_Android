@@ -4,13 +4,6 @@
     android:layout_height="match_parent"
     >
 
-    <ImageView
-        android:id="@+id/iv_cover"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_gravity="center"
-        android:scaleType="centerInside"
-        android:visibility="visible" />
 
     <com.tencent.rtmp.ui.TXCloudVideoView
         android:id="@+id/tcv_video_view"
@@ -24,6 +17,14 @@
         android:layout_height="52dp"
         android:layout_alignParentBottom="true"
         android:background="@color/superplayer_transparent"/>
+
+    <ImageView
+        android:id="@+id/iv_cover"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_gravity="center"
+        android:scaleType="centerInside"
+        android:visibility="visible" />
 
     <SeekBar
         android:id="@+id/seekbar_short_video"

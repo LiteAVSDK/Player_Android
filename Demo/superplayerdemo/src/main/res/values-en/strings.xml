@@ -43,6 +43,7 @@
     <string name="superplayer_cache_progress">progress：%1$d%%</string>
     <string name="superplayer_cache_state_cacheing">downloading</string>
     <string name="superplayer_cache_state_pause">pause</string>
+    <string name="superplayer_cache_state_error">error</string>
     <string name="superplayer_cache_state_finish">complete</string>
 
     <string name="superplayer_hint">Tip</string>

@@ -13,7 +13,6 @@
             android:name=".demo.SuperPlayerActivity"
             android:resizeableActivity="true"
             android:supportsPictureInPicture="true"
-            android:documentLaunchMode="intoExisting"
             android:excludeFromRecents="true"
             android:configChanges="orientation|keyboardHidden|screenSize|smallestScreenSize|screenLayout"
             android:label="@string/superplayer_app_name"

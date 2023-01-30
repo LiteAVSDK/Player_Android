@@ -22,8 +22,6 @@ public abstract class AbsPlayerRecyclerViewAdapter<T, K extends AbsViewHolder> e
     public K onCreateViewHolder(ViewGroup parent, int viewType) {
         mContext = parent.getContext();
         K holder = onCreateHolder(parent);
-
-        bindListener(holder);
         return holder;
     }
 
@@ -50,18 +48,5 @@ public abstract class AbsPlayerRecyclerViewAdapter<T, K extends AbsViewHolder> e
 
     public View getViewByRes(int res, ViewGroup parent) {
         return LayoutInflater.from(mContext).inflate(res, parent, false);
-    }
-
-
-    private void bindListener(final K holder) {
-        if (holder == null) {
-            return;
-        }
-        View itemView = holder.itemView;
-        if (itemView == null) {
-            return;
-        }
-        ViewGroup.LayoutParams params = new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
-        itemView.setLayoutParams(params);
     }
 }

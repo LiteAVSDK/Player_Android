@@ -7,6 +7,7 @@ import android.util.Log;
 import com.tencent.liteav.demo.vodcommon.entity.ConfigBean;
 import com.tencent.liteav.demo.vodcommon.entity.VideoModel;
 import com.tencent.rtmp.ITXVodPlayListener;
+import com.tencent.rtmp.TXLiveConstants;
 import com.tencent.rtmp.TXPlayerGlobalSetting;
 import com.tencent.rtmp.TXVodConstants;
 import com.tencent.rtmp.TXVodPlayConfig;
@@ -18,12 +19,13 @@ import java.io.File;
 import static com.tencent.rtmp.TXLiveConstants.PLAY_EVT_PLAY_BEGIN;
 import static com.tencent.rtmp.TXLiveConstants.PLAY_EVT_PLAY_END;
 import static com.tencent.rtmp.TXLiveConstants.PLAY_EVT_PLAY_PROGRESS;
+import static com.tencent.rtmp.TXLiveConstants.PLAY_EVT_RCV_FIRST_I_FRAME;
 import static com.tencent.rtmp.TXLiveConstants.PLAY_EVT_VOD_PLAY_PREPARED;
 
 public class TXVodPlayerWrapper implements ITXVodPlayListener {
     private static final String TAG = "ShortVideoDemo:TXVodPlayerWrapper";
     private TXVodPlayer mVodPlayer;
-    private ISeekBarChangeListener mSeekBarChangeListener;
+    private OnPlayEventChangedListener mOnPlayEventChangedListener;
     private TxVodStatus mStatus;
     private String mUrl;
     private boolean mStartOnPrepare;
@@ -64,12 +66,14 @@ public class TXVodPlayerWrapper implements ITXVodPlayListener {
                     playerStatusChanged(TxVodStatus.TX_VIDEO_PLAYER_STATUS_PLAYING);
                 }
                 break;
-            case PLAY_EVT_PLAY_BEGIN:
-                Log.i(TAG, "[onPlayEvent] , PLAY_EVT_PLAY_BEGIN，" + mVodPlayer.hashCode() + ",url " + mUrl);
+            case PLAY_EVT_RCV_FIRST_I_FRAME:
+                if (mOnPlayEventChangedListener != null) {
+                    mOnPlayEventChangedListener.onRcvFirstFrame();
+                }
                 break;
             case PLAY_EVT_PLAY_PROGRESS:
-                if (mSeekBarChangeListener != null) {
-                    mSeekBarChangeListener.seekbarChanged(bundle);
+                if (mOnPlayEventChangedListener != null) {
+                    mOnPlayEventChangedListener.onProgress(bundle);
                 }
                 break;
             case PLAY_EVT_PLAY_END:
@@ -154,9 +158,8 @@ public class TXVodPlayerWrapper implements ITXVodPlayListener {
         Log.i(TAG, " [playerStatusChanged] mVodPlayer" + mVodPlayer.hashCode() + " mStatus " + mStatus);
     }
 
-    public void setVodChangeListener(ISeekBarChangeListener listener) {
-        mSeekBarChangeListener = listener;
-
+    public void setVodChangeListener(OnPlayEventChangedListener listener) {
+        mOnPlayEventChangedListener = listener;
     }
 
     public enum TxVodStatus {
@@ -169,8 +172,10 @@ public class TXVodPlayerWrapper implements ITXVodPlayListener {
         TX_VIDEO_PLAYER_STATUS_STOPPED      // 手动停止播放
     }
 
-    public interface ISeekBarChangeListener {
-        void seekbarChanged(Bundle bundle);
+    public interface OnPlayEventChangedListener {
+        void onProgress(Bundle bundle);
+
+        void onRcvFirstFrame();
     }
 
     public TXVodPlayer getVodPlayer() {

@@ -159,6 +159,7 @@ public class ShortVideoPlayFragment extends AbsBaseFragment implements View.OnCl
 
     @Override
     public void onDestroyView() {
+        mSuperShortVideoView.onDestroy();
         super.onDestroyView();
         mSuperShortVideoView.releasePlayer();
     }

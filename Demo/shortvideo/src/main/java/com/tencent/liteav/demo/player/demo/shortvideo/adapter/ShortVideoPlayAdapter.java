@@ -1,6 +1,8 @@
 package com.tencent.liteav.demo.player.demo.shortvideo.adapter;
 
+import android.content.Context;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
@@ -21,21 +23,28 @@ public class ShortVideoPlayAdapter extends AbsPlayerRecyclerViewAdapter<VideoMod
 
     private static final String TAG = "ShortVideoDemo:ShortVideoPlayAdapter";
 
-    public ShortVideoPlayAdapter(List<VideoModel> list) {
+    private Context  mContext;
+
+    public ShortVideoPlayAdapter(Context context,List<VideoModel> list) {
         super(list);
+        mContext = context;
     }
 
     @Override
     public void onHolder(VideoViewHolder holder, VideoModel bean, int position) {
-        ViewGroup.LayoutParams layoutParams = holder.itemView.getLayoutParams();
-        layoutParams.height = ViewGroup.LayoutParams.MATCH_PARENT;
         if (bean != null && bean.placeholderImage != null) {
-            Glide.with(mContext).load(bean.placeholderImage).
-                    diskCacheStrategy(DiskCacheStrategy.ALL).centerCrop()
+            Glide.with(mContext).load(bean.placeholderImage)
+                    .skipMemoryCache(true)
+                    .diskCacheStrategy(DiskCacheStrategy.ALL).centerCrop()
                     .into(holder.mImageViewCover);
         }
     }
 
+    @Override
+    public void onViewRecycled(@NonNull VideoViewHolder holder) {
+        super.onViewRecycled(holder);
+        Glide.with(mContext).clear(holder.mImageViewCover);
+    }
 
     @Override
     public VideoViewHolder onCreateHolder(ViewGroup viewGroup) {

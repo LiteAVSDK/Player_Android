@@ -29,7 +29,7 @@ public class VideoDownloadHelper {
         put(TXVodDownloadMediaInfo.STATE_INIT, R.string.superplayer_cache_state_cacheing);
         put(TXVodDownloadMediaInfo.STATE_START, R.string.superplayer_cache_state_cacheing);
         put(TXVodDownloadMediaInfo.STATE_STOP, R.string.superplayer_cache_state_pause);
-        put(TXVodDownloadMediaInfo.STATE_ERROR, R.string.superplayer_cache_state_pause);
+        put(TXVodDownloadMediaInfo.STATE_ERROR, R.string.superplayer_cache_state_error);
         put(TXVodDownloadMediaInfo.STATE_FINISH, R.string.superplayer_cache_state_finish);
     }};
 

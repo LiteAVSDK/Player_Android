@@ -37,6 +37,8 @@ public class SuperShortVideoView extends RelativeLayout {
     private TXVideoBaseView       mBaseItemView;
     private Handler               mHandler;
     private Object                mLock                = new Object();
+    private Context               mContext;
+    private boolean               mIsOnDestroy;
 
     public SuperShortVideoView(Context context) {
         super(context);
@@ -54,15 +56,25 @@ public class SuperShortVideoView extends RelativeLayout {
     }
 
     public void init(Context context) {
+        mContext = context;
         mRootView = LayoutInflater.from(context).inflate(R.layout.super_short_video_view, null);
         addView(mRootView);
         mRecyclerView = mRootView.findViewById(R.id.rv_super_short_video);
         mUrlList = new ArrayList<>();
         mSnapHelper = new PagerSnapHelper();
         mSnapHelper.attachToRecyclerView(mRecyclerView);
-        mAdapter = new ShortVideoPlayAdapter(mUrlList);
-        mLayoutManager = new LinearLayoutManager(getContext(), LinearLayoutManager.VERTICAL, false);
+        mAdapter = new ShortVideoPlayAdapter(mContext,mUrlList);
+        mLayoutManager = new LinearLayoutManager(getContext(), LinearLayoutManager.VERTICAL, false) {
+            @Override
+            protected int getExtraLayoutSpace(RecyclerView.State state) {
+                return 300;
+            }
+        };
         mRecyclerView.setLayoutManager(mLayoutManager);
+        mRecyclerView.setItemViewCacheSize(6);
+        mRecyclerView.setHasFixedSize(true);
+        mRecyclerView.setDrawingCacheEnabled(true);
+        mRecyclerView.setDrawingCacheQuality(View.DRAWING_CACHE_QUALITY_LOW);
         mRecyclerView.setAdapter(mAdapter);
         mLayoutManager.scrollToPosition(0);
         mHandler = new Handler() {
@@ -134,7 +146,7 @@ public class SuperShortVideoView extends RelativeLayout {
             mBaseItemView.setTXVodPlayer(txVodPlayerWrapper);
             mLastPositionInIDLE = position;
         }
-        if (mBaseItemView != null) {
+        if (mBaseItemView != null && !mIsOnDestroy) {
             mBaseItemView.startPlay();
         }
     }
@@ -197,5 +209,9 @@ public class SuperShortVideoView extends RelativeLayout {
                 onPageSelectedMethod(position);
             }
         });
+    }
+
+    public void onDestroy() {
+        mIsOnDestroy = true;
     }
 }

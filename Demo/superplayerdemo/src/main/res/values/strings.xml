@@ -47,6 +47,7 @@
     <string name="superplayer_cache_progress">缓存进度：%1$d%%</string>
     <string name="superplayer_cache_state_cacheing">缓存中</string>
     <string name="superplayer_cache_state_pause">缓存暂停</string>
+    <string name="superplayer_cache_state_error">缓存错误</string>
     <string name="superplayer_cache_state_finish">缓存结束</string>
     
     <string name="superplayer_hint">提示</string>

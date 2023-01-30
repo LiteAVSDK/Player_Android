@@ -54,6 +54,8 @@ public class SuperVodListLoader {
     private              OnVodInfoLoadListener mOnVodInfoLoadListener;
     private              OkHttpClient          mHttpClient;
     private              int                   mAppId    = 1500005830;
+    private              Object mLock = new Object();
+
 
     public SuperVodListLoader(Context context) {
         mHandlerThread = new HandlerThread("SuperVodListLoader");
@@ -184,17 +186,19 @@ public class SuperVodListLoader {
             @Override
             public void run() {
                 final int loadSize = videoModels.size();
-                final AtomicInteger integer = new AtomicInteger(1);
+                final AtomicInteger integer = new AtomicInteger(0);
                 for (VideoModel model : videoModels) {
                     getVodByFileId(model, new OnVodInfoLoadListener() {
                         @Override
                         public void onSuccess(VideoModel videoModel) {
-                            integer.getAndAdd(1);
-                            if (integer.get() == loadSize) {
-                                VideoListModel videoListModel = new VideoListModel();
-                                videoListModel.videoModelList = videoModels;
-                                videoListModel.isEnableDownload = isCacheModel;
-                                listener.onSuccess(videoListModel);
+                            synchronized (mLock) {
+                                integer.getAndAdd(1);
+                                if (integer.get() == loadSize) {
+                                    VideoListModel videoListModel = new VideoListModel();
+                                    videoListModel.videoModelList = videoModels;
+                                    videoListModel.isEnableDownload = isCacheModel;
+                                    listener.onSuccess(videoListModel);
+                                }
                             }
                         }
 
