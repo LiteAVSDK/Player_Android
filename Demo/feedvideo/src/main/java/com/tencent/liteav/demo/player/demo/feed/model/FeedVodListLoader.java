@@ -73,12 +73,6 @@ public class FeedVodListLoader {
         dashData.add(model);
 
         model = new VideoModel();
-        model.videoURL = "http://1500004424.vod2.myqcloud.com/4383a13evodtranscq1500004424/baff45348602268011141077324/adp.9101.mpd";
-        model.title = "DRM Widevine";
-        model.playAction = PLAY_ACTION_PRELOAD;
-        dashData.add(model);
-
-        model = new VideoModel();
         model.videoURL = "https://bitmovin-a.akamaihd.net/content/MI201109210084_1/mpds/f08e80da-bf1d-4e3d-8899-f0f6155f6efa.mpd";
         model.title = "number-based";
         model.playAction = PLAY_ACTION_PRELOAD;

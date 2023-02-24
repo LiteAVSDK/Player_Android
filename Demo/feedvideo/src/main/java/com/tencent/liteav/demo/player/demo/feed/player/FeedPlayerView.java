@@ -142,6 +142,7 @@ public class FeedPlayerView extends FrameLayout implements FeedPlayer {
             playerModel.playAction = SuperPlayerModel.PLAY_ACTION_MANUAL_PLAY;
             playWithModelIsSuccess = false;
             superPlayerView.playWithModelNeedLicence(playerModel);
+            superPlayerView.showOrHideBackBtn(false);
         }
     }
 
@@ -151,6 +152,7 @@ public class FeedPlayerView extends FrameLayout implements FeedPlayer {
             playerModel.playAction = SuperPlayerModel.PLAY_ACTION_PRELOAD;
             playWithModelIsSuccess = true;
             superPlayerView.playWithModelNeedLicence(playerModel);
+            superPlayerView.showOrHideBackBtn(false);
         }
     }
 
@@ -161,6 +163,7 @@ public class FeedPlayerView extends FrameLayout implements FeedPlayer {
             playerModel.playAction = SuperPlayerModel.PLAY_ACTION_PRELOAD;
             playWithModelIsSuccess = true;
             superPlayerView.playWithModelNeedLicence(playerModel);
+            superPlayerView.showOrHideBackBtn(false);
             superPlayerView.onResume();
         }
     }

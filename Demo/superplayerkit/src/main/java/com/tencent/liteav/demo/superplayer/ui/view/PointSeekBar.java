@@ -342,10 +342,17 @@ public class PointSeekBar extends RelativeLayout {
     }
 
     private boolean handleUpEvent(MotionEvent event) {
+        // 需要使用event的x坐标 使用mThumbLeft 是使得点击无反应
         float x = event.getX();
-        float y = event.getY();
         if (mListener != null) {
-            mCurrentProgress = (int) ((x / (float) mWidth) * mMaxProgress);
+            mCurrentProgress = (int) ((x / (float) (mWidth)) * mMaxProgress);
+            // 针对 向左向右过度拖动 做保护
+            if (mCurrentProgress > 100) {
+                mCurrentProgress = 100;
+            }
+            if (mCurrentProgress < 0) {
+                mCurrentProgress = 0;
+            }
             calProgressDis();
             changeThumbPos();
             invalidate();

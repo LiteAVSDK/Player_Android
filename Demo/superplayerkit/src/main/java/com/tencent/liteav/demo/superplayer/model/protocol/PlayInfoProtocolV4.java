@@ -159,6 +159,7 @@ public class PlayInfoProtocolV4 implements IPlayInfoProtocol {
      */
     private String makeQueryString(String pcfg, String psign, String content) {
         StringBuilder str = new StringBuilder();
+        str.append("subversion=1" +  "&");  // V4协议子版本号,值为1标识为V4.1版本
         if (!TextUtils.isEmpty(pcfg)) {
             str.append("pcfg=" + pcfg + "&");
         }

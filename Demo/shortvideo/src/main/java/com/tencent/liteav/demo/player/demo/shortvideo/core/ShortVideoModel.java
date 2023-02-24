@@ -105,10 +105,6 @@ public class ShortVideoModel {
         model.title = "number-based";
         mSourceList.add(model);
 
-        model = new VideoModel();
-        model.videoURL = "http://1500004424.vod2.myqcloud.com/4383a13evodtranscq1500004424/baff45348602268011141077324/adp.9101.mpd";
-        model.title = "DRM Widevine";
-        mSourceList.add(model);
     }
 
     public void getVideoByFileId() {

@@ -79,6 +79,8 @@ public class SuperPlayerActivity extends FragmentActivity implements View.OnClic
     private static final String SHARE_PREFERENCE_NAME = "tx_super_player_guide_setting";
     private static final String KEY_GUIDE_ONE         = "is_guide_one_finish";
     private static final String KEY_GUIDE_TWO         = "is_guide_two_finish";
+    private static final String DEFAULT_FILE_ID       = "387702299774390972";
+    private static final int    DEFAULT_APP_ID         = 1500005830;
     private static final String DEFAULT_IMAGHOLDER    = "http://xiaozhibo-10055601.file.myqcloud.com/coverImg.jpg";
     private static final float sPlayerViewDisplayRatio = (float) 720 / 1280;   //当前界面播放器view展示的宽高比，用主流的16：9
     private static final int    LIST_TYPE_LIVE        = 0;
@@ -497,6 +499,18 @@ public class SuperPlayerActivity extends FragmentActivity implements View.OnClic
                     new SuperVodListLoader.OnVodListLoadListener() {
                         @Override
                         public void onSuccess(VideoListModel videoListModel) {
+                            VideoModel encryptModel = new VideoModel();
+                            encryptModel.appid = 1500005830;
+                            encryptModel.title = "加密视频_腾讯云业务介绍";
+                            encryptModel.placeholderImage = "https://1500005830.vod2.myqcloud.com/6c9a5118vodcq1500005830/35ab25fb243791578431393746/onEqUp.png";
+                            encryptModel.fileid = "243791578431393746";
+                            encryptModel.pSign = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhcHBJZCI6MTUwMDA"
+                                    + "wNTgzMCwiZmlsZUlkIjoiMjQzNzkxNTc4NDMxMzkzNzQ2IiwiY3VycmVudFRpbWVTdGFtc"
+                                    + "CI6MTY3MzQyNjIyNywiY29udGVudEluZm8iOnsiYXVkaW9WaWRlb1R5cGUiOiJQcm90ZWN0"
+                                    + "ZWRBZGFwdGl2ZSIsImRybUFkYXB0aXZlSW5mbyI6eyJwcml2YXRlRW5jcnlwdGlvbkRlZmluaX"
+                                    + "Rpb24iOjEyfX0sInVybEFjY2Vzc0luZm8iOnsiZG9tYWluIjoiMTUwMDAwNTgzMC52b2QyLm15cWNs"
+                                 + "b3VkLmNvbSIsInNjaGVtZSI6IkhUVFBTIn19.q34pq7Bl0ryKDwUHGyzfXKP-CDI8vrm0k_y-IaxgF_U";
+                            videoListModel.addVideoModel(encryptModel);
                             for (VideoModel videoModel : videoListModel.videoModelList) {
                                 onGetVodInfoOnebyOneOnSuccess(videoModel);
                             }
@@ -528,10 +542,12 @@ public class SuperPlayerActivity extends FragmentActivity implements View.OnClic
             mImageAdd.setVisibility(VISIBLE);
         } else {
             mVideoId = getIntent().getStringExtra(SuperPlayerConstants.PLAYER_VIDEO_ID);
-            if (!TextUtils.isEmpty(mVideoId)) {
+            if (TextUtils.isEmpty(mVideoId)) {
+                playDefaultVideo(DEFAULT_APP_ID, DEFAULT_FILE_ID);
+            } else {
                 playDefaultVideo(SuperPlayerConstants.VOD_APPID, mVideoId);
-                mVideoHasPlay = true;
             }
+            mVideoHasPlay = true;
             mGetVideoInfoListListener = new GetVideoInfoListListener() {
                 @Override
                 public void onGetVideoInfoList(final List<VideoInfo> videoInfoList) {

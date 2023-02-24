@@ -155,4 +155,19 @@ public interface SuperPlayer {
     void setSubTitleView(TXSubtitleView subTitleView);
 
     void onSubtitleSettingDone(TXSubtitleRenderModel model);
+
+    /**
+     * 往回seek并且播放
+     */
+    void playBackward(int position);
+
+    /**
+     * 往前倍速播放
+     */
+    void playForward();
+
+    /**
+     * 恢复倍速和播放
+     */
+    void revertSpeedRate();
 }

@@ -289,8 +289,25 @@ public interface Player {
 
         /**
          * 点击音轨view的设置页面的done按钮
-         * @param map
+         * @param model
          */
         void onClickSubtitleViewDoneButton(TXSubtitleRenderModel model);
+
+        /*
+         * 快退
+         */
+        void onPlayBackward();
+
+        /**
+         * 快进
+         */
+        void onPlayForward();
+
+
+        /**
+         * 手指抬起
+         */
+        void onActionUp();
+
     }
 }

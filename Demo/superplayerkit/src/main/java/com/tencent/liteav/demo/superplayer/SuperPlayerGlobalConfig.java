@@ -44,6 +44,11 @@ public class SuperPlayerGlobalConfig {
     public boolean enableFloatWindow = true;
 
     /**
+     * 是否开启快进快退手势
+     */
+    public boolean enableFingerTapFastPlay = true;
+
+    /**
      * 是否开启硬件加速 （ 默认开启硬件加速 ）
      */
     public boolean enableHWAcceleration = true;

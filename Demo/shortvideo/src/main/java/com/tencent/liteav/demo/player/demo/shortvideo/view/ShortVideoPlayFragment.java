@@ -30,11 +30,9 @@ public class ShortVideoPlayFragment extends AbsBaseFragment implements View.OnCl
 
     private RelativeLayout mMaskOne;
     private RelativeLayout mMaskTwo;
-    private RelativeLayout mMaskThree;
     private RelativeLayout mMaskFour;
     private TextView mMaskOneIKnow;
     private TextView mMaskTwoIKnow;
-    private TextView mMaskThreeIKnow;
     private TextView mMaskFourIKnow;
     private ImageButton mBack;
     private SuperShortVideoView mSuperShortVideoView;
@@ -49,15 +47,12 @@ public class ShortVideoPlayFragment extends AbsBaseFragment implements View.OnCl
     protected void initViews(@Nullable Bundle savedInstanceState) {
         mMaskOne = getActivity().findViewById(R.id.rl_mask_one);
         mMaskTwo = getActivity().findViewById(R.id.rl_mask_two);
-        mMaskThree = getActivity().findViewById(R.id.rl_mask_three);
         mMaskFour = getActivity().findViewById(R.id.rl_mask_four);
         mSuperShortVideoView = getActivity().findViewById(R.id.super_short_video_view_play_fragment);
         mMaskOneIKnow = getActivity().findViewById(R.id.tv_mask_one_i_know);
         mMaskOneIKnow.setOnClickListener(this);
         mMaskTwoIKnow = getActivity().findViewById(R.id.tv_mask_two_i_know);
         mMaskTwoIKnow.setOnClickListener(this);
-        mMaskThreeIKnow = getActivity().findViewById(R.id.tv_mask_three_i_know);
-        mMaskThreeIKnow.setOnClickListener(this);
         mMaskFourIKnow = getActivity().findViewById(R.id.tv_mask_four_i_know);
         mMaskFourIKnow.setOnClickListener(this);
         mBack = getActivity().findViewById(R.id.ib_back_play);
@@ -68,32 +63,22 @@ public class ShortVideoPlayFragment extends AbsBaseFragment implements View.OnCl
     private void initMask() {
         boolean isFinishOne = getBoolean(KEY_GUIDE_ONE);
         boolean isFinishTwo = getBoolean(KEY_GUIDE_TWO);
-        boolean isFinishThree = getBoolean(KEY_GUIDE_THREE);
         boolean isFinishFour = getBoolean(KEY_GUIDE_FOUR);
         if (!isFinishOne) {
             mMaskOne.setVisibility(View.VISIBLE);
             mMaskTwo.setVisibility(View.GONE);
-            mMaskThree.setVisibility(View.GONE);
             mMaskFour.setVisibility(View.GONE);
         } else if (!isFinishTwo) {
             mMaskOne.setVisibility(View.GONE);
             mMaskTwo.setVisibility(View.VISIBLE);
-            mMaskThree.setVisibility(View.GONE);
-            mMaskFour.setVisibility(View.GONE);
-        } else if (!isFinishThree) {
-            mMaskOne.setVisibility(View.GONE);
-            mMaskTwo.setVisibility(View.GONE);
-            mMaskThree.setVisibility(View.VISIBLE);
             mMaskFour.setVisibility(View.GONE);
         } else if (!isFinishFour) {
             mMaskOne.setVisibility(View.GONE);
             mMaskTwo.setVisibility(View.GONE);
-            mMaskThree.setVisibility(View.GONE);
             mMaskFour.setVisibility(View.VISIBLE);
         } else {
             mMaskOne.setVisibility(View.GONE);
             mMaskTwo.setVisibility(View.GONE);
-            mMaskThree.setVisibility(View.GONE);
             mMaskFour.setVisibility(View.GONE);
         }
     }
@@ -106,7 +91,6 @@ public class ShortVideoPlayFragment extends AbsBaseFragment implements View.OnCl
         } else if (v.getId() == R.id.tv_mask_one_i_know) {
             mMaskOne.setVisibility(GONE);
             mMaskTwo.setVisibility(VISIBLE);
-            mMaskThree.setVisibility(GONE);
             mMaskFour.setVisibility(GONE);
             putBoolean(KEY_GUIDE_ONE, true);
             putBoolean(KEY_GUIDE_TWO, false);
@@ -115,25 +99,14 @@ public class ShortVideoPlayFragment extends AbsBaseFragment implements View.OnCl
         } else if (v.getId() == R.id.tv_mask_two_i_know) {
             mMaskOne.setVisibility(GONE);
             mMaskTwo.setVisibility(GONE);
-            mMaskThree.setVisibility(VISIBLE);
-            mMaskFour.setVisibility(GONE);
+            mMaskFour.setVisibility(VISIBLE);
             putBoolean(KEY_GUIDE_ONE, true);
             putBoolean(KEY_GUIDE_TWO, true);
             putBoolean(KEY_GUIDE_THREE, false);
             putBoolean(KEY_GUIDE_FOUR, false);
-        } else if (v.getId() == R.id.tv_mask_three_i_know) {
-            mMaskOne.setVisibility(GONE);
-            mMaskTwo.setVisibility(GONE);
-            mMaskThree.setVisibility(GONE);
-            mMaskFour.setVisibility(VISIBLE);
-            putBoolean(KEY_GUIDE_ONE, true);
-            putBoolean(KEY_GUIDE_TWO, true);
-            putBoolean(KEY_GUIDE_THREE, true);
-            putBoolean(KEY_GUIDE_FOUR, false);
         } else if (v.getId() == R.id.tv_mask_four_i_know) {
             mMaskOne.setVisibility(GONE);
             mMaskTwo.setVisibility(GONE);
-            mMaskThree.setVisibility(GONE);
             mMaskFour.setVisibility(GONE);
             putBoolean(KEY_GUIDE_ONE, true);
             putBoolean(KEY_GUIDE_TWO, true);
@@ -170,19 +143,6 @@ public class ShortVideoPlayFragment extends AbsBaseFragment implements View.OnCl
 
     private boolean getBoolean(String key) {
         return getContext().getSharedPreferences(SHARE_PREFERENCE_NAME, Context.MODE_PRIVATE).getBoolean(key, false);
-    }
-
-    /**
-     * listAdapter的点击事件
-     *
-     * @param position
-     */
-    public void onItemClick(final int position) {
-        mSuperShortVideoView.onItemClick(position);
-    }
-
-    public void onListPageScrolled() {
-        mSuperShortVideoView.onListPageScrolled();
     }
 
     public void onLoaded(List<VideoModel> shortVideoBeanList) {

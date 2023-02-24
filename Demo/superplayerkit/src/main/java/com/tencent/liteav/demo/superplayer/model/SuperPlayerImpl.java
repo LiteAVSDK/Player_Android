@@ -7,6 +7,7 @@ import static com.tencent.liteav.demo.superplayer.SuperPlayerModel.PLAY_ACTION_P
 import android.content.Context;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Handler;
 import android.text.TextUtils;
 import android.util.Log;
 
@@ -54,6 +55,9 @@ public class SuperPlayerImpl implements SuperPlayer, ITXVodPlayListener, ITXLive
     private static final int    SUPERPLAYER_MODE      = 1;
     private static final int    SUPPORT_MAJOR_VERSION = 8;
     private static final int    SUPPORT_MINOR_VERSION = 5;
+    private static final int    PLAY_BACK_WARD_SEEK_INTERVAL_SECOND = 5;
+    private static final int    PLAY_FOR_WARD_SPEED_RATE = 3;
+    private static final int    PLAY_BACK_WARD_PLAY_INTERVAL_MILLI_SECOND = 1000;
 
     private Context                    mContext;
     private TXCloudVideoView           mVideoView;        // 腾讯云视频播放view
@@ -87,6 +91,10 @@ public class SuperPlayerImpl implements SuperPlayer, ITXVodPlayListener, ITXLive
     private int                        mCurrentIndex        = -1;
     private TXTrackInfo                mSelectedSoundTrackInfo;
     private TXTrackInfo                mSelectedSubtitleTrackInfo;
+    private boolean                    mIsContinuePlayBackSeek = false;
+    private int                        mCurrentPosition     = 0;
+    private Handler                    mHandler;
+    private float                      mCurrentSpeedRate    = 1;
 
     public SuperPlayerImpl(Context context, TXCloudVideoView videoView) {
         initialize(context, videoView);
@@ -173,6 +181,32 @@ public class SuperPlayerImpl implements SuperPlayer, ITXVodPlayListener, ITXLive
     }
 
 
+    @Override
+    public void playBackward(int position) {
+        mIsContinuePlayBackSeek = true;
+        mCurrentPosition = position;
+        playBackwardSeek();
+    }
+
+    @Override
+    public void playForward() {
+        mVodPlayer.setRate(PLAY_FOR_WARD_SPEED_RATE);
+    }
+
+    @Override
+    public void revertSpeedRate() {
+        mIsContinuePlayBackSeek = false;
+        mVodPlayer.setRate(mCurrentSpeedRate);
+    }
+
+    private void playBackwardSeek() {
+        mCurrentPosition = mCurrentPosition - PLAY_BACK_WARD_SEEK_INTERVAL_SECOND;
+        if (mCurrentPosition < 0) {
+            mCurrentPosition = 0;
+        }
+        mVodPlayer.seek(mCurrentPosition);
+    }
+
     /**
      * 点播播放器事件回调
      *
@@ -256,6 +290,16 @@ public class SuperPlayerImpl implements SuperPlayer, ITXVodPlayListener, ITXLive
                 Log.d(TAG, "receive VOD_PLAY_EVT_SELECT_TRACK_COMPLETE, trackIndex="
                         + trackIndex + " ,errorCode=" + errorCode);
                 break;
+            case TXVodConstants.VOD_PLAY_EVT_SEEK_COMPLETE:
+                if (mIsContinuePlayBackSeek) {
+                    mHandler.postDelayed(new Runnable() {
+                        @Override
+                        public void run() {
+                            playBackwardSeek();
+                        }
+                    }, PLAY_BACK_WARD_PLAY_INTERVAL_MILLI_SECOND);
+                }
+                break;
             default:
                 break;
         }
@@ -332,6 +376,7 @@ public class SuperPlayerImpl implements SuperPlayer, ITXVodPlayListener, ITXLive
     private void initialize(Context context, TXCloudVideoView videoView) {
         mContext = context;
         mVideoView = videoView;
+        mHandler = new Handler();
         initLivePlayer(mContext);
         initVodPlayer(mContext);
     }
@@ -606,7 +651,7 @@ public class SuperPlayerImpl implements SuperPlayer, ITXVodPlayListener, ITXLive
                 mVodPlayer.setBitrateIndex(mCurrentIndex);
             }
             if (url.startsWith("http") && !TextUtils.isEmpty(mFileId) && mAppId != 0 
-                && isVersionSupportAppendUrl()) {
+                && isVersionSupportAppendUrl() && canAppendCustomQuery(url)) {
                 Uri uri = Uri.parse(url);
                 String query = uri.getQuery();
                 if (query == null || query.isEmpty()) {
@@ -626,6 +671,14 @@ public class SuperPlayerImpl implements SuperPlayer, ITXVodPlayListener, ITXLive
             }
         }
         mIsPlayWithFileId = false;
+    }
+
+    private boolean canAppendCustomQuery(String url) {
+        if (url.contains("spfileid") || url.contains("spdrmtype") || url.contains("spappid")) {
+            return false;
+        } else {
+            return true;
+        }
     }
 
     private void sendRequestToUpdateVideoImageSpriteAndKeyFrame(SuperPlayerModel model) {
@@ -1059,6 +1112,8 @@ public class SuperPlayerImpl implements SuperPlayer, ITXVodPlayListener, ITXLive
     public void setRate(float speedLevel) {
         if (mCurrentPlayType == SuperPlayerDef.PlayerType.VOD) {
             mVodPlayer.setRate(speedLevel);
+            mCurrentSpeedRate = speedLevel;
+            mIsContinuePlayBackSeek = false;
         }
         //速度改变上报
         LogReport.getInstance().uploadLogs(LogReport.ELK_ACTION_CHANGE_SPEED, 0, 0);

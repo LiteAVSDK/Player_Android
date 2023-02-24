@@ -282,6 +282,7 @@ public class SuperPlayerView extends RelativeLayout
     }
 
     private void playWithModelInner(SuperPlayerModel model) {
+        mWindowPlayer.showPIPIV(model.vipWatchMode == null ? true : false);
         mPlayAction = mCurrentSuperPlayerModel.playAction;
         if (mPlayAction == PLAY_ACTION_AUTO_PLAY || mPlayAction == PLAY_ACTION_PRELOAD) {
             mSuperPlayer.play(model);
@@ -791,7 +792,22 @@ public class SuperPlayerView extends RelativeLayout
 
         @Override
         public void enterPictureInPictureMode() {
-            mPictureInPictureHelper.enterPictureInPictureMode(getPlayerState(),mTXCloudVideoView);
+            mPictureInPictureHelper.enterPictureInPictureMode(getPlayerState(), mTXCloudVideoView);
+        }
+
+        @Override
+        public void onPlayBackward() {
+            mSuperPlayer.playBackward((int)mProgress);
+        }
+
+        @Override
+        public void onPlayForward() {
+            mSuperPlayer.playForward();
+        }
+
+        @Override
+        public void onActionUp() {
+            mSuperPlayer.revertSpeedRate();
         }
     };
 
@@ -944,7 +960,9 @@ public class SuperPlayerView extends RelativeLayout
     }
 
     public void release() {
-        mVolumeChangeHelper.unRegisterVolumeChangeListener();
+        if (mVolumeChangeHelper != null) {
+            mVolumeChangeHelper.unRegisterVolumeChangeListener();
+        }
         mPictureInPictureHelper.release();
         if (mWindowPlayer != null) {
             mWindowPlayer.release();

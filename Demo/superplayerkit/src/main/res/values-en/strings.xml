@@ -35,4 +35,6 @@
     <string name="superplayer_audio_tracks">Audio Tracks</string>
     <string name="superplayer_off">Off</string>
     <string name="superplayer_audio_track">Audio Track </string>
+    <string name="superplayer_playforward">Fast Forward</string>
+    <string name="superplayer_playbackward">Fast Rewind</string>
 </resources>
