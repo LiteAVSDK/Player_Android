@@ -77,18 +77,29 @@
         android:layout_marginStart="10dp"/>
 
     <TextView
-        android:id="@id/cache_tv_cache_progress"
+        android:id="@+id/cache_tv_cache_video_size"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         app:layout_constraintStart_toStartOf="@id/cache_tv_video_title"
         app:layout_constraintTop_toBottomOf="@id/cache_tv_video_title"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintHorizontal_bias="0"
-        tools:text="@string/superplayer_cache_progress"
+        tools:text="@string/superplayer_cache_video_size"
         android:textColor="@color/superplayer_color_gray"
         android:textSize="12sp"
         android:layout_marginTop="5dp"/>
 
+    <TextView
+        android:id="@id/cache_tv_cache_progress"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="5dp"
+        app:layout_constraintBottom_toBottomOf="@id/cache_tv_cache_video_size"
+        app:layout_constraintLeft_toRightOf="@id/cache_tv_cache_video_size"
+        app:layout_constraintHorizontal_bias="0"
+        tools:text="@string/superplayer_cache_progress"
+        android:textColor="@color/superplayer_color_gray"
+        android:textSize="12sp"/>
 
     <LinearLayout
         android:layout_width="wrap_content"

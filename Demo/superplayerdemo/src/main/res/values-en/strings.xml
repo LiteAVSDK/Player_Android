@@ -41,6 +41,7 @@
     <string name="superplayer_carousel_list_title">Video list carousel demo</string>
 
     <string name="superplayer_cache_progress">progress：%1$d%%</string>
+    <string name="superplayer_cache_video_size">MB</string>
     <string name="superplayer_cache_state_cacheing">downloading</string>
     <string name="superplayer_cache_state_pause">pause</string>
     <string name="superplayer_cache_state_error">error</string>

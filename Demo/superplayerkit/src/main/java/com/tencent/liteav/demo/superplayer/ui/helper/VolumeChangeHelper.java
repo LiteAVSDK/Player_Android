@@ -39,10 +39,11 @@ public class VolumeChangeHelper {
         if (mVolumeBroadCastReceiver != null) {
             mContext.unregisterReceiver(mVolumeBroadCastReceiver);
             mVolumeBroadCastReceiver = null;
+            mListener = null;
         }
     }
 
-    static class  VolumeBroadCastReceiver extends BroadcastReceiver {
+    static class VolumeBroadCastReceiver extends BroadcastReceiver {
 
        @Override
        public void onReceive(Context context, Intent intent) {
@@ -50,12 +51,12 @@ public class VolumeChangeHelper {
                    && intent.getIntExtra(EXTRA_VOLUME_STREAM_TYPE,-1)
                    == AudioManager.STREAM_MUSIC) {
                int currentVolume = audioManager.getStreamVolume(AudioManager.STREAM_MUSIC);
-               if (currentVolume > 0) {
-                   mListener.onVolumeChange(currentVolume);
+               final VolumeChangeListener listener = mListener;
+               if (listener != null && currentVolume > 0) {
+                   listener.onVolumeChange(currentVolume);
                }
            }
        }
-
    }
 
    public interface VolumeChangeListener {

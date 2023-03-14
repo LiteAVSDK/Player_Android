@@ -45,6 +45,7 @@
     <string name="superplayer_carousel_list_title">视频列表轮播演示</string>
     
     <string name="superplayer_cache_progress">缓存进度：%1$d%%</string>
+    <string name="superplayer_cache_video_size">MB</string>
     <string name="superplayer_cache_state_cacheing">缓存中</string>
     <string name="superplayer_cache_state_pause">缓存暂停</string>
     <string name="superplayer_cache_state_error">缓存错误</string>

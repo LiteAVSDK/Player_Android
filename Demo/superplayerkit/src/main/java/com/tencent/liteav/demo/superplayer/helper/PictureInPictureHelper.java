@@ -125,6 +125,9 @@ public class PictureInPictureHelper {
      * @param requestCode
      */
     public void updatePictureInPictureActions(@DrawableRes int iconId, String title, int controlType, int requestCode) {
+        if (mPictureInPictureParamsBuilder == null) {
+            return;
+        }
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
 
             final ArrayList<RemoteAction> actions = new ArrayList<>();

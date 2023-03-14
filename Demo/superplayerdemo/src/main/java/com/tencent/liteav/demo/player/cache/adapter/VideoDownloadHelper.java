@@ -56,11 +56,13 @@ public class VideoDownloadHelper {
     }
 
     public int getProgressStateTextRes(int downloadState) {
-        return PROGRESS_STATE_TEXT_MAP.get(downloadState);
+        Integer resId = PROGRESS_STATE_TEXT_MAP.get(downloadState);
+        return resId != null ? resId : R.string.superplayer_cache_state_error;
     }
 
     public int getProgressStateIconRes(int downloadState) {
-        return PROGRESS_STATE_ICON_MAP.get(downloadState);
+        Integer drawableId =  PROGRESS_STATE_ICON_MAP.get(downloadState);
+        return drawableId != null ? drawableId : R.drawable.superplayer_cache_circle_status_pause;
     }
 
     public Integer getDownloadQualityText(int downloadQualityId) {

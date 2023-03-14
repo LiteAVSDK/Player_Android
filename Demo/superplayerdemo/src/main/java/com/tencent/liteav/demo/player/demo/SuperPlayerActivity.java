@@ -5,7 +5,6 @@ import static android.view.View.VISIBLE;
 
 import android.app.ActivityManager;
 import android.app.AlertDialog;
-import android.app.KeyguardManager;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -32,10 +31,9 @@ import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.annotation.RequiresApi;
-import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.fragment.app.FragmentActivity;
+import androidx.lifecycle.Lifecycle;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
@@ -62,8 +60,8 @@ import com.tencent.rtmp.TXLiveConstants;
 import com.tencent.rtmp.TXVodConstants;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 /**
  * Created by liyuejiao on 2018/7/3.
@@ -150,9 +148,15 @@ public class SuperPlayerActivity extends FragmentActivity implements View.OnClic
         updateList(mDataType);
     }
 
+
+
     @Override
     protected void onNewIntent(Intent intent) {
         super.onNewIntent(intent);
+        if (intent.getBooleanExtra("IS_DISTROY",false)) {
+            finish();
+            return;
+        }
         setIntent(intent);
         String from = intent.getStringExtra("from");
         if (!TextUtils.isEmpty(from)) {
@@ -328,7 +332,7 @@ public class SuperPlayerActivity extends FragmentActivity implements View.OnClic
 
     private void initData() {
         mLiveList = new ArrayList<>();
-        mVodList = Collections.synchronizedList(new ArrayList());
+        mVodList = new CopyOnWriteArrayList();
         mDefaultVideo = getIntent().getBooleanExtra(SuperPlayerConstants.PLAYER_DEFAULT_VIDEO, true);
         mSuperVodListLoader = new SuperVodListLoader(this);
 
@@ -1209,10 +1213,8 @@ public class SuperPlayerActivity extends FragmentActivity implements View.OnClic
         if (PictureInPictureHelper.hasPipPermission(this) && mIsEnteredPIPMode) {
             PowerManager manager = (PowerManager)getSystemService(POWER_SERVICE);
             if ((android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.N)
-                    && manager.isInteractive()) {
-                finish();
-            } else {
-                mSuperPlayerView.onPause();
+                    && !manager.isInteractive()) {
+                  mSuperPlayerView.onPause();
             }
         }
     }
@@ -1297,6 +1299,10 @@ public class SuperPlayerActivity extends FragmentActivity implements View.OnClic
         } else {
             mLayoutTitle.setVisibility(VISIBLE);
             mSuperPlayerView.showPIPIV(true);
+        }
+        if (getLifecycle().getCurrentState() == Lifecycle.State.CREATED
+                && (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O)) {
+            finishAndRemoveTask();
         }
     }
 }

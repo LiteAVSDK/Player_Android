@@ -22,6 +22,9 @@ import com.tencent.liteav.demo.superplayer.model.download.VideoDownloadCenter;
 import com.tencent.rtmp.downloader.TXVodDownloadDataSource;
 import com.tencent.rtmp.downloader.TXVodDownloadMediaInfo;
 
+import java.math.RoundingMode;
+import java.text.DecimalFormat;
+
 /**
  * video download list item view
  */
@@ -39,6 +42,7 @@ public class VideoDownloadItemView extends RelativeLayout implements VideoDonwlo
 
     private TXVodDownloadMediaInfo mMediaInfo; // 视频下载信息
     private VideoDownloadHelper    mVideoDownloadHelper;
+    private TextView  mVideoSizeTV;
 
     private VideoModel mVideoModel;
 
@@ -59,6 +63,7 @@ public class VideoDownloadItemView extends RelativeLayout implements VideoDonwlo
         LayoutInflater.from(getContext()).inflate(R.layout.cache_video_list_item_layout, this);
         mTvVideoDurationView = findViewById(R.id.cache_tv_video_duration);
         mTvVideoNameView = findViewById(R.id.cache_tv_video_title);
+        mVideoSizeTV = findViewById(R.id.cache_tv_cache_video_size);
         mIvVideoCoverView = findViewById(R.id.cache_iv_cache_video_cover);
         mTvVideoCacheProgressView = findViewById(R.id.cache_tv_cache_progress);
         mTvVideoCacheStateTextView = findViewById(R.id.cache_tv_status_text);
@@ -87,6 +92,7 @@ public class VideoDownloadItemView extends RelativeLayout implements VideoDonwlo
 
             mTvVideoQualityView.setText(String
                     .valueOf(mVideoDownloadHelper.getDownloadQualityText(dataSource.getQuality())));
+            mVideoSizeTV.setText(byteToMBStr((long)mediaInfo.getDownloadSize()));
 
             SuperVodListLoader loader = mVideoDownloadHelper.getLoader();
             loader.getVodByFileId(videoModel, new SuperVodListLoader.OnVodInfoLoadListener() {
@@ -133,6 +139,13 @@ public class VideoDownloadItemView extends RelativeLayout implements VideoDonwlo
         }
         updateDownloadState(mediaInfo);
         this.mVideoModel = videoModel;
+    }
+
+    public String byteToMBStr(long byteNumber) {
+        double size =  (byteNumber / (1024.0 * 1024.0));
+        DecimalFormat df = new DecimalFormat("0.00");
+        df.setRoundingMode(RoundingMode.HALF_UP);
+        return df.format(size) + getContext().getString(R.string.superplayer_cache_video_size);
     }
 
     public String getFileNameNoEx(String filename) {

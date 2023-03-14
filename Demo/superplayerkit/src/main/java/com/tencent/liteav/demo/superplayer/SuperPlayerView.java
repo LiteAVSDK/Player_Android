@@ -963,7 +963,9 @@ public class SuperPlayerView extends RelativeLayout
         if (mVolumeChangeHelper != null) {
             mVolumeChangeHelper.unRegisterVolumeChangeListener();
         }
-        mPictureInPictureHelper.release();
+        if (mPictureInPictureHelper != null) {
+            mPictureInPictureHelper.release();
+        }
         if (mWindowPlayer != null) {
             mWindowPlayer.release();
         }

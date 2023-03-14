@@ -25,10 +25,13 @@ public class VideoQualityUtils {
 
     // 下载文件画质文字表驱动
     private static final Map<Integer, Integer> DOWNLOAD_QUALITY_MAP = new HashMap<Integer, Integer>() {{
-        put(TXVodDownloadDataSource.QUALITY_FLU, R.string.superplayer_flu);
         put(TXVodDownloadDataSource.QUALITY_SD, R.string.superplayer_sd);
         put(TXVodDownloadDataSource.QUALITY_HD, R.string.superplayer_hd);
         put(TXVodDownloadDataSource.QUALITY_FHD, R.string.superplayer_fhd2);
+        put(TXVodDownloadDataSource.QUALITY_240P, R.string.superplayer_flu);
+        put(TXVodDownloadDataSource.QUALITY_480P, R.string.superplayer_sd);
+        put(TXVodDownloadDataSource.QUALITY_720P, R.string.superplayer_hd);
+        put(TXVodDownloadDataSource.QUALITY_1080P, R.string.superplayer_fhd2);
         put(TXVodDownloadDataSource.QUALITY_2K, R.string.superplayer_2k);
         put(TXVodDownloadDataSource.QUALITY_4K, R.string.superplayer_4k);
         put(TXVodDownloadDataSource.QUALITY_OD, R.string.superplayer_original_picture);
@@ -144,17 +147,17 @@ public class VideoQualityUtils {
             return TXVodDownloadDataSource.QUALITY_UNK;
         }
         int minValue = Math.min(quality.width, quality.height);
-        int cacheQualityIndex;
+        int cacheQualityIndex = 0;
         if (minValue == 240 || minValue == 180) {
-            cacheQualityIndex = TXVodDownloadDataSource.QUALITY_FLU;
+            cacheQualityIndex = TXVodDownloadDataSource.QUALITY_240P;
         } else if (minValue == 480 || minValue == 360) {
-            cacheQualityIndex = TXVodDownloadDataSource.QUALITY_SD;
+            cacheQualityIndex = TXVodDownloadDataSource.QUALITY_480P;
         } else if (minValue == 540) {
-            cacheQualityIndex = TXVodDownloadDataSource.QUALITY_SD;
+            cacheQualityIndex = TXVodDownloadDataSource.QUALITY_540P;
         } else if (minValue == 720) {
-            cacheQualityIndex = TXVodDownloadDataSource.QUALITY_HD;
+            cacheQualityIndex = TXVodDownloadDataSource.QUALITY_720P;
         } else if (minValue == 1080) {
-            cacheQualityIndex = TXVodDownloadDataSource.QUALITY_FHD;
+            cacheQualityIndex = TXVodDownloadDataSource.QUALITY_1080P;
         } else if (minValue == 1440) {
             cacheQualityIndex = TXVodDownloadDataSource.QUALITY_2K;
         } else if (minValue == 2160) {
