@@ -43,6 +43,7 @@ import com.tencent.liteav.demo.player.R;
 import com.tencent.liteav.demo.player.expand.model.SuperPlayerConstants;
 import com.tencent.liteav.demo.player.expand.model.VideoDataMgr;
 import com.tencent.liteav.demo.superplayer.helper.PictureInPictureHelper;
+import com.tencent.liteav.demo.vodcommon.entity.ConfigBean;
 import com.tencent.liteav.demo.vodcommon.entity.GetVideoInfoListListener;
 import com.tencent.liteav.demo.vodcommon.entity.SuperVodListLoader;
 import com.tencent.liteav.demo.vodcommon.entity.VideoInfo;
@@ -60,6 +61,7 @@ import com.tencent.rtmp.TXLiveConstants;
 import com.tencent.rtmp.TXVodConstants;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
 
@@ -153,10 +155,6 @@ public class SuperPlayerActivity extends FragmentActivity implements View.OnClic
     @Override
     protected void onNewIntent(Intent intent) {
         super.onNewIntent(intent);
-        if (intent.getBooleanExtra("IS_DISTROY",false)) {
-            finish();
-            return;
-        }
         setIntent(intent);
         String from = intent.getStringExtra("from");
         if (!TextUtils.isEmpty(from)) {
@@ -460,6 +458,10 @@ public class SuperPlayerActivity extends FragmentActivity implements View.OnClic
     }
 
     private List<VideoModel> getSubtitleVideoData() {
+        if (!ConfigBean.getInstance().isIsUseDash()) {
+            return Collections.EMPTY_LIST;
+        }
+
         VideoModel model = null;
         model = new VideoModel();
         model.placeholderImage = "http://1500005830.vod2.myqcloud.com/43843ec0vodtranscq1500005830/dc455d1d387702306937256938/coverBySnapshot_10_0.jpg";

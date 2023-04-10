@@ -17,23 +17,10 @@ public class PlayerManager {
 
     private VideoModel mLastPlayedVideoBean;
     private Context mContext;
-    private volatile static PlayerManager mInstance;
 
-
-    private PlayerManager(Context context) {
+    public PlayerManager(Context context) {
         mContext = context.getApplicationContext();
         mUrlPlayerMap = new HashMap<>();
-    }
-
-    public static PlayerManager getInstance(Context context) {
-        if (mInstance == null) {
-            synchronized (PlayerManager.class) {
-                if (mInstance == null) {
-                    mInstance = new PlayerManager(context);
-                }
-            }
-        }
-        return mInstance;
     }
 
     public void updateManager(List<VideoModel> shortVideoBeanList) {
@@ -115,7 +102,6 @@ public class PlayerManager {
             txVodPlayerWrapper.stopPlay();
         }
         mUrlPlayerMap.clear();
-        mInstance = null;
     }
 
     private List<VideoModel> playedVideoModel() {

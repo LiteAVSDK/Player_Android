@@ -39,6 +39,7 @@ public class SuperShortVideoView extends RelativeLayout {
     private Object                mLock                = new Object();
     private Context               mContext;
     private boolean               mIsOnDestroy;
+    private PlayerManager         mPlayerManager;
 
     public SuperShortVideoView(Context context) {
         super(context);
@@ -59,6 +60,7 @@ public class SuperShortVideoView extends RelativeLayout {
         mContext = context;
         mRootView = LayoutInflater.from(context).inflate(R.layout.super_short_video_view, null);
         addView(mRootView);
+        mPlayerManager = new PlayerManager(getContext());
         mRecyclerView = mRootView.findViewById(R.id.rv_super_short_video);
         mUrlList = new ArrayList<>();
         mSnapHelper = new PagerSnapHelper();
@@ -138,9 +140,8 @@ public class SuperShortVideoView extends RelativeLayout {
             mBaseItemView = (TXVideoBaseView) view.findViewById(R.id.baseItemView);
             Log.i(TAG, "onPageSelected " + position);
             List<VideoModel> tempUrlList = initUrlList(position, MAX_PLAYER_COUNT_ON_PASS);
-            PlayerManager.getInstance(getContext()).updateManager(tempUrlList);
-            TXVodPlayerWrapper txVodPlayerWrapper = PlayerManager.getInstance(getContext())
-                    .getPlayer(mUrlList.get(position));
+            mPlayerManager.updateManager(tempUrlList);
+            TXVodPlayerWrapper txVodPlayerWrapper = mPlayerManager.getPlayer(mUrlList.get(position));
             Log.i(TAG, "txVodPlayerWrapper " + txVodPlayerWrapper + "url-- " + mUrlList.get(position).videoURL);
             Log.i(TAG, "txVodPlayerWrapper " + txVodPlayerWrapper);
             mBaseItemView.setTXVodPlayer(txVodPlayerWrapper);
@@ -191,7 +192,7 @@ public class SuperShortVideoView extends RelativeLayout {
         if (mBaseItemView != null) {
             mBaseItemView.stopPlayer();
         }
-        PlayerManager.getInstance(getContext()).releasePlayer();
+        mPlayerManager.releasePlayer();
     }
 
     public void onListPageScrolled() {

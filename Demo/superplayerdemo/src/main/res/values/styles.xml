@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<resources>
+<resources xmlns:tools="http://schemas.android.com/tools">
 
     <!-- Application theme. -->
     <style name="AppTheme" parent="android:Theme.Black.NoTitleBar"></style>
@@ -16,6 +16,30 @@
 <!--        <item name="android:windowIsFloating">true</item>-->
         <item name="android:background">@color/superplayer_transparent</item>
         <item name="android:windowBackground">@android:color/transparent</item>
+    </style>
+
+    <!-- 取消界面转场动画使用-->
+    <style name="UnplugAnimTheme" parent="AppTheme">
+        <item name="android:windowAnimationStyle">@style/UnplugAnimation</item>
+        <item name="android:windowActivityTransitions" tools:targetApi="lollipop">false</item>
+        <item name="android:windowEnterTransition" tools:targetApi="lollipop">@null</item>
+        <item name="android:windowExitTransition" tools:targetApi="lollipop">@null</item>
+        <item name="android:screenOrientation">user</item>
+    </style>
+
+    <style name="UnplugAnimation" parent="@android:style/Animation.Activity">
+        <item name="android:activityOpenEnterAnimation">@android:anim/fade_in</item>
+        <item name="android:activityOpenExitAnimation">@android:anim/fade_out</item>
+        <item name="android:activityCloseEnterAnimation">@null</item>
+        <item name="android:activityCloseExitAnimation">@null</item>
+        <item name="android:taskOpenEnterAnimation">@null</item>
+        <item name="android:taskOpenExitAnimation">@null</item>
+        <item name="android:taskCloseEnterAnimation">@null</item>
+        <item name="android:taskCloseExitAnimation">@null</item>
+        <item name="android:taskToFrontEnterAnimation">@null</item>
+        <item name="android:taskToFrontExitAnimation">@null</item>
+        <item name="android:taskToBackEnterAnimation">@null</item>
+        <item name="android:taskToBackExitAnimation">@null</item>
     </style>
 
 </resources>

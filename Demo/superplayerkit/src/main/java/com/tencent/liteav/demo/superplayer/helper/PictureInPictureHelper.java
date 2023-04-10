@@ -6,12 +6,14 @@ import android.app.PendingIntent;
 import android.app.PictureInPictureParams;
 import android.app.RemoteAction;
 import android.content.BroadcastReceiver;
+import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.content.ServiceConnection;
 import android.graphics.drawable.Icon;
 import android.os.Build;
-import android.util.Log;
+import android.os.IBinder;
 import android.util.Rational;
 
 import androidx.annotation.DrawableRes;
@@ -23,7 +25,7 @@ import com.tencent.rtmp.ui.TXCloudVideoView;
 
 import java.util.ArrayList;
 
-public class PictureInPictureHelper {
+public class PictureInPictureHelper implements ServiceConnection {
 
     private static final String PIP_ACTION_MEDIA_CONTROL = "media_control";
     private static final String PIP_EXTRA_CONTROL_TYPE = "control_type";
@@ -40,6 +42,7 @@ public class PictureInPictureHelper {
     private PictureInPictureParams.Builder mPictureInPictureParamsBuilder;
     private Context mContext;
     private OnPictureInPictureClickListener mListener;
+    private boolean mIsBindService = false;
 
 
     public PictureInPictureHelper(Context context) {
@@ -114,6 +117,14 @@ public class PictureInPictureHelper {
         }
     }
 
+    private void bindAndroid12BugServiceIfNeed() {
+        if (Build.VERSION.SDK_INT >= 31 && !mIsBindService) {
+            mIsBindService = true;
+            Intent serviceIntent = new Intent(mContext, Android12BridgeService.class);
+            mContext.startService(serviceIntent);
+            mContext.bindService(serviceIntent, this, Context.BIND_AUTO_CREATE);
+        }
+    }
 
     /**
      *
@@ -152,7 +163,18 @@ public class PictureInPictureHelper {
             mPictureInPictureParamsBuilder.setActions(actions);
 
             ((Activity)mContext).setPictureInPictureParams(mPictureInPictureParamsBuilder.build());
+            bindAndroid12BugServiceIfNeed();
         }
+    }
+
+    @Override
+    public void onServiceConnected(ComponentName name, IBinder service) {
+        // do nothing
+    }
+
+    @Override
+    public void onServiceDisconnected(ComponentName name) {
+        // do nothing
     }
 
 
@@ -202,6 +224,10 @@ public class PictureInPictureHelper {
      */
     public void release() {
         ((Activity) mContext).unregisterReceiver(mReceiver);
+        if (Build.VERSION.SDK_INT >= 31 && mIsBindService) {
+            mIsBindService = false;
+            mContext.unbindService(this);
+        }
         mReceiver = null;
     }
 }

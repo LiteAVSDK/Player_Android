@@ -403,7 +403,7 @@ public class SuperPlayerImpl implements SuperPlayer, ITXVodPlayListener, ITXLive
         mVodPlayer.setRenderMode(config.renderMode);
         mVodPlayer.setVodListener(this);
         mVodPlayer.enableHardwareDecode(config.enableHWAcceleration);
-//        mVodPlayer.setSubtitleStyle(config.txSubtitleRenderModel);
+        mVodPlayer.setSubtitleStyle(config.txSubtitleRenderModel);
         mVodPlayer.setRate(config.playRate);
         mVodPlayer.setMute(config.mute);
         mVodPlayer.setMirror(config.mirror);
@@ -1256,7 +1256,7 @@ public class SuperPlayerImpl implements SuperPlayer, ITXVodPlayListener, ITXLive
 
     @Override
     public void onSubtitleSettingDone(TXSubtitleRenderModel model) {
-//        mVodPlayer.setSubtitleStyle(model);
+        mVodPlayer.setSubtitleStyle(model);
     }
 
 }
