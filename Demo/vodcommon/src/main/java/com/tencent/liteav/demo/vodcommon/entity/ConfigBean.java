@@ -52,7 +52,7 @@ public class ConfigBean {
         setTimeout(10);
         setProgressInterval(500);
         setCacheFolderPath(null);
-        setMaxCacheItems(200);
+        setMaxCacheItems(500);
         setMaxPreloadSize(50);
         setMaxBufferSize(50);
         setPreferredResolution(720 * 1280);

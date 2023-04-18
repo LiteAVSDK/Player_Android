@@ -7,11 +7,8 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * Created by yuejiaoli on 2018/7/4.
- * <p>
- * 超级播放器全局配置类
+ * 超级播放器组件全局配置类
  */
-
 public class SuperPlayerGlobalConfig {
 
     private static class Singleton {
@@ -34,9 +31,18 @@ public class SuperPlayerGlobalConfig {
     public int renderMode = TXLiveConstants.RENDER_MODE_ADJUST_RESOLUTION;
 
     /**
-     * 播放器最大缓存个数 （ 默认缓存 5 ）
+     * 播放器最大缓存个数。
+     * 此设置已经废弃， 不推荐使用，设置将会无效。
+     * 推荐使用 {@link SuperPlayerGlobalConfig#maxCacheSizeMB}
      */
+    @Deprecated
     public int maxCacheItem = 5;
+
+    /**
+     * 设置播放引擎的最大缓存大小，单位：MB，默认 500MB。
+     * 设置后会根据设定值自动清理 Cache 目录的文件。
+     */
+    public int maxCacheSizeMB = 500;
 
     /**
      * 是否启用悬浮窗 （ 默认开启 true ）

@@ -652,8 +652,6 @@ public class SuperPlayerActivity extends FragmentActivity implements View.OnClic
         rect.width = 810;
         rect.height = 540;
         prefs.floatViewRect = rect;
-        // 播放器默认缓存个数
-        prefs.maxCacheItem = 5;
         // 设置播放器渲染模式
         prefs.enableHWAcceleration = true;
         prefs.renderMode = TXLiveConstants.RENDER_MODE_ADJUST_RESOLUTION;
