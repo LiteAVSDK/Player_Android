@@ -358,6 +358,7 @@ public class PointSeekBar extends RelativeLayout {
             invalidate();
             mListener.onStopTrackingTouch(this);
         }
+        requestDisallowInterceptTouchEvent(false);
         mIsOnDrag = false;
         return true;
     }
@@ -427,10 +428,12 @@ public class PointSeekBar extends RelativeLayout {
         float x = event.getX();
         float y = event.getY();
         if (x >= mThumbLeft - 100 && x <= mThumbRight + 100) {
-            if (mListener != null)
+            if (mListener != null) {
                 mListener.onStartTrackingTouch(this);
+            }
             mIsOnDrag = true;
             mLastX = x;
+            requestDisallowInterceptTouchEvent(true);
             return true;
         }
         return false;

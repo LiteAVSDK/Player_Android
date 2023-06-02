@@ -14,10 +14,10 @@
             android:resizeableActivity="true"
             android:supportsPictureInPicture="true"
             android:excludeFromRecents="true"
+            android:theme="@style/UnplugAnimTheme"
+            android:taskAffinity=".demo.SuperPlayerActivity"
             android:configChanges="orientation|keyboardHidden|screenSize|smallestScreenSize|screenLayout"
             android:label="@string/superplayer_app_name"
-            android:theme="@style/UnplugAnimTheme"
-            android:launchMode="singleTask"
             android:screenOrientation="portrait"
             android:windowSoftInputMode="stateHidden">
             <intent-filter>

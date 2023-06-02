@@ -83,6 +83,8 @@ public class FeedPlayerView extends FrameLayout implements FeedPlayer {
                 if (feedPlayerManager != null) {
                     feedPlayerManager.setPlayingFeedPlayerView(FeedPlayerView.this, position);
                 }
+                // 开始播放后，重置播放开始时间
+                superPlayerView.setStartTime(0);
             }
 
             @Override

@@ -277,12 +277,18 @@ public class SuperPlayerView extends RelativeLayout
             mFullScreenPlayer.setPlayNextButtonVisibility(false);
         }
         mCurrentSuperPlayerModel = mSuperPlayerModelList.get(mPlayIndex);
-        playWithModelInner(mCurrentSuperPlayerModel);
+        playWithModelInner(mCurrentSuperPlayerModel, false);
         mIsPlayInit = true;
     }
 
     private void playWithModelInner(SuperPlayerModel model) {
-        mWindowPlayer.showPIPIV(model.vipWatchMode == null ? true : false);
+        playWithModelInner(model, true);
+    }
+
+    private void playWithModelInner(SuperPlayerModel model, boolean needChangeUI) {
+        if (needChangeUI) {
+            mWindowPlayer.showPIPIV(model.vipWatchMode == null);
+        }
         mPlayAction = mCurrentSuperPlayerModel.playAction;
         if (mPlayAction == PLAY_ACTION_AUTO_PLAY || mPlayAction == PLAY_ACTION_PRELOAD) {
             mSuperPlayer.play(model);

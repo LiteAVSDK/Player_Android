@@ -90,8 +90,7 @@ public class VideoDownloadItemView extends RelativeLayout implements VideoDonwlo
             videoModel.fileid = dataSource.getFileId();
             videoModel.pSign = dataSource.getPSign();
 
-            mTvVideoQualityView.setText(String
-                    .valueOf(mVideoDownloadHelper.getDownloadQualityText(dataSource.getQuality())));
+            mTvVideoQualityView.setText(getQualityText(dataSource.getQuality()));
             mVideoSizeTV.setText(byteToMBStr((long)mediaInfo.getDownloadSize()));
 
             SuperVodListLoader loader = mVideoDownloadHelper.getLoader();
@@ -156,6 +155,15 @@ public class VideoDownloadItemView extends RelativeLayout implements VideoDonwlo
             }
         }
         return filename;
+    }
+
+    private String getQualityText(int quality) {
+        int strId = mVideoDownloadHelper.getDownloadQualityText(quality);
+        if (strId < 0) {
+            return "";
+        } else {
+            return getContext().getString(strId);
+        }
     }
 
     private void updateDownloadState(TXVodDownloadMediaInfo mediaInfo) {
