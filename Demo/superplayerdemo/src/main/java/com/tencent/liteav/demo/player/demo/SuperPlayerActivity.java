@@ -206,6 +206,7 @@ public class SuperPlayerActivity extends FragmentActivity implements View.OnClic
         Intent intent = new Intent();
         intent.addCategory("android.intent.category.DEFAULT");
         intent.setAction("com.tencent.liteav.action.liteavapp");
+        intent.setFlags(Intent.FLAG_ACTIVITY_BROUGHT_TO_FRONT);
         IntentUtils.safeStartActivity(this, intent);
 
     }

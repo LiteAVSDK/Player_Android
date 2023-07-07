@@ -6,8 +6,8 @@
         <activity
             android:name="com.tencent.liteav.demo.player.demo.shortvideo.view.ShortVideoActivity"
             android:configChanges="orientation|keyboardHidden|screenSize"
-            android:launchMode="singleTask"
             android:screenOrientation="portrait"
+            android:launchMode="singleTop"
             android:theme="@style/Theme.AppCompat.Light.NoActionBar"
             android:windowSoftInputMode="stateHidden" />
     </application>

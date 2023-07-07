@@ -40,7 +40,7 @@ public class TXVodPlayerWrapper implements ITXVodPlayListener {
             mVodPlayer.setRenderMode(TXVodConstants.RENDER_MODE_FULL_FILL_SCREEN);
         }
         mTXVodPlayConfig = new TXVodPlayConfig();
-        mTXVodPlayConfig.setProgressInterval(1);
+        mTXVodPlayConfig.setProgressInterval(500);
         mTXVodPlayConfig.setSmoothSwitchBitrate(true);
         mTXVodPlayConfig.setMaxBufferSize(5);
         mTXVodPlayConfig.setPreferredResolution(1080 * 1920);
@@ -115,7 +115,7 @@ public class TXVodPlayerWrapper implements ITXVodPlayListener {
     }
 
 
-    public void seekTo(int time) {
+    public void seekTo(float time) {
         mVodPlayer.seek(time);
     }
 

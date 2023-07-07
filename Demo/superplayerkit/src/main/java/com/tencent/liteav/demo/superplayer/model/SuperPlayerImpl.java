@@ -121,7 +121,6 @@ public class SuperPlayerImpl implements SuperPlayer, ITXVodPlayListener, ITXLive
             case TXLiveConstants.PLAY_ERR_NET_DISCONNECT:
             case TXLiveConstants.PLAY_EVT_PLAY_END:
                 if (mCurrentPlayType == SuperPlayerDef.PlayerType.LIVE_SHIFT) {  // 直播时移失败，返回直播
-                    mLivePlayer.resumeLive();
                     updatePlayerType(SuperPlayerDef.PlayerType.LIVE);
                     onError(SuperPlayerCode.LIVE_SHIFT_FAIL, "时移失败,返回直播");
                     updatePlayerState(SuperPlayerDef.PlayerState.PLAYING);
@@ -742,7 +741,6 @@ public class SuperPlayerImpl implements SuperPlayer, ITXVodPlayListener, ITXLive
         } catch (NumberFormatException e) {
             Log.e(TAG, "playTimeShiftLiveURL: bizidNum error = " + bizid);
         }
-        mLivePlayer.prepareLiveSeek(domian, bizidNum);
     }
 
     /**
@@ -977,9 +975,6 @@ public class SuperPlayerImpl implements SuperPlayer, ITXVodPlayListener, ITXLive
 
     @Override
     public void resumeLive() {
-        if (mCurrentPlayType == SuperPlayerDef.PlayerType.LIVE_SHIFT) {
-            mLivePlayer.resumeLive();
-        }
         updatePlayerType(SuperPlayerDef.PlayerType.LIVE);
     }
 
@@ -1088,9 +1083,6 @@ public class SuperPlayerImpl implements SuperPlayer, ITXVodPlayListener, ITXLive
         } else {
             updatePlayerType(SuperPlayerDef.PlayerType.LIVE_SHIFT);
             LogReport.getInstance().uploadLogs(LogReport.ELK_ACTION_TIMESHIFT, 0, 0);
-            if (mLivePlayer != null) {
-                mLivePlayer.seek(position);
-            }
         }
         if (mObserver != null) {
             mObserver.onSeek(position);

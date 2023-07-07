@@ -156,7 +156,7 @@ public class TXVideoBaseView extends RelativeLayout implements View.OnClickListe
         getParent().requestDisallowInterceptTouchEvent(false);
         if (mTXVodPlayerWrapper != null) {
             Log.i(TAG, "[onStopTrackingTouch] seekBar.getProgress() " + seekBar.getProgress());
-            mTXVodPlayerWrapper.seekTo(seekBar.getProgress() / 1000);
+            mTXVodPlayerWrapper.seekTo(seekBar.getProgress() / 1000F);
         }
         mTrackingTouchTS = System.currentTimeMillis();
         mStartSeek = false;

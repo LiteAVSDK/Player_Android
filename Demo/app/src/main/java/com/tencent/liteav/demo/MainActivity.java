@@ -1,12 +1,15 @@
 package com.tencent.liteav.demo;
 
 import android.app.Activity;
+import android.app.ActivityManager;
 import android.app.AlertDialog;
+import android.content.ComponentName;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.net.Uri;
 import android.os.AsyncTask;
+import android.os.Build;
 import android.os.Bundle;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -149,7 +152,8 @@ public class MainActivity extends Activity {
         playerChildList.add(new ChildBean(getString(R.string.app_item_shortvideo_player), R.drawable.play, 3, ShortVideoActivity.class));
         playerChildList.add(new ChildBean(getString(R.string.app_feed_player), R.drawable.play, 3, FeedActivity.class));
         if (playerChildList.size() != 0) {
-            GroupBean playerGroupBean = new GroupBean(getString(R.string.app_item_player), R.drawable.composite, playerChildList);
+            GroupBean playerGroupBean = new GroupBean(getString(R.string.app_item_player), R.drawable.composite,
+                    playerChildList);
             groupList.add(playerGroupBean);
         }
 
@@ -395,5 +399,46 @@ public class MainActivity extends Activity {
             }
         }
         return zipFile;
+    }
+
+    /**
+     * 检查是否有在该activity之后的activity，如果有则拉起。
+     * MainActivity肯定是root Activity，该方法会检查是否有其他activity位于当前activity顺序之下，如果有则代表app的activity因为其他原因
+     * 跑到了其他任务栈中，并且位于后台。此时则需要将该activity拉到前台。
+     * e.g: 部分机型上，启用画中画，会导致画中画activity移动到新任务栈，回到桌面点击图标无法回到之前的activity，此时需要该方法将其拉起
+     */
+    private void checkIsHaveBackContext() {
+        ActivityManager am = (ActivityManager) getSystemService(ACTIVITY_SERVICE);
+        List<ActivityManager.RunningTaskInfo> taskInfoList = am.getRunningTasks(10);
+        if (!taskInfoList.isEmpty()) {
+            ActivityManager.RunningTaskInfo topTask = taskInfoList.get(0);
+            ComponentName topName = topTask.topActivity;
+            final int mainTaskId = getTaskId();
+            if (TextUtils.equals(topName.getClassName(), getComponentName().getClassName())
+                    && mainTaskId == getTaskId()) {
+                DemoApplication demoApplication = ((DemoApplication) getApplication());
+                for (int i = 1; i < taskInfoList.size(); i++) {
+                    ActivityManager.RunningTaskInfo taskInfo = taskInfoList.get(i);
+                    final int taskId = taskInfo.id;
+                    if (demoApplication.isUsActivity(taskId)) {
+                        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.Q || taskInfo.isRunning) {
+                            ComponentName componentName = taskInfo.topActivity;
+                            // 拉起当前app栈顶第一个activity
+                            Intent intent = new Intent();
+                            intent.setComponent(componentName);
+                            intent.setFlags(Intent.FLAG_ACTIVITY_BROUGHT_TO_FRONT);
+                            startActivity(intent);
+                            break;
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        checkIsHaveBackContext();
     }
 }

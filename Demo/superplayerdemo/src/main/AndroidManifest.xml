@@ -15,9 +15,10 @@
             android:supportsPictureInPicture="true"
             android:excludeFromRecents="true"
             android:theme="@style/UnplugAnimTheme"
-            android:taskAffinity=".demo.SuperPlayerActivity"
+            android:alwaysRetainTaskState="true"
             android:configChanges="orientation|keyboardHidden|screenSize|smallestScreenSize|screenLayout"
             android:label="@string/superplayer_app_name"
+            android:launchMode="singleTask"
             android:screenOrientation="portrait"
             android:windowSoftInputMode="stateHidden">
             <intent-filter>
@@ -31,8 +32,8 @@
         <activity
             android:name=".demo.shortvideo.view.ShortVideoActivity"
             android:configChanges="orientation|keyboardHidden|screenSize"
-            android:launchMode="singleTask"
             android:screenOrientation="portrait"
+            android:launchMode="singleTop"
             android:theme="@style/Theme.AppCompat.Light.NoActionBar"
             android:windowSoftInputMode="stateHidden" />
         <activity
