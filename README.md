@@ -36,18 +36,17 @@
 
 ## SDK 分类和下载
 
-腾讯云 Player SDK 基于 LiteAVSDK 统一框架设计和实现，该框架包含直播、点播、短视频、RTC、AI美颜在内的多项功能：
+腾讯云 Player SDK 提供**基础版本和高级版本**，产品功能的差异可查看播放器 SDK 官网[产品简介>产品功能](https://cloud.tencent.com/document/product/881/61375)：
 
-- 如果您追求最小化体积增量，可以下载 Player 版：[TXLiteAVSDK_Player.zip](https://cloud.tencent.com/document/product/881/20205)
-- 如果您需要使用多个功能而不希望打包多个 SDK，可以下载专业版：[TXLiteAVSDK_Professional.zip](https://cloud.tencent.com/document/product/647/32689#Professional)
-- 如果您已经通过腾讯云商务购买了企业版License，可以下载企业版：TXLiteAVSDK_Enterprise.zip。【注意：企业版已停止对外维护，仅供已购买客户使用。如果您需要使用高级美颜特效等功能，可通过集成[腾讯特效SDK](https://cloud.tencent.com/document/product/616/11209)来实现】
+- 如果您追求最小化体积增量，可以下载 Player 基础版：[TXLiteAVSDK_Player.zip](https://liteav.sdk.qcloud.com/download/latest/TXLiteAVSDK_Player_Android_latest.zip)
+- 如果您需要使用外挂字幕、多音轨、DRM 播放等高级功能，可以下载 Player 高级版：[TXLiteAVSDK_Player_Premium.zip](https://liteav.sdk.qcloud.com/download/latest/TXLiteAVSDK_Player_Premium_Android_latest.zip)
 
 ## 集成指引和文档链接
 
 - [Player SDK 集成指引](https://cloud.tencent.com/document/product/881/20216#sdk.E9.9B.86.E6.88.90)
 - [Player SDK 能力清单](https://cloud.tencent.com/document/product/881/61375)
 - [常见移动端播放问题](https://cloud.tencent.com/document/product/881/73976)
-- Player SDK 常见功能描述和使用说明，[请点击这里](https://cloud.tencent.com/document/product/881/20216#.E5.8A.9F.E8.83.BD.E4.BD.BF.E7.94.A8)。在Player SDK的基础上，我们提供了[播放器组件](https://cloud.tencent.com/document/product/266/7938)，集质量监控、视频加密、极速高清、清晰度切换、小窗播放等功能于一体，适用于所有点播、直播播放场景。封装了完整功能并提供上层 UI，可帮助您在短时间内，打造一个媲美市面上各种流行视频 App 的播放软件。
+- Player SDK 常见功能描述和使用说明，[请点击这里](https://cloud.tencent.com/document/product/881/20216#.E5.8A.9F.E8.83.BD.E4.BD.BF.E7.94.A8)。在Player SDK的基础上，我们提供了[播放器组件(superplayerkit)](https://cloud.tencent.com/document/product/266/7938)，集质量监控、视频加密、极速高清、清晰度切换、小窗播放等功能于一体，适用于所有点播、直播播放场景。封装了完整功能并提供上层 UI，可帮助您在短时间内，打造一个媲美市面上各种流行视频 App 的播放软件。
 - [SDK 的 API 文档](https://cloud.tencent.com/document/product/881/67113)
 - [SDK 的版本更新历史](https://cloud.tencent.com/document/product/881/62169)
 - [SDK 的官方体验 App](https://cloud.tencent.com/document/product/881/20204)
