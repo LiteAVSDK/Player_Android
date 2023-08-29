@@ -12,15 +12,16 @@ import android.widget.TextView;
 import com.tencent.liteav.demo.superplayer.R;
 
 /**
+ * The progress prompt view displayed when using swipe gestures to control playback progress
+ *
  * 滑动手势控制播放进度时显示的进度提示view
  */
-
 public class VideoProgressLayout extends RelativeLayout {
-    private ImageView    mIvThumbnail;       // 视频缩略图
-    private TextView     mTvTime;            // 视频进度文本
-    private ProgressBar  mProgressBar;       // 进度条
-    private HideRunnable mHideRunnable;      // 隐藏自身的线程
-    private int          duration = 1000;    // 自身消失的延迟事件ms
+    private ImageView    mIvThumbnail;
+    private TextView     mTvTime;
+    private ProgressBar  mProgressBar;
+    private HideRunnable mHideRunnable;
+    private int          duration = 1000;
 
     public VideoProgressLayout(Context context) {
         super(context);
@@ -41,9 +42,6 @@ public class VideoProgressLayout extends RelativeLayout {
         mHideRunnable = new HideRunnable();
     }
 
-    /**
-     * 显示view
-     */
     public void show() {
         setVisibility(VISIBLE);
         removeCallbacks(mHideRunnable);
@@ -51,36 +49,36 @@ public class VideoProgressLayout extends RelativeLayout {
     }
 
     /**
-     * 设置视频进度事件文本
+     * Set the video progress event text
      *
-     * @param text
+     * 设置视频进度事件文本
      */
     public void setTimeText(String text) {
         mTvTime.setText(text);
     }
 
     /**
-     * 设置progressbar的进度值
+     * Set the progress value of the progress bar
      *
-     * @param progress
+     * 设置progressbar的进度值
      */
     public void setProgress(int progress) {
         mProgressBar.setProgress(progress);
     }
 
     /**
-     * 设置view消失延迟的时间
+     * Set the delay time for the view to disappear.
      *
-     * @param duration
+     * 设置view消失延迟的时间
      */
     public void setDuration(int duration) {
         this.duration = duration;
     }
 
     /**
-     * 设置缩略图图片
+     * Set the thumbnail image
      *
-     * @param bitmap
+     * 设置缩略图图片
      */
     public void setThumbnail(Bitmap bitmap) {
         mIvThumbnail.setVisibility(VISIBLE);
@@ -88,6 +86,8 @@ public class VideoProgressLayout extends RelativeLayout {
     }
 
     /**
+     * Set the thumbnail.
+     *
      * 设置缩略图
      */
     public void hideThumbnail() {
@@ -95,15 +95,17 @@ public class VideoProgressLayout extends RelativeLayout {
     }
 
     /**
-     * 设置progressbar的可见性
+     * Set the visibility of the progress bar.
      *
-     * @param enable
+     * 设置progressbar的可见性
      */
     public void setProgressVisibility(boolean enable) {
         mProgressBar.setVisibility(enable ? VISIBLE : GONE);
     }
 
     /**
+     * Thread for hiding the view.
+     *
      * 隐藏view的线程
      */
     private class HideRunnable implements Runnable {

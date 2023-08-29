@@ -29,8 +29,9 @@ public class DownloadMenuListAdapter extends RecyclerView.Adapter<DownloadMenuLi
     private int                                                         mCurrentQualityId;
     private SuperPlayerModel                                            mCurrentPlayVideo;
     private OnCacheItemClickListener                                    mCacheItemClickListener;
-    // getDownloadMediaInfo 涉及IO操作，刚开始下载的时候拿不到mediaInfo，由于这里对于实时性操作要求不高，
-    // 所以做缓存存储mediaInfo,根据时机进行更新
+    // `getDownloadMediaInfo` involves IO operations, and `mediaInfo` cannot be obtained when downloading
+    // just starts. Because real-time operation is not required here, the `mediaInfo` is cached and stored,
+    // and updated according to the timing.
     private Map<Integer, Map<SuperPlayerModel, TXVodDownloadMediaInfo>> mMediaInfo = new HashMap<>();
 
     public DownloadMenuListAdapter(List<SuperPlayerModel> videoModuleList) {

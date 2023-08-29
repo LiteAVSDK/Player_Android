@@ -8,76 +8,78 @@ import com.tencent.liteav.demo.superplayer.model.entity.VideoQuality;
 import java.util.List;
 
 /**
+ * Video information protocol parsing interface
+ *
  * 视频信息协议解析接口
  */
 public interface IPlayInfoParser {
     /**
-     * 获取未加密视频播放url,若没有获取sampleaes url
+     * Get the unencrypted video playback URL. If not available, get the sampleaes URL
      *
-     * @return url字符串
+     * 获取未加密视频播放url,若没有获取sampleaes url
      */
     String getURL();
 
     /**
-     * 获取加密视频播放url
+     * Get the encrypted video playback URL
      *
-     * @return url字符串
+     * 获取加密视频播放url
      */
     String getEncryptedURL(PlayInfoConstant.EncryptedURLType type);
 
     /**
-     * 获取加密token
+     * Get the encryption token
      *
-     * @return token字符串
+     * 获取加密token
      */
     String getToken();
 
     /**
-     * 获取视频名称
+     * Get the video name
      *
-     * @return 视频名称字符串
+     * 获取视频名称
      */
     String getName();
 
     /**
-     * 获取雪碧图信息
+     * Get the sprite information
      *
-     * @return 雪碧图信息对象
+     * 获取雪碧图信息
      */
     PlayImageSpriteInfo getImageSpriteInfo();
 
     /**
-     * 获取关键帧信息
+     * Get the keyframe information
      *
-     * @return 关键帧信息数组
+     * 获取关键帧信息
      */
     List<PlayKeyFrameDescInfo> getKeyFrameDescInfo();
 
     /**
-     * 获取画质信息
+     * Get the video quality information
      *
-     * @return 画质信息数组
+     * 获取画质信息
      */
     List<VideoQuality> getVideoQualityList();
 
     /**
-     * 获取默认画质信息
+     * Get the default video quality information
      *
-     * @return 默认画质信息对象
+     * 获取默认画质信息
      */
     VideoQuality getDefaultVideoQuality();
 
     /**
-     * 获取视频画质别名列表
+     * Get the video quality alias list
      *
-     * @return 画质别名数组
+     * 获取视频画质别名列表
      */
     List<ResolutionName> getResolutionNameList();
 
     /**
-     * 获取 DRM 加密类型
+     * Get the DRM encryption type
      *
-     * @return
+     * 获取 DRM 加密类型
      */
     String getDRMType();
 

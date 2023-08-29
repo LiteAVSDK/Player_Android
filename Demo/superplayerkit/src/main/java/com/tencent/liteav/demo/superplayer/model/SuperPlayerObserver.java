@@ -12,6 +12,8 @@ import java.util.List;
 public abstract class SuperPlayerObserver {
 
     /**
+     * Preparing to play
+     *
      * 准备播放
      */
     public void onPlayPrepare() {
@@ -19,36 +21,44 @@ public abstract class SuperPlayerObserver {
     }
 
     /**
+     * Start playing
+     *
      * 开始播放
      *
-     * @param name 当前视频名称
+     * @param name Current video name
+     *             当前视频名称
      */
     public void onPlayBegin(String name) {
     }
 
     /**
+     * Playback paused
+     *
      * 播放暂停
      */
     public void onPlayPause() {
     }
 
     /**
+     * Player stopped
+     *
      * 播放器停止
      */
     public void onPlayStop() {
     }
 
     /**
+     * Player enters loading state
+     *
      * 播放器进入Loading状态
      */
     public void onPlayLoading() {
     }
 
     /**
-     * 播放进度回调
+     * Playback progress callback
      *
-     * @param current
-     * @param duration
+     * 播放进度回调
      */
     public void onPlayProgress(long current, long duration, long playable) {
     }

@@ -112,7 +112,7 @@ public class DemoApplication extends MultiDexApplication implements Application.
     public void onActivityDestroyed(@NonNull Activity activity) {
         final int taskId = activity.getTaskId();
         mActivityList.remove(activity);
-        // 移除无用的taskId
+        // Remove useless `taskId`.
         boolean removeFlag = true;
         for (Activity tmpAct : mActivityList) {
             if (null != tmpAct && !tmpAct.isDestroyed() && !tmpAct.isFinishing() && tmpAct.getTaskId() == taskId) {
@@ -121,7 +121,7 @@ public class DemoApplication extends MultiDexApplication implements Application.
             }
         }
         if (removeFlag) {
-            // valueOf装箱，根据对象移除
+            // Boxing of `valueOf`, remove according to the object.
             mAppTaskIds.remove(Integer.valueOf(taskId));
         }
     }

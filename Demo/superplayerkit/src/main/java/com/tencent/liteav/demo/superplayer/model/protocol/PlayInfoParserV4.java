@@ -17,6 +17,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
+ * V4 video protocol parsing implementation class
+ * <p>
+ * Responsible for parsing the JSON data of the V4 video information protocol request response.
+ *
  * V4视频协议解析实现类
  * <p>
  * 负责解析V4视频信息协议请求响应的Json数据
@@ -25,19 +29,19 @@ public class PlayInfoParserV4 implements IPlayInfoParser {
 
     private static final String TAG = "TCPlayInfoParserV4";
 
-    private JSONObject mResponse;   // 协议请求返回的Json数据
-    private String     mName;       // 视频名称
-    private String     mURL;        // 未加密视频播放url
-    private String     mToken;      // DRM token
+    private JSONObject mResponse;
+    private String     mName;
+    private String     mURL;
+    private String     mToken;
 
     private String mDescription; // description
     private String mCoverUrl;   // coverUrl
     private int    mDuration;   // duration
 
-    private List<EncryptedStreamingInfo> mEncryptedStreamingInfoList;// 加密视频播放url 数组
-    private PlayImageSpriteInfo          mImageSpriteInfo;           // 雪碧图信息
-    private List<PlayKeyFrameDescInfo>   mKeyFrameDescInfo;          // 关键帧信息
-    private List<ResolutionName>         mResolutionNameList;        // 自适应码流画质名称匹配信息
+    private List<EncryptedStreamingInfo> mEncryptedStreamingInfoList;
+    private PlayImageSpriteInfo          mImageSpriteInfo;
+    private List<PlayKeyFrameDescInfo>   mKeyFrameDescInfo;
+    private List<ResolutionName>         mResolutionNameList;
     private String                       mDRMType;
 
     public PlayInfoParserV4(JSONObject response) {
@@ -63,13 +67,15 @@ public class PlayInfoParserV4 implements IPlayInfoParser {
     }
 
     /**
+     * Parse video information from the JSON data of the video information protocol request response.
+     *
      * 从视频信息协议请求响应的Json数据中解析出视频信息
      */
     private void parsePlayInfo() {
         try {
             JSONObject media = mResponse.optJSONObject("media");
             if (media != null) {
-                //解析视频名称
+                // Parse video name
                 JSONObject basicInfo = media.optJSONObject("basicInfo");
                 if (basicInfo != null) {
                     mName = basicInfo.optString("name");
@@ -78,16 +84,18 @@ public class PlayInfoParserV4 implements IPlayInfoParser {
                     mDuration = basicInfo.optInt("duration");
                 }
                 String audioVideoType = media.optString("audioVideoType");
-                if (TextUtils.equals(audioVideoType, "AdaptiveDynamicStream")) { // 多码率视频信息
-                    //解析视频播放url
+                // Multi-bitrate video information
+                if (TextUtils.equals(audioVideoType, "AdaptiveDynamicStream")) {
+                    // Parse video playback URL
                     JSONObject streamingInfo = media.optJSONObject("streamingInfo");
                     if (streamingInfo != null) {
-                        JSONObject plainoutObj = streamingInfo.optJSONObject("plainOutput");//未加密的输出
+                        JSONObject plainoutObj = streamingInfo.optJSONObject("plainOutput"); // Unencrypted output
                         if (plainoutObj != null) {
-                            mURL = plainoutObj.optString("url");//未加密直接解析出视频url
+                            // Parse the video URL directly if it is unencrypted
+                            mURL = plainoutObj.optString("url");
                             parseSubStreams(plainoutObj.optJSONArray("subStreams"));
                         }
-                        JSONArray drmoutputobj = streamingInfo.optJSONArray("drmOutput");//加密输出
+                        JSONArray drmoutputobj = streamingInfo.optJSONArray("drmOutput"); // Encrypted output
                         if (drmoutputobj != null && drmoutputobj.length() > 0) {
                             mEncryptedStreamingInfoList = new ArrayList<>();
                             for (int i = 0; i < drmoutputobj.length(); i++) {
@@ -104,19 +112,19 @@ public class PlayInfoParserV4 implements IPlayInfoParser {
                         }
                         mToken = streamingInfo.optString("drmToken");
                     }
-                } else if (TextUtils.equals(audioVideoType, "Transcode")) { // 转码视频信息
+                } else if (TextUtils.equals(audioVideoType, "Transcode")) { // Transcode video information
                     JSONObject transCodeInfo = media.optJSONObject("transcodeInfo");
                     if (transCodeInfo != null) {
                         mURL = transCodeInfo.optString("url");
                     }
-                } else if (TextUtils.equals(audioVideoType, "Original")) { // 原始视频信息
+                } else if (TextUtils.equals(audioVideoType, "Original")) { // Original video information
                     JSONObject originalInfo = media.optJSONObject("originalInfo");
                     if (originalInfo != null) {
                         mURL = originalInfo.optString("url");
                     }
                 }
 
-                //解析雪碧图信息
+                // Parse the sprite information
                 JSONObject imageSpriteInfo = media.optJSONObject("imageSpriteInfo");
                 if (imageSpriteInfo != null) {
                     mImageSpriteInfo = new PlayImageSpriteInfo();
@@ -159,9 +167,9 @@ public class PlayInfoParserV4 implements IPlayInfoParser {
     }
 
     /**
-     * 获取视频播放url
+     * Get the video playback URL
      *
-     * @return url字符串
+     * 获取视频播放url
      */
     @Override
     public String getURL() {
@@ -188,9 +196,9 @@ public class PlayInfoParserV4 implements IPlayInfoParser {
     }
 
     /**
-     * 获取视频名称
+     * Get the video name
      *
-     * @return 视频名称字符串
+     * 获取视频名称
      */
     @Override
     public String getName() {
@@ -210,9 +218,9 @@ public class PlayInfoParserV4 implements IPlayInfoParser {
     }
 
     /**
-     * 获取雪碧图信息
+     * Get the sprite information
      *
-     * @return 雪碧图信息对象
+     * 获取雪碧图信息
      */
     @Override
     public PlayImageSpriteInfo getImageSpriteInfo() {
@@ -220,9 +228,9 @@ public class PlayInfoParserV4 implements IPlayInfoParser {
     }
 
     /**
-     * 获取关键帧信息
+     * Get the keyframe information
      *
-     * @return 关键帧信息数组
+     * 获取关键帧信息
      */
     @Override
     public List<PlayKeyFrameDescInfo> getKeyFrameDescInfo() {
@@ -230,9 +238,9 @@ public class PlayInfoParserV4 implements IPlayInfoParser {
     }
 
     /**
-     * 获取画质信息
+     * Get the video quality information
      *
-     * @return 画质信息数组
+     * 获取画质信息
      */
     @Override
     public List<VideoQuality> getVideoQualityList() {
@@ -240,9 +248,9 @@ public class PlayInfoParserV4 implements IPlayInfoParser {
     }
 
     /**
-     * 获取默认画质信息
+     * Get the default video quality information
      *
-     * @return 默认画质信息对象
+     * 获取默认画质信息
      */
     @Override
     public VideoQuality getDefaultVideoQuality() {
@@ -250,9 +258,9 @@ public class PlayInfoParserV4 implements IPlayInfoParser {
     }
 
     /**
-     * 获取视频画质别名列表
+     * Get the video quality alias list
      *
-     * @return 画质别名数组
+     * 获取视频画质别名列表
      */
     @Override
     public List<ResolutionName> getResolutionNameList() {

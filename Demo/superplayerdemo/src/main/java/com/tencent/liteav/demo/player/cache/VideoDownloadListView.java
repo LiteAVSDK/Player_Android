@@ -63,7 +63,6 @@ public class VideoDownloadListView extends RelativeLayout
         mVideoDownloadListAdapter.setOnItemClickListener(this);
         mVideoDownloadListAdapter.setOnItemLongClickListener(this);
 
-        // 去掉不好看的动画
         mRvCacheVideoListView.setItemAnimator(null);
         checkIfShowEmptyView();
     }
@@ -129,11 +128,9 @@ public class VideoDownloadListView extends RelativeLayout
         } else if (state == TXVodDownloadMediaInfo.STATE_STOP
                     || state == TXVodDownloadMediaInfo.STATE_ERROR) {
             VideoDownloadCenter.getInstance().resumeDownload(mediaInfo);
-            // resume之后，再次刷新状态
             refreshMediaInfo(mediaInfo, position);
         } else {
             VideoDownloadCenter.getInstance().stopDownload(mediaInfo);
-            // stop之后，再次刷新状态
             refreshMediaInfo(mediaInfo, position);
         }
     }

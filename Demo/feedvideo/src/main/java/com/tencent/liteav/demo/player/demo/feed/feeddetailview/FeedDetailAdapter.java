@@ -18,7 +18,8 @@ import java.util.List;
 
 
 /**
- * 详情页面recycleview 的adapter
+ * Adapter for the details page RecyclerView.
+ * 详情页面recycleView 的adapter
  */
 public class FeedDetailAdapter extends RecyclerView.Adapter<FeedDetailAdapter.FeedDetailItemHolder> {
 

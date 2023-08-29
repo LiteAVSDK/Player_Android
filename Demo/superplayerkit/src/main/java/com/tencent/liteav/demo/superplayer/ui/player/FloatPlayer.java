@@ -17,6 +17,14 @@ import com.tencent.rtmp.ui.TXCloudVideoView;
 import java.lang.reflect.Field;
 
 /**
+ * Floating window mode playback control
+ * <p>
+ * Slide to move the floating window, click the floating window to return
+ * to window mode {@link #onTouchEvent(MotionEvent)}
+ * <p>
+ * Close the floating window {@link #onClick(View)}
+ *
+ *
  * 悬浮窗模式播放控件
  * <p>
  * 1、滑动以移动悬浮窗，点击悬浮窗回到窗口模式{@link #onTouchEvent(MotionEvent)}
@@ -25,18 +33,18 @@ import java.lang.reflect.Field;
  */
 public class FloatPlayer extends AbsPlayer implements View.OnClickListener, VipWatchView.VipWatchViewClickListener {
 
-    private TXCloudVideoView mFloatVideoView;   // 悬浮窗中的视频播放view
+    private TXCloudVideoView mFloatVideoView;
 
-    private int   mStatusBarHeight;   // 系统状态栏的高度
-    private float mXDownInScreen;   // 按下事件距离屏幕左边界的距离
-    private float mYDownInScreen;   // 按下事件距离屏幕上边界的距离
-    private float mXInScreen;       // 滑动事件距离屏幕左边界的距离
-    private float mYInScreen;       // 滑动事件距离屏幕上边界的距离
-    private float mXInView;         // 滑动事件距离自身左边界的距离
-    private float mYInView;         // 滑动事件距离自身上边界的距离
+    private int   mStatusBarHeight;   // System status bar height.
+    private float mXDownInScreen;   // Distance from the press event to the left edge of the screen.
+    private float mYDownInScreen;   // Distance from the press event to the top edge of the screen.
+    private float mXInScreen;       // Distance from the sliding event to the left edge of the screen.
+    private float mYInScreen;       // Distance from the sliding event to the top edge of the screen.
+    private float mXInView;         // Distance from the sliding event to the left edge of itself.
+    private float mYInView;         // Distance from the sliding event to the top edge of itself.
 
-    private SuperPlayerDef.PlayerType mPlayType;        // 当前播放视频类型
-    private LinearLayout              dynamicWatermarkLayout;   //存放动态水印的layout
+    private SuperPlayerDef.PlayerType mPlayType;
+    private LinearLayout              dynamicWatermarkLayout;
 
     public FloatPlayer(Context context) {
         super(context);
@@ -53,9 +61,6 @@ public class FloatPlayer extends AbsPlayer implements View.OnClickListener, VipW
         initView(context);
     }
 
-    /**
-     * 初始化view
-     */
     private void initView(Context context) {
         LayoutInflater.from(context).inflate(R.layout.superplayer_vod_player_float, this);
         mFloatVideoView = (TXCloudVideoView) findViewById(R.id.superplayer_float_cloud_video_view);
@@ -80,6 +85,8 @@ public class FloatPlayer extends AbsPlayer implements View.OnClickListener, VipW
 
 
     /**
+     * Get the video playback view in the floating window.
+     *
      * 获取悬浮窗中的视频播放view
      */
     public TXCloudVideoView getFloatVideoView() {
@@ -87,6 +94,8 @@ public class FloatPlayer extends AbsPlayer implements View.OnClickListener, VipW
     }
 
     /**
+     * Set click event listener to close the floating window after clicking the close button.
+     *
      * 设置点击事件监听，实现点击关闭按钮后关闭悬浮窗
      */
     @Override
@@ -100,6 +109,8 @@ public class FloatPlayer extends AbsPlayer implements View.OnClickListener, VipW
     }
 
     /**
+     * Override touch event listener to move the floating window with finger.
+     *
      * 重写触摸事件监听，实现悬浮窗随手指移动
      */
     @Override
@@ -114,14 +125,15 @@ public class FloatPlayer extends AbsPlayer implements View.OnClickListener, VipW
                 mYInScreen = event.getRawY() - getStatusBarHeight();
 
                 break;
-            case MotionEvent.ACTION_MOVE: //悬浮窗随手指移动
+            case MotionEvent.ACTION_MOVE:
                 mXInScreen = event.getRawX();
                 mYInScreen = event.getRawY() - getStatusBarHeight();
                 updateViewPosition();
 
                 break;
             case MotionEvent.ACTION_UP:
-                if (mXDownInScreen == mXInScreen && mYDownInScreen == mYInScreen) {//手指没有滑动视为点击，回到窗口模式
+                // If the finger does not slide, it is regarded as a click and returns to window mode.
+                if (mXDownInScreen == mXInScreen && mYDownInScreen == mYInScreen) {
                     if (mControllerCallback != null) {
                         mControllerCallback.onSwitchPlayMode(SuperPlayerDef.PlayerMode.WINDOW);
                     }
@@ -151,6 +163,8 @@ public class FloatPlayer extends AbsPlayer implements View.OnClickListener, VipW
     }
 
     /**
+     * Get the height of the system status bar.
+     *
      * 获取系统状态栏高度
      */
     private int getStatusBarHeight() {
@@ -169,6 +183,9 @@ public class FloatPlayer extends AbsPlayer implements View.OnClickListener, VipW
     }
 
     /**
+     * Update the position information of the floating window, and implement the floating window movement in
+     * the callback {@link Callback#onFloatPositionChange(int, int)}.
+     *
      * 更新悬浮窗的位置信息，在回调{@link Callback#onFloatPositionChange(int, int)}中实现悬浮窗移动
      */
     private void updateViewPosition() {

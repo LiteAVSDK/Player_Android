@@ -9,51 +9,62 @@ import com.tencent.rtmp.TXTrackInfo;
 import com.tencent.rtmp.ui.TXCloudVideoView;
 import com.tencent.rtmp.ui.TXSubtitleView;
 
-import java.util.List;
-import java.util.Map;
-
 public interface SuperPlayer {
 
 
     /**
-     * 开始播放
+     * Start playing.
      *
-     * @param model 超级播放器模型
+     * 开始播放
      */
     void play(SuperPlayerModel model);
 
 
     /**
+     * Replay
+     *
      * 重播
      */
     void reStart();
 
     /**
+     * Pause playback
+     *
      * 暂停播放
      */
     void pause();
 
     /**
+     * Pause on-demand video
+     *
      * 暂停点播视频
      */
     void pauseVod();
 
     /**
+     * Resume playback
+     *
      * 恢复播放
      */
     void resume();
 
     /**
+     * Resume live playback, from live time shift playback to live playback
+     *
      * 恢复直播播放，从直播时移播放中，恢复到直播播放。
      */
     void resumeLive();
 
     /**
+     * Stop playing
+     *
      * 停止播放
      */
     void stop();
 
     /**
+     * Destroy the player
+     *
      * 销毁播放器
      */
     void destroy();
@@ -63,11 +74,13 @@ public interface SuperPlayer {
     void revertSettings();
 
     /**
+     * Switch player mode.
+     *
      * 切换播放器模式
      *
-     * @param playerMode {@link SuperPlayerDef.PlayerMode#WINDOW  }          窗口模式
-     *                   {@link SuperPlayerDef.PlayerMode#FULLSCREEN  }      全屏模式
-     *                   {@link SuperPlayerDef.PlayerMode#FLOAT  }           悬浮窗模式
+     * @param playerMode {@link SuperPlayerDef.PlayerMode#WINDOW  }          Window mode
+     *                   {@link SuperPlayerDef.PlayerMode#FULLSCREEN  }      Full screen mode
+     *                   {@link SuperPlayerDef.PlayerMode#FLOAT  }           Floating window mode
      */
     void switchPlayMode(SuperPlayerDef.PlayerMode playerMode);
 
@@ -88,34 +101,42 @@ public interface SuperPlayer {
     String getPlayURL();
 
     /**
+     * Get the current player mode
+     *
      * 获取当前播放器模式
      *
-     * @return {@link SuperPlayerDef.PlayerMode#WINDOW  }          窗口模式
-     * {@link SuperPlayerDef.PlayerMode#FULLSCREEN  }              全屏模式
-     * {@link SuperPlayerDef.PlayerMode#FLOAT  }                   悬浮窗模式
+     * @return {@link SuperPlayerDef.PlayerMode#WINDOW  }          Window mode
+     * {@link SuperPlayerDef.PlayerMode#FULLSCREEN  }              Full screen mode
+     * {@link SuperPlayerDef.PlayerMode#FLOAT  }                   Floating window mode for live time shift
      */
     SuperPlayerDef.PlayerMode getPlayerMode();
 
     /**
+     * Get the current player status
+     *
      * 获取当前播放器状态
      *
-     * @return {@link SuperPlayerDef.PlayerState#PLAYING  }     播放中
-     * {@link SuperPlayerDef.PlayerState#PAUSE  }               暂停中
-     * {@link SuperPlayerDef.PlayerState#LOADING  }             缓冲中
-     * {@link SuperPlayerDef.PlayerState#END  }                 结束播放
+     * @return {@link SuperPlayerDef.PlayerState#PLAYING  }     Playing
+     * {@link SuperPlayerDef.PlayerState#PAUSE  }               Paused
+     * {@link SuperPlayerDef.PlayerState#LOADING  }             Buffering
+     * {@link SuperPlayerDef.PlayerState#END  }                 Playback ended
      */
     SuperPlayerDef.PlayerState getPlayerState();
 
     /**
+     * Get the current player type
+     *
      * 获取当前播放器类型
      *
-     * @return {@link SuperPlayerDef.PlayerType#LIVE  }     直播
-     * {@link SuperPlayerDef.PlayerType#LIVE_SHIFT  }       直播时移
-     * {@link SuperPlayerDef.PlayerType#VOD  }              点播
+     * @return {@link SuperPlayerDef.PlayerType#LIVE  }     Live
+     * {@link SuperPlayerDef.PlayerType#LIVE_SHIFT  }       Live time shift
+     * {@link SuperPlayerDef.PlayerType#VOD  }              vod
      */
     SuperPlayerDef.PlayerType getPlayerType();
 
     /**
+     * Set player status callback
+     *
      * 设置播放器状态回调
      *
      * @param observer {@link SuperPlayerObserver}
@@ -123,26 +144,32 @@ public interface SuperPlayer {
     void setObserver(SuperPlayerObserver observer);
 
     /**
+     * Set callbacks for on-demand events and live events in the super player
+     *
      * 设置超级播放器中点播事件和直播事件的回调
-     * @param superPlayerListener
      */
     void setSuperPlayerListener(ISuperPlayerListener superPlayerListener);
 
     /**
+     * Set looping
+     *
      * 设置是否循环
-     * @param isLoop true循环，false不循环
+     * @param isLoop True for looping, false for non-looping.
+     *               true循环，false不循环
      */
     void setLoop(boolean isLoop);
 
     /**
+     * Set start time
+     *
      * 设置开始时间
-     * @param startPos 开始时间
      */
     void setStartTime(float startPos);
 
     /**
+     * Set autoplay
+     *
      * 设置是否自动播放
-     * @param isAutoPlay true自动播放，false不自动播放
      */
     void setAutoPlay(boolean isAutoPlay);
 
@@ -157,16 +184,22 @@ public interface SuperPlayer {
     void onSubtitleSettingDone(TXSubtitleRenderModel model);
 
     /**
+     * Seek backwards and play
+     *
      * 往回seek并且播放
      */
     void playBackward(int position);
 
     /**
+     * Fast forward
+     *
      * 往前倍速播放
      */
     void playForward();
 
     /**
+     * Restore playback speed and play
+     *
      * 恢复倍速和播放
      */
     void revertSpeedRate();

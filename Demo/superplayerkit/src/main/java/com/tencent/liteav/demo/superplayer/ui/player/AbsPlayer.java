@@ -16,13 +16,15 @@ import com.tencent.liteav.demo.superplayer.ui.view.VipWatchView;
 import java.util.List;
 
 /**
+ * Common logic of the player
+ *
  * 播放器公共逻辑
  */
 public abstract class AbsPlayer extends RelativeLayout implements Player {
 
-    protected static final int      MAX_SHIFT_TIME = 7200; // demo演示直播时移是MAX_SHIFT_TIMEs，即2小时
-    protected Callback     mControllerCallback; // 播放控制回调
-    protected VipWatchView mVipWatchView;                           //用于展示VIP 试看的view控件
+    protected static final int      MAX_SHIFT_TIME = 7200;
+    protected Callback     mControllerCallback;
+    protected VipWatchView mVipWatchView;
 
 
     protected Runnable mHideViewRunnable = new Runnable() {
@@ -151,20 +153,18 @@ public abstract class AbsPlayer extends RelativeLayout implements Player {
     }
 
     /**
-     * 设置控件的可见性
+     * Set the visibility of the control
      *
-     * @param view      目标控件
-     * @param isVisible 显示：true 隐藏：false
+     * 设置控件的可见性
      */
     protected void toggleView(View view, boolean isVisible) {
         view.setVisibility(isVisible ? View.VISIBLE : View.GONE);
     }
 
     /**
-     * 将秒数转换为hh:mm:ss的格式
+     * Convert seconds to the format of hh:mm:ss
      *
-     * @param second
-     * @return
+     * 将秒数转换为hh:mm:ss的格式
      */
     protected String formattedTime(long second) {
         String formatTime;

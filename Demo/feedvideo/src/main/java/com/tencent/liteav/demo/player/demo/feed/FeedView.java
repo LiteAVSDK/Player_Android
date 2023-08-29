@@ -41,59 +41,42 @@ public class FeedView extends FrameLayout implements FeedListCallBack {
         initViews();
     }
 
-    /**
-     * 初始化界面元素
-     */
     private void initViews() {
         feedListView = new FeedListView(getContext());
         feedListView.setFeedListCallBack(this);
         addView(feedListView);
     }
 
-
-    /**
-     * 设置回调接口
-     *
-     * @param callBack
-     */
     public void setFeedViewCallBack(FeedViewCallBack callBack) {
         feedViewCallBack = callBack;
     }
 
-
-    /**
-     * 添加数据
-     *
-     * @param videoModels 数据列表
-     * @param isCleanData 是否清理之前的数据
-     */
     public void addData(List<VideoModel> videoModels, boolean isCleanData) {
         feedListView.addData(videoModels, isCleanData);
     }
 
 
     /**
+     * End pull-down refresh.
+     *
      * 结束下拉刷新
      *
-     * @param success
+     * @param success Whether to mark this refresh as successful.
+     *                本次刷新是否置为成功
      */
     public void finishRefresh(boolean success) {
         feedListView.finishRefresh(success);
     }
 
     /**
-     * 结束上拉加载
+     * End pull-up load.
      *
-     * @param success
-     * @param noMoreData
+     * 结束上拉加载
      */
     public void finishLoadMore(boolean success, boolean noMoreData) {
         feedListView.finishLoadMore(success, noMoreData);
     }
 
-    /**
-     * 播放
-     */
     public void onResume() {
         if (feedListItemView != null) {
             feedListItemView.setIsPaused(false);
@@ -101,9 +84,6 @@ public class FeedView extends FrameLayout implements FeedListCallBack {
         feedListView.onResume();
     }
 
-    /**
-     * 暂停
-     */
     public void onPause() {
         if (feedListItemView != null) {
             feedListItemView.setIsPaused(true);

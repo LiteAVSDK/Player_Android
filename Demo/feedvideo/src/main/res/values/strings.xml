@@ -50,4 +50,13 @@
     <string name="superplayer_delete_failed">删除失败</string>
     <string name="superplayer_cahche_empty">暂无数据</string>
     <string name="superplayer_net_error">网络异常，请稍后重试</string>
+    
+    <string name="superplayer_one_segment_multi_bitrate">单分片 &amp;&amp; 多码率</string>
+    <string name="superplayer_video_subtitle">字幕</string>
+    <string name="superplayer_multi_segment_multi_bitrate">多分片 &amp;&amp; 多码率</string>
+    <string name="superplayer_video_30fps">30fps</string>
+    <string name="superplayer_one_segment_one_bitrate">单分片 &amp;&amp; 单码率</string>
+    <string name="superplayer_time_based">time-based</string>
+    <string name="superplayer_multi_segment_one_bitrate">多分片 &amp;&amp; 单码率</string>
+    <string name="superplayer_number_based">number-based</string>
 </resources>

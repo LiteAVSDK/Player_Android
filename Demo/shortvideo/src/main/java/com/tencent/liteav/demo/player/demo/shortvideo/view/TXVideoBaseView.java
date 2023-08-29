@@ -23,6 +23,8 @@ import com.tencent.rtmp.ui.TXCloudVideoView;
 import java.util.Locale;
 
 /**
+ * Immersive playback component.
+ *
  * 沉浸式播放组件
  */
 public class TXVideoBaseView extends RelativeLayout implements View.OnClickListener,
@@ -92,7 +94,6 @@ public class TXVideoBaseView extends RelativeLayout implements View.OnClickListe
         int durationMS = param.getInt(TXLiveConstants.EVT_PLAY_DURATION_MS);
 
         long curTS = System.currentTimeMillis();
-        // 避免滑动进度条松开的瞬间可能出现滑动条瞬间跳到上一个位置
         if (Math.abs(curTS - mTrackingTouchTS) < 500) {
             return;
         }
@@ -145,14 +146,12 @@ public class TXVideoBaseView extends RelativeLayout implements View.OnClickListe
     @Override
     public void onStartTrackingTouch(SeekBar seekBar) {
         mStartSeek = true;
-        // 解决viewPager和的滑动冲突问题
         getParent().requestDisallowInterceptTouchEvent(true);
     }
 
 
     @Override
     public void onStopTrackingTouch(SeekBar seekBar) {
-        // 解决viewPager和的滑动冲突问题
         getParent().requestDisallowInterceptTouchEvent(false);
         if (mTXVodPlayerWrapper != null) {
             Log.i(TAG, "[onStopTrackingTouch] seekBar.getProgress() " + seekBar.getProgress());

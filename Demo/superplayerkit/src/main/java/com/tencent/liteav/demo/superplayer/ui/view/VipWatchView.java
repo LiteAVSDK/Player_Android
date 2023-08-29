@@ -13,17 +13,16 @@ import com.tencent.liteav.demo.superplayer.R;
 import com.tencent.liteav.demo.superplayer.model.VipWatchModel;
 
 /**
+ * VIP preview page view
+ *
  * VIP 试看界面View
- * showTip(string tip,int times)  展示tip提示view
- * 参数说明：tip指展示的文本信息   times是指试看的最长时间，单位为秒
- * setCurrentTime(int currentTime)
  */
 public class VipWatchView extends RelativeLayout implements View.OnClickListener {
 
     private LinearLayout              mLayoutTips                = null;
-    private TextView                  mTextTips                  = null;   //用于展示  "可试看30s，开通VIP观看完整视频"的提示语信息
-    private RelativeLayout            mLayoutVip                 = null;   //用于展示VIP重试的view
-    private VipWatchModel             mVipWatchModel             = null;    //
+    private TextView                  mTextTips                  = null;
+    private RelativeLayout            mLayoutVip                 = null;
+    private VipWatchModel             mVipWatchModel             = null;
     private VipWatchViewClickListener mVipWatchViewClickListener = null;
 
 
@@ -51,11 +50,11 @@ public class VipWatchView extends RelativeLayout implements View.OnClickListener
         if (mVipWatchViewClickListener == null) {
             return;
         }
-        if (R.id.vip_watch_tip_close == v.getId()) {  //关闭按钮
+        if (R.id.vip_watch_tip_close == v.getId()) {
             mVipWatchViewClickListener.onCloseVipTip();
-        } else if (R.id.vip_watch_back_img == v.getId()) {  //返回按钮
+        } else if (R.id.vip_watch_back_img == v.getId()) {
             mVipWatchViewClickListener.onClickVipTitleBack();
-        } else if (R.id.vip_watch_retry_btn == v.getId()) {  //重试按钮
+        } else if (R.id.vip_watch_retry_btn == v.getId()) {
             mVipWatchViewClickListener.onClickVipRetry();
         } else if (R.id.vip_watch_handle_vip_btn == v.getId()) {
             mVipWatchViewClickListener.onClickVipBtn();
@@ -63,25 +62,22 @@ public class VipWatchView extends RelativeLayout implements View.OnClickListener
     }
 
     public interface VipWatchViewClickListener {
-        //当点击左上角返回按钮时回调
+        // Callback when the upper left corner return button is clicked
         void onClickVipTitleBack();
 
-        //当用于点击重看的时候回调
+        // Callback when the replay button is clicked
         void onClickVipRetry();
 
-        //当展示VIP view的时候回调
+        // Callback when the VIP view is displayed
         void onShowVipView();
 
-        //当点击开通VIP按钮的时候回调
+        // Callback when the Become VIP Member button is clicked
         void onClickVipBtn();
 
-        //当点击关闭提示控件时回调此方法
+        // Callback when the close prompt control is clicked
         void onCloseVipTip();
     }
 
-    /**
-     * 初始化页面元素
-     */
     private void initView() {
         LayoutInflater.from(getContext()).inflate(R.layout.superplayer_vod_vipwatch_view, this);
         mLayoutTips = findViewById(R.id.vip_watch_tip_view);
@@ -95,6 +91,9 @@ public class VipWatchView extends RelativeLayout implements View.OnClickListener
 
 
     /**
+     * Display the tip prompt view.
+     * Can be called multiple times, with the final data taking precedence
+     *
      * 展示tip提示view
      * 可调用多次，以最后一次的数据为准
      */
@@ -113,9 +112,10 @@ public class VipWatchView extends RelativeLayout implements View.OnClickListener
     }
 
     /**
-     * 当视频开始播放的时候，视频播放进度更新时，调用测方法，设置视频当前的播放位置,单位为秒
+     * When the video starts playing and the video playback progress is updated,
+     * call this method to set the current playback position of the video in seconds
      *
-     * @param currentTime 视频已经播放了多长时间，单位为秒
+     * 当视频开始播放的时候，视频播放进度更新时，调用测方法，设置视频当前的播放位置,单位为秒
      */
     public void setCurrentTime(float currentTime) {
         if (canShowVipWatchView(currentTime)) {
@@ -124,16 +124,17 @@ public class VipWatchView extends RelativeLayout implements View.OnClickListener
     }
 
     /**
-     * 用于判断是否可以展示VIP view了
+     * Used to determine if the VIP view can be displayed
      *
-     * @param currentTime 当前视频的播放位置（时间节点）
-     * @return
+     * 用于判断是否可以展示VIP view了
      */
     public boolean canShowVipWatchView(float currentTime) {
         return (mVipWatchModel != null && currentTime >= mVipWatchModel.getCanWatchTime() && !isShowing());
     }
 
     /**
+     * Hide the prompt view
+     *
      * 隐藏提示语view
      */
     public void hideTipView() {
@@ -142,6 +143,8 @@ public class VipWatchView extends RelativeLayout implements View.OnClickListener
     }
 
     /**
+     * Hide the VIP view.
+     *
      * 隐藏调VIP view
      */
     public void hideVipView() {
@@ -150,9 +153,12 @@ public class VipWatchView extends RelativeLayout implements View.OnClickListener
     }
 
     /**
+     * Determine if the page displays a completely black screen
+     *
      * 判断是否展示了全黑的界面
      *
-     * @return true 表示页面展示的是试看VIP界面
+     * @return true Indicates that the page displays the VIP preview page
+     *              表示页面展示的是试看VIP界面
      */
     public boolean isShowing() {
         return mLayoutVip.getVisibility() == View.VISIBLE;

@@ -11,30 +11,33 @@ import android.view.Window;
 import android.view.WindowManager;
 
 /**
+ * Gesture control tool for adjusting video playback progress, brightness and volume
+ *
  * 手势控制视频播放进度、调节亮度音量的工具
  */
-
 public class VideoGestureDetector {
-    // 手势类型
-    private static final int NONE           = 0;    // 无效果
-    private static final int VOLUME         = 1;    // 音量
-    private static final int BRIGHTNESS     = 2;    // 亮度
-    private static final int VIDEO_PROGRESS = 3;    // 播放进度
+    private static final int NONE           = 0;
+    private static final int VOLUME         = 1;
+    private static final int BRIGHTNESS     = 2;
+    private static final int VIDEO_PROGRESS = 3;
 
-    private int                        mScrollMode  = NONE;     // 手势类型
-    private VideoGestureListener       mVideoGestureListener;  // 回调
-    private int                        mVideoWidth;            // 视频宽度px
-    private float                      mBrightness  = 1;        // 当前亮度(0.0~1.0)
-    private Window                     mWindow;                // 当前window
-    private WindowManager.LayoutParams mLayoutParams;          // 用于获取和设置屏幕亮度
-    private ContentResolver            mResolver;              // 用于获取当前屏幕亮度
-    private AudioManager               mAudioManager;          // 音频管理器，用于设置音量
-    private int                        mMaxVolume   = 0;         // 最大音量值
-    private int                        mOldVolume   = 0;         // 记录调节音量之前的旧音量值
-    private int                        mVideoProgress;         // 记录滑动后的进度，在回调中抛出
-    private int                        mDownProgress;          // 滑动开始时的视频播放进度
-    private int                        offsetX      = 20; //手势临界值，当两滑动事件坐标的水平差值>20时判定为{@link #VIDEO_PROGRESS}, 否则判定为{@link #VOLUME}或者{@link #BRIGHTNESS}
-    private float                      mSensitivity = 0.3f;    // 调节音量、亮度的灵敏度   //手势灵敏度 0.0~1.0
+    private int                        mScrollMode  = NONE;
+    private VideoGestureListener       mVideoGestureListener;
+    private int                        mVideoWidth;
+    private float                      mBrightness  = 1;
+    private Window                     mWindow;
+    private WindowManager.LayoutParams mLayoutParams;
+    private ContentResolver            mResolver;
+    private AudioManager               mAudioManager;
+    private int                        mMaxVolume   = 0;
+    private int                        mOldVolume   = 0;
+    private int                        mVideoProgress;
+    private int                        mDownProgress;
+    // Gesture threshold, when the horizontal difference between two sliding events is >20, it is judged as
+    // {@link #VIDEO_PROGRESS}, otherwise it is judged as {@link #VOLUME} or {@link #BRIGHTNESS}
+    private int                        offsetX      = 20;
+    // Adjust the sensitivity of volume and brightness, range 0.0~1.0
+    private float                      mSensitivity = 0.3f;
 
     public VideoGestureDetector(Context context) {
         mAudioManager = (AudioManager) context.getSystemService(Service.AUDIO_SERVICE);
@@ -51,20 +54,19 @@ public class VideoGestureDetector {
         return mMaxVolume;
     }
 
-    /**
-     * 设置回调
-     *
-     * @param videoGestureListener
-     */
     public void setVideoGestureListener(VideoGestureListener videoGestureListener) {
         mVideoGestureListener = videoGestureListener;
     }
 
     /**
+     * Reset the data to start a new slide
+     *
      * 重置数据以开始新的一次滑动
      *
-     * @param videoWidth   视频宽度px
-     * @param downProgress 手势按下时视频的播放进度(秒)
+     * @param videoWidth   Video width in pixels
+     *                     视频宽度px
+     * @param downProgress Video playback progress in seconds when the gesture is pressed
+     *                     手势按下时视频的播放进度(秒)
      */
     public void reset(int videoWidth, int downProgress) {
         mVideoProgress = 0;
@@ -73,43 +75,50 @@ public class VideoGestureDetector {
         mOldVolume = mAudioManager.getStreamVolume(AudioManager.STREAM_MUSIC);
         mBrightness = mLayoutParams.screenBrightness;
         if (mBrightness == -1) {
-            //一开始是默认亮度的时候，获取系统亮度，计算比例值
+            // When the default brightness is set, get the system brightness and calculate the ratio value
             mBrightness = getBrightness() / 255.0f;
         }
         mDownProgress = downProgress;
     }
 
     /**
-     * 获取当前是否是视频进度滑动手势
+     * Get whether the current gesture is a video progress sliding gesture
      *
-     * @return
+     * 获取当前是否是视频进度滑动手势
      */
     public boolean isVideoProgressModel() {
         return mScrollMode == VIDEO_PROGRESS;
     }
 
     /**
-     * 获取滑动后对应的视频进度
+     * Get the corresponding video progress after sliding
      *
-     * @return
+     * 获取滑动后对应的视频进度
      */
     public int getVideoProgress() {
         return mVideoProgress;
     }
 
     /**
+     * Sliding gesture type judgment
+     *
      * 滑动手势操控类别判定
      *
-     * @param height    滑动事件的高度px
-     * @param downEvent 按下事件
-     * @param moveEvent 滑动事件
-     * @param distanceX 滑动水平距离
-     * @param distanceY 滑动竖直距离
+     * @param height    Height of sliding event in pixels
+     *                  滑动事件的高度px
+     * @param downEvent Press event
+     *                  按下事件
+     * @param moveEvent Sliding event
+     *                  滑动事件
+     * @param distanceX Horizontal distance of sliding
+     *                  滑动水平距离
+     * @param distanceY Vertical distance of sliding
+     *                  滑动竖直距离
      */
     public void check(int height, MotionEvent downEvent, MotionEvent moveEvent, float distanceX, float distanceY) {
         switch (mScrollMode) {
             case NONE:
-                //offset是让快进快退不要那么敏感的值
+                // The offset represents the minimum sliding threshold
                 if (Math.abs(downEvent.getX() - moveEvent.getX()) > offsetX) {
                     mScrollMode = VIDEO_PROGRESS;
                 } else {
@@ -159,13 +168,15 @@ public class VideoGestureDetector {
                     mVideoGestureListener.onSeekGesture(mVideoProgress);
                 }
                 break;
+            default:
+                break;
         }
     }
 
     /**
-     * 获取当前亮度
+     * Get the current brightness
      *
-     * @return
+     * 获取当前亮度
      */
     private int getBrightness() {
         if (mResolver != null) {
@@ -175,28 +186,25 @@ public class VideoGestureDetector {
         }
     }
 
-    /**
-     * 回调
-     */
     public interface VideoGestureListener {
         /**
-         * 亮度调节回调
+         * Brightness adjustment callback
          *
-         * @param newBrightness 滑动后的新亮度值
+         * 亮度调节回调
          */
         void onBrightnessGesture(float newBrightness);
 
         /**
-         * 音量调节回调
+         * Volume adjustment callback
          *
-         * @param volumeProgress 滑动后的新音量值
+         * 音量调节回调
          */
         void onVolumeGesture(float volumeProgress);
 
         /**
-         * 播放进度调节回调
+         * Playback progress adjustment callback
          *
-         * @param seekProgress 滑动后的新视频进度
+         * 播放进度调节回调
          */
         void onSeekGesture(int seekProgress);
     }

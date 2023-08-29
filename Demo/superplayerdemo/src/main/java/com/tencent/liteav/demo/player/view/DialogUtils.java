@@ -35,9 +35,6 @@ public class DialogUtils {
         return showCommonDialog(context, title, content, null, okClickListener);
     }
 
-    /**
-     * 显示弹框
-     */
     public Dialog showCommonDialog(Context context, String title, String content
             , final DialogInterface.OnClickListener cancelClickListener,
                                    final DialogInterface.OnClickListener okClickListener) {
@@ -77,7 +74,9 @@ public class DialogUtils {
     }
 
     /**
-     * 显示tip提示，会在MAX_TIP_SHOW_TIME自动消失
+     * Display the tip prompt, which will automatically disappear after `MAX_TIP_SHOW_TIME` milliseconds.
+     *
+     * 显示tip提示，会在MAX_TIP_SHOW_TIME毫秒后自动消失
      */
     public Dialog showTip(Context context, boolean isSuccess, String content) {
         final Dialog dialog = new Dialog(context, R.style.superplayer_tip_common);
@@ -97,7 +96,6 @@ public class DialogUtils {
         dialog.setCanceledOnTouchOutside(false);
         dialog.show();
 
-        // MAX_TIP_SHOW_TIME 后消失
         mainHandler.postDelayed(new Runnable() {
             @Override
             public void run() {

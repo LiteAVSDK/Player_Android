@@ -18,9 +18,9 @@ public class PlayInfoResponseParser {
     }
 
     /**
-     * 获取封面图片
+     * Get the cover image.
      *
-     * @return 图片url
+     * 获取封面图片
      */
     public String coverURL() {
         try {
@@ -52,9 +52,9 @@ public class PlayInfoResponseParser {
     }
 
     /**
-     * 获取视频名称
+     * Get the video name.
      *
-     * @return
+     * 获取视频名称
      */
     public String name() {
         try {
@@ -69,9 +69,9 @@ public class PlayInfoResponseParser {
     }
 
     /**
-     * 获取视频描述
+     * Get the video description.
      *
-     * @return
+     * 获取视频描述
      */
     public String description() {
         try {

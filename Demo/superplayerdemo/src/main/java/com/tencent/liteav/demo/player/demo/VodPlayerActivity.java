@@ -125,6 +125,8 @@ public class VodPlayerActivity extends Activity implements ITXVodPlayListener,
     }
 
     /**
+     * Display the video quality list popup.
+     *
      * 显示画质列表弹窗
      */
     private void showQualityView() {
@@ -138,7 +140,6 @@ public class VodPlayerActivity extends Activity implements ITXVodPlayListener,
         if (mVideoQualityList.size() == 2 && !mUrl.endsWith(".mpd")) {
             return;
         }
-        // 设置默认显示分辨率文字
         mVodResolutionView.setVisibility(View.VISIBLE);
         if (!mFirstShowQuality && mDefaultVideoQuality != null) {
             for (int i = 0; i < mVideoQualityList.size(); i++) {
@@ -237,7 +238,6 @@ public class VodPlayerActivity extends Activity implements ITXVodPlayListener,
             }
         });
 
-        //停止按钮
         mButtonStop = (Button) findViewById(R.id.btnStop);
         mButtonStop.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -273,7 +273,6 @@ public class VodPlayerActivity extends Activity implements ITXVodPlayListener,
             }
         });
 
-        //横屏|竖屏
         mButtonRenderRotation = (Button) findViewById(R.id.btnOrientation);
         mButtonRenderRotation.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -294,7 +293,6 @@ public class VodPlayerActivity extends Activity implements ITXVodPlayListener,
             }
         });
 
-        //平铺模式
         mButtonRenderMode = (Button) findViewById(R.id.btnRenderMode);
         mButtonRenderMode.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -315,7 +313,6 @@ public class VodPlayerActivity extends Activity implements ITXVodPlayListener,
             }
         });
 
-        //静音
         mButtonMute = (Button) findViewById(R.id.btnMute);
         mButtonMute.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -325,18 +322,20 @@ public class VodPlayerActivity extends Activity implements ITXVodPlayListener,
                 }
                 mEnableMute = !mEnableMute;
                 mVodPlayer.setMute(mEnableMute);
-                mButtonMute.setBackgroundResource(mEnableMute ? R.drawable.superplayer_mic_disable : R.drawable.superplayer_mic_enable);
+                mButtonMute.setBackgroundResource(mEnableMute ? R.drawable.superplayer_mic_disable :
+                        R.drawable.superplayer_mic_enable);
             }
         });
     }
 
     /**
+     * Load layout and initialize view.
+     *
      * 加载布局和初始化view
      */
     private void setContentView() {
         super.setContentView(R.layout.superplayer_activity_vod);
         initView();
-        //硬件解码
         mButtonHWDecode = (Button) findViewById(R.id.btnHWDecode);
         mButtonHWDecode.getBackground().setAlpha(mHWDecode ? 255 : 100);
         mButtonHWDecode.setOnClickListener(new View.OnClickListener() {
@@ -471,9 +470,9 @@ public class VodPlayerActivity extends Activity implements ITXVodPlayListener,
     }
 
     /**
-     * 获取内置SD卡路径
+     * Get the internal SD card path.
      *
-     * @return
+     * 获取内置SD卡路径
      */
     public String getInnerSDCardPath() {
         return getExternalFilesDir(null).getAbsolutePath();
@@ -547,9 +546,11 @@ public class VodPlayerActivity extends Activity implements ITXVodPlayListener,
         mVodPlayer.setPlayerView(mPlayerView);
         mVodPlayer.setVodListener(this);
         mVodPlayer.setRate(mPlayRate);
-        // 硬件加速在1080p解码场景下效果显著，但细节之处并不如想象的那么美好：
-        // (1) 只有 4.3 以上android系统才支持
-        // (2) 兼容性我们目前还仅过了小米华为等常见机型，故这里的返回值您先不要太当真
+        // Hardware acceleration has a significant effect in 1080p decoding scenarios,
+        // but the details are not as good as imagined:
+        // (1) Only Android systems above 4.3 are supported.
+        // (2) Compatibility is currently only available for common models such as Xiaomi and Huawei, so you should
+        // not take the return value here too seriously.
         mVodPlayer.enableHardwareDecode(mHWDecode);
         mVodPlayer.setRenderRotation(mCurrentRenderRotation);
         mVodPlayer.setRenderMode(mCurrentRenderMode);
@@ -606,14 +607,14 @@ public class VodPlayerActivity extends Activity implements ITXVodPlayListener,
             List<TXBitrateItem> bitrateItems = mVodPlayer.getSupportedBitrates();
             int bitrateItemSize = bitrateItems != null ? bitrateItems.size() : 0;
             if (bitrateItemSize > 0) {
-                Collections.sort(bitrateItems); //masterPlaylist多清晰度，按照码率排序，从低到高
+                Collections.sort(bitrateItems);
                 List<VideoQuality> videoQualities = new ArrayList<>();
                 for (int i = 0; i < bitrateItemSize; i++) {
                     TXBitrateItem bitrateItem = bitrateItems.get(i);
                     VideoQuality quality = VideoQualityUtils.convertToVideoQuality(this, bitrateItem);
                     videoQualities.add(quality);
                 }
-                int bitrateIndex = mVodPlayer.getBitrateIndex();   //获取默认码率的index
+                int bitrateIndex = mVodPlayer.getBitrateIndex();
                 VideoQuality defaultQuality = null;
                 for (VideoQuality quality : videoQualities) {
                     if (quality.index == bitrateIndex) {
@@ -683,7 +684,7 @@ public class VodPlayerActivity extends Activity implements ITXVodPlayListener,
                 mVodPlayer.pause();
             }
         } else if (event == TXLiveConstants.PLAY_EVT_CHANGE_RESOLUTION) {
-        } else if (event == TXLiveConstants.PLAY_ERR_HLS_KEY) {//HLS 解密 key 获取失败
+        } else if (event == TXLiveConstants.PLAY_ERR_HLS_KEY) {
             stopPlayVod();
         } else if (event == TXLiveConstants.PLAY_WARNING_RECONNECT) {
             startLoadingAnimation();
@@ -781,20 +782,23 @@ public class VodPlayerActivity extends Activity implements ITXVodPlayListener,
             super.onCallStateChanged(state, incomingNumber);
             TXVodPlayer player = mPlayer.get();
             switch (state) {
-                //电话等待接听
                 case TelephonyManager.CALL_STATE_RINGING:
                     Log.d(TAG, "CALL_STATE_RINGING");
-                    if (player != null) player.pause();
+                    if (player != null) {
+                        player.pause();
+                    }
                     break;
-                //电话接听
                 case TelephonyManager.CALL_STATE_OFFHOOK:
                     Log.d(TAG, "CALL_STATE_OFFHOOK");
-                    if (player != null) player.pause();
+                    if (player != null) {
+                        player.pause();
+                    }
                     break;
-                //电话挂机
                 case TelephonyManager.CALL_STATE_IDLE:
                     Log.d(TAG, "CALL_STATE_IDLE");
-                    if (player != null && activityCount >= 0) player.resume();
+                    if (player != null && activityCount >= 0) {
+                        player.resume();
+                    }
                     break;
             }
         }
@@ -849,7 +853,7 @@ public class VodPlayerActivity extends Activity implements ITXVodPlayListener,
         updateVideoQuality(quality);
         if (mVodPlayer != null) {
             if (quality.url != null) { // br!=0;index=-1;url!=null   //br=0;index!=-1;url!=null
-                // 说明是非多bitrate的m3u8子流，需要手动seek
+                // Indicates that it is a non-multi-bitrate m3u8 sub-stream and requires manual seek.
                 if (!mIsStopped) {
                     float currentTime = mVodPlayer.getCurrentPlaybackTime();
                     mVodPlayer.stopPlay(true);
@@ -859,7 +863,7 @@ public class VodPlayerActivity extends Activity implements ITXVodPlayListener,
                 }
             } else { //br!=0;index!=-1;url=null
                 Log.i(TAG, "setBitrateIndex quality.index:" + quality.index);
-                // 说明是多bitrate的m3u8子流，会自动无缝seek
+                // Indicates that it is a multi-bitrate m3u8 sub-stream, and will automatically seek seamlessly
                 mVodPlayer.setBitrateIndex(quality.index);
             }
         }

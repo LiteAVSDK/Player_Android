@@ -19,6 +19,18 @@ import com.tencent.liteav.demo.superplayer.R;
 import java.util.List;
 
 /**
+ * A view with markers that mimics a seekbar
+ * <p>
+ * In addition to the basic functions of a seekbar, it also has the ability to add keyframe markers.
+ * <p>
+ * 1、Add marker information {@link #addPoint(PointParams, int)}.
+ * <p>
+ * 2、Custom thumb {@link TCThumbView}.
+ * <p>
+ * 3、Marker view {@link TCPointView}.
+ * <p>
+ * 4、Marker information parameters {@link PointParams}.
+ *
  * 一个带有打点的，模仿seekbar的view
  * <p>
  * 除seekbar基本功能外，还具备关键帧信息打点的功能
@@ -33,35 +45,35 @@ import java.util.List;
  */
 public class PointSeekBar extends RelativeLayout {
 
-    private int                         mWidth;                 // 自身宽度
-    private int                         mHeight;                // 自身高度
-    private int                         mSeekBarLeft;           // SeekBar的起点位置
-    private int                         mSeekBarRight;          // SeekBar的终点位置
-    private int                         mBgTop;                 // 进度条距离父布局上边界的距离
-    private int                         mBgBottom;              // 进度条距离父布局下边界的距离
-    private int                         mRoundSize;             // 进度条圆角大小
-    private int                         mViewEnd;               // 自身的右边界
-    private Paint                       mNormalPaint;           // seekbar背景画笔
-    private Paint                       mProgressPaint;         // seekbar进度条画笔
-    private Paint                       mPointerPaint;          // 打点view画笔
-    private Paint                       mPlayablePaint;         // 缓存画笔
-    private Drawable                    mThumbDrawable;         // 拖动块图片
-    private int                         mHalfDrawableWidth;     // Thumb图片宽度的一半
-    private float                       mThumbLeft;             // thumb的marginLeft值
-    private float                       mThumbRight;            // thumb的marginRight值
-    private float                       mThumbTop;              // thumb的marginTop值
-    private float                       mThumbBottom;           // thumb的marginBottom值
-    private boolean                     mIsOnDrag;              // 是否处于拖动状态
-    private float                       mCurrentLeftOffset = 0; // thumb距离打点view的偏移量
-    private float                       mLastX;                 // 上一次点击事件的横坐标，用于计算偏移量
-    private int                         mCurrentProgress;       // 当前seekbar的数值
-    private int                         mCurrentPlayableProgress; // 当前playable的数值
-    private int                         mMaxProgress       = 100;     // seekbar最大数值
-    private float                       mBarHeightPx       = 0;       // seekbar的高度大小 px
-    private TCThumbView                 mThumbView;             // 滑动ThumbView
-    private List<PointParams>           mPointList;             // 打点信息的列表
-    private OnSeekBarPointClickListener mPointClickListener;    // 打点view点击回调
-    private boolean                     mIsChangePointViews;    // 打点信息是否更新过
+    private int                         mWidth;
+    private int                         mHeight;
+    private int                         mSeekBarLeft;
+    private int                         mSeekBarRight;
+    private int                         mBgTop;
+    private int                         mBgBottom;
+    private int                         mRoundSize;
+    private int                         mViewEnd;
+    private Paint                       mNormalPaint;
+    private Paint                       mProgressPaint;
+    private Paint                       mPointerPaint;
+    private Paint                       mPlayablePaint;
+    private Drawable                    mThumbDrawable;
+    private int                         mHalfDrawableWidth;
+    private float                       mThumbLeft;
+    private float                       mThumbRight;
+    private float                       mThumbTop;
+    private float                       mThumbBottom;
+    private boolean                     mIsOnDrag;
+    private float                       mCurrentLeftOffset = 0;
+    private float                       mLastX;
+    private int                         mCurrentProgress;
+    private int                         mCurrentPlayableProgress;
+    private int                         mMaxProgress       = 100;
+    private float                       mBarHeightPx       = 0;
+    private TCThumbView                 mThumbView;
+    private List<PointParams>           mPointList;
+    private OnSeekBarPointClickListener mPointClickListener;
+    private boolean                     mIsChangePointViews;
     private LayoutParams                mLayoutParams;
     private LayoutParams                mThumbViewParams;
     private LayoutParams                mTcPointViewLayoutParams;
@@ -86,9 +98,9 @@ public class PointSeekBar extends RelativeLayout {
     }
 
     /**
-     * 设置seekbar进度值
+     * Set the seekbar progress value
      *
-     * @param progress
+     * 设置seekbar进度值
      */
     public void setProgress(int progress) {
         if (progress < 0) {
@@ -105,9 +117,9 @@ public class PointSeekBar extends RelativeLayout {
     }
 
     /**
-     * 设置seekbar playable进度值
+     * Set the seekbar playable progress value
      *
-     * @param secondaryProgress
+     * 设置seekbar playable进度值
      */
     public void setSecondaryProgress(int secondaryProgress) {
         if (secondaryProgress < 0) {
@@ -122,27 +134,27 @@ public class PointSeekBar extends RelativeLayout {
     }
 
     /**
-     * 设置seekbar最大值
+     * Set the maximum value of the seekbar
      *
-     * @param max
+     * 设置seekbar最大值
      */
     public void setMax(int max) {
         mMaxProgress = max;
     }
 
     /**
-     * 获取seekbar进度值
+     * Get the seekbar progress value
      *
-     * @return
+     * 获取seekbar进度值
      */
     public int getProgress() {
         return mCurrentProgress;
     }
 
     /**
-     * 获取seekbar最大值
+     * Get the maximum value of the seekbar
      *
-     * @return
+     * 获取seekbar最大值
      */
     public int getMax() {
         return mMaxProgress;
@@ -192,6 +204,8 @@ public class PointSeekBar extends RelativeLayout {
     }
 
     /**
+     * Change the position of the thumb
+     *
      * 改变thumb位置
      */
     private void changeThumbPos() {
@@ -222,7 +236,7 @@ public class PointSeekBar extends RelativeLayout {
 
         mViewEnd = mWidth;
 
-        // 解决播放前 seekbar点就已经领先进度原点的问题
+        // Solve the problem that the seekbar marker is ahead of the progress origin before playback
         invalidate();
 
     }
@@ -281,10 +295,10 @@ public class PointSeekBar extends RelativeLayout {
         mTRectF.top = mBgTop;
         mTRectF.bottom = mBgBottom;
 
-        // 避免刚开始播放时候 seekbar原点和最左端的一段白色
+        // Avoid the white space between the seekbar origin and the left end when starting playback
         float tempRight = mPlayableRight < mSeekBarLeft ? mSeekBarLeft : mPlayableRight;
 
-        // 避免从点播切换到直播的时候 最右端出现白色
+        // Avoid white space at the right end when switching from VOD to live
         mTRectF.right = (tempRight > mTRectF.left) ? tempRight : mTRectF.left;
         canvas.drawRoundRect(mTRectF, mRoundSize, mRoundSize, mPlayablePaint);
 
@@ -292,10 +306,9 @@ public class PointSeekBar extends RelativeLayout {
     }
 
     /**
-     * 添加打点view
+     * Add the marker view
      *
-     * @param pointParams
-     * @param index
+     * 添加打点view
      */
     public void addPoint(PointParams pointParams, final int index) {
         final TCPointView view = new TCPointView(getContext());
@@ -342,11 +355,11 @@ public class PointSeekBar extends RelativeLayout {
     }
 
     private boolean handleUpEvent(MotionEvent event) {
-        // 需要使用event的x坐标 使用mThumbLeft 是使得点击无反应
+        // Need to use the x coordinate of the event, use mThumbLeft to make it unresponsive to clicks
         float x = event.getX();
         if (mListener != null) {
             mCurrentProgress = (int) ((x / (float) (mWidth)) * mMaxProgress);
-            // 针对 向左向右过度拖动 做保护
+            // Protect against excessive dragging to the left or right
             if (mCurrentProgress > 100) {
                 mCurrentProgress = 100;
             }
@@ -368,7 +381,6 @@ public class PointSeekBar extends RelativeLayout {
         float y = event.getY();
         if (mIsOnDrag) {
             mCurrentLeftOffset = x - mLastX;
-            //计算出标尺的Rect
             calculatePointerRect();
             if (mThumbRight - mHalfDrawableWidth <= mSeekBarLeft) {
                 mThumbLeft = 0;
@@ -388,6 +400,8 @@ public class PointSeekBar extends RelativeLayout {
     }
 
     /**
+     * Update progress
+     *
      * 更新progress
      */
     private void callbackProgress() {
@@ -411,10 +425,9 @@ public class PointSeekBar extends RelativeLayout {
     }
 
     /**
-     * 更新windowPlayer FullscreenPlayer的 duration
+     * Update the duration of the windowPlayer and FullscreenPlayer
      *
-     * @param progress
-     * @param isFromUser
+     * 更新windowPlayer FullscreenPlayer的 duration
      */
     private void callbackProgressInternal(int progress, boolean isFromUser) {
         mCurrentProgress = progress;
@@ -440,6 +453,8 @@ public class PointSeekBar extends RelativeLayout {
     }
 
     /**
+     * Calculate the coordinates of the dragging block
+     *
      * 计算拖动块的坐标
      */
     private void calculatePointerRect() {
@@ -465,27 +480,14 @@ public class PointSeekBar extends RelativeLayout {
         void onStopTrackingTouch(PointSeekBar seekBar);
     }
 
-    /**
-     * 设置监听
-     *
-     * @param listener
-     */
     public void setOnPointClickListener(OnSeekBarPointClickListener listener) {
         mPointClickListener = listener;
     }
 
-    /**
-     * 打点view点击回调
-     */
     public interface OnSeekBarPointClickListener {
         void onSeekBarPointClick(View view, int pos);
     }
 
-    /**
-     * 设置打点信息列表
-     *
-     * @param pointList
-     */
     public void setPointList(List<PointParams> pointList) {
         mPointList = pointList;
         mIsChangePointViews = true;
@@ -493,11 +495,13 @@ public class PointSeekBar extends RelativeLayout {
     }
 
     /**
+     * Marker information
+     *
      * 打点信息
      */
     public static class PointParams {
-        int progress = 0;       // 视频进度值(秒)
-        int color = Color.RED;  // 打点view的颜色
+        int progress = 0;
+        int color = Color.RED;
 
         public PointParams(int progress, int color) {
             this.progress = progress;
@@ -506,12 +510,14 @@ public class PointSeekBar extends RelativeLayout {
     }
 
     /**
+     * Marker view
+     *
      * 打点view
      */
     private static class TCPointView extends View {
-        private int mColor = Color.WHITE; // view颜色
-        private Paint mPaint;               // 画笔
-        private RectF mRectF;               // 打点view的位置信息(矩形)
+        private int mColor = Color.WHITE;
+        private Paint mPaint;
+        private RectF mRectF;
 
         public TCPointView(Context context) {
             super(context);
@@ -536,9 +542,9 @@ public class PointSeekBar extends RelativeLayout {
         }
 
         /**
-         * 设置打点颜色
+         * Set the color of the marker.
          *
-         * @param color
+         * 设置打点颜色
          */
         public void setColor(int color) {
             mColor = color;
@@ -546,12 +552,9 @@ public class PointSeekBar extends RelativeLayout {
         }
 
         /**
-         * 设置打点view的位置信息
+         * Set the position information of the marker view
          *
-         * @param left
-         * @param top
-         * @param right
-         * @param bottom
+         * 设置打点view的位置信息
          */
         public void setDrawRect(float left, float top, float right, float bottom) {
             mRectF.left = left;
@@ -569,12 +572,14 @@ public class PointSeekBar extends RelativeLayout {
     }
 
     /**
+     * Dragging block view.
+     *
      * 拖动块view
      */
     private static class TCThumbView extends View {
-        private Paint mPaint;        // 画笔
-        private Rect mRect;         // 位置信息(矩形)
-        private Drawable mThumbDrawable;// thumb图片
+        private Paint mPaint;
+        private Rect mRect;
+        private Drawable mThumbDrawable;
 
         public TCThumbView(Context context, Drawable drawable) {
             super(context);

@@ -1,11 +1,10 @@
 package com.tencent.liteav.demo.superplayer.model.entity;
 
 /**
- * Created by annidy on 2017/12/20.
- * <p>
+ * Video playback information.
+ *
  * 视频播放信息
  */
-
 public class PlayInfoStream {
     public int    height;
     public int    width;

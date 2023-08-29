@@ -37,4 +37,8 @@
     <string name="superplayer_audio_track">Audio Track </string>
     <string name="superplayer_playforward">Fast Forward</string>
     <string name="superplayer_playbackward">Fast Rewind</string>
+
+    <string name="superplayer_weak_net_tip">Detected that your network is poor, it is recommended to switch to a lower video quality</string>
+    <string name="superplayer_switch_high_quality_failed">Switching to high video quality failed, please try again later</string>
+    <string name="superplayer_switching_high_quality">Switching to high video quality, please wait&#8230;</string>
 </resources>

@@ -24,7 +24,6 @@ public class VideoDownloadHelper {
     public static final String DEFAULT_DOWNLOAD_VIDEO_COVER =
             "http://xiaozhibo-10055601.file.myqcloud.com/coverImg.jpg";
 
-    // 下载状态文字表驱动
     private static final Map<Integer, Integer> PROGRESS_STATE_TEXT_MAP = new HashMap<Integer, Integer>() {{
         put(TXVodDownloadMediaInfo.STATE_INIT, R.string.superplayer_cache_state_cacheing);
         put(TXVodDownloadMediaInfo.STATE_START, R.string.superplayer_cache_state_cacheing);
@@ -33,7 +32,6 @@ public class VideoDownloadHelper {
         put(TXVodDownloadMediaInfo.STATE_FINISH, R.string.superplayer_cache_state_finish);
     }};
 
-    // 下载状态图标表驱动
     private static final Map<Integer, Integer> PROGRESS_STATE_ICON_MAP = new HashMap<Integer, Integer>() {{
         put(TXVodDownloadMediaInfo.STATE_INIT, R.drawable.superplayer_cache_circle_status_caching);
         put(TXVodDownloadMediaInfo.STATE_START, R.drawable.superplayer_cache_circle_status_caching);
@@ -49,7 +47,6 @@ public class VideoDownloadHelper {
     private boolean isRequestSuccess  = true;
     private long    lastShowErrorTime = 0L;
 
-    // 只能包内实例化
     VideoDownloadHelper(String mProgressFormatter,Context context) {
         this.mProgressFormatter = mProgressFormatter;
         loader = new SuperVodListLoader(context);
@@ -77,9 +74,6 @@ public class VideoDownloadHelper {
         return mProgressFormatter;
     }
 
-    /**
-     * 根据时间戳格式化成 00:00
-     */
     public String formattedTime(long second) {
         long h = second / 3600;
         long m = (second % 3600) / 60;

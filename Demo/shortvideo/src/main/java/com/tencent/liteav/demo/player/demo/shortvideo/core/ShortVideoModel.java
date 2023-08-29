@@ -1,5 +1,7 @@
 package com.tencent.liteav.demo.player.demo.shortvideo.core;
 
+import static com.tencent.liteav.demo.superplayer.SuperPlayerModel.PLAY_ACTION_PRELOAD;
+
 import android.content.Context;
 import android.os.Handler;
 import android.os.Looper;
@@ -8,6 +10,7 @@ import com.tencent.liteav.demo.vodcommon.entity.ConfigBean;
 import com.tencent.liteav.demo.vodcommon.entity.SuperVodListLoader;
 import com.tencent.liteav.demo.vodcommon.entity.VideoListModel;
 import com.tencent.liteav.demo.vodcommon.entity.VideoModel;
+import com.tencent.liteav.shortvideoplayerdemo.R;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -25,9 +28,11 @@ public class ShortVideoModel {
 
     private ArrayList<VideoModel> mSourceList;
     private boolean mIsHttps = true;
+    private Context mContext;
     private IOnDataLoadFullListener mOnDataLoadFullListener;
 
     private ShortVideoModel(Context context) {
+        mContext = context;
         mListLoader = new SuperVodListLoader(context);
         mSourceList = new ArrayList<>();
     }
@@ -62,55 +67,62 @@ public class ShortVideoModel {
         }
     }
 
-
-    private void loadDashData() {
-        VideoModel model = null;
-        model = new VideoModel();
+    private List<VideoModel> loadDashData() {
+        VideoModel model = new VideoModel();
         model.videoURL = "http://1500004424.vod2.myqcloud.com/4383a13evodtranscq1500004424/baff45348602268011141077324/adp.20.mpd";
-        model.title = "单分片 && 多码率";
-        mSourceList.add(model);
+        model.playAction = PLAY_ACTION_PRELOAD;
+        model.title = mContext.getString(R.string.superplayer_one_segment_multi_bitrate);
+        List<VideoModel> dashData = new ArrayList<>();
+        dashData.add(model);
 
         model = new VideoModel();
         model.videoURL = "https://dash.akamaized.net/akamai/test/caption_test/ElephantsDream/elephants_dream_480p_heaac5_1_https.mpd";
-        model.title = "with subtitle";
-        mSourceList.add(model);
+        model.title = mContext.getString(R.string.superplayer_video_subtitle);
+        model.playAction = PLAY_ACTION_PRELOAD;
+        dashData.add(model);
+
 
         model = new VideoModel();
         model.videoURL = "http://1500004424.vod2.myqcloud.com/4383a13evodtranscq1500004424/baff45348602268011141077324/adp.22.mpd";
-        model.title = "多分片 && 多码率";
-        mSourceList.add(model);
+        model.title = mContext.getString(R.string.superplayer_multi_segment_multi_bitrate);
+        model.playAction = PLAY_ACTION_PRELOAD;
+        dashData.add(model);
 
         model = new VideoModel();
         model.videoURL = "https://dash.akamaized.net/akamai/bbb_30fps/bbb_30fps.mpd";
-        model.title = "30fps";
-        mSourceList.add(model);
+        model.title = mContext.getString(R.string.superplayer_video_30fps);
+        model.playAction = PLAY_ACTION_PRELOAD;
+        dashData.add(model);
 
         model = new VideoModel();
         model.videoURL = "http://1500004424.vod2.myqcloud.com/4383a13evodtranscq1500004424/baff45348602268011141077324/adp.1163819.mpd";
-        model.title = "单分片 && 单码率";
-        mSourceList.add(model);
+        model.title = mContext.getString(R.string.superplayer_one_segment_one_bitrate);
+        model.playAction = PLAY_ACTION_PRELOAD;
+        dashData.add(model);
 
         model = new VideoModel();
         model.videoURL = "https://dash.akamaized.net/dash264/TestCases/2c/qualcomm/1/MultiResMPEG2.mpd";
-        model.title = "time-based";
-        mSourceList.add(model);
+        model.title = mContext.getString(R.string.superplayer_time_based);
+        model.playAction = PLAY_ACTION_PRELOAD;
+        dashData.add(model);
 
         model = new VideoModel();
         model.videoURL = "http://1500004424.vod2.myqcloud.com/4383a13evodtranscq1500004424/baff45348602268011141077324/adp.1163820.mpd";
-        model.title = "多分片 && 单码率";
-        mSourceList.add(model);
+        model.title = mContext.getString(R.string.superplayer_multi_segment_one_bitrate);
+        model.playAction = PLAY_ACTION_PRELOAD;
+        dashData.add(model);
 
         model = new VideoModel();
         model.videoURL = "https://bitmovin-a.akamaihd.net/content/MI201109210084_1/mpds/f08e80da-bf1d-4e3d-8899-f0f6155f6efa.mpd";
-        model.title = "number-based";
-        mSourceList.add(model);
+        model.title = mContext.getString(R.string.superplayer_number_based);
+        model.playAction = PLAY_ACTION_PRELOAD;
+        dashData.add(model);
 
+        return dashData;
     }
 
     public void getVideoByFileId() {
         if (ConfigBean.getInstance().isIsUseDash()) {
-
-            // 模拟网络耗时
             new Handler(Looper.getMainLooper()).postDelayed(new Runnable() {
                 @Override
                 public void run() {

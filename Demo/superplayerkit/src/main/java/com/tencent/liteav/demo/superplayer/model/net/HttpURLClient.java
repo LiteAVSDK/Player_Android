@@ -12,7 +12,11 @@ import java.net.URL;
 import java.net.URLConnection;
 
 /**
- * Created by hans on 2018/9/11.
+ * The SuperPlayer module needs a built-in HTTP request module because it involves querying video information.
+ * To avoid introducing additional network request libraries, the native Java HTTPURLConnection is used here.
+ * We recommend that you modify the network module and use the network request library in your project,
+ * such as OkHTTP, Volley, etc.
+ *
  * <p>
  * 超级播放器模块由于涉及查询视频信息，所以需要有一个内置的HTTP请求模块
  * <p>
@@ -30,12 +34,6 @@ public class HttpURLClient {
         return Holder.INSTANCE;
     }
 
-    /**
-     * get请求
-     *
-     * @param urlStr
-     * @param callback
-     */
     public void get(final String urlStr, final OnHttpCallback callback) {
         AsyncTask.execute(new Runnable() {
             @Override
@@ -79,10 +77,9 @@ public class HttpURLClient {
     }
 
     /**
-     * post json数据请求
+     * Post JSON data request.
      *
-     * @param urlStr
-     * @param callback
+     * post json数据请求
      */
     public void postJson(final String urlStr, final String json, final OnHttpCallback callback) {
         AsyncTask.execute(new Runnable() {

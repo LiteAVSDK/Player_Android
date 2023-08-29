@@ -14,13 +14,6 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 
-/**
- * Created by annidy on 2017/11/17.
- */
-
-/**
- * TODO: document your custom view class.
- */
 public class BitrateView extends FrameLayout {
 
     public ArrayList<Button> mButtons;

@@ -12,10 +12,9 @@ public class FeedPlayerManager {
 
 
     /**
-     * 将正在播放的item添加进来
+     * Add the currently playing item.
      *
-     * @param playerView
-     * @param position
+     * 将正在播放的item添加进来
      */
     public void setPlayingFeedPlayerView(FeedPlayerView playerView, int position) {
         if (lastPosition == position) {
@@ -83,9 +82,12 @@ public class FeedPlayerManager {
 
 
     /**
+     * Set full-screen mode to window mode.
+     *
      * 将全屏模式设置为窗口模式
      *
-     * @return true 表示消费了此次事件，
+     * @return true Indicates that this event has been consumed
+     *              表示消费了此次事件，
      */
     public boolean setWindowPlayMode() {
         if (feedPlayerView != null && feedPlayerView.isFullScreenPlay()) {

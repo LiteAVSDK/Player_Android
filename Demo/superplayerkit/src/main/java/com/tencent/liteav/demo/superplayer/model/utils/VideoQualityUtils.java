@@ -14,16 +14,14 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * Created by yuejiaoli on 2018/7/6.
- * <p>
+ * Video quality conversion tool
+ *
  * 清晰度转换工具
  */
-
 public class VideoQualityUtils {
 
     private static final String TAG = "TCVideoQualityUtil";
 
-    // 下载文件画质文字表驱动
     private static final Map<Integer, Integer> DOWNLOAD_QUALITY_MAP = new HashMap<Integer, Integer>() {{
         put(TXVodDownloadDataSource.QUALITY_SD, R.string.superplayer_sd);
         put(TXVodDownloadDataSource.QUALITY_HD, R.string.superplayer_hd);
@@ -39,10 +37,9 @@ public class VideoQualityUtils {
     }};
 
     /**
-     * 从比特流信息转换为清晰度信息
+     * Converts from bitstream information to video quality information
      *
-     * @param bitrateItem
-     * @return
+     * 从比特流信息转换为清晰度信息
      */
     public static VideoQuality convertToVideoQuality(Context context, TXBitrateItem bitrateItem) {
         VideoQuality quality = new VideoQuality();
@@ -55,10 +52,9 @@ public class VideoQualityUtils {
     }
 
     /**
-     * 从{@link PlayInfoStream}转换为{@link VideoQuality}
+     * Converts from {@link PlayInfoStream} to {@link VideoQuality}
      *
-     * @param stream
-     * @return
+     * 从{@link PlayInfoStream}转换为{@link VideoQuality}
      */
     public static VideoQuality convertToVideoQuality(PlayInfoStream stream) {
         VideoQuality qulity = new VideoQuality();
@@ -70,10 +66,9 @@ public class VideoQualityUtils {
     }
 
     /**
-     * 从转码列表转换为清晰度列表
+     * Converts from transcoding list to video quality list
      *
-     * @param transcodeList
-     * @return
+     * 从转码列表转换为清晰度列表
      */
     public static List<VideoQuality> convertToVideoQualityList(HashMap<String, PlayInfoStream> transcodeList) {
         List<VideoQuality> videoQualities = new ArrayList<>();
@@ -137,10 +132,12 @@ public class VideoQualityUtils {
     }
 
     /**
+     * Converts to the video quality ID required for video download based on videoQuality
+     *
      * 根据videoQuality，转化为视频下载需要用到的画质id
      *
-     * @param quality 视频画质
-     * @return {@link TXVodDownloadDataSource} QUALITY常量
+     * @return {@link TXVodDownloadDataSource} QUALITY constant
+     *         {@link TXVodDownloadDataSource} QUALITY常量
      */
     public static int getCacheVideoQualityIndex(VideoQuality quality) {
         if (null == quality) {

@@ -98,11 +98,6 @@ public class TCVodPlayerListAdapter extends RecyclerView.Adapter<TCVodPlayerList
         }
     }
 
-    /**
-     * 添加一个SuperPlayerModel
-     *
-     * @param videoListModel
-     */
     public void addSuperPlayerModel(VideoListModel videoListModel) {
         notifyItemInserted(mVideoListModelList.size());
         mVideoListModelList.add(videoListModel);

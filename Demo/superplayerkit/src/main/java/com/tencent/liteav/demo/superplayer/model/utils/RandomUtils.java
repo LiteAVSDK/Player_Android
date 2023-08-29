@@ -5,11 +5,9 @@ import java.util.Random;
 public class RandomUtils {
 
     /**
-     * 获取范围内的数据
+     * Get a random number within a range.
      *
-     * @param min 最小值
-     * @param max 最大值
-     * @return 随机数
+     * 获取范围内的随机数
      */
     public static Integer getRandomNumber(int min, int max) {
         Random random = new Random();

@@ -3,11 +3,10 @@ package com.tencent.liteav.demo.superplayer.model.entity;
 import java.util.List;
 
 /**
- * Created by yuejiaoli on 2018/7/6.
- * <p>
+ * Video quality information.
+ *
  * 视频画质信息
  */
-
 public class VideoClassification {
 
     private String        id;

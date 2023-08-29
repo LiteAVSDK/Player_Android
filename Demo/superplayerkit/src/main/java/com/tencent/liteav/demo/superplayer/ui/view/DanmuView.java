@@ -24,7 +24,13 @@ import master.flame.danmaku.danmaku.parser.BaseDanmakuParser;
 import master.flame.danmaku.ui.widget.DanmakuView;
 
 /**
- * Created by liyuejiao on 2018/1/29.
+ * <p>
+ * Danmaku view in the full-featured player
+ * <p>
+ * 1、Send random danmaku {@link #addDanmaku(String, boolean)}.
+ * <p>
+ * 2、Handler for danmaku operations in the current thread {@link DanmuHandler}
+ *
  * <p>
  * 全功能播放器中的弹幕View
  * <p>
@@ -35,9 +41,9 @@ import master.flame.danmaku.ui.widget.DanmakuView;
 public class DanmuView extends DanmakuView {
     private Context        mContext;
     private DanmakuContext mDanmakuContext;
-    private boolean        mShowDanma;         // 弹幕是否开启
-    private HandlerThread  mHandlerThread;     // 发送弹幕的线程
-    private DanmuHandler   mDanmuHandler;      // 弹幕线程handler
+    private boolean        mShowDanma;
+    private HandlerThread  mHandlerThread;
+    private DanmuHandler   mDanmuHandler;
 
     public DanmuView(Context context) {
         super(context);
@@ -110,6 +116,8 @@ public class DanmuView extends DanmakuView {
     };
 
     /**
+     * Generate some random danmaku content for testing.
+     *
      * 随机生成一些弹幕内容以供测试
      */
     private void generateDanmaku() {
@@ -119,10 +127,14 @@ public class DanmuView extends DanmakuView {
     }
 
     /**
+     * Add a danmaku to the danmaku view
+     *
      * 向弹幕View中添加一条弹幕
      *
-     * @param content    弹幕的具体内容
-     * @param withBorder 弹幕是否有边框
+     * @param content    The specific content of the danmaku
+     *                   弹幕的具体内容
+     * @param withBorder Whether the danmaku has a border
+     *                   弹幕是否有边框
      */
     private void addDanmaku(String content, boolean withBorder) {
         BaseDanmaku danmaku = mDanmakuContext.mDanmakuFactory.createDanmaku(BaseDanmaku.TYPE_SCROLL_RL);
@@ -140,11 +152,9 @@ public class DanmuView extends DanmakuView {
     }
 
     /**
-     * sp单位转px
+     * Convert sp unit to px
      *
-     * @param context
-     * @param spValue
-     * @return
+     * sp单位转px
      */
     public int sp2px(Context context, float spValue) {
         final float scale = context.getResources().getDisplayMetrics().density;

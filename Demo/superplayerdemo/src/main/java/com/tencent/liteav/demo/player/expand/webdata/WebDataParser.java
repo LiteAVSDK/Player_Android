@@ -13,9 +13,20 @@ import com.tencent.liteav.demo.player.demo.SuperPlayerActivity;
 import java.util.Map;
 
 /**
+ * External call entry
+ * The URI format is as follows:
+ * liteav://com.tencent.liteav.demo?from=wechat&target=superplayer&protocol=v4vodplay&data={"appId":"1400295357",
+ * "fileId":"5285890803757278095","psign":"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9"}
+ * from: Source, such as WeChat, browser, etc.; not currently used to prevent the need to determine the
+ * calling party in the future
+ * target: Target page, mainly used to jump to the corresponding page, such as SuperPlayer page, live broadcast, etc.;
+ * data: Data required by the target page. The specific fields are subject to the fields used by the target page.
+ * The above is only an example, and the final data will be passed through to the target page.
+ *
  * 外部调起入口
  * URI 格式如下：
- * liteav://com.tencent.liteav.demo?from=wechat&target=superplayer&protocol=v4vodplay&data={"appId":"1400295357","fileId":"5285890803757278095","psign":"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9"}
+ * liteav://com.tencent.liteav.demo?from=wechat&target=superplayer&protocol=v4vodplay&data={"appId":"1400295357",
+ * "fileId":"5285890803757278095","psign":"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9"}
  * from： 来源，例如：微信、浏览器等；暂时不用，防止以后需要确定调起方
  * target： 目标页面，主要用于跳转对应页面，例如：超级播放器页，直播等；
  * data： 数据，目标页面所需数据，具体字段按目标页面所使用字段为准，以上仅为事例，最终会透传给目标页面

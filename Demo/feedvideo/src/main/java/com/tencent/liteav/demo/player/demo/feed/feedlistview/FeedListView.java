@@ -25,6 +25,8 @@ import com.tencent.liteav.demo.vodcommon.entity.VideoModel;
 import java.util.List;
 
 /**
+ * Used in the feed stream main interface.
+ * Add SmartRefreshLayout to FrameLayout and add a RecycleView to SmartRefreshLayout.
  * feed流主界面使用
  * 在FrameLayout中添加SmartRefreshLayout 在SmartRefreshLayout中添加一个RecycleView
  */
@@ -55,6 +57,7 @@ public class FeedListView extends FrameLayout implements FeedListItemView.FeedLi
     }
 
     /**
+     * Initialize interface elements.
      * 初始化界面元素
      */
     private void initViews() {
@@ -64,7 +67,7 @@ public class FeedListView extends FrameLayout implements FeedListItemView.FeedLi
         refreshLayout.setRefreshHeader(new ClassicsHeader(getContext()));
         refreshLayout.setRefreshFooter(new ClassicsFooter(getContext()));
         refreshLayout.setEnableAutoLoadMore(false);
-        refreshLayout.setEnableOverScrollBounce(false);//是否启用越界回弹
+        refreshLayout.setEnableOverScrollBounce(false); // Whether to enable boundary rebound.
         recyclerView = new RecyclerView(getContext());
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
         recyclerView.setHasFixedSize(true);
@@ -98,7 +101,8 @@ public class FeedListView extends FrameLayout implements FeedListItemView.FeedLi
 
 
     /**
-     * 设置feedlistview 回调接口
+     * Set feedListView callback interface.
+     * 设置feedListView 回调接口
      *
      * @param callBack
      */
@@ -108,10 +112,13 @@ public class FeedListView extends FrameLayout implements FeedListItemView.FeedLi
 
 
     /**
+     * Add list data.
      * 添加列表数据
      *
-     * @param videoModels 数据列表
-     * @param isCleanData 是否清理之前的数据
+     * @param videoModels Data list.
+     *                    数据列表
+     * @param isCleanData Whether to clear previous data.
+     *                    是否清理之前的数据
      */
     public void addData(List<VideoModel> videoModels, boolean isCleanData) {
         feedListAdapter.addVideoData(videoModels, isCleanData);
@@ -126,6 +133,7 @@ public class FeedListView extends FrameLayout implements FeedListItemView.FeedLi
     }
 
     /**
+     * End pull-down refresh animation.
      * 结束下拉刷新动画
      *
      * @param success
@@ -135,6 +143,7 @@ public class FeedListView extends FrameLayout implements FeedListItemView.FeedLi
     }
 
     /**
+     * End pull-up load animation.
      * 结束上拉加载动画
      *
      * @param success
@@ -155,13 +164,14 @@ public class FeedListView extends FrameLayout implements FeedListItemView.FeedLi
     }
 
     /**
+     * Called when destroyed.
      * 销毁时调用
      */
     public void destroy() {
         if (feedPlayerManager != null) {
             feedPlayerManager.destroy();
         }
-        //清理掉列表数据
+        // Clear list data.
         if (recyclerView != null) {
             recyclerView.setAdapter(null);
             recyclerView = null;
@@ -171,6 +181,7 @@ public class FeedListView extends FrameLayout implements FeedListItemView.FeedLi
 
 
     /**
+     * Callback method when clicking on a RecycleView item.
      * 点击RecycleView item 回调方法
      *
      * @param itemView
@@ -186,6 +197,7 @@ public class FeedListView extends FrameLayout implements FeedListItemView.FeedLi
     }
 
     /**
+     * Callback method for player full-screen, and notify feedView of full-screen events in this method.
      * 播放器全屏回调方法，在此方法中将全屏事件通知给feedView
      *
      * @param feedListItemView
@@ -216,6 +228,7 @@ public class FeedListView extends FrameLayout implements FeedListItemView.FeedLi
 
 
     /**
+     * Callback method for player small window event, and notify feedView of this event in this method.
      * 播放器小窗口事件，在此方法中将此事件通知feedView
      *
      * @param feedListItemView
@@ -231,9 +244,11 @@ public class FeedListView extends FrameLayout implements FeedListItemView.FeedLi
 
 
     /**
+     * Set full-screen mode to window mode.
      * 将全屏模式设置为窗口模式
      *
-     * @return true 表示消费了此次事件，
+     * @return true Indicates that this event has been consumed
+     *              表示消费了此次事件，
      */
     public boolean setWindowPlayMode() {
         if (feedPlayerManager != null) {

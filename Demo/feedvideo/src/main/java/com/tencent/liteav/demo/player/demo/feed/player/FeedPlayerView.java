@@ -17,6 +17,8 @@ import com.tencent.liteav.demo.superplayer.SuperPlayerView;
 
 
 /**
+ * Player control for the feed stream.
+ *
  * feed流需求的播放器控件
  */
 public class FeedPlayerView extends FrameLayout implements FeedPlayer {
@@ -83,7 +85,6 @@ public class FeedPlayerView extends FrameLayout implements FeedPlayer {
                 if (feedPlayerManager != null) {
                     feedPlayerManager.setPlayingFeedPlayerView(FeedPlayerView.this, position);
                 }
-                // 开始播放后，重置播放开始时间
                 superPlayerView.setStartTime(0);
             }
 
@@ -111,18 +112,18 @@ public class FeedPlayerView extends FrameLayout implements FeedPlayer {
     }
 
     /**
-     * 设置播放器管理类
+     * Set the player management class.
      *
-     * @param manager
+     * 设置播放器管理类
      */
     public void setFeedPlayerManager(FeedPlayerManager manager) {
         feedPlayerManager = manager;
     }
 
     /**
-     * 设置回调接口
+     * Set the callback interface.
      *
-     * @param callBack
+     * 设置回调接口
      */
     @Override
     public void setFeedPlayerCallBack(FeedPlayerCallBack callBack) {

@@ -15,240 +15,291 @@ import java.util.List;
 import java.util.Map;
 
 /**
+ * Playback control interface
+ *
  * 播放控制接口
  */
 public interface Player {
 
     /**
-     * 设置回调
+     * Set callback.
      *
-     * @param callback 回调接口实现对象
+     * 设置回调
      */
     void setCallback(Callback callback);
 
     /**
+     * Set watermark
+     *
      * 设置水印
      *
-     * @param bmp 水印图
-     * @param x   水印的x坐标
-     * @param y   水印的y坐标
+     * @param bmp Watermark image
+     *            水印图
+     * @param x   X coordinate of watermark
+     *            水印的x坐标
+     * @param y   Y coordinate of watermark
+     *            水印的y坐标
      */
     void setWatermark(Bitmap bmp, float x, float y);
 
     /**
+     * Show control
+     *
      * 显示控件
      */
     void show();
 
     /**
+     * Hide control
+     *
      * 隐藏控件
      */
     void hide();
 
     /**
+     * Release control memory
+     *
      * 释放控件的内存
      */
     void release();
 
     /**
+     * Update playback status
+     *
      * 更新播放状态
      *
-     * @param playState 正在播放{@link SuperPlayerDef.PlayerState#PLAYING}
-     *                  正在加载{@link SuperPlayerDef.PlayerState#LOADING}
-     *                  暂停   {@link SuperPlayerDef.PlayerState#PAUSE}
-     *                  播放结束{@link SuperPlayerDef.PlayerState#END}
+     * @param playState Playing {@link SuperPlayerDef.PlayerState#PLAYING}
+     *                  Loading {@link SuperPlayerDef.PlayerState#LOADING}
+     *                  Paused   {@link SuperPlayerDef.PlayerState#PAUSE}
+     *                  Playback ended {@link SuperPlayerDef.PlayerState#END}
      */
     void updatePlayState(SuperPlayerDef.PlayerState playState);
 
     /**
-     * 设置视频画质信息
+     * Set video quality information
      *
-     * @param list 画质列表
+     * 设置视频画质信息
      */
     void setVideoQualityList(List<VideoQuality> list);
 
     /**
-     * 更新视频名称
+     * Update video name
      *
-     * @param title 视频名称
+     * 更新视频名称
      */
     void updateTitle(String title);
 
     /**
-     * 更新视频播放进度
+     * Update video playback progress
      *
-     * @param current 当前进度(秒)
-     * @param duration 视频总时长(秒)
+     * 更新视频播放进度
      */
     void updateVideoProgress(long current, long duration, long playable);
 
     /**
+     * Update playback type
+     *
      * 更新播放类型
      *
-     * @param type 点播     {@link SuperPlayerDef.PlayerType#VOD}
-     *             点播     {@link SuperPlayerDef.PlayerType#LIVE}
-     *             直播回看  {@link SuperPlayerDef.PlayerType#LIVE_SHIFT}
+     * @param type VOD     {@link SuperPlayerDef.PlayerType#VOD}
+     *             Live     {@link SuperPlayerDef.PlayerType#LIVE}
+     *             Live playback  {@link SuperPlayerDef.PlayerType#LIVE_SHIFT}
      */
     void updatePlayType(SuperPlayerDef.PlayerType type);
 
     /**
-     * 设置背景
+     * Set background
      *
-     * @param bitmap 背景图
+     * 设置背景
      */
     void setBackground(final Bitmap bitmap);
 
     /**
+     * Show background
+     *
      * 显示背景
      */
     void showBackground();
 
     /**
+     * Hide background
+     *
      * 隐藏背景
      */
     void hideBackground();
 
     /**
-     * 更新视频播放画质
+     * Update video playback quality
      *
-     * @param videoQuality 画质
+     * 更新视频播放画质
      */
     void updateVideoQuality(VideoQuality videoQuality);
 
     /**
-     * 更新雪碧图信息
+     * Update sprite information
      *
-     * @param info 雪碧图信息
+     * 更新雪碧图信息
      */
     void updateImageSpriteInfo(PlayImageSpriteInfo info);
 
     /**
-     * 更新关键帧信息
+     * Update keyframe information
      *
-     * @param list 关键帧信息列表
+     * 更新关键帧信息
      */
     void updateKeyFrameDescInfo(List<PlayKeyFrameDescInfo> list);
 
     /**
+     * Whether to display video quality, default display
+     *
      * 是否显示清晰度，默认显示
      */
     void setVideoQualityVisible(boolean isShow);
 
     /**
+     * Playback control callback interface
+     *
      * 播放控制回调接口
      */
     interface Callback {
 
         /**
+         * Switch playback mode callback.
+         *
          * 切换播放模式回调
          *
-         * @param playMode 切换后的播放模式：
-         *                 窗口模式      {@link SuperPlayerDef.PlayerMode#WINDOW  }
-         *                 全屏模式      {@link SuperPlayerDef.PlayerMode#FULLSCREEN  }
-         *                 悬浮窗模式    {@link SuperPlayerDef.PlayerMode#FLOAT  }
+         * @param playMode Playback mode after switching
+         *                 切换后的播放模式：
+         *                 Window mode      {@link SuperPlayerDef.PlayerMode#WINDOW  }
+         *                 Full-screen mode      {@link SuperPlayerDef.PlayerMode#FULLSCREEN  }
+         *                 Floating window mode    {@link SuperPlayerDef.PlayerMode#FLOAT  }
          */
         void onSwitchPlayMode(SuperPlayerDef.PlayerMode playMode);
 
         /**
+         * backPress event callback
+         *
          * 返回点击事件回调
          *
-         * @param playMode 当前播放模式：
-         *                 窗口模式      {@link SuperPlayerDef.PlayerMode#WINDOW  }
-         *                 全屏模式      {@link SuperPlayerDef.PlayerMode#FULLSCREEN  }
-         *                 悬浮窗模式    {@link SuperPlayerDef.PlayerMode#FLOAT  }
+         * @param playMode Playback mode after switching
+         *                 切换后的播放模式：
+         *                 Window mode      {@link SuperPlayerDef.PlayerMode#WINDOW  }
+         *                 Full-screen mode      {@link SuperPlayerDef.PlayerMode#FULLSCREEN  }
+         *                 Floating window mode    {@link SuperPlayerDef.PlayerMode#FLOAT  }
          */
         void onBackPressed(SuperPlayerDef.PlayerMode playMode);
 
         /**
+         * Floating window position update callback
+         *
          * 悬浮窗位置更新回调
          *
-         * @param x 悬浮窗x坐标
-         * @param y 悬浮窗y坐标
+         * @param x Floating window x coordinate
+         *          悬浮窗x坐标
+         * @param y Floating window y coordinate
+         *          悬浮窗y坐标
          */
         void onFloatPositionChange(int x, int y);
 
         /**
+         * Playback pause callback
+         *
          * 播放暂停回调
          */
         void onPause();
 
         /**
+         * Playback resume callback
+         *
          * 播放继续回调
          */
         void onResume();
 
         /**
-         * 播放跳转回调
+         * Playback jump callback
          *
-         * @param position 跳转的位置(秒)
+         * 播放跳转回调
          */
         void onSeekTo(int position);
 
         /**
+         * Restore live playback callback
+         *
          * 恢复直播回调
          */
         void onResumeLive();
 
         /**
-         * 弹幕开关回调
+         * Bullet screen switch callback
          *
-         * @param isOpen 开启：true 关闭：false
+         * 弹幕开关回调
          */
         void onDanmuToggle(boolean isOpen);
 
         /**
+         * Screenshot callback
+         *
          * 屏幕截图回调
          */
         void onSnapshot();
 
         /**
-         * 更新画质回调
+         * Update quality callback
          *
-         * @param quality 画质
+         * 更新画质回调
          */
         void onQualityChange(VideoQuality quality);
 
         /**
-         * 更新播放速度回调
+         * Update playback speed callback
          *
-         * @param speedLevel 播放速度
+         * 更新播放速度回调
          */
         void onSpeedChange(float speedLevel);
 
         /**
-         * 镜像开关回调
+         * Mirror switch callback
          *
-         * @param isMirror 开启：true 关闭：close
+         * 镜像开关回调
          */
         void onMirrorToggle(boolean isMirror);
 
         /**
-         * 硬件加速开关回调
+         * Hardware acceleration switch callback
          *
-         * @param isAccelerate 开启：true 关闭：false
+         * 硬件加速开关回调
          */
         void onHWAccelerationToggle(boolean isAccelerate);
 
         /**
+         * Callback event when the user clicks the "Become VIP Member" button
+         *
          * 当用户点击了 开通VIP会员按钮的回调事件
          */
         void onClickHandleVip();
 
         /**
+         * Callback event when the "Return" button on the VIP preview page is clicked
+         *
          * 当点击了VIP试看界面的返回按钮的的回调
-         *  * @param playMode 当前播放模式：
-         *                       窗口模式      {@link SuperPlayerDef.PlayerMode#WINDOW  }
-         *                       全屏模式      {@link SuperPlayerDef.PlayerMode#FULLSCREEN  }
-         *                       悬浮窗模式    {@link SuperPlayerDef.PlayerMode#FLOAT  }
+         * @param playMode Current playback mode
+         *                 当前播放模式：
+         *                       Window mode      {@link SuperPlayerDef.PlayerMode#WINDOW  }
+         *                       Full-screen mode      {@link SuperPlayerDef.PlayerMode#FULLSCREEN  }
+         *                       Floating window mode    {@link SuperPlayerDef.PlayerMode#FLOAT  }
          */
         void onClickVipTitleBack(SuperPlayerDef.PlayerMode playMode);
 
         /**
+         * Callback event when the "Retry Preview" button on the VIP page is clicked
+         *
          * 但点击了VIP页面的重新试看按钮
          */
         void onClickVipRetry();
 
         /**
+         * Callback event when the "Close" button on the prompt message is clicked
+         *
          * 当点击了提示语的关闭按钮
          */
         void onCloseVipTip();
@@ -256,55 +307,72 @@ public interface Player {
         void playNext();
 
         /**
+         * Enable picture-in-picture
+         *
          * 开启画中画
          */
         void enterPictureInPictureMode();
 
         /**
+         * Get the current episode playlist
+         *
          * 获得当前剧集播放列表
          */
         List<SuperPlayerModel> getPlayList();
 
         /**
+         * Get the currently playing video
+         *
          * 获得当前正在播放的视频
          */
         SuperPlayerModel getPlayingVideoModel();
 
         /**
+         * Click the "Go to Cache List" button in the cache menu on the full-screen page
+         *
          * 全屏页面点击了缓存菜单的前往缓存列表按钮
          */
         void onShowDownloadList();
 
         /**
+         * Click the item in the audio track view
+         *
          * 点击音轨view的item
-         * @param clickInfo
          */
         void onClickSoundTrackItem(TXTrackInfo clickInfo);
 
         /**
+         * Click the item in the subtitle view
+         *
          * 点击字幕view的item
-         * @param clickInfo
          */
         void onClickSubtitleItem(TXTrackInfo clickInfo);
 
         /**
+         * Click the "Done" button on the audio track view settings page
+         *
          * 点击音轨view的设置页面的done按钮
-         * @param model
          */
         void onClickSubtitleViewDoneButton(TXSubtitleRenderModel model);
 
-        /*
+        /**
+         * Fast rewind
+         *
          * 快退
          */
         void onPlayBackward();
 
         /**
+         * Fast forward
+         *
          * 快进
          */
         void onPlayForward();
 
 
         /**
+         * Finger lift
+         *
          * 手指抬起
          */
         void onActionUp();

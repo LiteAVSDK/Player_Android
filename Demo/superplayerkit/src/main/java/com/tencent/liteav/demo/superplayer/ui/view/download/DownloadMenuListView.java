@@ -18,7 +18,6 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.tencent.liteav.demo.superplayer.R;
 import com.tencent.liteav.demo.superplayer.SuperPlayerModel;
-import com.tencent.liteav.demo.superplayer.model.download.VideoDonwloadListener;
 import com.tencent.liteav.demo.superplayer.model.download.VideoDownloadCenter;
 import com.tencent.liteav.demo.superplayer.model.download.VideoDownloadModel;
 import com.tencent.liteav.demo.superplayer.model.entity.VideoQuality;
@@ -41,7 +40,7 @@ public class DownloadMenuListView extends RelativeLayout
 
     private static final long ANIMATE_TIME = 500;
 
-    // 当前清晰度
+    // Current video quality
     private int mCurrentQualityId;
 
     private RecyclerView     mRvDownloadListView;
@@ -177,13 +176,13 @@ public class DownloadMenuListView extends RelativeLayout
                     @Override
                     public void onReady(TXVodDownloadMediaInfo mediaInfo) {
                         if (null == mediaInfo) {
-                            // 检查视频是否有该清晰度
+                            // Check if the video has this quality
                             if (!checkVideoQuality(superPlayerModel, mCurrentQualityId)) {
                                 Toast.makeText(getContext(), R.string.superplayer_download_quality_invalid,
                                         Toast.LENGTH_LONG).show();
                                 return;
                             }
-                            // 拿不到下载信息则开始启动下载
+                            // If download information cannot be obtained, start downloading
                             VideoDownloadModel videoDownloadModel = new VideoDownloadModel();
                             videoDownloadModel.setQualityId(mCurrentQualityId);
                             videoDownloadModel.setPlayerModel(superPlayerModel);
@@ -220,7 +219,7 @@ public class DownloadMenuListView extends RelativeLayout
                 }
             }
         } else {
-            // videoQualityList为空，交给下载去判断，这里返回true
+            // if the videoQualityList is empty, let the download module handle it and return true here
             return true;
         }
         return false;
@@ -311,7 +310,7 @@ public class DownloadMenuListView extends RelativeLayout
         mRvQualityListView.setVisibility(VISIBLE);
     }
 
-    class VideoDownloadListener implements VideoDonwloadListener {
+    class VideoDownloadListener implements com.tencent.liteav.demo.superplayer.model.download.VideoDownloadListener {
 
         private final int              mPosition;
         private final SuperPlayerModel mSuperPlayerModel;

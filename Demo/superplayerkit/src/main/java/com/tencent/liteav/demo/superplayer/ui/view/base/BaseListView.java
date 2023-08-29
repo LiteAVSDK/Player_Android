@@ -64,9 +64,9 @@ public abstract class BaseListView<ADAPTER extends BaseAdapter,DATA>  extends Re
     }
 
     /**
-     * 设置画质列表
+     * Set the video quality list.
      *
-     * @param list
+     * 设置画质列表
      */
     public void setModelList(List<DATA> list) {
         mData.clear();

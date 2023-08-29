@@ -9,15 +9,12 @@ import android.os.HandlerThread;
 import android.text.TextUtils;
 import android.util.Log;
 
-
 import com.tencent.liteav.demo.superplayer.model.VipWatchModel;
 import com.tencent.liteav.demo.superplayer.model.entity.DynamicWaterConfig;
 import com.tencent.liteav.demo.superplayer.model.entity.VideoQuality;
 import com.tencent.liteav.demo.superplayer.model.protocol.PlayInfoParserV2;
 import com.tencent.liteav.demo.superplayer.model.protocol.PlayInfoParserV4;
 import com.tencent.liteav.demo.vodcommon.R;
-import com.tencent.liteav.demo.vodcommon.entity.VideoModel;
-
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -37,10 +34,10 @@ import okhttp3.Request;
 import okhttp3.Response;
 
 /**
- * Created by liyuejiao on 2018/7/3.
+ * Get VOD information
+ *
  * 获取点播信息
  */
-
 public class SuperVodListLoader {
 
     private static final String                M3U8_SUFFIX = ".m3u8";
@@ -108,11 +105,6 @@ public class SuperVodListLoader {
         model.fileid = "8602268011437356984";
         model.title = applicationContext.getString(R.string.superplayer_cover_title);
         model.coverPictureUrl = "http://1500005830.vod2.myqcloud.com/6c9a5118vodcq1500005830/cc1e28208602268011087336518/MXUW1a5I9TsA.png";
-        list.add(model);
-
-        model = new VideoModel();
-        model.appid = 1252463788;
-        model.fileid = "5285890781763144364";
         list.add(model);
 
         return list;
@@ -232,7 +224,6 @@ public class SuperVodListLoader {
                 call.enqueue(new Callback() {
                     @Override
                     public void onFailure(Call call, IOException e) {
-                        //获取请求信息失败
                         listener.onFail(-1);
                     }
 
@@ -259,7 +250,6 @@ public class SuperVodListLoader {
                 call.enqueue(new Callback() {
                     @Override
                     public void onFailure(Call call, IOException e) {
-                        //获取请求信息失败
                         if (listener != null) {
                             listener.onFail(-1);
                         }
@@ -347,7 +337,7 @@ public class SuperVodListLoader {
                     videoModel.videoURL = null;
                     videoModel.multiVideoURLs = new ArrayList<>();
                     List<VideoQuality> videoQualityList = parserV2.getVideoQualityList();
-                    Collections.sort(videoQualityList); // 码率从高到底排序
+                    Collections.sort(videoQualityList); // Sort the bitrate from high to low
                     for (int i = 0; i < videoQualityList.size(); i++) {
                         VideoQuality videoQuality = videoQualityList.get(i);
                         videoModel.multiVideoURLs.add(
@@ -379,10 +369,9 @@ public class SuperVodListLoader {
     }
 
     /**
-     * 根据视频ID 获取视频标题
+     * Get the video title based on the video ID
      *
-     * @param model
-     * @return
+     * 根据视频ID 获取视频标题
      */
     private String getTitleByFileId(VideoModel model) {
         String fileId = model.fileid;
@@ -408,6 +397,9 @@ public class SuperVodListLoader {
                 break;
             case "387702299774253670":
                 title = mContext.getString(R.string.simplify_complexity_and_build_big_from_small_title);
+                break;
+            case "387702299774390972":
+                title = mContext.getString(R.string.superplayer_dynamic_watermark_title);
                 break;
             case "387702299773851453":
                 title = String.format(mContext.getString(R.string.super_player_cache_video_title),1);
@@ -438,14 +430,14 @@ public class SuperVodListLoader {
     }
 
     /**
-     * 拼装协议请求url
+     * Assemble the protocol request URL.
      *
-     * @return 协议请求url字符串
+     * 拼装协议请求url
      */
     private String makeUrlString(int appId, String fileId, String pSign) {
         String urlStr;
         if (mIsHttps) {
-            // 默认用https
+            // Use HTTPS by default.
             urlStr = String.format("%s/%d/%s", BASE_URLS, appId, fileId);
         } else {
             urlStr = String.format("%s/%d/%s", BASE_URL, appId, fileId);
@@ -458,9 +450,9 @@ public class SuperVodListLoader {
     }
 
     /**
-     * 拼装协议请求url中的query字段
+     * Assemble the query field in the protocol request URL.
      *
-     * @return query字段字符串
+     * 拼装协议请求url中的query字段
      */
     private String makeQueryString(String pcfg, String psign, String content) {
         StringBuilder str = new StringBuilder();

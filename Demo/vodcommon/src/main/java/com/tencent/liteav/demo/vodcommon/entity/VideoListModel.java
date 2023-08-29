@@ -7,7 +7,7 @@ public class VideoListModel {
     public List<VideoModel> videoModelList = new ArrayList<>();
     public String title;
     public String  icon;
-    // 是否可以离线缓存
+    // Can it be cached offline
     public boolean isEnableDownload;
 
     public void addVideoModel(VideoModel videoModel) {

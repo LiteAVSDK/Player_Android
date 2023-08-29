@@ -50,6 +50,7 @@
     <string name="superplayer_cache_state_pause">缓存暂停</string>
     <string name="superplayer_cache_state_error">缓存错误</string>
     <string name="superplayer_cache_state_finish">缓存结束</string>
+    <string name="superplayer_cache_download_switch">是否开启缓存功能</string>
     
     <string name="superplayer_hint">提示</string>
     <string name="superplayer_delete_video_confirm">确定删除视频吗</string>
@@ -57,6 +58,7 @@
     <string name="superplayer_delete_failed">删除失败</string>
     <string name="superplayer_cahche_empty">暂无数据</string>
     <string name="superplayer_net_error">网络异常，请稍后重试</string>
+
     <string name="superplayer_live_list">直播列表</string>
     <string name="superplayer_vod_list">点播列表</string>
 
@@ -70,8 +72,35 @@
     <string name="super_player_tv_screen_auto">自适应</string>
     <string name="super_player_tv_vod_self">点播自适应</string>
     <string name="super_player_tv_live_self">直播自适应</string>
-    <string name="super_player_multi_subtitle_video">多字幕视频</string>
-    <string name="super_player_multi_sound_track_video">多音轨视频</string>
     <string name="super_player_save_succeed">保存配置成功！</string>
     <string name="super_player_reset_succeed">重置配置成功！</string>
+    <string name="super_player_multi_subtitle_video">多字幕视频</string>
+    <string name="super_player_multi_sound_track_video">多音轨视频</string>
+
+    <string name="super_play_encrypt_video_introduction">加密视频_腾讯云业务介绍</string>
+
+    <string name="super_player_vod_config">播放器配置</string>
+    <string name="super_player_vod_need_accurate_seek">是否使用精准seek</string>
+    <string name="super_player_vod_smooth_switch">平滑切换多码率</string>
+    <string name="super_player_vod_rotate_auto">视频角度自动给旋转</string>
+    <string name="super_player_vod_adaptive_bitrate">开启自适应码率</string>
+    <string name="super_player_vod_super_resolution">开启超分后处理</string>
+    <string name="super_player_vod_reconnect_count">播放器重连次数</string>
+    <string name="super_player_vod_reconnect_period">播放器重连间隔</string>
+    <string name="super_player_vod_connect_timeout">播放器连接超时时间（s)</string>
+    <string name="super_player_vod_progress_period">播放进度回调间隔（ms)</string>
+    <string name="super_player_vod_cache_directory">设置播放引擎的cache目录</string>
+    <string name="super_player_vod_max_cache">播放引擎cache目录的最大缓存(MB)</string>
+    <string name="super_player_vod_pre_max_cache">预加载最大缓存 （MB）</string>
+    <string name="super_player_vod_buffer_max_cache">最大播放缓冲大小（MB）</string>
+    <string name="super_player_vod_prefer_resolution">启播偏好分辨率（width*height）</string>
+    <string name="super_player_vod_media_type">播放媒资类型：</string>
+    <string name="super_player_vod_decode_strategy">视频解码策略：</string>
+    <string name="super_player_vod_log_level">控制台Log输出级别：</string>
+    <string name="super_player_vod_video_type">播放器视频类型：</string>
+    <string name="super_player_vod_save">保存</string>
+    <string name="super_player_vod_reset">重置</string>
+    <string name="super_player_vod_hard_first">优先硬解(默认)</string>
+    <string name="super_player_vod_soft_first">优先软解</string>
+
 </resources>

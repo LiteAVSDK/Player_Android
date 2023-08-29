@@ -10,7 +10,6 @@ import com.tencent.liteav.demo.superplayer.model.entity.PlayKeyFrameDescInfo;
 import com.tencent.liteav.demo.superplayer.model.entity.ResolutionName;
 import com.tencent.liteav.demo.superplayer.model.entity.VideoQuality;
 import com.tencent.liteav.demo.superplayer.model.net.HttpURLClient;
-import com.tencent.rtmp.TXVodPlayer;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -19,17 +18,21 @@ import java.util.List;
 import java.util.Random;
 
 /**
+ * V4 video information protocol implementation class
+ * <p>
+ * Responsible for controlling the V4 video information protocol request and data retrieval
+ *
  * V4视频信息协议实现类
  * <p>
  * 负责V4视频信息协议的请求控制与数据获取
  */
 public class PlayInfoProtocolV4 implements IPlayInfoProtocol {
     private static final String          TAG          = "TCPlayInfoProtocolV4";
-    private final        String          BASE_URLS_V4 = "https://playvideo.qcloud.com/getplayinfo/v4";  // V4协议请求地址
-    private              Handler         mMainHandler;   // 用于切换线程
-    private              PlayInfoParams  mParams;        // 协议请求输入的参数
-    private              IPlayInfoParser mParser;        // 协议请求返回Json的解析对象
-    private              String          mRequestContext;//透传字段
+    private final        String          baseUrlsV4 = "https://playvideo.qcloud.com/getplayinfo/v4";
+    private              Handler         mMainHandler;
+    private              PlayInfoParams  mParams;
+    private              IPlayInfoParser mParser;
+    private              String          mRequestContext;
 
     public PlayInfoProtocolV4(PlayInfoParams params) {
         mParams = params;
@@ -37,9 +40,9 @@ public class PlayInfoProtocolV4 implements IPlayInfoProtocol {
     }
 
     /**
-     * 发送视频信息协议网络请求
+     * Send a network request for video information protocol
      *
-     * @param callback 协议请求回调
+     * 发送视频信息协议网络请求
      */
     @Override
     public void sendRequest(final IPlayInfoRequestCallback callback) {
@@ -76,10 +79,9 @@ public class PlayInfoProtocolV4 implements IPlayInfoProtocol {
     }
 
     /**
-     * 解析视频信息协议请求响应的Json数据
+     * Parse the JSON data of the video information protocol request response
      *
-     * @param content  响应Json字符串
-     * @param callback 协议请求回调
+     * 解析视频信息协议请求响应的Json数据
      */
     private boolean parseJson(String content, final IPlayInfoRequestCallback callback) {
         if (TextUtils.isEmpty(content)) {
@@ -125,12 +127,12 @@ public class PlayInfoProtocolV4 implements IPlayInfoProtocol {
     }
 
     /**
-     * 拼装协议请求url
+     * Assemble the protocol request URL
      *
-     * @return 协议请求url字符串
+     * 拼装协议请求url
      */
     private String makeUrlString() {
-        String urlStr = String.format("%s/%d/%s", BASE_URLS_V4, mParams.appId, mParams.fileId);
+        String urlStr = String.format("%s/%d/%s", baseUrlsV4, mParams.appId, mParams.fileId);
         String psign = makeJWTSignature(mParams);
         String query = null;
         if (mParams.videoId != null) {
@@ -153,13 +155,14 @@ public class PlayInfoProtocolV4 implements IPlayInfoProtocol {
 
 
     /**
-     * 拼装协议请求url中的query字段
+     * Assemble the query field in the protocol request URL
      *
-     * @return query字段字符串
+     * 拼装协议请求url中的query字段
      */
     private String makeQueryString(String pcfg, String psign, String content) {
         StringBuilder str = new StringBuilder();
-        str.append("subversion=1" +  "&");  // V4协议子版本号,值为1标识为V4.1版本
+        // V4 protocol sub-version number, with a value of 1 indicating V4.1 version
+        str.append("subversion=1" +  "&");
         if (!TextUtils.isEmpty(pcfg)) {
             str.append("pcfg=" + pcfg + "&");
         }
@@ -178,11 +181,12 @@ public class PlayInfoProtocolV4 implements IPlayInfoProtocol {
     }
 
     /**
+     * Get a 32-bit random string
+     *
      * 获取32位随机字符串
-     * @return
      */
     private String genRandomHexString() {
-        final char[] HEX_ARRAY = "0123456789ABCDEF".toCharArray();  // 16进制字符数组
+        final char[] HEX_ARRAY = "0123456789ABCDEF".toCharArray();
         int keyLen = 32;
         StringBuilder sb = new StringBuilder();
         for (int i = 0; i < keyLen; i++) {
@@ -193,6 +197,8 @@ public class PlayInfoProtocolV4 implements IPlayInfoProtocol {
     }
 
     /**
+     * Cancel the request midway
+     *
      * 中途取消请求
      */
     @Override
@@ -201,9 +207,9 @@ public class PlayInfoProtocolV4 implements IPlayInfoProtocol {
     }
 
     /**
-     * 获取视频播放url
+     * Get the video playback URL
      *
-     * @return 视频播放url字符串
+     * 获取视频播放url
      */
     @Override
     public String getUrl() {
@@ -221,9 +227,9 @@ public class PlayInfoProtocolV4 implements IPlayInfoProtocol {
     }
 
     /**
-     * 获取视频名称
+     * Get the video name
      *
-     * @return 视频名称字符串
+     * 获取视频名称
      */
     @Override
     public String getName() {
@@ -231,9 +237,9 @@ public class PlayInfoProtocolV4 implements IPlayInfoProtocol {
     }
 
     /**
-     * 获取雪碧图信息
+     * Get the sprite information
      *
-     * @return 雪碧图信息对象
+     * 获取雪碧图信息
      */
     @Override
     public PlayImageSpriteInfo getImageSpriteInfo() {
@@ -241,9 +247,9 @@ public class PlayInfoProtocolV4 implements IPlayInfoProtocol {
     }
 
     /**
-     * 获取关键帧信息
+     * Get the keyframe information
      *
-     * @return 关键帧信息数组
+     * 获取关键帧信息
      */
     @Override
     public List<PlayKeyFrameDescInfo> getKeyFrameDescInfo() {
@@ -251,9 +257,9 @@ public class PlayInfoProtocolV4 implements IPlayInfoProtocol {
     }
 
     /**
-     * 获取画质信息
+     * Get the video quality information
      *
-     * @return 画质信息数组
+     * 获取画质信息
      */
     @Override
     public List<VideoQuality> getVideoQualityList() {
@@ -261,9 +267,9 @@ public class PlayInfoProtocolV4 implements IPlayInfoProtocol {
     }
 
     /**
-     * 获取默认画质
+     * Get the default video quality
      *
-     * @return 默认画质信息对象
+     * 获取默认画质
      */
     @Override
     public VideoQuality getDefaultVideoQuality() {
@@ -271,11 +277,16 @@ public class PlayInfoProtocolV4 implements IPlayInfoProtocol {
     }
 
     /**
+     * Switch to the main thread.
+     * <p>
+     * Switch back to the main thread from the sub-thread of the video protocol request callback.
+     *
      * 切换到主线程
      * <p>
      * 从视频协议请求回调的子线程切换回主线程
      *
-     * @param r 需要在主线程中执行的任务
+     * @param r Tasks that need to be executed on the main thread.
+     *          需要在主线程中执行的任务
      */
     private void runOnMainThread(Runnable r) {
         if (Looper.myLooper() == mMainHandler.getLooper()) {
@@ -286,9 +297,9 @@ public class PlayInfoProtocolV4 implements IPlayInfoProtocol {
     }
 
     /**
-     * 获取视频画质别名列表
+     * Get the video quality alias list.
      *
-     * @return 画质别名数组
+     * 获取视频画质别名列表
      */
     @Override
     public List<ResolutionName> getResolutionNameList() {

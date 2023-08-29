@@ -1,11 +1,10 @@
 package com.tencent.liteav.demo.superplayer.model.entity;
 
 /**
- * Created by hans on 2019/3/25.
- * <p>
+ * Adaptive bitrate information.
+ *
  * 自适应码流信息
  */
-
 public class EncryptedStreamingInfo {
 
     public String drmType;

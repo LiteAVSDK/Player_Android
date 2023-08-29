@@ -7,8 +7,8 @@
     </string-array>
 
     <string-array name="decoding_strategy" translatable="false">
-        <item>优先硬解</item>
-        <item>优先软解</item>
+        <item>@string/super_player_vod_hard_first</item>
+        <item>@string/super_player_vod_soft_first</item>
     </string-array>
 
     <string-array name="log_level" translatable="false">

@@ -66,7 +66,7 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="10dp"
         android:checked="false"
-        android:text="是否开启缓存功能"/>
+        android:text="@string/superplayer_cache_download_switch"/>
 
 
 </LinearLayout>

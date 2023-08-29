@@ -1,6 +1,5 @@
 package com.tencent.liteav.demo.vodcommon.entity;
 
-
 import static com.tencent.liteav.demo.superplayer.SuperPlayerModel.PLAY_ACTION_AUTO_PLAY;
 
 import android.text.TextUtils;
@@ -16,35 +15,41 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- * Created by yuejiaoli on 2018/7/4.
- */
-
 public class VideoModel implements Serializable {
 
     /**
+     * Video title
+     *
      * 视频标题
      */
     public String title;
 
     /**
+     * Video URL.
+     *
      * 视频URL
      */
     public String videoURL;
 
 
     /**
+     * Cover image pulled from the server.
+     *
      * 从服务器拉取的封面图片
      */
     public String placeholderImage;
 
 
     /**
+     * Interface for user-set images, if it is a local image, add file:// in front of it.
+     *
      * 用户设置图片的接口 如果是本地图片前面加file://
      */
     public String coverPictureUrl;
 
     /**
+     * Video duration.
+     *
      * 视频时长
      */
     public int duration;
@@ -55,11 +60,15 @@ public class VideoModel implements Serializable {
     public int appid;
 
     /**
+     * Video fileid.
+     *
      * 视频的fileid
      */
     public String fileid;
 
     /**
+     * Signature string
+     *
      * 签名字串
      */
     public String pSign;
@@ -69,26 +78,35 @@ public class VideoModel implements Serializable {
     public List<VideoQuality> videoQualityList = new ArrayList<>();
 
     /**
+     * External subtitles
+     *
      * 外挂字幕
      */
     public List<SubtitleSourceModel> subtitleSourceModelList = new ArrayList<>();
 
     /**
+     * URL links for different clarity levels of the video.
+     *
      * VIDEO 不同清晰度的URL链接
      */
     public List<VideoPlayerURL> multiVideoURLs;
-    public int                  playDefaultIndex; // 指定多码率情况下，默认播放的连接Index
+    // Specify the default playback link index in the case of multiple bitrates.
+    public int                  playDefaultIndex;
     public VipWatchModel        vipWatchModel = null;
 
-    //feed流视频描述信息
+    // Feed stream video description information.
     public String             videoDescription     = null;
     public String             videoMoreDescription = null;
     /**
+     * Dynamic watermark text.
+     *
      * 动态水印文本
      */
     public DynamicWaterConfig dynamicWaterConfig   = null;
 
     /**
+     * Whether to enable caching and download capabilities.
+     *
      * 是否启用缓存下载能力
      */
     public boolean isEnableDownload = false;
@@ -105,11 +123,15 @@ public class VideoModel implements Serializable {
         }
 
         /**
+         * Video title.
+         *
          * 视频标题
          */
         public String title;
 
         /**
+         * Video URL.
+         *
          * 视频URL
          */
         public String url;

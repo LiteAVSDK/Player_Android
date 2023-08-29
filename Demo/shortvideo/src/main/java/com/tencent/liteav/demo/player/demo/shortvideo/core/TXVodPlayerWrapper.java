@@ -1,5 +1,10 @@
 package com.tencent.liteav.demo.player.demo.shortvideo.core;
 
+import static com.tencent.rtmp.TXLiveConstants.PLAY_EVT_PLAY_END;
+import static com.tencent.rtmp.TXLiveConstants.PLAY_EVT_PLAY_PROGRESS;
+import static com.tencent.rtmp.TXLiveConstants.PLAY_EVT_RCV_FIRST_I_FRAME;
+import static com.tencent.rtmp.TXLiveConstants.PLAY_EVT_VOD_PLAY_PREPARED;
+
 import android.content.Context;
 import android.os.Bundle;
 import android.util.Log;
@@ -7,7 +12,6 @@ import android.util.Log;
 import com.tencent.liteav.demo.vodcommon.entity.ConfigBean;
 import com.tencent.liteav.demo.vodcommon.entity.VideoModel;
 import com.tencent.rtmp.ITXVodPlayListener;
-import com.tencent.rtmp.TXLiveConstants;
 import com.tencent.rtmp.TXPlayerGlobalSetting;
 import com.tencent.rtmp.TXVodConstants;
 import com.tencent.rtmp.TXVodPlayConfig;
@@ -15,12 +19,6 @@ import com.tencent.rtmp.TXVodPlayer;
 import com.tencent.rtmp.ui.TXCloudVideoView;
 
 import java.io.File;
-
-import static com.tencent.rtmp.TXLiveConstants.PLAY_EVT_PLAY_BEGIN;
-import static com.tencent.rtmp.TXLiveConstants.PLAY_EVT_PLAY_END;
-import static com.tencent.rtmp.TXLiveConstants.PLAY_EVT_PLAY_PROGRESS;
-import static com.tencent.rtmp.TXLiveConstants.PLAY_EVT_RCV_FIRST_I_FRAME;
-import static com.tencent.rtmp.TXLiveConstants.PLAY_EVT_VOD_PLAY_PREPARED;
 
 public class TXVodPlayerWrapper implements ITXVodPlayListener {
     private static final String TAG = "ShortVideoDemo:TXVodPlayerWrapper";
@@ -166,13 +164,13 @@ public class TXVodPlayerWrapper implements ITXVodPlayListener {
     }
 
     public enum TxVodStatus {
-        TX_VIDEO_PLAYER_STATUS_UNLOAD,      // 未加载
-        TX_VIDEO_PLAYER_STATUS_PREPARED,    // 准备播放
-        TX_VIDEO_PLAYER_STATUS_LOADING,     // 加载中
-        TX_VIDEO_PLAYER_STATUS_PLAYING,     // 播放中
-        TX_VIDEO_PLAYER_STATUS_PAUSED,      // 暂停
-        TX_VIDEO_PLAYER_STATUS_ENDED,       // 播放完成
-        TX_VIDEO_PLAYER_STATUS_STOPPED      // 手动停止播放
+        TX_VIDEO_PLAYER_STATUS_UNLOAD,      // Not loaded
+        TX_VIDEO_PLAYER_STATUS_PREPARED,    // Ready to play
+        TX_VIDEO_PLAYER_STATUS_LOADING,     // Loading
+        TX_VIDEO_PLAYER_STATUS_PLAYING,     // Playing
+        TX_VIDEO_PLAYER_STATUS_PAUSED,      // Paused
+        TX_VIDEO_PLAYER_STATUS_ENDED,       // Playback completed
+        TX_VIDEO_PLAYER_STATUS_STOPPED      // Manually stopped playback
     }
 
     public interface OnPlayEventChangedListener {

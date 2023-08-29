@@ -5,7 +5,7 @@ import java.io.Serializable;
 
 public class DynamicWaterConfig implements Serializable {
     /**
-     * 动态水印文本
+     * Dynamic watermark text
      */
     public String dynamicWatermarkTip;
     public int    tipTextSize;

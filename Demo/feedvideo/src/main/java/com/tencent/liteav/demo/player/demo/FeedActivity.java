@@ -106,9 +106,6 @@ public class FeedActivity extends AppCompatActivity implements ActivityCompat.On
         feedView.onRequestPermissionsResult(requestCode,grantResults);
     }
 
-    /**
-     * 加载更多数据
-     */
     private void loadMore() {
         feedVodListLoader.loadListData(page + 1, new FeedVodListLoader.LoadDataCallBack() {
             @Override
@@ -135,10 +132,8 @@ public class FeedActivity extends AppCompatActivity implements ActivityCompat.On
     protected void onResume() {
         super.onResume();
         feedView.onResume();
-        //添加屏幕常亮
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
         if (isFullScreen) {
-            //隐藏虚拟按键，并且全屏
             View decorView = getWindow().getDecorView();
             if (decorView == null) {
                 return;
@@ -157,7 +152,6 @@ public class FeedActivity extends AppCompatActivity implements ActivityCompat.On
     protected void onPause() {
         super.onPause();
         feedView.onPause();
-        //清楚屏幕常亮
         getWindow().clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
     }
 

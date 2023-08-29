@@ -24,10 +24,6 @@ import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
 
-/**
- * Created by vinsonswang on 2018/3/26.
- */
-
 public class VideoDataMgr {
     private static final String                   TAG = "VideoDataMgr";
     private static       VideoDataMgr             sInstance;
@@ -47,9 +43,9 @@ public class VideoDataMgr {
 
     private VideoDataMgr() {
         mOkHttpClient = new OkHttpClient().newBuilder()
-                .connectTimeout(5, TimeUnit.SECONDS)    // 设置超时时间
-                .readTimeout(5, TimeUnit.SECONDS)       // 设置读取超时时间
-                .writeTimeout(5, TimeUnit.SECONDS)      // 设置写入超时时间
+                .connectTimeout(5, TimeUnit.SECONDS)
+                .readTimeout(5, TimeUnit.SECONDS)
+                .writeTimeout(5, TimeUnit.SECONDS)
                 .build();
     }
 
@@ -123,9 +119,9 @@ public class VideoDataMgr {
     }
 
     /**
-     * 访问服务器需要加鉴权
+     * Accessing the server requires authentication.
      *
-     * @return
+     * 访问服务器需要加鉴权
      */
     private String getSigParams() {
         long timeStamp = System.currentTimeMillis() / 1000;
@@ -153,10 +149,8 @@ public class VideoDataMgr {
         String result = "";
         if (originString != null) {
             try {
-                // 指定加密的方式为MD5
                 MessageDigest md = MessageDigest.getInstance("MD5");
-                // 进行加密运算
-                byte bytes[] = md.digest(originString.getBytes());
+                byte[] bytes = md.digest(originString.getBytes());
                 StringBuilder sb = new StringBuilder(40);
                 for (byte b : bytes) {
                     if ((b & 0xff) >> 4 == 0) {

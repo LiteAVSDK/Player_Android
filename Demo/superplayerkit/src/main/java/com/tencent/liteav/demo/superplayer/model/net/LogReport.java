@@ -9,8 +9,8 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 /**
- * Created by liyuejiao on 2018/7/19.
- * <p>
+ * Data reporting module.
+ *
  * 数据上报模块
  */
 public class LogReport {
@@ -18,7 +18,7 @@ public class LogReport {
     private static final String TAG                          = "TCLogReport";
     private              String mAppName;
     private              String mPackageName;
-    public static final  String ELK_ACTION_CHANGE_RESOLUTION = "change_resolution";    //ELK上报事件
+    public static final  String ELK_ACTION_CHANGE_RESOLUTION = "change_resolution"; // ELK reporting event.
     public static final  String ELK_ACTION_TIMESHIFT         = "timeshift";
     public static final  String ELK_ACTION_FLOATMOE          = "floatmode";
     public static final  String ELK_ACTION_LIVE_TIME         = "superlive";
@@ -91,7 +91,6 @@ public class LogReport {
         }
         try {
             PackageInfo info = context.getPackageManager().getPackageInfo(context.getPackageName(), 0);
-            // 当前版本的包名
             mPackageName = info.packageName;
         } catch (Exception e) {
             e.printStackTrace();

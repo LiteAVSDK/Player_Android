@@ -111,6 +111,8 @@ public class VideoDownloadListActivity extends Activity
     }
 
     /**
+     * Scan QR code.
+     *
      * 扫描二维码
      */
     private void scanQRCode() {
@@ -126,10 +128,9 @@ public class VideoDownloadListActivity extends Activity
         }
         String result = data.getStringExtra("result");
         if (REQUEST_CODE_QR_SCAN == requestCode) {
-            // 二维码播放视频
             Intent intent = new Intent(this, SuperPlayerActivity.class);
             //noinspection ConstantConditions
-            if (result.contains("protocol=v4vodplay")) { // 优先解析包含v4协议字段的特殊食品
+            if (result.contains("protocol=v4vodplay")) {
                 Uri uri = Uri.parse(result);
                 String appId = uri.getQueryParameter("appId");
                 String fileId = uri.getQueryParameter("fileId");

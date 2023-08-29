@@ -2,9 +2,12 @@ package com.tencent.liteav.demo.superplayer.model;
 
 import java.io.Serializable;
 
-public class VipWatchModel implements Serializable { //展示的提示语信息
+public class VipWatchModel implements Serializable {
+    // Display prompt message.
     private String tipStr       = null;
-    //试看的时间   默认值是long的最大值，表示不展示VIP试看内容的时间，单位为秒
+    // Trial viewing time. The default value is the maximum value of `long`, which indicates that the VIP trial
+    // viewing content is not displayed, and the unit is seconds.
+    // Display prompt message.
     private long   canWatchTime = Long.MAX_VALUE;
 
 

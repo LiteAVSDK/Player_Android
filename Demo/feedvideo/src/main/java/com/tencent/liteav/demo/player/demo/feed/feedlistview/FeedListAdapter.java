@@ -30,7 +30,6 @@ public class FeedListAdapter extends RecyclerView.Adapter<FeedListAdapter.FeedLi
         int videoViewWidth = (int) (context.getResources().getDisplayMetrics().widthPixels - dp2px(context, 20));
         int videoViewHeight = videoViewWidth * 9 / 16;
         mListItemHeight = (int) (videoViewHeight + dp2px(context, 20 + 55));
-        // recyclerView目前最多会创建11个，这里选择预缓存12个
         mFeedViewManager = new FeedViewManager(context, mListItemHeight, 12);
     }
 
@@ -39,10 +38,13 @@ public class FeedListAdapter extends RecyclerView.Adapter<FeedListAdapter.FeedLi
     }
 
     /**
+     * Add data.
      * 添加数据
      *
-     * @param videoModels 数据列表
-     * @param isCleanData TRUE 表示清理之前的数据
+     * @param videoModels Data list.
+     *                    数据列表
+     * @param isCleanData TRUE Represents data before clearing.
+     *                    TRUE 表示清理之前的数据
      */
     public void addVideoData(List<VideoModel> videoModels, boolean isCleanData) {
         if (isCleanData) {
@@ -109,7 +111,8 @@ public class FeedListAdapter extends RecyclerView.Adapter<FeedListAdapter.FeedLi
     }
 
     /**
-     * 此处可以对itemView进行还原处理，
+     * Here, itemView can be restored.
+     * 此处可以对itemView进行还原处理
      *
      * @param holder
      */

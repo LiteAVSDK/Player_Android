@@ -27,7 +27,17 @@ import com.tencent.liteav.demo.superplayer.SuperPlayerDef;
 import com.tencent.liteav.demo.superplayer.SuperPlayerGlobalConfig;
 
 /**
- * Created by yuejiaoli on 2018/7/4.
+ * <p>
+ * More options popup
+ * <p>
+ * 1、Volume adjustment seekBar callback {@link #mVolumeChangeListener}.
+ * <p>
+ * 2、Brightness adjustment seekBar callback {@link #mLightChangeListener}.
+ * <p>
+ * 3、Speed selection callback {@link #onCheckedChanged(RadioGroup, int)}.
+ * <p>
+ * 4、Mirror, hardware acceleration switch callback {@link #onCheckedChanged(CompoundButton, boolean)}.
+ *
  * <p>
  * 更多选项弹框
  * <p>
@@ -39,26 +49,25 @@ import com.tencent.liteav.demo.superplayer.SuperPlayerGlobalConfig;
  * <p>
  * 4、镜像、硬件加速开关回调{@link #onCheckedChanged(CompoundButton, boolean)}
  */
-
 public class VodMoreView extends RelativeLayout implements RadioGroup.OnCheckedChangeListener, CompoundButton.OnCheckedChangeListener {
 
     private static final String VOLUME_CHANGED_ACTION    = "android.media.VOLUME_CHANGED_ACTION";
     private static final String EXTRA_VOLUME_STREAM_TYPE = "android.media.EXTRA_VOLUME_STREAM_TYPE";
 
     private Context                 mContext;
-    private SeekBar                 mSeekBarVolume;     // 音量seekBar
-    private SeekBar                 mSeekBarLight;      // 亮度seekBar
-    private Switch                  mSwitchMirror;      // 镜像开关
-    private Switch                  mSwitchAccelerate;  // 硬解开关
-    private Callback                mCallback;          // 回调
-    private AudioManager            mAudioManager;      // 音频管理器
-    private RadioGroup              mRadioGroup;        // 倍速选择radioGroup
-    private RadioButton             mRbSpeed1;          // 1.0倍速按钮
-    private RadioButton             mRbSpeed125;        // 1.25倍速按钮
-    private RadioButton             mRbSpeed15;         // 1.5倍速按钮
-    private RadioButton             mRbSpeed2;          // 2.0倍速按钮
-    private LinearLayout            mLayoutSpeed;       // 倍速按钮所在布局
-    private LinearLayout            mLayoutMirror;      // 镜像按钮所在布局
+    private SeekBar                 mSeekBarVolume;
+    private SeekBar                 mSeekBarLight;
+    private Switch                  mSwitchMirror;
+    private Switch                  mSwitchAccelerate;
+    private Callback                mCallback;
+    private AudioManager            mAudioManager;
+    private RadioGroup              mRadioGroup;
+    private RadioButton             mRbSpeed1;
+    private RadioButton             mRbSpeed125;
+    private RadioButton             mRbSpeed15;
+    private RadioButton             mRbSpeed2;
+    private LinearLayout            mLayoutSpeed;
+    private LinearLayout            mLayoutMirror;
     private VolumeBroadcastReceiver mVolumeBroadcastReceiver;
 
     public VodMoreView(Context context) {
@@ -130,10 +139,9 @@ public class VodMoreView extends RelativeLayout implements RadioGroup.OnCheckedC
     }
 
     /**
-     * 获取当前亮度
+     * Get the current brightness
      *
-     * @param activity
-     * @return
+     * 获取当前亮度
      */
     public float getActivityBrightness(Activity activity) {
         float value = 0;
@@ -214,10 +222,9 @@ public class VodMoreView extends RelativeLayout implements RadioGroup.OnCheckedC
     }
 
     /**
-     * 镜像、硬解开关监听
+     * Mirror and hardware decoding switch listener.
      *
-     * @param compoundButton
-     * @param isChecked
+     * 镜像、硬解开关监听
      */
     @Override
     public void onCheckedChanged(CompoundButton compoundButton, boolean isChecked) {
@@ -236,19 +243,9 @@ public class VodMoreView extends RelativeLayout implements RadioGroup.OnCheckedC
     }
 
     /**
-     * 设置回调
+     * Speed selection listener.
      *
-     * @param callback
-     */
-    public void setCallback(Callback callback) {
-        mCallback = callback;
-    }
-
-    /**
      * 倍速选择监听
-     *
-     * @param radioGroup
-     * @param checkedId
      */
     @Override
     public void onCheckedChanged(RadioGroup radioGroup, int checkedId) {
@@ -279,6 +276,10 @@ public class VodMoreView extends RelativeLayout implements RadioGroup.OnCheckedC
         }
     }
 
+    public void setCallback(Callback callback) {
+        mCallback = callback;
+    }
+
     @Override
     public void setVisibility(int visibility) {
         super.setVisibility(visibility);
@@ -301,9 +302,9 @@ public class VodMoreView extends RelativeLayout implements RadioGroup.OnCheckedC
 
 
     /**
-     * 更新播放视频类型
+     * Update the playback video type.
      *
-     * @param playType
+     * 更新播放视频类型
      */
     public void updatePlayType(SuperPlayerDef.PlayerType playType) {
         if (playType == SuperPlayerDef.PlayerType.VOD) {
@@ -316,6 +317,9 @@ public class VodMoreView extends RelativeLayout implements RadioGroup.OnCheckedC
     }
 
     /**
+     * Restore the mirror button on the interface.
+     * Restore the speed playback option.
+     *
      * 还原界面上的镜像按钮
      * 还原倍速播放选项
      */
@@ -337,7 +341,7 @@ public class VodMoreView extends RelativeLayout implements RadioGroup.OnCheckedC
     private class VolumeBroadcastReceiver extends BroadcastReceiver {
 
         public void onReceive(Context context, Intent intent) {
-            //媒体音量改变才通知
+            // Notify only when the media volume changes.
             if (VOLUME_CHANGED_ACTION.equals(intent.getAction())
                     && (intent.getIntExtra(EXTRA_VOLUME_STREAM_TYPE, -1) == AudioManager.STREAM_MUSIC)) {
                 updateCurrentVolume();
@@ -346,9 +350,9 @@ public class VodMoreView extends RelativeLayout implements RadioGroup.OnCheckedC
     }
 
     /**
-     * 注册音量广播接收器
+     * Register volume broadcast receiver.
      *
-     * @return
+     * 注册音量广播接收器
      */
     public void registerReceiver() {
         mVolumeBroadcastReceiver = new VolumeBroadcastReceiver();
@@ -358,6 +362,8 @@ public class VodMoreView extends RelativeLayout implements RadioGroup.OnCheckedC
     }
 
     /**
+     * Unregister volume broadcast receiver, should be used in pairs with registerReceiver
+     *
      * 反注册音量广播监听器，需要与 registerReceiver 成对使用
      */
     public void unregisterReceiver() {
@@ -368,28 +374,25 @@ public class VodMoreView extends RelativeLayout implements RadioGroup.OnCheckedC
         }
     }
 
-    /**
-     * 回调
-     */
     public interface Callback {
         /**
-         * 播放速度更新回调
+         * Playback speed update callback.
          *
-         * @param speedLevel
+         * 播放速度更新回调
          */
         void onSpeedChange(float speedLevel);
 
         /**
-         * 镜像开关回调
+         * Mirror switch callback
          *
-         * @param isMirror
+         * 镜像开关回调
          */
         void onMirrorChange(boolean isMirror);
 
         /**
-         * 硬解开关回调
+         * Hardware decoding switch callback
          *
-         * @param isAccelerate
+         * 硬解开关回调
          */
         void onHWAcceleration(boolean isAccelerate);
     }

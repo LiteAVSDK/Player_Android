@@ -32,11 +32,8 @@ public class ShortVideoActivity extends AbsBaseActivity implements  ShortVideoMo
         ShortVideoModel.getInstance(this).setOnDataLoadFullListener(this);
         mPlayFragment = new ShortVideoPlayFragment();
         FragmentManager manager = getSupportFragmentManager();
-        // 开始事务 得到事务
         FragmentTransaction fragmentTransaction = manager.beginTransaction();
-        // 替换操作
         fragmentTransaction.replace(R.id.player_frame_layout, mPlayFragment);
-        // 提交
         fragmentTransaction.commit();
     }
 

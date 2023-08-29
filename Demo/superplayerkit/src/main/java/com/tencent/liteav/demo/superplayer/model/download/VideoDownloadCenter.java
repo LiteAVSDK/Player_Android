@@ -35,9 +35,9 @@ public class VideoDownloadCenter {
 
     private final TXVodDownloadManager                               mDownloadManager;
     // 监控单个mediaInfo的listener
-    private final Map<TXVodDownloadMediaInfo, VideoDonwloadListener> mMediaInfoListeners = new HashMap<>();
+    private final Map<TXVodDownloadMediaInfo, VideoDownloadListener> mMediaInfoListeners = new HashMap<>();
     // 监控所有下载任务的listener
-    private final List<VideoDonwloadListener>                        mAllMediaListeners  = new ArrayList<>();
+    private final List<VideoDownloadListener>                        mAllMediaListeners  = new ArrayList<>();
     // 确保每个操作入栈按顺序执行
     private final Handler                                            mMainThreadHandler;
     private final Handler                                            mWorkThreadHandler;
@@ -166,7 +166,7 @@ public class VideoDownloadCenter {
     /**
      * register global download listener
      */
-    public void registerDownloadListener(final VideoDonwloadListener listener) {
+    public void registerDownloadListener(final VideoDownloadListener listener) {
         mMainThreadHandler.post(new Runnable() {
             @Override
             public void run() {
@@ -180,7 +180,7 @@ public class VideoDownloadCenter {
     /**
      * register special mediainfo download listener
      */
-    public void registerDownloadListener(final TXVodDownloadMediaInfo mediaInfo, final VideoDonwloadListener listener) {
+    public void registerDownloadListener(final TXVodDownloadMediaInfo mediaInfo, final VideoDownloadListener listener) {
         mMainThreadHandler.post(new Runnable() {
             @Override
             public void run() {
@@ -194,11 +194,11 @@ public class VideoDownloadCenter {
     /**
      * unregister download listener
      */
-    public void unRegisterDownloadListener(final VideoDonwloadListener listener) {
+    public void unRegisterDownloadListener(final VideoDownloadListener listener) {
         mMainThreadHandler.post(new Runnable() {
             @Override
             public void run() {
-                Collection<VideoDonwloadListener> mediaCollection = mMediaInfoListeners.values();
+                Collection<VideoDownloadListener> mediaCollection = mMediaInfoListeners.values();
                 while (mediaCollection.contains(listener)) {
                     mediaCollection.remove(listener);
                 }
@@ -281,7 +281,7 @@ public class VideoDownloadCenter {
         mMainThreadHandler.post(new Runnable() {
             @Override
             public void run() {
-                for (VideoDonwloadListener listener : mAllMediaListeners) {
+                for (VideoDownloadListener listener : mAllMediaListeners) {
                     listener.onDownloadEvent(event, txVodDownloadMediaInfo);
                 }
 
@@ -308,10 +308,10 @@ public class VideoDownloadCenter {
         mMainThreadHandler.post(new Runnable() {
             @Override
             public void run() {
-                for (VideoDonwloadListener listener : mAllMediaListeners) {
+                for (VideoDownloadListener listener : mAllMediaListeners) {
                     listener.onDownloadError(txVodDownloadMediaInfo, errorCode, errorMsg);
                 }
-                for (VideoDonwloadListener listener : mMediaInfoListeners.values()) {
+                for (VideoDownloadListener listener : mMediaInfoListeners.values()) {
                     if (mMediaInfoListeners.containsKey(txVodDownloadMediaInfo)) {
                         listener.onDownloadError(txVodDownloadMediaInfo, errorCode, errorMsg);
                     }

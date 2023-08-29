@@ -9,39 +9,42 @@ import android.text.TextUtils;
 import android.util.Log;
 import android.widget.Toast;
 
+import com.tencent.liteav.demo.superplayer.R;
 import com.tencent.rtmp.TXLivePlayer;
 
 import java.lang.ref.WeakReference;
 
 /**
+ * Network quality monitoring tool.
+ * <p>
+ * When the loading count is greater than or equal to 3, prompt the user to switch to low video quality
+ *
  * 网络质量监视工具
  * <p>
  * 当loading次数大于等于3次时，提示用户切换到低清晰度
  */
-
 public class NetWatcher {
 
-    private final static int WATCH_TIME        = 30000; // 监控总时长ms
-    private final static int MAX_LOADING_TIME  = 10000; // 一次loading的判定时长ms
-    private final static int MAX_LOADING_COUNT = 3;     // 弹出切换清晰度提示框的loading总次数
+    private final static int WATCH_TIME        = 30000;
+    private final static int MAX_LOADING_TIME  = 10000;
+    private final static int MAX_LOADING_COUNT = 3;
 
     private WeakReference<Context>      mContext;
-    private WeakReference<TXLivePlayer> mLivePlayer;    // 直播播放器
-    private String                      mPlayURL          = "";    // 播放的url
-    private int                         mLoadingCount     = 0;     // 记录loading次数
-    private long                        mLoadingTime      = 0;     // 记录单次loading的时长
-    private long                        mLoadingStartTime = 0;     // loading开始的时间
-    private boolean                     mWatching;              // 是否正在监控
+    private WeakReference<TXLivePlayer> mLivePlayer;
+    private String                      mPlayURL          = "";
+    private int                         mLoadingCount     = 0;
+    private long                        mLoadingTime      = 0;
+    private long                        mLoadingStartTime = 0;
+    private boolean                     mWatching;
 
     public NetWatcher(Context context) {
         mContext = new WeakReference<>(context);
     }
 
     /**
-     * 开始监控网络
+     * Start monitoring the network
      *
-     * @param playUrl 播放的url
-     * @param player  播放器
+     * 开始监控网络
      */
     public void start(String playUrl, TXLivePlayer player) {
         mWatching = true;
@@ -66,6 +69,8 @@ public class NetWatcher {
     }
 
     /**
+     * Stop monitoring
+     *
      * 停止监控
      */
     public void stop() {
@@ -79,6 +84,8 @@ public class NetWatcher {
     }
 
     /**
+     * Start loading timer
+     *
      * 开始loading计时
      */
     public void enterLoading() {
@@ -89,6 +96,8 @@ public class NetWatcher {
     }
 
     /**
+     * Stop loading timer
+     *
      * 结束loading计时
      */
     public void exitLoading() {
@@ -101,13 +110,17 @@ public class NetWatcher {
     }
 
     /**
+     * Pop up the prompt to switch video quality
+     *
      * 弹出切换清晰度的提示框
      */
     private void showSwitchStreamDialog() {
         final Context context = mContext.get();
-        if (context == null) return;
+        if (context == null) {
+            return;
+        }
         AlertDialog alertDialog = new AlertDialog.Builder(context).create();
-        alertDialog.setMessage("检测到您的网络较差，建议切换清晰度");
+        alertDialog.setMessage(context.getString(R.string.superplayer_weak_net_tip));
         alertDialog.setButton(AlertDialog.BUTTON_NEUTRAL, "OK",
                 new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int which) {
@@ -116,9 +129,13 @@ public class NetWatcher {
                         if (player != null && !TextUtils.isEmpty(videoUrl)) {
                             int result = player.switchStream(videoUrl);
                             if (result < 0) {
-                                Toast.makeText(context, "切换高清清晰度失败，请稍候重试", Toast.LENGTH_SHORT).show();
+                                Toast.makeText(context,
+                                        context.getString(R.string.superplayer_switch_high_quality_failed),
+                                        Toast.LENGTH_SHORT).show();
                             } else {
-                                Toast.makeText(context, "正在为您切换为高清清晰度，请稍候...", Toast.LENGTH_SHORT).show();
+                                Toast.makeText(context,
+                                        context.getString(R.string.superplayer_switching_high_quality),
+                                        Toast.LENGTH_SHORT).show();
                             }
                         }
                         dialog.dismiss();

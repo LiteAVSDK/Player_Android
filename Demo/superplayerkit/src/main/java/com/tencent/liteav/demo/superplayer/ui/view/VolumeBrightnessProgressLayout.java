@@ -11,13 +11,15 @@ import com.tencent.liteav.demo.superplayer.R;
 
 
 /**
+ * The prompt view displayed when using swipe gestures to adjust volume and brightness
+ *
  * 滑动手势设置音量、亮度时显示的提示view
  */
 public class VolumeBrightnessProgressLayout extends RelativeLayout {
-    private ImageView    mImageCenter;       // 中心图片：亮度提示、音量提示
-    private ProgressBar  mProgressBar;       // 进度条
-    private HideRunnable mHideRunnable;      // 隐藏view的runnable
-    private int          mDuration = 1000;   // view消失延迟时间(秒)
+    private ImageView    mImageCenter;
+    private ProgressBar  mProgressBar;
+    private HideRunnable mHideRunnable;
+    private int          mDuration = 1000;
 
     public VolumeBrightnessProgressLayout(Context context) {
         super(context);
@@ -37,9 +39,6 @@ public class VolumeBrightnessProgressLayout extends RelativeLayout {
         setVisibility(GONE);
     }
 
-    /**
-     * 显示
-     */
     public void show() {
         setVisibility(VISIBLE);
         removeCallbacks(mHideRunnable);
@@ -47,33 +46,35 @@ public class VolumeBrightnessProgressLayout extends RelativeLayout {
     }
 
     /**
-     * 设置progressBar的进度值
+     * Set the progress value of the progress bar
      *
-     * @param progress
+     * 设置progressBar的进度值
      */
     public void setProgress(int progress) {
         mProgressBar.setProgress(progress);
     }
 
     /**
-     * 设置view消失的延迟时间
+     * Set the delay time for the view to disappear.
      *
-     * @param duration
+     * 设置view消失的延迟时间
      */
     public void setDuration(int duration) {
         this.mDuration = duration;
     }
 
     /**
-     * 设置显示的图片，亮度提示图片或者音量提示图片
+     * Set the displayed image, brightness prompt image or volume prompt image
      *
-     * @param resource
+     * 设置显示的图片，亮度提示图片或者音量提示图片
      */
     public void setImageResource(int resource) {
         mImageCenter.setImageResource(resource);
     }
 
     /**
+     * Runnable for hiding the view
+     *
      * 隐藏view的runnable
      */
     private class HideRunnable implements Runnable {

@@ -19,9 +19,10 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:textAppearance="?android:attr/textAppearanceLarge"
-                android:text="播放器配置"
+                android:text="@string/super_player_vod_config"
                 android:layout_marginLeft="15dp"
                 android:layout_marginTop="7dp"
+                android:maxLines="2"
                 android:textColor="@color/vod_setting_button"
                 android:layout_marginBottom="7dp"/>
             <LinearLayout
@@ -43,56 +44,64 @@
                         android:layout_height="35dp"
                         android:textSize="14sp"
                         android:checked="true"
+                        android:maxLines="2"
                         android:textColor="@color/superplayer_white"
-                        android:text="是否使用精准seek"/>
+                        android:text="@string/super_player_vod_need_accurate_seek"/>
                     <CheckBox
                         android:id="@+id/checkbox_smooth_change"
                         android:layout_width="wrap_content"
                         android:layout_height="35dp"
                         android:textSize="14sp"
                         android:checked="true"
+                        android:maxLines="2"
                         android:textColor="@color/superplayer_white"
-                        android:text="平滑切换多码率"/>
+                        android:text="@string/super_player_vod_smooth_switch"/>
                     <CheckBox
                         android:id="@+id/checkbox_auto_rotate"
                         android:layout_width="wrap_content"
                         android:layout_height="35dp"
                         android:textSize="14sp"
                         android:checked="true"
+                        android:maxLines="2"
                         android:textColor="@color/superplayer_white"
-                        android:text="视频角度自动给旋转"/>
+                        android:text="@string/super_player_vod_rotate_auto"/>
                     <CheckBox
                         android:id="@+id/checkbox_bitrate_index"
                         android:layout_width="wrap_content"
                         android:layout_height="35dp"
                         android:textSize="14sp"
                         android:checked="true"
+                        android:maxLines="2"
                         android:textColor="@color/superplayer_white"
-                        android:text="开启自适应码率"/>
+                        android:text="@string/super_player_vod_adaptive_bitrate"/>
                     <CheckBox
                         android:id="@+id/checkbox_deal"
                         android:layout_width="wrap_content"
                         android:layout_height="35dp"
                         android:textSize="14sp"
                         android:checked="true"
+                        android:maxLines="2"
                         android:textColor="@color/superplayer_white"
-                        android:text="开启超分后处理"/>
+                        android:text="@string/super_player_vod_super_resolution"/>
                     <RelativeLayout
+                        android:layout_marginBottom="10dp"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content">
 
                         <TextView
                             android:id="@+id/tv_play_reconnect_time"
                             android:layout_width="140dp"
-                            android:layout_height="30dp"
+                            android:layout_height="wrap_content"
+                            android:layout_centerVertical="true"
                             android:gravity="center_vertical"
                             android:textColor="@color/superplayer_white"
-                            android:text="播放器重连次数"
+                            android:text="@string/super_player_vod_reconnect_count"
                             android:textSize="14sp" />
                         <EditText
                             android:id="@+id/et_play_reconnect_time"
                             android:layout_width="80dp"
                             android:layout_height="35dp"
+                            android:layout_centerVertical="true"
                             android:layout_toRightOf="@+id/tv_play_reconnect_time"
                             android:textSize="10sp"
                             android:digits="1234567890"
@@ -100,20 +109,23 @@
                             android:inputType="phone|number"/>
                     </RelativeLayout>
                     <RelativeLayout
+                        android:layout_marginBottom="10dp"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content">
                         <TextView
                             android:id="@+id/tv_play_reconnect_interval"
                             android:layout_width="140dp"
-                            android:layout_height="30dp"
+                            android:layout_height="wrap_content"
+                            android:layout_centerVertical="true"
                             android:textSize="14sp"
                             android:gravity="center_vertical"
                             android:textColor="@color/superplayer_white"
-                            android:text="播放器重连间隔" />
+                            android:text="@string/super_player_vod_reconnect_period" />
                         <EditText
                             android:id="@+id/et_play_reconnect_interval"
                             android:layout_width="80dp"
                             android:layout_height="35dp"
+                            android:layout_centerVertical="true"
                             android:layout_toRightOf="@+id/tv_play_reconnect_interval"
                             android:textSize="10sp"
                             android:textColor="@color/superplayer_white"
@@ -121,20 +133,23 @@
                             android:inputType="phone|number"/>
                     </RelativeLayout>
                     <RelativeLayout
+                        android:layout_marginBottom="10dp"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content">
                         <TextView
                             android:id="@+id/tv_connect_over_time"
                             android:layout_width="140dp"
                             android:layout_height="wrap_content"
+                            android:layout_centerVertical="true"
                             android:textSize="14sp"
                             android:textColor="@color/superplayer_white"
                             android:gravity="center_vertical"
-                            android:text="播放器连接超时时间（s)" />
+                            android:text="@string/super_player_vod_connect_timeout" />
                         <EditText
                             android:id="@+id/et_connect_over_time"
                             android:layout_width="80dp"
                             android:layout_height="35dp"
+                            android:layout_centerVertical="true"
                             android:layout_toRightOf="@+id/tv_connect_over_time"
                             android:textSize="10sp"
                             android:textColor="@color/superplayer_white"
@@ -142,21 +157,24 @@
                             android:inputType="phone|number"/>
                     </RelativeLayout>
                     <RelativeLayout
+                        android:layout_marginBottom="10dp"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content">
                         <TextView
                             android:id="@+id/tv_progress_interval"
                             android:layout_width="140dp"
                             android:layout_height="wrap_content"
+                            android:layout_centerVertical="true"
                             android:textSize="14sp"
                             android:textColor="@color/superplayer_white"
                             android:gravity="center_vertical"
-                            android:text="播放进度回调间隔（ms)" />
+                            android:text="@string/super_player_vod_progress_period" />
 
                         <EditText
                             android:id="@+id/et_progress_interval"
                             android:layout_width="80dp"
                             android:layout_height="35dp"
+                            android:layout_centerVertical="true"
                             android:textColor="@color/superplayer_white"
                             android:layout_toRightOf="@+id/tv_progress_interval"
                             android:digits="1234567890"
@@ -164,20 +182,23 @@
                             android:textSize="10sp" />
                     </RelativeLayout>
                     <RelativeLayout
+                        android:layout_marginBottom="10dp"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content">
                         <TextView
                             android:id="@+id/tv_cache_folder"
                             android:layout_width="140dp"
                             android:layout_height="wrap_content"
+                            android:layout_centerVertical="true"
                             android:textSize="14sp"
                             android:textColor="@color/superplayer_white"
                             android:gravity="center_vertical"
-                            android:text="设置播放引擎的cache目录"/>
+                            android:text="@string/super_player_vod_cache_directory"/>
                         <EditText
                             android:id="@+id/et_cache_folder"
                             android:layout_width="80dp"
                             android:layout_height="35dp"
+                            android:layout_centerVertical="true"
                             android:layout_toRightOf="@+id/tv_cache_folder"
                             android:textSize="10sp"
                             android:gravity="center_vertical"
@@ -185,20 +206,23 @@
                             />
                     </RelativeLayout>
                     <RelativeLayout
+                        android:layout_marginBottom="10dp"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content">
                         <TextView
                             android:id="@+id/tv_max_cache"
                             android:layout_width="140dp"
                             android:layout_height="wrap_content"
+                            android:layout_centerVertical="true"
                             android:textSize="14sp"
                             android:gravity="center_vertical"
                             android:textColor="@color/superplayer_white"
-                            android:text="播放引擎cache目录的最大缓存(MB)"/>
+                            android:text="@string/super_player_vod_max_cache"/>
                         <EditText
                             android:id="@+id/et_max_cache"
                             android:layout_width="80dp"
                             android:layout_height="35dp"
+                            android:layout_centerVertical="true"
                             android:layout_toRightOf="@+id/tv_max_cache"
                             android:textSize="10sp"
                             android:gravity="center_vertical"
@@ -208,19 +232,22 @@
                     </RelativeLayout>
                     <RelativeLayout
                         android:layout_width="match_parent"
-                        android:layout_height="wrap_content">
+                        android:layout_height="wrap_content"
+                        android:layout_marginBottom="10dp">
                         <TextView
                             android:id="@+id/tv_preload_max_cache"
                             android:layout_width="140dp"
                             android:layout_height="wrap_content"
+                            android:layout_centerVertical="true"
                             android:textSize="14sp"
                             android:textColor="@color/superplayer_white"
                             android:gravity="center_vertical"
-                            android:text="预加载最大缓存 （MB）" />
+                            android:text="@string/super_player_vod_pre_max_cache" />
                         <EditText
                             android:id="@+id/et_preload_max_cache"
                             android:layout_width="80dp"
                             android:layout_height="35dp"
+                            android:layout_centerVertical="true"
                             android:layout_toRightOf="@+id/tv_preload_max_cache"
                             android:textSize="10sp"
                             android:textColor="@color/superplayer_white"
@@ -229,19 +256,22 @@
                     </RelativeLayout>
                     <RelativeLayout
                         android:layout_width="match_parent"
-                        android:layout_height="wrap_content">
+                        android:layout_height="wrap_content"
+                        android:layout_marginBottom="10dp">
                         <TextView
                             android:id="@+id/tv_buffering_max_time"
                             android:layout_width="140dp"
                             android:layout_height="wrap_content"
+                            android:layout_centerVertical="true"
                             android:textSize="14sp"
                             android:textColor="@color/superplayer_white"
                             android:gravity="center_vertical"
-                            android:text="最大播放缓冲大小（MB）" />
+                            android:text="@string/super_player_vod_buffer_max_cache" />
                         <EditText
                             android:id="@+id/et_buffering_max_time"
                             android:layout_width="80dp"
                             android:layout_height="35dp"
+                            android:layout_centerVertical="true"
                             android:layout_toRightOf="@+id/tv_buffering_max_time"
                             android:textSize="10sp"
                             android:textColor="@color/superplayer_white"
@@ -250,19 +280,22 @@
                     </RelativeLayout>
                     <RelativeLayout
                         android:layout_width="match_parent"
-                        android:layout_height="wrap_content">
+                        android:layout_height="wrap_content"
+                        android:layout_marginBottom="10dp">
                         <TextView
                             android:id="@+id/tv_preferred_resolution"
                             android:layout_width="140dp"
                             android:layout_height="wrap_content"
+                            android:layout_centerVertical="true"
                             android:textSize="14sp"
                             android:textColor="@color/superplayer_white"
                             android:gravity="center_vertical"
-                            android:text="启播偏好分辨率（width*height）"/>
+                            android:text="@string/super_player_vod_prefer_resolution"/>
                         <EditText
                             android:id="@+id/et_preferred_resolution"
                             android:layout_width="80dp"
                             android:layout_height="35dp"
+                            android:layout_centerVertical="true"
                             android:layout_toRightOf="@+id/tv_preferred_resolution"
                             android:textSize="10sp"
                             android:textColor="@color/superplayer_white"
@@ -285,13 +318,15 @@
                 <TextView
                     android:textColor="@color/superplayer_white"
                     android:layout_width="100dp"
-                    android:layout_height="40dp"
-                    android:text="播放媒资类型："/>
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_vertical"
+                    android:text="@string/super_player_vod_media_type"/>
 
                 <Spinner
                     android:id="@+id/sp_player_media_type"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:layout_gravity="center_vertical"
                     android:entries="@array/player_media_type"/>
 
             </LinearLayout>
@@ -306,13 +341,15 @@
                 <TextView
                     android:layout_width="100dp"
                     android:textColor="@color/superplayer_white"
-                    android:layout_height="40dp"
-                    android:text="视频解码策略："/>
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_vertical"
+                    android:text="@string/super_player_vod_decode_strategy"/>
 
                 <Spinner
                     android:id="@+id/sp_decoding_strategy"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:layout_gravity="center_vertical"
                     android:entries="@array/decoding_strategy"/>
 
             </LinearLayout>
@@ -328,13 +365,14 @@
                 <TextView
                     android:layout_width="100dp"
                     android:textColor="@color/superplayer_white"
-                    android:layout_height="40dp"
-                    android:text="控制台Log输出级别："/>
+                    android:layout_height="wrap_content"
+                    android:text="@string/super_player_vod_log_level"/>
 
                 <Spinner
                     android:id="@+id/sp_log_level"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:layout_gravity="center_vertical"
                     android:entries="@array/log_level"/>
 
             </LinearLayout>
@@ -350,13 +388,15 @@
                 <TextView
                     android:layout_width="100dp"
                     android:textColor="@color/superplayer_white"
-                    android:layout_height="40dp"
-                    android:text="播放器视频类型："/>
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_vertical"
+                    android:text="@string/super_player_vod_video_type"/>
 
                 <Spinner
                     android:id="@+id/sp_video_type"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:layout_gravity="center_vertical"
                     android:entries="@array/video_type"/>
 
             </LinearLayout>
@@ -379,7 +419,7 @@
             android:layout_marginRight="15dp"
             android:background="@color/vod_setting_button"
             android:textColor="@color/superplayer_white"
-            android:text="保存"/>
+            android:text="@string/super_player_vod_save"/>
         <Button
             android:id="@+id/btn_reset_config"
             android:layout_width="80dp"
@@ -388,6 +428,6 @@
             android:layout_marginRight="15dp"
             android:background="@color/vod_setting_button"
             android:textColor="@color/superplayer_white"
-            android:text="重置"/>
+            android:text="@string/super_player_vod_reset"/>
     </LinearLayout>
 </LinearLayout>

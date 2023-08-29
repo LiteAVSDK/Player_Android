@@ -144,7 +144,7 @@ public class MainActivity extends Activity {
     private List<GroupBean> initGroupData() {
         List<GroupBean> groupList = new ArrayList<>();
 
-        // 初始化播放器
+        // Initialize the player.
         List<ChildBean> playerChildList = new ArrayList<>();
         playerChildList.add(new ChildBean(getString(R.string.app_item_super_player), R.drawable.play, 3, SuperPlayerActivity.class));
         playerChildList.add(new ChildBean(getString(R.string.app_vod_player), R.drawable.play,
@@ -402,6 +402,14 @@ public class MainActivity extends Activity {
     }
 
     /**
+     * Check if there are any activities after this activity. If so, launch them.
+     * MainActivity must be the root activity. This method checks whether there are other activities below the current
+     * activity sequence of the app. If so, it means that the app's activity has been moved to another task stack due
+     * to other reasons and is in the background. At this time, the activity needs to be brought to the foreground.
+     * For example, on some models, enabling picture-in-picture mode will cause the PIP activity to move to a new
+     * task stack. Clicking the icon on the desktop will not return to the previous activity. At this time,
+     * this method needs to be used to bring it up.
+     *
      * 检查是否有在该activity之后的activity，如果有则拉起。
      * MainActivity肯定是root Activity，该方法会检查是否有其他activity位于当前activity顺序之下，如果有则代表app的activity因为其他原因
      * 跑到了其他任务栈中，并且位于后台。此时则需要将该activity拉到前台。
@@ -423,7 +431,7 @@ public class MainActivity extends Activity {
                     if (demoApplication.isUsActivity(taskId)) {
                         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.Q || taskInfo.isRunning) {
                             ComponentName componentName = taskInfo.topActivity;
-                            // 拉起当前app栈顶第一个activity
+                            // Bring up the first activity at the top of the current app stack.
                             Intent intent = new Intent();
                             intent.setComponent(componentName);
                             intent.setFlags(Intent.FLAG_ACTIVITY_BROUGHT_TO_FRONT);

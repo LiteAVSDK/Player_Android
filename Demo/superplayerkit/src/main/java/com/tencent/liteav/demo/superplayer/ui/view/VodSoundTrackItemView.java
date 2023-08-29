@@ -2,8 +2,6 @@ package com.tencent.liteav.demo.superplayer.ui.view;
 
 import android.content.Context;
 import android.util.AttributeSet;
-import android.widget.RelativeLayout;
-import android.widget.TextView;
 
 import com.tencent.liteav.demo.superplayer.R;
 import com.tencent.liteav.demo.superplayer.ui.view.base.BaseItemView;

@@ -7,4 +7,13 @@
     <string name="short_video_pause_video">点击可暂停视频播放</string>
     <string name="short_video_go_to_list">左滑进入视频列表</string>
     <string name="short_video_move_seeek">拖拽进度条快速查看视频</string>
+
+    <string name="superplayer_one_segment_multi_bitrate">单分片 &amp;&amp; 多码率</string>
+    <string name="superplayer_video_subtitle">字幕</string>
+    <string name="superplayer_multi_segment_multi_bitrate">多分片 &amp;&amp; 多码率</string>
+    <string name="superplayer_video_30fps">30fps</string>
+    <string name="superplayer_one_segment_one_bitrate">单分片 &amp;&amp; 单码率</string>
+    <string name="superplayer_time_based">time-based</string>
+    <string name="superplayer_multi_segment_one_bitrate">多分片 &amp;&amp; 单码率</string>
+    <string name="superplayer_number_based">number-based</string>
 </resources>

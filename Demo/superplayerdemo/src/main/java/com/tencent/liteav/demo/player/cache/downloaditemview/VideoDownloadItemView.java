@@ -17,7 +17,7 @@ import com.tencent.liteav.demo.player.R;
 import com.tencent.liteav.demo.player.cache.adapter.VideoDownloadHelper;
 import com.tencent.liteav.demo.vodcommon.entity.SuperVodListLoader;
 import com.tencent.liteav.demo.vodcommon.entity.VideoModel;
-import com.tencent.liteav.demo.superplayer.model.download.VideoDonwloadListener;
+import com.tencent.liteav.demo.superplayer.model.download.VideoDownloadListener;
 import com.tencent.liteav.demo.superplayer.model.download.VideoDownloadCenter;
 import com.tencent.rtmp.downloader.TXVodDownloadDataSource;
 import com.tencent.rtmp.downloader.TXVodDownloadMediaInfo;
@@ -28,19 +28,19 @@ import java.text.DecimalFormat;
 /**
  * video download list item view
  */
-public class VideoDownloadItemView extends RelativeLayout implements VideoDonwloadListener {
+public class VideoDownloadItemView extends RelativeLayout implements VideoDownloadListener {
 
     private static final String TAG = "VideoDownloadItemView";
 
-    private TextView  mTvVideoDurationView; // 视频时长
-    private TextView  mTvVideoNameView; // 视频名称
-    private ImageView mIvVideoCoverView; // 视频封面
-    private TextView  mTvVideoCacheProgressView; // 视频下载进度
-    private TextView  mTvVideoCacheStateTextView; // 视频下载状态文字
-    private View      mVVideoCacheStateIconView; // 视频下载状态指示图标
-    private TextView  mTvVideoQualityView; // 视频下载画质
+    private TextView  mTvVideoDurationView;
+    private TextView  mTvVideoNameView;
+    private ImageView mIvVideoCoverView;
+    private TextView  mTvVideoCacheProgressView;
+    private TextView  mTvVideoCacheStateTextView;
+    private View      mVVideoCacheStateIconView;
+    private TextView  mTvVideoQualityView;
 
-    private TXVodDownloadMediaInfo mMediaInfo; // 视频下载信息
+    private TXVodDownloadMediaInfo mMediaInfo;
     private VideoDownloadHelper    mVideoDownloadHelper;
     private TextView  mVideoSizeTV;
 
@@ -76,9 +76,9 @@ public class VideoDownloadItemView extends RelativeLayout implements VideoDonwlo
     }
 
     /**
-     * 设置视频下载信息
+     * Set video download information.
      *
-     * @param mediaInfo 视频下载信息
+     * 设置视频下载信息
      */
     public void setVideoInfo(TXVodDownloadMediaInfo mediaInfo) {
         this.mMediaInfo = mediaInfo;
@@ -179,6 +179,8 @@ public class VideoDownloadItemView extends RelativeLayout implements VideoDonwlo
     }
 
     /**
+     * Notify to register real-time monitoring for video downloads.
+     *
      * 通知注册视频下载实时监听
      */
     public void notifyRegisterCacheListener() {
@@ -186,6 +188,8 @@ public class VideoDownloadItemView extends RelativeLayout implements VideoDonwlo
     }
 
     /**
+     * Notify to unregister real-time monitoring for video downloads.
+     *
      * 通知解注册视频下载实时监听
      */
     public void notifyUnRegisterCacheListener() {

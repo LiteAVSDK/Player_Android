@@ -29,6 +29,8 @@ import com.tencent.liteav.demo.vodcommon.entity.VideoModel;
 import java.util.List;
 
 /**
+ * Details page of the feed stream.
+ *
  * feed流详情页面
  */
 public class FeedDetailView extends FrameLayout implements FeedDetailListClickListener {
@@ -39,11 +41,11 @@ public class FeedDetailView extends FrameLayout implements FeedDetailListClickLi
     private TextView                          titleTxt               = null;
     private TextView                          descriptionTxt         = null;
     private TextView                          detailDescriptionTxt   = null;
-    private boolean                           isChangeVideo          = false;   //用于在详情页面是否播放了底部列表的视频，TRUE表示播放了
+    private boolean                           isChangeVideo          = false;
     private FeedPlayerView                    feedPlayerView         = null;
-    private int                               playerViewHeight       = 0;   //PlayerView 的在窗口模式时的高度
-    private FeedPlayerView.FeedPlayerCallBack feedPlayerCallBack     = null;   //用于存放之前给FeedPlayerView设置的callBack对象
-    private RelativeLayout                    detailLayout           = null;  //详情页面用于展示视频介绍和视频列表的布局
+    private int                               playerViewHeight       = 0;
+    private FeedPlayerView.FeedPlayerCallBack feedPlayerCallBack     = null;
+    private RelativeLayout                    detailLayout           = null;
     private boolean                           isDestroy              = false;
     private RelativeLayout                    titleLayout            = null;
     private Button                            backButton             = null;
@@ -93,6 +95,7 @@ public class FeedDetailView extends FrameLayout implements FeedDetailListClickLi
     }
 
     /**
+     * Set video description information.
      * 设置视频的描述信息
      *
      * @param videoModel
@@ -108,6 +111,7 @@ public class FeedDetailView extends FrameLayout implements FeedDetailListClickLi
     }
 
     /**
+     * Set data for the bottom list.
      * 设置底部列表的数据
      *
      * @param videoModels
@@ -118,8 +122,8 @@ public class FeedDetailView extends FrameLayout implements FeedDetailListClickLi
 
 
     /**
-     * 添加详情页面到feedview中
-     *
+     * Add detail page to feed view.
+     * 添加详情页面到feedView中
      */
     public void showDetailView(final VideoModel videoModel) {
         feedPlayerView.post(new Runnable() {
@@ -129,7 +133,6 @@ public class FeedDetailView extends FrameLayout implements FeedDetailListClickLi
                 playerViewHeight = feedPlayerView.getHeight() * phoneWidth / feedPlayerView.getWidth();
             }
         });
-        //设置新的callback回调
         feedPlayerView.setFeedPlayerCallBack(new FeedPlayerView.FeedPlayerCallBack() {
             @Override
             public void onStartFullScreenPlay() {
@@ -159,6 +162,8 @@ public class FeedDetailView extends FrameLayout implements FeedDetailListClickLi
 
 
     /**
+     * When the bottom video list on the detail page is clicked, this event is triggered,
+     * and video playback can be performed here.
      * 当点击详情页面底部视频列表时触发此事件，此时可在此处进行视频播放
      *
      * @param entity
@@ -175,16 +180,15 @@ public class FeedDetailView extends FrameLayout implements FeedDetailListClickLi
     }
 
     /**
+     * Clear page data.
      * 对页面数据进行清除
      */
     public void destroy() {
         isDestroy = true;
-        //清理描述信息
         headImg.setImageResource(0);
         titleTxt.setText("");
         descriptionTxt.setText("");
         detailDescriptionTxt.setText("");
-        //清理掉列表数据
         if (recyclerView != null && recyclerView.getChildCount() > 0) {
             recyclerView.removeAllViews();
             feedDetailAdapter.setFeedEntityList(null);
@@ -193,7 +197,8 @@ public class FeedDetailView extends FrameLayout implements FeedDetailListClickLi
     }
 
     /**
-     * 当此页面从父控件移除的时候调用，
+     * Called when this page is removed from its parent view.
+     * 当此页面从父控件移除的时候调用
      */
     @Override
     protected void onDetachedFromWindow() {

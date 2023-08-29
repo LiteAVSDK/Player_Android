@@ -122,9 +122,9 @@ public class SuperShortVideoView extends RelativeLayout {
                         Log.i(TAG, "[SCROLL_STATE_IDLE] mLastPositionInIDLE " + mLastPositionInIDLE + " position " + position);
                         onPageSelectedMethod(position);
                         break;
-                    case RecyclerView.SCROLL_STATE_DRAGGING://拖动
+                    case RecyclerView.SCROLL_STATE_DRAGGING:
                         break;
-                    case RecyclerView.SCROLL_STATE_SETTLING://惯性滑动
+                    case RecyclerView.SCROLL_STATE_SETTLING:
                         break;
                 }
             }
@@ -153,11 +153,14 @@ public class SuperShortVideoView extends RelativeLayout {
     }
 
     /**
+     * The urlList passed to PlayManager for initialization.
+     *
      * 初始化向PlayManager传递的urlList
      *
-     * @param startIndex 开始的索引
-     * @param maxCount   传递的urlList的数目
-     * @return
+     * @param startIndex Starting index
+     *                   开始的索引
+     * @param maxCount   Number of urlList passed
+     *                   传递的urlList的数目
      */
     private List<VideoModel> initUrlList(int startIndex, int maxCount) {
 

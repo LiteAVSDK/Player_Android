@@ -11,6 +11,7 @@ import android.os.Handler;
 import android.text.TextUtils;
 import android.util.Log;
 
+import com.tencent.liteav.demo.superplayer.R;
 import com.tencent.liteav.demo.superplayer.SubtitleSourceModel;
 import com.tencent.liteav.demo.superplayer.SuperPlayerCode;
 import com.tencent.liteav.demo.superplayer.SuperPlayerDef;
@@ -60,31 +61,33 @@ public class SuperPlayerImpl implements SuperPlayer, ITXVodPlayListener, ITXLive
     private static final int    PLAY_BACK_WARD_PLAY_INTERVAL_MILLI_SECOND = 1000;
 
     private Context                    mContext;
-    private TXCloudVideoView           mVideoView;        // 腾讯云视频播放view
-    private IPlayInfoProtocol          mCurrentProtocol; // 当前视频信息协议类
-    private TXVodPlayer                mVodPlayer;       // 点播播放器
-    private TXVodPlayConfig            mVodPlayConfig;   // 点播播放器配置
-    private TXLivePlayer               mLivePlayer;      // 直播播放器
-    private TXLivePlayConfig           mLivePlayConfig;  // 直播播放器配置
+    private TXCloudVideoView           mVideoView;        // Tencent Cloud video playback view
+    private IPlayInfoProtocol          mCurrentProtocol; // Current video information protocol class
+    private TXVodPlayer                mVodPlayer;
+    private TXVodPlayConfig            mVodPlayConfig;
+    private TXLivePlayer               mLivePlayer;
+    private TXLivePlayConfig           mLivePlayConfig;
     private ISuperPlayerListener       mSuperPlayerListener;
-    private SuperPlayerModel           mCurrentModel;  // 当前播放的model
+    private SuperPlayerModel           mCurrentModel;
     private SuperPlayerObserver        mObserver;
     private VideoQuality               mVideoQuality;
-    private SuperPlayerDef.PlayerType  mCurrentPlayType     = SuperPlayerDef.PlayerType.VOD;       // 当前播放类型
-    private SuperPlayerDef.PlayerMode  mCurrentPlayMode     = SuperPlayerDef.PlayerMode.WINDOW;    // 当前播放模式
-    private SuperPlayerDef.PlayerState mCurrentPlayState    = SuperPlayerDef.PlayerState.INIT;  // 当前播放状态
-    private String                     mCurrentPlayVideoURL;    // 当前播放的URL
-    private int                        mSeekPos;                   // 记录切换硬解时的播放时间
-    private float                      mStartPos;                // 视频开始播放时间
-    private long                       mReportLiveStartTime = -1; // 直播开始时间，用于上报使用时长
-    private long                       mReportVodStartTime  = -1;  // 点播开始时间，用于上报使用时长
-    private long                       mMaxLiveProgressTime;      // 观看直播的最大时长
-    private boolean                    mIsAutoPlay          = true;      // 是否自动播放
-    private boolean                    mIsPlayWithFileId;      // 是否是腾讯云fileId播放
-    private boolean                    mChangeHWAcceleration;  // 切换硬解后接收到第一个关键帧前的标记位
+    private SuperPlayerDef.PlayerType  mCurrentPlayType     = SuperPlayerDef.PlayerType.VOD;
+    private SuperPlayerDef.PlayerMode  mCurrentPlayMode     = SuperPlayerDef.PlayerMode.WINDOW;
+    private SuperPlayerDef.PlayerState mCurrentPlayState    = SuperPlayerDef.PlayerState.INIT;
+    private String                     mCurrentPlayVideoURL;
+    // Record the playback time when switching to hardware decoding
+    private int                        mSeekPos;
+    private float                      mStartPos;
+    private long                       mReportLiveStartTime = -1; // Live start time, used to report usage time
+    private long                       mReportVodStartTime  = -1;  // On-demand start time, used to report usage time
+    private long                       mMaxLiveProgressTime;      // Maximum viewing time for live streaming
+    private boolean                    mIsAutoPlay          = true;
+    private boolean                    mIsPlayWithFileId;      // Whether it is Tencent Cloud fileId playback
+    // Flag before receiving the first keyframe after switching to hardware decoding
+    private boolean                    mChangeHWAcceleration;
     private String                     mFileId;
     private int                        mAppId;
-    private int                        mPlayAction;            //播放模式
+    private int                        mPlayAction;
     private boolean                    isPrepared           = false;
     private boolean                    isNeedResume         = false;
     private boolean                    mNeedToPause         = false;
@@ -101,10 +104,9 @@ public class SuperPlayerImpl implements SuperPlayer, ITXVodPlayListener, ITXLive
     }
 
     /**
-     * 直播播放器事件回调
+     * Live player event callback
      *
-     * @param event
-     * @param param
+     * 直播播放器事件回调
      */
     @Override
     public void onPlayEvent(int event, Bundle param) {
@@ -114,28 +116,27 @@ public class SuperPlayerImpl implements SuperPlayer, ITXVodPlayListener, ITXLive
             Log.d(TAG, playEventLog);
         }
         switch (event) {
-            case TXLiveConstants.PLAY_EVT_VOD_PLAY_PREPARED: //视频播放开始
+            case TXLiveConstants.PLAY_EVT_VOD_PLAY_PREPARED:
             case TXLiveConstants.PLAY_EVT_PLAY_BEGIN:
                 updatePlayerState(SuperPlayerDef.PlayerState.PLAYING);
                 break;
             case TXLiveConstants.PLAY_ERR_NET_DISCONNECT:
             case TXLiveConstants.PLAY_EVT_PLAY_END:
-                if (mCurrentPlayType == SuperPlayerDef.PlayerType.LIVE_SHIFT) {  // 直播时移失败，返回直播
+                if (mCurrentPlayType == SuperPlayerDef.PlayerType.LIVE_SHIFT) {
                     updatePlayerType(SuperPlayerDef.PlayerType.LIVE);
-                    onError(SuperPlayerCode.LIVE_SHIFT_FAIL, "时移失败,返回直播");
+                    onError(SuperPlayerCode.LIVE_SHIFT_FAIL, "time shift failed, return to live");
                     updatePlayerState(SuperPlayerDef.PlayerState.PLAYING);
                 } else {
                     stop();
                     updatePlayerState(SuperPlayerDef.PlayerState.END);
                     if (event == TXLiveConstants.PLAY_ERR_NET_DISCONNECT) {
-                        onError(SuperPlayerCode.NET_ERROR, "网络不给力,点击重试");
+                        onError(SuperPlayerCode.NET_ERROR, "poor network, click to retry");
                     } else {
                         onError(SuperPlayerCode.LIVE_PLAY_END, param.getString(TXLiveConstants.EVT_DESCRIPTION));
                     }
                 }
                 break;
             case TXLiveConstants.PLAY_EVT_PLAY_LOADING:
-//            case TXLiveConstants.PLAY_WARNING_RECONNECT:  //暂时去掉，回调该状态时，播放画面可能是正常的，loading 状态只在 TXLiveConstants.PLAY_EVT_PLAY_LOADING 处理
                 updatePlayerState(SuperPlayerDef.PlayerState.LOADING);
                 break;
             case TXLiveConstants.PLAY_EVT_RCV_FIRST_I_FRAME:
@@ -162,9 +163,9 @@ public class SuperPlayerImpl implements SuperPlayer, ITXVodPlayListener, ITXLive
     }
 
     /**
-     * 直播播放器网络状态回调
+     * Live player network status callback
      *
-     * @param bundle
+     * 直播播放器网络状态回调
      */
     @Override
     public void onNetStatus(Bundle bundle) {
@@ -173,12 +174,22 @@ public class SuperPlayerImpl implements SuperPlayer, ITXVodPlayListener, ITXLive
         }
     }
 
+    /**
+     * On-demand player network status callback
+     *
+     * 点播播放器网络状态回调
+     */
+    @Override
+    public void onNetStatus(TXVodPlayer player, Bundle bundle) {
+        if (mSuperPlayerListener != null) {
+            mSuperPlayerListener.onVodNetStatus(player, bundle);
+        }
+    }
 
     @Override
     public void setNeedToPause(boolean value) {
         mNeedToPause = value;
     }
-
 
     @Override
     public void playBackward(int position) {
@@ -207,11 +218,9 @@ public class SuperPlayerImpl implements SuperPlayer, ITXVodPlayListener, ITXLive
     }
 
     /**
-     * 点播播放器事件回调
+     * On-demand player event callback
      *
-     * @param player
-     * @param event
-     * @param param
+     * 点播播放器事件回调
      */
     @Override
     public void onPlayEvent(TXVodPlayer player, int event, Bundle param) {
@@ -241,7 +250,7 @@ public class SuperPlayerImpl implements SuperPlayer, ITXVodPlayListener, ITXLive
                 }
                 updateVideoImageSpriteAndKeyFrame(playImageSpriteInfo,keyFrameDescInfoList);
                 break;
-            case TXLiveConstants.PLAY_EVT_VOD_PLAY_PREPARED://视频播放开始
+            case TXLiveConstants.PLAY_EVT_VOD_PLAY_PREPARED:
                 onVodPlayPrepared();
                 getAudioTrackInfo();
                 getSubTitleTrackInfo();
@@ -252,7 +261,8 @@ public class SuperPlayerImpl implements SuperPlayer, ITXVodPlayListener, ITXLive
                 if (mNeedToPause) {
                     return;
                 }
-                if (mChangeHWAcceleration) { //切换软硬解码器后，重新seek位置
+                // After switching the software and hardware decoders, re-seek the position
+                if (mChangeHWAcceleration) {
                     Log.i(TAG, "seek pos:" + mSeekPos);
                     seek(mSeekPos);
                     mChangeHWAcceleration = false;
@@ -302,7 +312,8 @@ public class SuperPlayerImpl implements SuperPlayer, ITXVodPlayListener, ITXLive
             default:
                 break;
         }
-        if (event < 0) {// 播放点播文件失败
+        if (event < 0) {
+            // Failed to play on-demand file
             mVodPlayer.stopPlay(true);
             updatePlayerState(SuperPlayerDef.PlayerState.PAUSE);
             onError(SuperPlayerCode.VOD_PLAY_FAIL, param.getString(TXLiveConstants.EVT_DESCRIPTION));
@@ -334,14 +345,15 @@ public class SuperPlayerImpl implements SuperPlayer, ITXVodPlayListener, ITXLive
         List<TXBitrateItem> bitrateItems = mVodPlayer.getSupportedBitrates();
         int bitrateItemSize = bitrateItems != null ? bitrateItems.size() : 0;
         if (bitrateItemSize > 0) {
-            Collections.sort(bitrateItems); //masterPlaylist多清晰度，按照码率排序，从低到高
+            // MasterPlaylist multi-bitrate, sorted by bitrate from low to high
+            Collections.sort(bitrateItems);
             List<VideoQuality> videoQualities = new ArrayList<>();
             for (int i = 0; i < bitrateItemSize; i++) {
                 TXBitrateItem bitrateItem = bitrateItems.get(i);
                 VideoQuality quality = VideoQualityUtils.convertToVideoQuality(mContext, bitrateItem);
                 videoQualities.add(quality);
             }
-            int bitrateIndex = mVodPlayer.getBitrateIndex();   //获取默认码率的index
+            int bitrateIndex = mVodPlayer.getBitrateIndex();
             VideoQuality defaultQuality = null;
             for (VideoQuality quality : videoQualities) {
                 if (quality.index == bitrateIndex) {
@@ -359,19 +371,6 @@ public class SuperPlayerImpl implements SuperPlayer, ITXVodPlayListener, ITXLive
         }
     }
 
-    /**
-     * 点播播放器网络状态回调
-     *
-     * @param player
-     * @param bundle
-     */
-    @Override
-    public void onNetStatus(TXVodPlayer player, Bundle bundle) {
-        if (mSuperPlayerListener != null) {
-            mSuperPlayerListener.onVodNetStatus(player, bundle);
-        }
-    }
-
     private void initialize(Context context, TXCloudVideoView videoView) {
         mContext = context;
         mVideoView = videoView;
@@ -380,11 +379,6 @@ public class SuperPlayerImpl implements SuperPlayer, ITXVodPlayListener, ITXLive
         initVodPlayer(mContext);
     }
 
-    /**
-     * 初始化点播播放器
-     *
-     * @param context
-     */
     private void initVodPlayer(Context context) {
         mVodPlayer = new TXVodPlayer(context);
         SuperPlayerGlobalConfig config = SuperPlayerGlobalConfig.getInstance();
@@ -408,11 +402,6 @@ public class SuperPlayerImpl implements SuperPlayer, ITXVodPlayListener, ITXLive
         mVodPlayer.setMirror(config.mirror);
     }
 
-    /**
-     * 初始化直播播放器
-     *
-     * @param context
-     */
     private void initLivePlayer(Context context) {
         mLivePlayer = new TXLivePlayer(context);
         SuperPlayerGlobalConfig config = SuperPlayerGlobalConfig.getInstance();
@@ -427,14 +416,14 @@ public class SuperPlayerImpl implements SuperPlayer, ITXVodPlayListener, ITXLive
     }
 
     /**
-     * 播放视频
+     * Play video
      *
-     * @param model
+     * 播放视频
      */
     public void playWithModel(SuperPlayerModel model) {
         reset();
         updateVideoImageSpriteAndKeyFrame(null, null);
-        mCurrentProtocol = null;//置空
+        mCurrentProtocol = null;
         if (!TextUtils.isEmpty(model.url)
                 || (model.multiURLs != null
                  && !model.multiURLs.isEmpty())) {
@@ -443,7 +432,7 @@ public class SuperPlayerImpl implements SuperPlayer, ITXVodPlayListener, ITXLive
         } else if (model.videoId != null) {
             playWithFileId(model);
         } else if (model.videoIdV2 != null) {
-            // 根据FileId播放
+            // Play according to fileId
             PlayInfoParams params = new PlayInfoParams();
             params.appId = model.appId;
             params.fileId = model.videoIdV2.fileId;
@@ -482,7 +471,8 @@ public class SuperPlayerImpl implements SuperPlayer, ITXVodPlayListener, ITXLive
             @Override
             public void onError(int errCode, String message) {
                 Log.i(TAG, "onFail: errorCode = " + errCode + " message = " + message);
-                SuperPlayerImpl.this.onError(SuperPlayerCode.VOD_REQUEST_FILE_ID_FAIL, "播放视频文件失败 code = " + errCode + " msg = " + message);
+                SuperPlayerImpl.this.onError(SuperPlayerCode.VOD_REQUEST_FILE_ID_FAIL,
+                        "failed to play video file code = " + errCode + " msg = " + message);
             }
         });
     }
@@ -495,7 +485,7 @@ public class SuperPlayerImpl implements SuperPlayer, ITXVodPlayListener, ITXLive
         String videoURL = null;
         List<VideoQuality> videoQualities = model.videoQualityList;
         VideoQuality defaultVideoQuality = null;
-        if (model.multiURLs != null && !model.multiURLs.isEmpty()) {    // 多码率URL播放
+        if (model.multiURLs != null && !model.multiURLs.isEmpty()) {    // Play multiple bitrate URL
             int i = 0;
             for (SuperPlayerModel.SuperPlayerURL superPlayerURL : model.multiURLs) {
                 if (i == model.playDefaultIndex) {
@@ -505,25 +495,28 @@ public class SuperPlayerImpl implements SuperPlayer, ITXVodPlayListener, ITXLive
             if (videoQualities != null && model.playDefaultIndex < videoQualities.size()) {
                 defaultVideoQuality = videoQualities.get(model.playDefaultIndex);
             }
-        } else if (!TextUtils.isEmpty(model.url)) { // 传统URL模式播放
+        } else if (!TextUtils.isEmpty(model.url)) { // Play in traditional URL mode
             videoURL = model.url;
         }
         if (TextUtils.isEmpty(videoURL)) {
-            onError(SuperPlayerCode.PLAY_URL_EMPTY, "播放视频失败，播放链接为空");
+            onError(SuperPlayerCode.PLAY_URL_EMPTY, "failed to play video, the playback link is empty");
             return;
         }
-        if (isRTMPPlay(videoURL) || isWebrtcPlay(videoURL)) { // 直播播放器：普通RTMP流播放和webrtc
+        // Live player: normal RTMP stream playback and webrtc
+        if (isRTMPPlay(videoURL) || isWebrtcPlay(videoURL)) {
             mReportLiveStartTime = System.currentTimeMillis();
             mLivePlayer.setPlayerView(mVideoView);
             playLiveURL(videoURL, TXLivePlayer.PLAY_TYPE_LIVE_RTMP);
-        } else if (isFLVPlay(videoURL)) { // 直播播放器：直播FLV流播放
+        } else if (isFLVPlay(videoURL)) {
+            // Live player: live FLV stream playback
             mReportLiveStartTime = System.currentTimeMillis();
             mLivePlayer.setPlayerView(mVideoView);
             playTimeShiftLiveURL(model.appId, videoURL);
             if (model.multiURLs != null && !model.multiURLs.isEmpty()) {
                 startMultiStreamLiveURL(videoURL);
             }
-        } else { // 点播播放器：播放点播文件
+        } else {
+            // On-demand player: play on-demand files
             mReportVodStartTime = System.currentTimeMillis();
             mVodPlayer.setPlayerView(mVideoView);
             playVodURL(videoURL);
@@ -535,9 +528,9 @@ public class SuperPlayerImpl implements SuperPlayer, ITXVodPlayListener, ITXLive
     }
 
     /**
-     * 播放v4协议视频
+     * Play v4 protocol video
      *
-     * @param model
+     * 播放v4协议视频
      */
     private void playWithFileId(SuperPlayerModel model) {
         if (model == null || model.videoId == null) {
@@ -566,9 +559,9 @@ public class SuperPlayerImpl implements SuperPlayer, ITXVodPlayListener, ITXLive
     }
 
     /**
-     * 播放v2协议视频
+     * Play v2 protocol video
      *
-     * @param protocol
+     * 播放v2协议视频
      */
     @Deprecated
     private void playModeVideo(IPlayInfoProtocol protocol) {
@@ -581,12 +574,12 @@ public class SuperPlayerImpl implements SuperPlayer, ITXVodPlayListener, ITXLive
     }
 
     /**
-     * 播放非v2和v4协议视频
+     * Play non-v2 and v4 protocol video
      *
-     * @param model
+     * 播放非v2和v4协议视频
      */
     private void playModeVideo(SuperPlayerModel model) {
-        if (model.multiURLs != null && !model.multiURLs.isEmpty()) {// 多码率URL播放
+        if (model.multiURLs != null && !model.multiURLs.isEmpty()) {
             for (int i = 0; i < model.multiURLs.size(); i++) {
                 if (i == model.playDefaultIndex) {
                     playVodURL(model.multiURLs.get(i).url);
@@ -601,6 +594,8 @@ public class SuperPlayerImpl implements SuperPlayer, ITXVodPlayListener, ITXLive
     }
 
     /**
+     * Play live URL
+     *
      * 播放直播URL
      */
     private void playLiveURL(String url, int playType) {
@@ -618,6 +613,8 @@ public class SuperPlayerImpl implements SuperPlayer, ITXVodPlayListener, ITXLive
     }
 
     /**
+     * Play on-demand URL
+     *
      * 播放点播url
      */
     private void playVodURL(String url) {
@@ -727,6 +724,8 @@ public class SuperPlayerImpl implements SuperPlayer, ITXVodPlayListener, ITXLive
     }
 
     /**
+     * Play time-shifted live URL
+     *
      * 播放时移直播url
      */
     private void playTimeShiftLiveURL(int appId, String url) {
@@ -744,9 +743,9 @@ public class SuperPlayerImpl implements SuperPlayer, ITXVodPlayListener, ITXLive
     }
 
     /**
-     * 配置多码流url
+     * Configure multi-bitrate URLs
      *
-     * @param url
+     * 配置多码流url
      */
     private void startMultiStreamLiveURL(String url) {
         mLivePlayConfig.setAutoAdjustCacheTime(false);
@@ -759,6 +758,8 @@ public class SuperPlayerImpl implements SuperPlayer, ITXVodPlayListener, ITXLive
     }
 
     /**
+     * Report playback time
+     *
      * 上报播放时长
      */
     private void reportPlayTime() {
@@ -777,10 +778,14 @@ public class SuperPlayerImpl implements SuperPlayer, ITXVodPlayListener, ITXLive
     }
 
     /**
+     * Update playback progress
+     *
      * 更新播放进度
      *
-     * @param current  当前播放进度(秒)
-     * @param duration 总时长(秒)
+     * @param current  Current playback progress (seconds)
+     *                 当前播放进度(秒)
+     * @param duration Total duration (seconds)
+     *                 总时长(秒)
      */
     private void updatePlayProgress(long current, long duration, long playable) {
         if (mObserver != null) {
@@ -789,9 +794,9 @@ public class SuperPlayerImpl implements SuperPlayer, ITXVodPlayListener, ITXLive
     }
 
     /**
-     * 更新播放类型
+     * Update playback type
      *
-     * @param playType
+     * 更新播放类型
      */
     private void updatePlayerType(SuperPlayerDef.PlayerType playType) {
         if (playType != mCurrentPlayType) {
@@ -803,9 +808,9 @@ public class SuperPlayerImpl implements SuperPlayer, ITXVodPlayListener, ITXLive
     }
 
     /**
-     * 更新播放状态
+     * Update playback status
      *
-     * @param playState
+     * 更新播放状态
      */
     private void updatePlayerState(SuperPlayerDef.PlayerState playState) {
         mCurrentPlayState = playState;
@@ -872,10 +877,9 @@ public class SuperPlayerImpl implements SuperPlayer, ITXVodPlayListener, ITXLive
     }
 
     /**
-     * 是否是RTMP协议
+     * Whether it is RTMP protocol
      *
-     * @param videoURL
-     * @return
+     * 是否是RTMP协议
      */
     private boolean isRTMPPlay(String videoURL) {
         return !TextUtils.isEmpty(videoURL) && videoURL.startsWith("rtmp");
@@ -886,10 +890,9 @@ public class SuperPlayerImpl implements SuperPlayer, ITXVodPlayListener, ITXLive
     }
 
     /**
-     * 是否是HTTP-FLV协议
+     * Whether it is HTTP-FLV protocol
      *
-     * @param videoURL
-     * @return
+     * 是否是HTTP-FLV协议
      */
     private boolean isFLVPlay(String videoURL) {
         return (!TextUtils.isEmpty(videoURL) && videoURL.startsWith("http://")
@@ -940,6 +943,13 @@ public class SuperPlayerImpl implements SuperPlayer, ITXVodPlayListener, ITXLive
                         subtitleSourceModel.name, subtitleSourceModel.mimeType);
             }
         }
+    }
+
+    private String obtGetString(int resourceId) {
+        if (null != mContext) {
+            mContext.getString(resourceId);
+        }
+        return "";
     }
 
     @Override
@@ -1013,12 +1023,14 @@ public class SuperPlayerImpl implements SuperPlayer, ITXVodPlayListener, ITXLive
     }
 
     /**
+     * Restore mirror settings
+     * Restore playback speed
+     *
      * 对镜像设置进行还原处理
      * 对播放速度进行还原处理
      */
     @Override
     public void revertSettings() {
-        //取消镜像
         if (mCurrentPlayType == SuperPlayerDef.PlayerType.VOD) {
             mVodPlayer.setMirror(false);
             mVodPlayer.setRate(1.0f);
@@ -1043,7 +1055,8 @@ public class SuperPlayerImpl implements SuperPlayer, ITXVodPlayListener, ITXLive
                 mSeekPos = (int) mVodPlayer.getCurrentPlaybackTime();
                 Log.i(TAG, "save pos:" + mSeekPos);
                 resetPlayer();
-                if (mCurrentProtocol == null) {    // 当protocol为空时，则说明当前播放视频为非v2和v4视频
+                // When the protocol is empty, it means that the current played video is non-v2 and v4 video
+                if (mCurrentProtocol == null) {
                     playModeVideo(mCurrentModel);
                 } else {
                     playModeVideo(mCurrentProtocol);
@@ -1053,7 +1066,7 @@ public class SuperPlayerImpl implements SuperPlayer, ITXVodPlayListener, ITXLive
             mLivePlayer.enableHardwareDecode(enable);
             playWithModel(mCurrentModel);
         }
-        // 硬件加速上报
+        // Hardware acceleration report
         if (enable) {
             LogReport.getInstance().uploadLogs(LogReport.ELK_ACTION_HW_DECODE, 0, 0);
         } else {
@@ -1107,7 +1120,7 @@ public class SuperPlayerImpl implements SuperPlayer, ITXVodPlayListener, ITXLive
             mCurrentSpeedRate = speedLevel;
             mIsContinuePlayBackSeek = false;
         }
-        //速度改变上报
+        // Speed change report
         LogReport.getInstance().uploadLogs(LogReport.ELK_ACTION_CHANGE_SPEED, 0, 0);
 
     }
@@ -1128,7 +1141,7 @@ public class SuperPlayerImpl implements SuperPlayer, ITXVodPlayListener, ITXLive
         if (mCurrentPlayType == SuperPlayerDef.PlayerType.VOD) {
             if (mVodPlayer != null) {
                 if (quality.url != null) { // br!=0;index=-1;url!=null   //br=0;index!=-1;url!=null
-                    // 说明是非多bitrate的m3u8子流，需要手动seek
+                    // Manual seek is required for non-multi-bitrate m3u8 sub-streams
                     if (mCurrentPlayState != SuperPlayerDef.PlayerState.END) {
                         float currentTime = mVodPlayer.getCurrentPlaybackTime();
                         mVodPlayer.stopPlay(true);
@@ -1138,7 +1151,7 @@ public class SuperPlayerImpl implements SuperPlayer, ITXVodPlayListener, ITXLive
                     }
                 } else { //br!=0;index!=-1;url=null
                     Log.i(TAG, "setBitrateIndex quality.index:" + quality.index);
-                    // 说明是多bitrate的m3u8子流，会自动无缝seek
+                    // Automatic seamless seek for multi-bitrate m3u8 sub-strea
                     mVodPlayer.setBitrateIndex(quality.index);
                     mCurrentIndex = quality.index;
                 }
@@ -1152,7 +1165,7 @@ public class SuperPlayerImpl implements SuperPlayer, ITXVodPlayListener, ITXLive
             }
             updateStreamStartStatus(success, SuperPlayerDef.PlayerType.LIVE, quality);
         }
-        //清晰度上报
+        // Resolution reporting
         LogReport.getInstance().uploadLogs(LogReport.ELK_ACTION_CHANGE_RESOLUTION, 0, 0);
     }
 

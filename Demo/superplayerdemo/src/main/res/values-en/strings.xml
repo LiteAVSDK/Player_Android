@@ -2,8 +2,10 @@
 <resources>
     <string name="superplayer_app_name">Superplayer</string>
     <string name="superplayer_cache_name">offline download</string>
+
     <string name="superplayer_cancel">Cancel</string>
     <string name="superplayer_ok">OK</string>
+
     <string name="superplayer_vod_ffplay">ffplay</string>
     <string name="superplayer_vod_exo">exo</string>
     <string name="superplayer_scancode_tip">Invalid playback URL. Check the QR code.</string>
@@ -34,6 +36,8 @@
     <string name="superplayer_vip_title">Try function demo </string>
     <string name="superplayer_vip_watch_tip">You can try it for %ss, open VIP to watch the full video</string>
     <string name="superplayer_cover_video_name">Custom cover presentation</string>
+    <string name="app_feed_title">Feed stream playback</string>
+    <string name="app_feed_detail_title">Video details</string>
     <string name="superplayer_dynamic_watermark_title">Dynamic watermark demo</string>
     <string name="superplayer_dynamic_watermark_tip">shipinyun</string>
     <string name="superplayer_cover_title">Custom cover presentation</string>
@@ -46,6 +50,7 @@
     <string name="superplayer_cache_state_pause">pause</string>
     <string name="superplayer_cache_state_error">error</string>
     <string name="superplayer_cache_state_finish">complete</string>
+    <string name="superplayer_cache_download_switch">Is caching function required</string>
 
     <string name="superplayer_hint">Tip</string>
     <string name="superplayer_delete_video_confirm">Are you sure you want to delete this video</string>
@@ -71,4 +76,30 @@
     <string name="super_player_reset_succeed">Reset Succeed !</string>
     <string name="super_player_multi_subtitle_video">Multi SubTitle Video</string>
     <string name="super_player_multi_sound_track_video">Multi Sound Track Video</string>
+
+    <string name="super_play_encrypt_video_introduction">Encrypted Video_Tencent Cloud Business Introduction</string>
+
+    <string name="super_player_vod_config">Player configuration</string>
+    <string name="super_player_vod_need_accurate_seek">Whether to use accurate seek</string>
+    <string name="super_player_vod_smooth_switch">Smooth switching of multiple bitrates</string>
+    <string name="super_player_vod_rotate_auto">Automatic rotation of video angle</string>
+    <string name="super_player_vod_adaptive_bitrate">Enable adaptive bitrate</string>
+    <string name="super_player_vod_super_resolution">enabling super-resolution post-processing</string>
+    <string name="super_player_vod_reconnect_count">Player reconnection times</string>
+    <string name="super_player_vod_reconnect_period">Player reconnection interval</string>
+    <string name="super_player_vod_connect_timeout">Player connection timeout(s)</string>
+    <string name="super_player_vod_progress_period">Player progress callback interval(ms)</string>
+    <string name="super_player_vod_cache_directory">Set the cache directory of the playback engine</string>
+    <string name="super_player_vod_max_cache">Maximum cache size (MB) of the playback engine cache directory</string>
+    <string name="super_player_vod_pre_max_cache">Maximum cache (MB) for preloading</string>
+    <string name="super_player_vod_buffer_max_cache">Maximum playback buffer size (MB)</string>
+    <string name="super_player_vod_prefer_resolution">Preferred playback resolution (width*height)</string>
+    <string name="super_player_vod_media_type">Play media type:</string>
+    <string name="super_player_vod_decode_strategy">Video decoding strategy:</string>
+    <string name="super_player_vod_log_level">Console Log Output Level:</string>
+    <string name="super_player_vod_video_type">Play resource type:</string>
+    <string name="super_player_vod_save">Save</string>
+    <string name="super_player_vod_reset">Reset</string>
+    <string name="super_player_vod_hard_first">Prefer hardware decoding (default)</string>
+    <string name="super_player_vod_soft_first">Prefer software decoding</string>
 </resources>

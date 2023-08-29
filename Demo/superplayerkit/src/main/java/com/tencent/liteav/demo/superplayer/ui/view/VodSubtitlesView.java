@@ -18,7 +18,6 @@ import com.tencent.liteav.demo.superplayer.ui.view.base.BaseListView;
 import com.tencent.liteav.demo.superplayer.ui.view.base.BaseViewHolder;
 import com.tencent.rtmp.TXTrackInfo;
 
-import java.util.ArrayList;
 import java.util.List;
 
 public class VodSubtitlesView extends BaseListView<VodSubtitlesView.VodSubtitlesAdapter,TXTrackInfo> {

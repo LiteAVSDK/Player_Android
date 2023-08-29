@@ -21,6 +21,8 @@ import com.tencent.liteav.demo.vodcommon.entity.VideoModel;
 
 
 /**
+ * Feed stream list page item.
+ * Contains a player FeedPlayerView and a view for displaying video description information.
  * feed流列表页item
  * 包含播放器FeedPlayerView以及展示视频描述信息的View
  */
@@ -52,6 +54,7 @@ public class FeedListItemView extends RelativeLayout {
     }
 
     /**
+     * Initialize interface.
      * 初始化界面
      */
     private void initViews() {
@@ -69,6 +72,7 @@ public class FeedListItemView extends RelativeLayout {
 
 
     /**
+     * Set data for item and pre-load video information.
      * 给item设置数据,并预加载视频信息
      *
      * @param videoModel
@@ -107,6 +111,7 @@ public class FeedListItemView extends RelativeLayout {
     }
 
     /**
+     * Play a video directly.
      * 直接播放个视频
      *
      * @param videoModel
@@ -139,6 +144,7 @@ public class FeedListItemView extends RelativeLayout {
     }
 
     /**
+     * reset itemView.
      * 还原ItemView
      */
     public void reset() {
@@ -148,6 +154,7 @@ public class FeedListItemView extends RelativeLayout {
     }
 
     /**
+     * Called when the item is destroyed.
      * 销毁item时调用
      */
     public void destroy() {
@@ -161,6 +168,7 @@ public class FeedListItemView extends RelativeLayout {
     }
 
     /**
+     * Remove the player from the item.
      * 从item中移除播放器
      */
     public void removeFeedPlayFromItem() {
@@ -170,6 +178,7 @@ public class FeedListItemView extends RelativeLayout {
     }
 
     /**
+     * Add the player to the item.
      * 将播放器添加进item
      */
     public void addFeedPlayToItem() {
@@ -198,6 +207,7 @@ public class FeedListItemView extends RelativeLayout {
 
 
     /**
+     * Get the player control.
      * 获取播放器控件
      *
      * @return
@@ -208,6 +218,7 @@ public class FeedListItemView extends RelativeLayout {
 
 
     /**
+     * Get the Y coordinate of the player bottom relative to the parent view.
      * 获取播放器底部Y的坐标，相对于父控件的
      *
      * @return
@@ -218,6 +229,9 @@ public class FeedListItemView extends RelativeLayout {
 
 
     /**
+     * Get the height of the view above the video control in the item.
+     * Since the video control of this item is at the top of the item, return 0.
+     *
      * 获取item中视频控件之上的view的高度
      * 因为此item的视频控件在item的最顶部，所以返回0
      *

@@ -2,8 +2,10 @@
 <resources>
     <string name="superplayer_app_name">Superplayer</string>
     <string name="superplayer_cache_name">offline download</string>
+
     <string name="superplayer_cancel">Cancel</string>
     <string name="superplayer_ok">OK</string>
+
     <string name="superplayer_vod_ffplay">ffplay</string>
     <string name="superplayer_vod_exo">exo</string>
     <string name="superplayer_scancode_tip">Invalid playback URL. Check the QR code.</string>
@@ -48,4 +50,13 @@
     <string name="superplayer_delete_failed">Deleted failed</string>
     <string name="superplayer_cahche_empty">No data</string>
     <string name="superplayer_net_error">The network is abnormal. Please try again later</string>
+
+    <string name="superplayer_one_segment_multi_bitrate">Single-segment &amp;&amp; Multi-bitrate</string>
+    <string name="superplayer_video_subtitle">with subtitle</string>
+    <string name="superplayer_multi_segment_multi_bitrate">Multi-segment &amp;&amp; Multi-bitrate</string>
+    <string name="superplayer_video_30fps">30fps</string>
+    <string name="superplayer_one_segment_one_bitrate">Single-segment &amp;&amp; Single-bitrate</string>
+    <string name="superplayer_time_based">time-based</string>
+    <string name="superplayer_multi_segment_one_bitrate">Multi-segment &amp;&amp; Single-bitrate</string>
+    <string name="superplayer_number_based">number-based</string>
 </resources>

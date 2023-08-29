@@ -19,6 +19,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
+ * Feed view management.
  * feedView管理
  */
 public class FeedViewManager {

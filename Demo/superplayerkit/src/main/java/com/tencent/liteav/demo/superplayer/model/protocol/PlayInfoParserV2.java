@@ -21,6 +21,10 @@ import java.util.LinkedHashMap;
 import java.util.List;
 
 /**
+ * V2 video information protocol parsing implementation class
+ * <p>
+ * Responsible for parsing the JSON data of the V2 video information protocol request response
+ *
  * V2视频信息协议解析实现类
  * <p>
  * 负责解析V2视频信息协议请求响应的Json数据
@@ -28,24 +32,24 @@ import java.util.List;
 public class PlayInfoParserV2 implements IPlayInfoParser {
     private static final String TAG = "TCPlayInfoParserV2";
 
-    private JSONObject mResponse;   // 协议请求返回的Json数据
+    private JSONObject mResponse;
 
-    //播放器配置信息
-    private String                    mDefaultVideoClassification;  // 默认视频清晰度名称
-    private List<VideoClassification> mVideoClassificationList;     // 视频清晰度信息列表
+    // Player configuration information
+    private String                    mDefaultVideoClassification;
+    private List<VideoClassification> mVideoClassificationList;
 
-    private PlayImageSpriteInfo        mImageSpriteInfo;            // 雪碧图信息
-    private List<PlayKeyFrameDescInfo> mKeyFrameDescInfo;           // 关键帧打点信息
-    //视频信息
-    private String                     mName;                                   // 视频名称
-    private PlayInfoStream             mSourceStream;                           // 源视频流信息
-    private PlayInfoStream             mMasterPlayList;                         // 主播放视频流信息
+    private PlayImageSpriteInfo        mImageSpriteInfo;
+    private List<PlayKeyFrameDescInfo> mKeyFrameDescInfo;
+    // Video information
+    private String                     mName;
+    private PlayInfoStream             mSourceStream;
+    private PlayInfoStream             mMasterPlayList;
 
-    private LinkedHashMap<String, PlayInfoStream> mTranscodePlayList;   // 转码视频信息列表
+    private LinkedHashMap<String, PlayInfoStream> mTranscodePlayList;   // Transcode video information list
 
-    private String             mURL;                    // 视频播放url
-    private List<VideoQuality> mVideoQualityList;       // 视频画质信息列表
-    private VideoQuality       mDefaultVideoQuality;    // 默认视频画质
+    private String             mURL;
+    private List<VideoQuality> mVideoQualityList;
+    private VideoQuality       mDefaultVideoQuality;
 
     private String mCoverUrl;   // coverUrl
 
@@ -55,6 +59,27 @@ public class PlayInfoParserV2 implements IPlayInfoParser {
     }
 
     /**
+     * Parse video information from the JSON data of the video information protocol request response.
+     * <p>
+     * Parsing process:
+     * <p>
+     * 1、Parse the player information (playerInfo) field to obtain the video quality list
+     * {@link #mVideoClassificationList} and the default video quality {@link #mDefaultVideoClassification}.
+     * <p>
+     * 2、Parse the sprite information (imageSpriteInfo) field to obtain the sprite information
+     * {@link #mImageSpriteInfo}.
+     * <p>
+     * 3、Parse the keyframe information (keyFrameDescInfo) field to obtain the keyframe
+     * information {@link #mKeyFrameDescInfo}.
+     * <p>
+     * 4、Parse the video information (videoInfo) field to obtain the video name {@link #mName},
+     * source video information {@link #mSourceStream}, main video list {@link #mMasterPlayList},
+     * and transcoded video list {@link #mTranscodePlayList}.
+     * <p>
+     * 5、Parse the video playback URL {@link #mURL}, video quality information {@link #mVideoQualityList},
+     * and default video quality {@link #mDefaultVideoQuality} from the main video list, transcoded video list,
+     * and source video information.
+     *
      * 从视频信息协议请求响应的Json数据中解析出视频信息
      * <p>
      * 解析流程：
@@ -104,20 +129,18 @@ public class PlayInfoParserV2 implements IPlayInfoParser {
     }
 
     /**
-     * 解析默认视频清晰度信息
+     * Parse default video quality information
      *
-     * @param playerInfo 包含默认视频清晰度信息的Json对象
-     * @return 默认视频清晰度名称字符串
+     * 解析默认视频清晰度信息
      */
     private String parseDefaultVideoClassification(JSONObject playerInfo) throws JSONException {
         return playerInfo.getString("defaultVideoClassification");
     }
 
     /**
-     * 解析视频清晰度信息
+     * Parse video quality information
      *
-     * @param playerInfo 包含默认视频类别信息的Json对象
-     * @return 视频清晰度信息数组
+     * 解析视频清晰度信息
      */
     private List<VideoClassification> parseVideoClassificationList(JSONObject playerInfo) throws JSONException {
         List<VideoClassification> arrayList = new ArrayList<>();
@@ -146,15 +169,15 @@ public class PlayInfoParserV2 implements IPlayInfoParser {
     }
 
     /**
-     * 解析雪碧图信息
+     * Parse sprite information
      *
-     * @param imageSpriteInfo 包含雪碧图信息的Json对象
-     * @return 雪碧图信息对象
+     * 解析雪碧图信息
      */
     private PlayImageSpriteInfo parseImageSpriteInfo(JSONObject imageSpriteInfo) throws JSONException {
         JSONArray imageSpriteList = imageSpriteInfo.getJSONArray("imageSpriteList");
         if (imageSpriteList != null) {
-            JSONObject spriteJSONObject = imageSpriteList.optJSONObject(imageSpriteList.length() - 1); //获取最后一个来解析
+            // Get the last one to parse.
+            JSONObject spriteJSONObject = imageSpriteList.optJSONObject(imageSpriteList.length() - 1);
             PlayImageSpriteInfo info = new PlayImageSpriteInfo();
             info.webVttUrl = spriteJSONObject.getString("webVttUrl");
             JSONArray jsonArray = spriteJSONObject.getJSONArray("imageUrls");
@@ -170,10 +193,9 @@ public class PlayInfoParserV2 implements IPlayInfoParser {
     }
 
     /**
-     * 解析关键帧打点信息
+     * Parse keyframe information
      *
-     * @param keyFrameDescInfo 包含关键帧信息的Json对象
-     * @return 关键帧信息数组
+     * 解析关键帧打点信息
      */
     private List<PlayKeyFrameDescInfo> parseKeyFrameDescInfo(JSONObject keyFrameDescInfo) throws JSONException {
         JSONArray jsonArr = keyFrameDescInfo.getJSONArray("keyFrameDescList");
@@ -182,7 +204,7 @@ public class PlayInfoParserV2 implements IPlayInfoParser {
             for (int i = 0; i < jsonArr.length(); i++) {
                 String content = jsonArr.optJSONObject(i).getString("content");
                 long time = jsonArr.optJSONObject(i).getLong("timeOffset");
-                float timeS = (float) (time / 1000.0);//转换为秒
+                float timeS = (float) (time / 1000.0);
                 PlayKeyFrameDescInfo info = new PlayKeyFrameDescInfo();
                 try {
                     info.content = URLDecoder.decode(content, "UTF-8");
@@ -199,11 +221,9 @@ public class PlayInfoParserV2 implements IPlayInfoParser {
     }
 
     /**
-     * 解析视频名称
+     * Parse video name
      *
-     * @param videoInfo 包含视频名称信息的Json对象
-     * @return 视频名称字符串
-     * @throws JSONException
+     * 解析视频名称
      */
     private String parseName(JSONObject videoInfo) throws JSONException {
         JSONObject basicInfo = videoInfo.optJSONObject("basicInfo");
@@ -214,10 +234,9 @@ public class PlayInfoParserV2 implements IPlayInfoParser {
     }
 
     /**
-     * 解析源视频流信息
+     * Parse source video stream information
      *
-     * @param videoInfo 包含源视频流信息的Json对象
-     * @return 源视频流信息对象
+     * 解析源视频流信息
      */
     private PlayInfoStream parseSourceStream(JSONObject videoInfo) throws JSONException {
         JSONObject sourceVideo = videoInfo.optJSONObject("sourceVideo");
@@ -235,14 +254,14 @@ public class PlayInfoParserV2 implements IPlayInfoParser {
     }
 
     /**
-     * 解析主播放视频流信息
+     * Parse main playback video stream information
      *
-     * @param videoInfo 包含主播放视频流信息的Json对象
-     * @return 主播放视频流信息对象
+     * 解析主播放视频流信息
      */
     private PlayInfoStream parseMasterPlayList(JSONObject videoInfo) throws JSONException {
-        if (!videoInfo.has("masterPlayList"))
+        if (!videoInfo.has("masterPlayList")) {
             return null;
+        }
         JSONObject masterPlayList = videoInfo.optJSONObject("masterPlayList");
         if (masterPlayList != null) {
             PlayInfoStream stream = new PlayInfoStream();
@@ -253,19 +272,25 @@ public class PlayInfoParserV2 implements IPlayInfoParser {
     }
 
     /**
+     * Parse transcode video stream information
+     * <p>
+     * The transcoded video stream information {@link #mTranscodePlayList} does not include the quality name,
+     * so it needs to be matched with the video quality information {@link #mVideoClassificationList}.
+     *
      * 解析转码视频流信息
      * <p>
      * 转码视频流信息{@link #mTranscodePlayList}中不包含清晰度名称，需要与视频清晰度信息{@link #mVideoClassificationList}做匹配
      *
-     * @param videoInfo 包含转码视频流信息的Json对象
-     * @return 转码视频信息列表 key: 清晰度名称 value: 视频流信息
+     * @return Transcode video information list key: quality name value: video stream information
+     *         转码视频信息列表 key: 清晰度名称 value: 视频流信息
      */
     private LinkedHashMap<String, PlayInfoStream> parseTranscodePlayList(JSONObject videoInfo) throws JSONException {
         List<PlayInfoStream> transcodeList = parseStreamList(videoInfo);
-        if (transcodeList == null) return mTranscodePlayList;
+        if (transcodeList == null) {
+            return mTranscodePlayList;
+        }
         for (int i = 0; i < transcodeList.size(); i++) {
             PlayInfoStream stream = transcodeList.get(i);
-            // 匹配清晰度
             if (mVideoClassificationList != null) {
                 for (int j = 0; j < mVideoClassificationList.size(); j++) {
                     VideoClassification classification = mVideoClassificationList.get(j);
@@ -277,7 +302,7 @@ public class PlayInfoParserV2 implements IPlayInfoParser {
                 }
             }
         }
-        //清晰度去重
+        // Remove duplicates by quality
         LinkedHashMap<String, PlayInfoStream> idList = new LinkedHashMap<>();
         for (int i = 0; i < transcodeList.size(); i++) {
             PlayInfoStream stream = transcodeList.get(i);
@@ -285,24 +310,23 @@ public class PlayInfoParserV2 implements IPlayInfoParser {
                 idList.put(stream.id, stream);
             } else {
                 PlayInfoStream copy = idList.get(stream.id);
-                if (copy.getUrl().endsWith("mp4")) {  // 列表中url是mp4，则进行下一步
+                if (copy.getUrl().endsWith("mp4")) {
                     continue;
                 }
-                if (stream.getUrl().endsWith("mp4")) { // 新判断的url是mp4，则替换列表中
+                if (stream.getUrl().endsWith("mp4")) {
                     idList.remove(copy.id);
                     idList.put(stream.id, stream);
                 }
             }
         }
-        //按清晰度排序
+        // Sort by quality
         return idList;
     }
 
     /**
-     * 解析转码视频信息
+     * Parse transcoded video information
      *
-     * @param videoInfo 包含转码视频信息的Json对象
-     * @return 转码视频是信息数组
+     * 解析转码视频信息
      */
     private List<PlayInfoStream> parseStreamList(JSONObject videoInfo) throws JSONException {
         List<PlayInfoStream> streamList = new ArrayList<>();
@@ -325,6 +349,14 @@ public class PlayInfoParserV2 implements IPlayInfoParser {
     }
 
     /**
+     * Parse video playback URL, video quality list, and default video quality.
+     * <p>
+     * The V2 protocol response JSON data may contain multiple video playback information: main playback video
+     * information {@link #mMasterPlayList}, transcoded video information {@link #mTranscodePlayList}, source
+     * video information {@link #mSourceStream}, and the playback priority decreases in turn
+     * <p>
+     * Parse the playback information from the highest priority video information
+     *
      * 解析视频播放url、画质列表、默认画质
      * <p>
      * V2协议响应Json数据中可能包含多个视频播放信息：主播放视频信息{@link #mMasterPlayList}、转码视频{@link #mTranscodePlayList}、
@@ -333,7 +365,7 @@ public class PlayInfoParserV2 implements IPlayInfoParser {
      * 从优先级最高的视频信息中解析出播放信息
      */
     private void parseVideoInfo() {
-        //有主播放视频信息时，从中解析出支持多码率播放的url
+        // If there is main playback video information, parse the URL that supports multi-bitrate playback from it.
         if (mMasterPlayList != null) {
             mURL = mMasterPlayList.getUrl();
             if (mTranscodePlayList != null && mTranscodePlayList.size() != 0) {
@@ -343,7 +375,8 @@ public class PlayInfoParserV2 implements IPlayInfoParser {
             }
             return;
         }
-        //无主播放信息，从转码视频信息中解析出各码流信息
+        // If there is no main playback information, parse the stream information of each bitrate
+        // from the transcode video information
         if (mTranscodePlayList != null && mTranscodePlayList.size() != 0) {
             PlayInfoStream stream = mTranscodePlayList.get(mDefaultVideoClassification);
             String videoURL = null;
@@ -365,7 +398,8 @@ public class PlayInfoParserV2 implements IPlayInfoParser {
                 return;
             }
         }
-        //无主播放信息、转码信息，从源视频信息中解析出播放信息
+        // If there is no main playback information or transcode information, parse the playback information
+        // from the source video information
         if (mSourceStream != null) {
             if (mDefaultVideoClassification != null) {
                 mDefaultVideoQuality = VideoQualityUtils.convertToVideoQuality(mSourceStream);
@@ -377,9 +411,9 @@ public class PlayInfoParserV2 implements IPlayInfoParser {
     }
 
     /**
-     * 获取视频播放url
+     * Get the video playback URL
      *
-     * @return url字符串
+     * 获取视频播放url
      */
     @Override
     public String getURL() {
@@ -397,9 +431,9 @@ public class PlayInfoParserV2 implements IPlayInfoParser {
     }
 
     /**
-     * 获取视频名称
+     * Get the video name
      *
-     * @return 视频名称字符串
+     * 获取视频名称
      */
     @Override
     public String getName() {
@@ -419,9 +453,9 @@ public class PlayInfoParserV2 implements IPlayInfoParser {
     }
 
     /**
-     * 获取雪碧图信息
+     * Get the sprite information
      *
-     * @return 雪碧图信息对象
+     * 获取雪碧图信息
      */
     @Override
     public PlayImageSpriteInfo getImageSpriteInfo() {
@@ -429,9 +463,9 @@ public class PlayInfoParserV2 implements IPlayInfoParser {
     }
 
     /**
-     * 获取关键帧信息
+     * Get the keyframe information
      *
-     * @return 关键帧信息数组
+     * 获取关键帧信息
      */
     @Override
     public List<PlayKeyFrameDescInfo> getKeyFrameDescInfo() {
@@ -439,9 +473,9 @@ public class PlayInfoParserV2 implements IPlayInfoParser {
     }
 
     /**
-     * 获取画质信息
+     * Get the video quality information
      *
-     * @return 画质信息数组
+     * 获取画质信息
      */
     @Override
     public List<VideoQuality> getVideoQualityList() {
@@ -449,9 +483,9 @@ public class PlayInfoParserV2 implements IPlayInfoParser {
     }
 
     /**
-     * 获取默认画质信息
+     * Get the default video quality information
      *
-     * @return 默认画质信息对象
+     * 获取默认画质信息
      */
     @Override
     public VideoQuality getDefaultVideoQuality() {
@@ -459,9 +493,9 @@ public class PlayInfoParserV2 implements IPlayInfoParser {
     }
 
     /**
-     * 获取视频画质别名列表
+     * Get the video quality alias list
      *
-     * @return 画质别名数组
+     * 获取视频画质别名列表
      */
     @Override
     public List<ResolutionName> getResolutionNameList() {

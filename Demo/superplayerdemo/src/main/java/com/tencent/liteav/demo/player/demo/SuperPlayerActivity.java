@@ -66,7 +66,8 @@ import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
 
 /**
- * Created by liyuejiao on 2018/7/3.
+ * SuperPlayer main activity.
+ *
  * 超级播放器主Activity
  */
 
@@ -82,7 +83,8 @@ public class SuperPlayerActivity extends FragmentActivity implements View.OnClic
     private static final String DEFAULT_FILE_ID       = "387702299774390972";
     private static final int    DEFAULT_APP_ID         = 1500005830;
     private static final String DEFAULT_IMAGHOLDER    = "http://xiaozhibo-10055601.file.myqcloud.com/coverImg.jpg";
-    private static final float sPlayerViewDisplayRatio = (float) 720 / 1280;   //当前界面播放器view展示的宽高比，用主流的16：9
+    // The aspect ratio of the player view displayed on the current interface, using the mainstream 16:9.
+    private static final float sPlayerViewDisplayRatio = (float) 720 / 1280;
     private static final int    LIST_TYPE_LIVE        = 0;
     private static final int    LIST_TYPE_VOD         = 1;
     private static final int    REQUEST_CODE_QR_SCAN  = 100;
@@ -121,7 +123,7 @@ public class SuperPlayerActivity extends FragmentActivity implements View.OnClic
 
     private boolean                  mIsManualPause = false;
     private boolean                  mUseLocalLiveData = true;
-    private boolean                  mIsEnteredPIPMode = false;  // 是否进入了画中画模式
+    private boolean                  mIsEnteredPIPMode = false;
 
     private static class ListTabItem {
         public ListTabItem(int type, TextView textView, ImageView imageView, View.OnClickListener listener) {
@@ -184,6 +186,8 @@ public class SuperPlayerActivity extends FragmentActivity implements View.OnClic
     }
 
     /**
+     * Display the player view in a 16:9 aspect ratio, with priority given to fully filling the width.
+     *
      * 以16：9 比例显示播放器view，优先保证宽度完全填充
      */
     private void adjustSuperPlayerViewAndMaskHeight() {
@@ -244,9 +248,6 @@ public class SuperPlayerActivity extends FragmentActivity implements View.OnClic
         initMaskLayout();
     }
 
-    /**
-     * 初始化新手引导布局
-     */
     private void initNewGuideLayout() {
         mRelativeMaskOne = (RelativeLayout) findViewById(R.id.superplayer_small_rl_mask_one);
         mRelativeMaskOne.setOnTouchListener(new View.OnTouchListener() { // 拦截事件
@@ -306,14 +307,14 @@ public class SuperPlayerActivity extends FragmentActivity implements View.OnClic
 
     private void initMaskLayout() {
         mTitleMask = findViewById(R.id.superplayer_view_title_mask);
-        mTitleMask.setOnClickListener(new View.OnClickListener() {// 拦截所有事件
+        mTitleMask.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
 
             }
         });
         mListMask = findViewById(R.id.superplayer_view_list_mask);
-        mListMask.setOnClickListener(new View.OnClickListener() { // 拦截所有事件
+        mListMask.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
 
@@ -510,7 +511,7 @@ public class SuperPlayerActivity extends FragmentActivity implements View.OnClic
                         public void onSuccess(VideoListModel videoListModel) {
                             VideoModel encryptModel = new VideoModel();
                             encryptModel.appid = 1500005830;
-                            encryptModel.title = "加密视频_腾讯云业务介绍";
+                            encryptModel.title = getString(R.string.super_play_encrypt_video_introduction);
                             encryptModel.placeholderImage = "https://1500005830.vod2.myqcloud.com/6c9a5118vodcq1500005830/35ab25fb243791578431393746/onEqUp.png";
                             encryptModel.fileid = "243791578431393746";
                             encryptModel.pSign = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhcHBJZCI6MTUwMDA"
@@ -641,31 +642,23 @@ public class SuperPlayerActivity extends FragmentActivity implements View.OnClic
         playVideoModel(videoModel);
     }
 
-    /**
-     * 初始化超级播放器全局配置
-     */
     private void initSuperVodGlobalSetting() {
         SuperPlayerGlobalConfig prefs = SuperPlayerGlobalConfig.getInstance();
-        // 开启悬浮窗播放
         prefs.enableFloatWindow = true;
-        // 设置悬浮窗的初始位置和宽高
         SuperPlayerGlobalConfig.TXRect rect = new SuperPlayerGlobalConfig.TXRect();
         rect.x = 0;
         rect.y = 0;
         rect.width = 810;
         rect.height = 540;
         prefs.floatViewRect = rect;
-        // 设置播放器渲染模式
         prefs.enableHWAcceleration = true;
         prefs.renderMode = TXLiveConstants.RENDER_MODE_ADJUST_RESOLUTION;
-        //需要修改为自己的时移域名
         prefs.playShiftDomain = "liteavapp.timeshift.qcloud.com";
     }
 
     @Override
     protected void onStart() {
         super.onStart();
-        // 画中画状态下下解锁恢复播放
         if (PictureInPictureHelper.hasPipPermission(this)
                 && (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.N)
                 && isInPictureInPictureMode()) {
@@ -688,7 +681,6 @@ public class SuperPlayerActivity extends FragmentActivity implements View.OnClic
             }
         }
         if (mSuperPlayerView.getPlayerMode() == SuperPlayerDef.PlayerMode.FULLSCREEN) {
-            //隐藏虚拟按键，并且全屏
             View decorView = getWindow().getDecorView();
             if (decorView == null) return;
             if (Build.VERSION.SDK_INT > 11 && Build.VERSION.SDK_INT < 19) { // lower api
@@ -819,11 +811,11 @@ public class SuperPlayerActivity extends FragmentActivity implements View.OnClic
     @Override
     public void onClick(View v) {
         int id = v.getId();
-        if (id == R.id.superplayer_iv_add) {            // 点击+添加一个点播列表项
+        if (id == R.id.superplayer_iv_add) {
             showAddVideoDialog();
-        } else if (id == R.id.superplayer_btn_scan) {   // 扫描二维码播放一个视频
+        } else if (id == R.id.superplayer_btn_scan) {
             scanQRCode();
-        } else if (id == R.id.superplayer_iv_back) {    // 悬浮窗播放
+        } else if (id == R.id.superplayer_iv_back) {
             finish();
         } else if (id == R.id.superplayer_tv_live) {
             mDataType = LIST_TYPE_LIVE;
@@ -900,6 +892,8 @@ public class SuperPlayerActivity extends FragmentActivity implements View.OnClic
     }
 
     /**
+     * Floating window playback.
+     *
      * 悬浮窗播放
      */
     private void showFloatWindow() {
@@ -912,6 +906,8 @@ public class SuperPlayerActivity extends FragmentActivity implements View.OnClic
     }
 
     /**
+     * Scan QR code.
+     *
      * 扫描二维码
      */
     private void scanQRCode() {
@@ -927,7 +923,6 @@ public class SuperPlayerActivity extends FragmentActivity implements View.OnClic
         }
         String result = data.getStringExtra("result");
         if (REQUEST_CODE_QR_SCAN == requestCode) {
-            // 二维码播放视频
             playExternalVideo(result);
         }
     }
@@ -964,9 +959,6 @@ public class SuperPlayerActivity extends FragmentActivity implements View.OnClic
         return result;
     }
 
-    /**
-     * 点击+添加一个点播列表项
-     */
     private void showAddVideoDialog() {
         AlertDialog.Builder dialog = new AlertDialog.Builder(this);
         final View dialogView = LayoutInflater.from(this).inflate(R.layout.superplayer_dialog_new_vod_player_fileid, null);
@@ -1027,7 +1019,6 @@ public class SuperPlayerActivity extends FragmentActivity implements View.OnClic
                             videoModel.pSign = pSign;
                             videoModel.isEnableDownload = cbCache.isChecked();
 
-                            // 尝试请求fileid信息
                             SuperVodListLoader loader = new SuperVodListLoader(SuperPlayerActivity.this);
                             loader.getVodByFileId(videoModel, new SuperVodListLoader.OnVodInfoLoadListener() {
                                 @Override
@@ -1119,6 +1110,8 @@ public class SuperPlayerActivity extends FragmentActivity implements View.OnClic
     }
 
     /**
+     * Play cached videos passed in externally.
+     *
      * 播放外部传入的缓存视频
      */
     private void playExternalDownloadVideo() {
@@ -1143,6 +1136,9 @@ public class SuperPlayerActivity extends FragmentActivity implements View.OnClic
     }
 
     /**
+     * Play videos passed in externally.
+     * Data passed in through Intent.
+     *
      * 播放外部传入的视频
      * 通过Intent传入的数据
      */
@@ -1155,13 +1151,14 @@ public class SuperPlayerActivity extends FragmentActivity implements View.OnClic
     }
 
     /**
+     * Play external data.
+     * URL data returned through scanning.
+     *
      * 播放外部传入的数据
      * 通过扫码返回的url数据
-     *
-     * @param result
      */
     private void playExternalVideo(String result) {
-        if (result.contains("protocol=v4vodplay")) { // 优先解析包含v4协议字段的特殊食品
+        if (result.contains("protocol=v4vodplay")) {
             Uri uri = Uri.parse(result);
             String appId = uri.getQueryParameter("appId");
             String fileId = uri.getQueryParameter("fileId");
@@ -1194,7 +1191,6 @@ public class SuperPlayerActivity extends FragmentActivity implements View.OnClic
 
     @Override
     public void onStartFullScreenPlay() {
-        // 隐藏其他元素实现全屏
         mLayoutTitle.setVisibility(GONE);
         if (mImageAdd != null) {
             mImageAdd.setVisibility(GONE);
@@ -1203,7 +1199,6 @@ public class SuperPlayerActivity extends FragmentActivity implements View.OnClic
 
     @Override
     public void onStopFullScreenPlay() {
-        // 恢复原有元素
         mLayoutTitle.setVisibility(VISIBLE);
         if (mDefaultVideo && mImageAdd != null) {
             mImageAdd.setVisibility(VISIBLE);
@@ -1224,20 +1219,20 @@ public class SuperPlayerActivity extends FragmentActivity implements View.OnClic
 
     @Override
     public void onClickFloatCloseBtn() {
-        // 点击悬浮窗关闭按钮，那么结束整个播放
+        // If the close button in the floating window is clicked, the entire playback is ended.
         mSuperPlayerView.resetPlayer();
         finish();
     }
 
     @Override
     public void onClickSmallReturnBtn() {
-        // 点击小窗模式下返回按钮，开始悬浮播放
+        // If the back button is clicked in small window mode, start floating playback.
         showFloatWindow();
     }
 
     @Override
     public void onStartFloatWindowPlay() {
-        // 开始悬浮播放后，直接返回到桌面，进行悬浮播放
+        // After starting floating playback, return directly to the desktop for floating playback.
         Intent intent = new Intent(Intent.ACTION_MAIN);
         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         intent.addCategory(Intent.CATEGORY_HOME);

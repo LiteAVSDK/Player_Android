@@ -17,6 +17,10 @@ import org.json.JSONObject;
 import java.util.List;
 
 /**
+ * V2 video information protocol implementation class
+ * <p>
+ * Responsible for controlling the V2 video information protocol request and data retrieval
+ *
  * V2视频信息协议实现类
  * <p>
  * 负责V2视频信息协议的请求控制与数据获取
@@ -24,10 +28,10 @@ import java.util.List;
 public class PlayInfoProtocolV2 implements IPlayInfoProtocol {
 
     private static final String          TAG          = "TCPlayInfoProtocolV2";
-    private final        String          BASE_URLS_V2 = "https://playvideo.qcloud.com/getplayinfo/v2";  // V2协议请求地址
-    private              Handler         mMainHandler;   // 用于切换线程
-    private              PlayInfoParams  mParams;        // 协议请求输入的参数
-    private              IPlayInfoParser mParser;        // 协议请求返回Json的解析对象
+    private final        String          BASE_URLS_V2 = "https://playvideo.qcloud.com/getplayinfo/v2";
+    private              Handler         mMainHandler;
+    private              PlayInfoParams  mParams;
+    private              IPlayInfoParser mParser;
 
     public PlayInfoProtocolV2(PlayInfoParams params) {
         mParams = params;
@@ -35,9 +39,9 @@ public class PlayInfoProtocolV2 implements IPlayInfoProtocol {
     }
 
     /**
-     * 发送视频信息协议网络请求
+     * Send a network request for video information protocol
      *
-     * @param callback 协议请求回调
+     * 发送视频信息协议网络请求
      */
     @Override
     public void sendRequest(final IPlayInfoRequestCallback callback) {
@@ -74,9 +78,9 @@ public class PlayInfoProtocolV2 implements IPlayInfoProtocol {
     }
 
     /**
-     * 拼装协议请求url
+     * Assemble the protocol request URL
      *
-     * @return 协议请求url字符串
+     * 拼装协议请求url
      */
     private String makeUrlString() {
         String urlStr = String.format("%s/%d/%s", BASE_URLS_V2, mParams.appId, mParams.fileId);
@@ -90,13 +94,20 @@ public class PlayInfoProtocolV2 implements IPlayInfoProtocol {
     }
 
     /**
+     * Assemble the query field in the protocol request URL
+     *
      * 拼装协议请求url中的query字段
      *
-     * @param timeout 加密链接超时时间戳
-     * @param us      唯一标识请求
-     * @param exper   试看时长，单位：秒，十进制数值
-     * @param sign    签名字符串
-     * @return query字段字符串
+     * @param timeout Encryption link timeout timestamp
+     *                加密链接超时时间戳
+     * @param us      Unique identifier for the request
+     *                唯一标识请求
+     * @param exper   Preview duration in seconds, decimal value
+     *                试看时长，单位：秒，十进制数值
+     * @param sign    Signature string
+     *                签名字符串
+     * @return Query field string.
+     *         query字段字符串
      */
     private String makeQueryString(String timeout, String us, int exper, String sign) {
         StringBuilder str = new StringBuilder();
@@ -119,6 +130,8 @@ public class PlayInfoProtocolV2 implements IPlayInfoProtocol {
     }
 
     /**
+     * Cancel the request midway
+     *
      * 中途取消请求
      */
     @Override
@@ -127,9 +140,9 @@ public class PlayInfoProtocolV2 implements IPlayInfoProtocol {
     }
 
     /**
-     * 获取视频播放url
+     * Get the video playback URL
      *
-     * @return 视频播放url字符串
+     * 获取视频播放url
      */
     @Override
     public String getUrl() {
@@ -147,9 +160,9 @@ public class PlayInfoProtocolV2 implements IPlayInfoProtocol {
     }
 
     /**
-     * 获取视频名称
+     * Get the video name
      *
-     * @return 视频名称字符串
+     * 获取视频名称
      */
     @Override
     public String getName() {
@@ -157,9 +170,9 @@ public class PlayInfoProtocolV2 implements IPlayInfoProtocol {
     }
 
     /**
-     * 获取雪碧图信息
+     * Get the sprite information
      *
-     * @return 雪碧图信息对象
+     * 获取雪碧图信息
      */
     @Override
     public PlayImageSpriteInfo getImageSpriteInfo() {
@@ -167,9 +180,9 @@ public class PlayInfoProtocolV2 implements IPlayInfoProtocol {
     }
 
     /**
-     * 获取关键帧信息
+     * Get the keyframe information
      *
-     * @return 关键帧信息数组
+     * 获取关键帧信息
      */
     @Override
     public List<PlayKeyFrameDescInfo> getKeyFrameDescInfo() {
@@ -177,9 +190,9 @@ public class PlayInfoProtocolV2 implements IPlayInfoProtocol {
     }
 
     /**
-     * 获取画质信息
+     * Get the video quality information
      *
-     * @return 画质信息数组
+     * 获取画质信息
      */
     @Override
     public List<VideoQuality> getVideoQualityList() {
@@ -187,9 +200,9 @@ public class PlayInfoProtocolV2 implements IPlayInfoProtocol {
     }
 
     /**
-     * 获取默认画质
+     * Get the default video quality
      *
-     * @return 默认画质信息对象
+     * 获取默认画质
      */
     @Override
     public VideoQuality getDefaultVideoQuality() {
@@ -197,10 +210,9 @@ public class PlayInfoProtocolV2 implements IPlayInfoProtocol {
     }
 
     /**
-     * 解析视频信息协议请求响应的Json数据
+     * Parse the JSON data of the video information protocol request response
      *
-     * @param content  响应Json字符串
-     * @param callback 协议请求回调
+     * 解析视频信息协议请求响应的Json数据
      */
     private boolean parseJson(String content, final IPlayInfoRequestCallback callback) {
         if (TextUtils.isEmpty(content)) {
@@ -237,11 +249,16 @@ public class PlayInfoProtocolV2 implements IPlayInfoProtocol {
     }
 
     /**
+     * Switch to the main thread
+     * <p>
+     * Switch back to the main thread from the sub-thread of the video protocol request callback.
+     *
      * 切换到主线程
      * <p>
      * 从视频协议请求回调的子线程切换回主线程
      *
-     * @param r 需要在主线程中执行的任务
+     * @param r Tasks that need to be executed on the main thread
+     *          需要在主线程中执行的任务
      */
     private void runOnMainThread(Runnable r) {
         if (Looper.myLooper() == mMainHandler.getLooper()) {
@@ -252,9 +269,9 @@ public class PlayInfoProtocolV2 implements IPlayInfoProtocol {
     }
 
     /**
-     * 获取视频画质别名列表
+     * Get the video quality alias list
      *
-     * @return 画质别名数组
+     * 获取视频画质别名列表
      */
     @Override
     public List<ResolutionName> getResolutionNameList() {
