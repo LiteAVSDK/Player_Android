@@ -126,7 +126,8 @@ public class VideoDownloadListView extends RelativeLayout
             if (null != mVideoPlayListener) {
                 mVideoPlayListener.onVideoPlay(videoModel, mediaInfo);
             }
-        } else if (state == TXVodDownloadMediaInfo.STATE_STOP) {
+        } else if (state == TXVodDownloadMediaInfo.STATE_STOP
+                    || state == TXVodDownloadMediaInfo.STATE_ERROR) {
             VideoDownloadCenter.getInstance().resumeDownload(mediaInfo);
             // resume之后，再次刷新状态
             refreshMediaInfo(mediaInfo, position);

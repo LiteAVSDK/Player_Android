@@ -117,6 +117,9 @@ public class TXVodPlayerWrapper implements ITXVodPlayListener {
 
     public void seekTo(float time) {
         mVodPlayer.seek(time);
+        if (!mVodPlayer.isPlaying()) {
+            mVodPlayer.resume();
+        }
     }
 
 

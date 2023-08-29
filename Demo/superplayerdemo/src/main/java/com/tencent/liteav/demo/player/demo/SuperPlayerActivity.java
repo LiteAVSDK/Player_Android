@@ -235,8 +235,10 @@ public class SuperPlayerActivity extends FragmentActivity implements View.OnClic
         mImageAdd.setOnClickListener(this);
 
         mListTabs = new ArrayList<>();
-        mListTabs.add(LIST_TYPE_LIVE, new ListTabItem(LIST_TYPE_LIVE, (TextView) findViewById(R.id.superplayer_tv_live), null, this));
-        mListTabs.add(LIST_TYPE_VOD, new ListTabItem(LIST_TYPE_VOD, (TextView) findViewById(R.id.superplayer_tv_vod), null, this));
+        mListTabs.add(LIST_TYPE_LIVE, new ListTabItem(LIST_TYPE_LIVE,
+                (TextView) findViewById(R.id.superplayer_tv_live), null, this));
+        mListTabs.add(LIST_TYPE_VOD, new ListTabItem(LIST_TYPE_VOD,
+                (TextView) findViewById(R.id.superplayer_tv_vod), null, this));
 
         initNewGuideLayout();
         initMaskLayout();
