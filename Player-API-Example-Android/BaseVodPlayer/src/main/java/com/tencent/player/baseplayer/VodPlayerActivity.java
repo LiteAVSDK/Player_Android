@@ -1,17 +1,12 @@
 package com.tencent.player.baseplayer;
 
 import android.app.Activity;
-import android.app.Application;
-import android.app.Service;
-import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.drawable.AnimationDrawable;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
-import android.telephony.PhoneStateListener;
-import android.telephony.TelephonyManager;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.ContextMenu;
@@ -28,12 +23,6 @@ import android.widget.Toast;
 
 import com.blankj.utilcode.constant.PermissionConstants;
 import com.blankj.utilcode.util.PermissionUtils;
-
-import com.tencent.player.baseplayer.IntentUtils;
-import com.tencent.player.baseplayer.QRCodeScanActivity;
-import com.tencent.player.baseplayer.VideoQuality;
-import com.tencent.player.baseplayer.VideoQualityUtils;
-import com.tencent.player.baseplayer.VodQualityView;
 import com.tencent.rtmp.ITXVodPlayListener;
 import com.tencent.rtmp.TXBitrateItem;
 import com.tencent.rtmp.TXLiveConstants;
@@ -42,7 +31,6 @@ import com.tencent.rtmp.TXVodPlayConfig;
 import com.tencent.rtmp.TXVodPlayer;
 import com.tencent.rtmp.ui.TXCloudVideoView;
 
-import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -53,14 +41,13 @@ public class VodPlayerActivity extends Activity implements ITXVodPlayListener, V
     public static  final int    REQUEST_CODE_CONFIG          = 101;
     private static final String TAG                   = "VodPlayerActivity";
     private static final String WEBRTC_LINK_URL       = "https://cloud.tencent.com/document/product/454/12148";
-    private static final String DEFAULT_PLAY_URL      = "http://200024424.vod.myqcloud.com/200024424_709ae516bdf811e6ad39991f76a4df69.f20.mp4";
+    private static final String DEFAULT_PLAY_URL      = "http://1500005830.vod2.myqcloud.com/43843ec0vodtranscq1500005830/48d0f1f9387702299774251236/adp.10.m3u8";
     private static final String SPEED_FORMAT_TEMPLATE = "%.2f";
     private static final int    MILLS_PER_SECOND      = 1000;
     private static final int    MILLS_PER_MINUTE      = 60000;
     private static final int    SEROND_PER_MINUTE     = 60;
 
     private   TXVodPlayer      mVodPlayer        = null;
-    private   TXVodPlayer      mVodPlayerPreload = null;
     private   TXCloudVideoView mPlayerView;
     private   ImageView        mLoadingView;
     private   LinearLayout     mLinearRootView;
@@ -196,10 +183,6 @@ public class VodPlayerActivity extends Activity implements ITXVodPlayListener, V
         if (mVodPlayer == null) {
             mVodPlayer = new TXVodPlayer(this);
         }
-
-
-        mPhoneListener = new TXPhoneStateListener(this, mVodPlayer);
-        mPhoneListener.startListen();
 
         mPlayerView = (TXCloudVideoView) findViewById(R.id.video_view);
         mPlayerView.showLog(false);
@@ -484,7 +467,6 @@ public class VodPlayerActivity extends Activity implements ITXVodPlayListener, V
         }
         mPlayConfig = null;
         Log.d(TAG, "vrender onDestroy");
-        mPhoneListener.stopListen();
     }
 
     @Override
@@ -544,7 +526,7 @@ public class VodPlayerActivity extends Activity implements ITXVodPlayListener, V
         mVodPlayer.enableHardwareDecode(mHWDecode);
         mVodPlayer.setRenderRotation(mCurrentRenderRotation);
         mVodPlayer.setRenderMode(mCurrentRenderMode);
-        mPlayConfig.setMediaType(TXVodConstants.MEDIA_TYPE_HLS_VOD);
+        mPlayConfig.setMediaType(TXVodConstants.MEDIA_TYPE_AUTO);
         if (mEnableCache) {
             mPlayConfig.setCacheFolderPath(getInnerSDCardPath() + "/txcache");
             mPlayConfig.setMaxCacheItems(1);
@@ -634,10 +616,6 @@ public class VodPlayerActivity extends Activity implements ITXVodPlayListener, V
         if (event == TXLiveConstants.PLAY_EVT_PLAY_BEGIN) {
             stopLoadingAnimation();
             Log.d("AutoMonitor", "PlayFirstRender,cost=" + (System.currentTimeMillis() - mStartPlayTS));
-            if (mPhoneListener.isInBackground()) {
-                mVodPlayer.pause();
-            }
-
 
         } else if (event == TXLiveConstants.PLAY_EVT_PLAY_PROGRESS) {
             if (mStartSeek) {
@@ -676,9 +654,6 @@ public class VodPlayerActivity extends Activity implements ITXVodPlayListener, V
         } else if (event == TXLiveConstants.PLAY_EVT_RCV_FIRST_I_FRAME) {
             stopLoadingAnimation();
             findViewById(R.id.playerHeaderView).setVisibility(View.GONE);
-            if (mPhoneListener.isInBackground()) {
-                mVodPlayer.pause();
-            }
         } else if (event == TXLiveConstants.PLAY_EVT_CHANGE_RESOLUTION) {
         } else if (event == TXLiveConstants.PLAY_ERR_HLS_KEY) {//HLS 解密 key 获取失败
             stopPlayVod();
@@ -735,93 +710,6 @@ public class VodPlayerActivity extends Activity implements ITXVodPlayListener, V
         }
     }
 
-
-    static class TXPhoneStateListener extends PhoneStateListener implements Application.ActivityLifecycleCallbacks {
-        WeakReference<TXVodPlayer> mPlayer;
-        Context                    mContext;
-        int                        activityCount;
-
-        public TXPhoneStateListener(Context context, TXVodPlayer player) {
-            mPlayer = new WeakReference<>(player);
-            mContext = context.getApplicationContext();
-        }
-
-        public void startListen() {
-            TelephonyManager tm = (TelephonyManager) mContext.getSystemService(Service.TELEPHONY_SERVICE);
-            tm.listen(this, PhoneStateListener.LISTEN_CALL_STATE);
-        }
-
-        public void stopListen() {
-            TelephonyManager tm = (TelephonyManager) mContext.getSystemService(Service.TELEPHONY_SERVICE);
-            tm.listen(this, PhoneStateListener.LISTEN_NONE);
-        }
-
-        @Override
-        public void onCallStateChanged(int state, String incomingNumber) {
-            super.onCallStateChanged(state, incomingNumber);
-            TXVodPlayer player = mPlayer.get();
-            switch (state) {
-                //电话等待接听
-                case TelephonyManager.CALL_STATE_RINGING:
-                    Log.d(TAG, "CALL_STATE_RINGING");
-                    if (player != null) player.pause();
-                    break;
-                //电话接听
-                case TelephonyManager.CALL_STATE_OFFHOOK:
-                    Log.d(TAG, "CALL_STATE_OFFHOOK");
-                    if (player != null) player.pause();
-                    break;
-                //电话挂机
-                case TelephonyManager.CALL_STATE_IDLE:
-                    Log.d(TAG, "CALL_STATE_IDLE");
-                    if (player != null && activityCount >= 0) player.resume();
-                    break;
-            }
-        }
-
-        @Override
-        public void onActivityCreated(Activity activity, Bundle savedInstanceState) {
-
-        }
-
-        @Override
-        public void onActivityPaused(Activity activity) {
-
-        }
-
-        @Override
-        public void onActivityDestroyed(Activity activity) {
-
-        }
-
-        @Override
-        public void onActivityResumed(Activity activity) {
-            activityCount++;
-            Log.d(TAG, "onActivityResumed" + activityCount);
-        }
-
-        @Override
-        public void onActivitySaveInstanceState(Activity activity, Bundle outState) {
-
-        }
-
-        @Override
-        public void onActivityStarted(Activity activity) {
-
-        }
-
-        @Override
-        public void onActivityStopped(Activity activity) {
-            activityCount--;
-            Log.d(TAG, "onActivityStopped" + activityCount);
-        }
-
-        boolean isInBackground() {
-            return (activityCount < 0);
-        }
-    }
-
-    private TXPhoneStateListener mPhoneListener = null;
 
     @Override
     public void onQualitySelect(VideoQuality quality) {
