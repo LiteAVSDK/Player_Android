@@ -162,6 +162,14 @@ public class FloatPlayer extends AbsPlayer implements View.OnClickListener, VipW
         }
     }
 
+    @Override
+    public void updateVipInfo(int position) {
+        super.updateVipInfo(position);
+        if (mPlayType == SuperPlayerDef.PlayerType.VOD) {
+            mVipWatchView.setCurrentTime(position);
+        }
+    }
+
     /**
      * Get the height of the system status bar.
      *

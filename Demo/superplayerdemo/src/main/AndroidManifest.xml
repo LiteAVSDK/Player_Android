@@ -16,6 +16,7 @@
             android:excludeFromRecents="true"
             android:theme="@style/UnplugAnimTheme"
             android:alwaysRetainTaskState="true"
+            android:exported="false"
             android:configChanges="orientation|keyboardHidden|screenSize|smallestScreenSize|screenLayout"
             android:label="@string/superplayer_app_name"
             android:launchMode="singleTask"
@@ -43,7 +44,8 @@
             android:screenOrientation="portrait"
             android:name=".demo.VodPlayerActivity" />
 
-        <receiver android:name=".expand.webdata.reveiver.WebDataReceiver">
+        <receiver android:name=".expand.webdata.reveiver.WebDataReceiver"
+            android:exported="true">
             <intent-filter>
                 <action android:name="com.tencent.liteav.action.WED_DATA" />
             </intent-filter>

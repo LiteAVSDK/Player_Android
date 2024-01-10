@@ -12,6 +12,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.pm.ActivityInfo;
 import android.graphics.Bitmap;
+import android.graphics.Color;
 import android.graphics.PixelFormat;
 import android.net.Uri;
 import android.os.AsyncTask;
@@ -20,6 +21,7 @@ import android.os.Build;
 import android.os.Environment;
 import android.provider.MediaStore;
 import android.provider.Settings;
+import android.text.TextUtils;
 import android.text.format.DateUtils;
 import android.util.AttributeSet;
 import android.util.Log;
@@ -36,9 +38,7 @@ import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 
-import com.cloud.tencent.liteav.demo.comon.TUIBuild;
-import com.tencent.liteav.demo.common.manager.PermissionManager;
-import com.tencent.liteav.demo.common.utils.IntentUtils;
+import com.tencent.liteav.demo.superplayer.helper.IntentUtils;
 import com.tencent.liteav.demo.superplayer.helper.PictureInPictureHelper;
 import com.tencent.liteav.demo.superplayer.model.ISuperPlayerListener;
 import com.tencent.liteav.demo.superplayer.model.SuperPlayer;
@@ -49,8 +49,8 @@ import com.tencent.liteav.demo.superplayer.model.entity.DynamicWaterConfig;
 import com.tencent.liteav.demo.superplayer.model.entity.PlayImageSpriteInfo;
 import com.tencent.liteav.demo.superplayer.model.entity.PlayKeyFrameDescInfo;
 import com.tencent.liteav.demo.superplayer.model.entity.VideoQuality;
-import com.tencent.liteav.demo.superplayer.model.net.LogReport;
 import com.tencent.liteav.demo.superplayer.model.utils.NetWatcher;
+import com.tencent.liteav.demo.superplayer.permission.PermissionManager;
 import com.tencent.liteav.demo.superplayer.ui.helper.VolumeChangeHelper;
 import com.tencent.liteav.demo.superplayer.ui.player.FloatPlayer;
 import com.tencent.liteav.demo.superplayer.ui.player.FullScreenPlayer;
@@ -73,6 +73,7 @@ import java.lang.reflect.Constructor;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.List;
+
 
 /**
  * Super player view
@@ -230,9 +231,6 @@ public class SuperPlayerView extends RelativeLayout
                 }
             }
         });
-        LogReport.getInstance().setAppName(mContext);
-        LogReport.getInstance().setPackageName(mContext);
-
         if (mWatcher == null) {
             mWatcher = new NetWatcher(mContext);
         }
@@ -601,7 +599,6 @@ public class SuperPlayerView extends RelativeLayout
     }
 
     private void onSwitchFloatMode(SuperPlayerDef.PlayerMode playerMode) {
-        Log.i(TAG, "requestPlayMode Float :" + TUIBuild.getManufacturer());
         SuperPlayerGlobalConfig prefs = SuperPlayerGlobalConfig.getInstance();
         if (!prefs.enableFloatWindow) {
             return;
@@ -651,7 +648,6 @@ public class SuperPlayerView extends RelativeLayout
             mSuperPlayer.setPlayerView(videoView);
             mSuperPlayer.resume();
         }
-        LogReport.getInstance().uploadLogs(LogReport.ELK_ACTION_FLOATMOE, 0, 0);
         mSuperPlayer.switchPlayMode(playerMode);
     }
 
@@ -1144,7 +1140,7 @@ public class SuperPlayerView extends RelativeLayout
 
         @Override
         public void onPlayStop() {
-            if (mCurrentSuperPlayerModel != null && mCurrentSuperPlayerModel.dynamicWaterConfig != null) {
+            if (mCurrentSuperPlayerModel != null/* && mCurrentSuperPlayerModel.dynamicWaterConfig != null*/) {
                 mDynamicWatermarkView.hide();
             }
             if (mSuperPlayerModelList.size() >= 1 && mIsPlayInit && mIsLoopPlayList) {
@@ -1191,6 +1187,10 @@ public class SuperPlayerView extends RelativeLayout
                 if (mWatcher != null) {
                     mWatcher.stop();
                 }
+            } else {
+                mWindowPlayer.updateVipInfo(position);
+                mFullScreenPlayer.updateVipInfo(position);
+                mFloatPlayer.updateVipInfo(position);
             }
         }
 
@@ -1272,7 +1272,17 @@ public class SuperPlayerView extends RelativeLayout
             super.onRcvSubTitleTrackInformation(infoList);
             mFullScreenPlayer.setVodSubtitlesViewPositionAndData(infoList);
         }
-    };
+
+        @Override
+        public void onRcvWaterMark(String text, long duration) {
+            if (!TextUtils.isEmpty(text)) {
+                DynamicWaterConfig dynamicWaterConfig = new DynamicWaterConfig(text, 30, Color.parseColor("#30FFFFFF"));
+                dynamicWaterConfig.durationInSecond = duration;
+                dynamicWaterConfig.setShowType(DynamicWaterConfig.GHOST_RUNNING);
+                setDynamicWatermarkConfig(dynamicWaterConfig);
+            }
+        }
+    }
 
     private void showToast(String message) {
         Toast.makeText(mContext, message, Toast.LENGTH_SHORT).show();

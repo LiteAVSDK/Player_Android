@@ -10,10 +10,10 @@ import android.view.View;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 
-import com.tencent.liteav.demo.common.utils.IntentUtils;
 import com.tencent.liteav.demo.player.R;
 import com.tencent.liteav.demo.player.cache.VideoDownloadListView;
 import com.tencent.liteav.demo.player.expand.model.SuperPlayerConstants;
+import com.tencent.liteav.demo.superplayer.helper.IntentUtils;
 import com.tencent.liteav.demo.vodcommon.entity.VideoModel;
 import com.tencent.liteav.demo.superplayer.model.download.VideoDownloadCenter;
 import com.tencent.rtmp.downloader.TXVodDownloadDataSource;

@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <declare-styleable name="VideoSeekBar">
+        <attr name="vsb_progress_background_color" format="color"/>
+        <attr name="vsb_progress_color" format="color"/>
+        <attr name="vsb_progress_bar_color" format="color"/>
+        <attr name="vsb_progress" format="float"/>
+        <attr name="vsb_bar_progress" format="float"/>
+        <attr name="vsb_drag_bar_reached_color" format="color"/>
+        <attr name="vsb_progress_height" format="dimension"/>
+        <attr name="vsb_progress_drag_height" format="dimension"/>
+        <attr name="vsb_drag_bar" format="reference"/>
+        <!-- is need drag bar show on normal progress -->
+        <attr name="vsb_drag_bar_show_on_normal" format="boolean"/>
+    </declare-styleable>
+</resources>

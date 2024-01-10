@@ -15,4 +15,12 @@
         <attr name="psb_progressHeight" format="dimension" />
     </declare-styleable>
 
+    <style name="DialogFragment" parent="@android:style/Theme.Holo.Dialog">
+        <item name="android:windowIsFloating">false</item>
+        <item name="android:windowNoTitle">true</item>
+        <item name="android:windowCloseOnTouchOutside">true</item>
+        <item name="android:windowBackground">@color/app_dialog_bg</item>
+        <item name="android:windowSoftInputMode">adjustResize</item>
+    </style>
+
 </resources>

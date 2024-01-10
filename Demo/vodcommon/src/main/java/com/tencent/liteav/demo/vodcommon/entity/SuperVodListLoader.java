@@ -172,7 +172,7 @@ public class SuperVodListLoader {
         getVideoListInfo(cacheModels, true, listener);
     }
 
-    public void getVideoListInfo(final ArrayList<VideoModel> videoModels, final boolean isCacheModel,
+    public void getVideoListInfo(final List<VideoModel> videoModels, final boolean isCacheModel,
                                  final OnVodListLoadListener listener) {
         mHandler.post(new Runnable() {
             @Override

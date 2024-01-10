@@ -11,7 +11,7 @@
 |  ├─ app                   // 程序入口界面
 |  ├─ superplayerkit        // 播放器组件
 |  ├─ superplayerdemo       // 播放器组件 Demo
-|  ├─ common                // common 工具类
+|  ├─ tuishortvideo         // 短视频组件，接入文档：https://cloud.tencent.com/document/product/881/96685
 |  ├─ feedvideo             // feed 视频流组件
 |  ├─ shortvideo            // 短视频组件
 |  ├─ vodcommon             // 点播 common 工具类

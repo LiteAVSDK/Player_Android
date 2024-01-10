@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.app.ActivityManager;
 import android.app.AlertDialog;
 import android.content.ComponentName;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.AsyncTask;
@@ -21,10 +22,10 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.blankj.utilcode.util.UriUtils;
-import com.tencent.liteav.demo.common.utils.IntentUtils;
 import com.tencent.liteav.demo.common.widget.expandableadapter.BaseExpandableRecyclerViewAdapter;
 import com.tencent.liteav.demo.player.demo.FeedActivity;
 import com.tencent.liteav.demo.player.demo.SuperPlayerActivity;
+import com.tencent.liteav.demo.player.demo.TUIShortVideoActivity;
 import com.tencent.liteav.demo.player.demo.VodPlayerActivity;
 import com.tencent.liteav.demo.player.demo.shortvideo.view.ShortVideoActivity;
 import com.tencent.rtmp.TXLiveBase;
@@ -34,6 +35,8 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.InputStream;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.zip.ZipEntry;
@@ -75,9 +78,7 @@ public class MainActivity extends Activity {
                             Intent intent = new Intent(Intent.ACTION_SEND);
                             intent.setType("application/octet-stream");
                             intent.putExtra(Intent.EXTRA_STREAM, UriUtils.file2Uri(logFile));
-                            IntentUtils.safeStartActivity(
-                                    MainActivity.this,
-                                    Intent.createChooser(intent, getString(R.string.app_title_share_log)));
+                            startActivity(Intent.createChooser(intent, getString(R.string.app_title_share_log)));
                         }
                     }
                 });
@@ -111,13 +112,14 @@ public class MainActivity extends Activity {
             }
         });
         mRvList.setAdapter(mAdapter);
+        preRequestShortVideosIfNeed();
     }
 
     public void startItemActivity(ChildBean childItem) {
         Intent intent = new Intent(this, childItem.getTargetClass());
         intent.putExtra("TITLE", childItem.mName);
         intent.putExtra("TYPE", childItem.mType);
-        IntentUtils.safeStartActivity(this, intent);
+        startActivity(intent);
     }
 
     @Override
@@ -146,10 +148,14 @@ public class MainActivity extends Activity {
 
         // Initialize the player.
         List<ChildBean> playerChildList = new ArrayList<>();
-        playerChildList.add(new ChildBean(getString(R.string.app_item_super_player), R.drawable.play, 3, SuperPlayerActivity.class));
-        playerChildList.add(new ChildBean(getString(R.string.app_vod_player), R.drawable.play,
-                3, VodPlayerActivity.class));
-        playerChildList.add(new ChildBean(getString(R.string.app_item_shortvideo_player), R.drawable.play, 3, ShortVideoActivity.class));
+        playerChildList.add(new ChildBean(getString(R.string.app_item_super_player), R.drawable.play, 3,
+                SuperPlayerActivity.class));
+        playerChildList.add(new ChildBean(getString(R.string.app_vod_player), R.drawable.play, 3,
+                VodPlayerActivity.class));
+        playerChildList.add(new ChildBean(getString(R.string.app_item_shortvideo_player), R.drawable.play, 3,
+                ShortVideoActivity.class));
+        playerChildList.add(new ChildBean(getString(R.string.app_item_tui_shortvideo_player), R.drawable.play, 3,
+                        TUIShortVideoActivity.class));
         playerChildList.add(new ChildBean(getString(R.string.app_feed_player), R.drawable.play, 3, FeedActivity.class));
         if (playerChildList.size() != 0) {
             GroupBean playerGroupBean = new GroupBean(getString(R.string.app_item_player), R.drawable.composite,
@@ -448,5 +454,20 @@ public class MainActivity extends Activity {
     protected void onResume() {
         super.onResume();
         checkIsHaveBackContext();
+    }
+
+    private void preRequestShortVideosIfNeed() {
+        try {
+            Class<?> shortVideoModelClass = Class.forName("com.tencent.liteav.demo.player.demo.tuishortvideo."
+                    + "data.ShortVideoModel");
+            Method getInstanceMethod = shortVideoModelClass.getMethod("getInstance", Context.class);
+            Method preloadMethod = shortVideoModelClass.getMethod("preloadVideosIfNeed");
+            Object shortVideoModelObj = getInstanceMethod.invoke(null, this);
+            preloadMethod.invoke(shortVideoModelObj);
+        } catch (ClassNotFoundException | NoSuchMethodException
+                | InvocationTargetException | IllegalAccessException e) {
+            Log.e(TAG, "preRequest shortVideo sources failed:", e);
+            e.printStackTrace();
+        }
     }
 }

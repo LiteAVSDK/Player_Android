@@ -1,5 +1,6 @@
 package com.tencent.liteav.demo.player.demo;
 
+import android.Manifest;
 import android.app.Activity;
 import android.app.Application;
 import android.app.Service;
@@ -28,8 +29,8 @@ import android.widget.Toast;
 import com.blankj.utilcode.constant.PermissionConstants;
 import com.blankj.utilcode.util.PermissionUtils;
 
-import com.tencent.liteav.demo.common.utils.IntentUtils;
 import com.tencent.liteav.demo.player.R;
+import com.tencent.liteav.demo.superplayer.helper.IntentUtils;
 import com.tencent.liteav.demo.superplayer.model.entity.VideoQuality;
 import com.tencent.liteav.demo.superplayer.model.utils.VideoQualityUtils;
 import com.tencent.liteav.demo.superplayer.ui.view.VodResolutionView;
@@ -118,10 +119,13 @@ public class VodPlayerActivity extends Activity implements ITXVodPlayListener,
                 finish();
             }
         });
-        checkPublishPermission();
+
         registerForContextMenu(findViewById(R.id.btnPlay));
         getWindow().addFlags(WindowManager.LayoutParams.
                 FLAG_KEEP_SCREEN_ON);
+
+        mPhoneListener = new TXPhoneStateListener(this, mVodPlayer);
+        checkPublishPermission();
     }
 
     /**
@@ -169,15 +173,16 @@ public class VodPlayerActivity extends Activity implements ITXVodPlayListener,
     }
 
     private boolean checkPublishPermission() {
-        PermissionUtils.permission(PermissionConstants.CAMERA, PermissionConstants.STORAGE).callback(new PermissionUtils.FullCallback() {
+        PermissionUtils.permission(PermissionConstants.CAMERA, PermissionConstants.STORAGE, Manifest.permission.READ_PHONE_STATE).callback(new PermissionUtils.FullCallback() {
             @Override
             public void onGranted(List<String> permissionsGranted) {
-
+                if (permissionsGranted.contains(Manifest.permission.READ_PHONE_STATE)) {
+                    mPhoneListener.startListen();
+                }
             }
 
             @Override
             public void onDenied(List<String> permissionsDeniedForever, List<String> permissionsDenied) {
-
             }
         }).request();
         return true;
@@ -201,8 +206,6 @@ public class VodPlayerActivity extends Activity implements ITXVodPlayListener,
         }
 
 
-        mPhoneListener = new TXPhoneStateListener(this, mVodPlayer);
-        mPhoneListener.startListen();
 
         mPlayerView = (TXCloudVideoView) findViewById(R.id.video_view);
         mPlayerView.showLog(false);
@@ -761,6 +764,7 @@ public class VodPlayerActivity extends Activity implements ITXVodPlayListener,
         WeakReference<TXVodPlayer> mPlayer;
         Context                    mContext;
         int                        activityCount;
+        private boolean hasListened = false;
 
         public TXPhoneStateListener(Context context, TXVodPlayer player) {
             mPlayer = new WeakReference<>(player);
@@ -770,9 +774,13 @@ public class VodPlayerActivity extends Activity implements ITXVodPlayListener,
         public void startListen() {
             TelephonyManager tm = (TelephonyManager) mContext.getSystemService(Service.TELEPHONY_SERVICE);
             tm.listen(this, PhoneStateListener.LISTEN_CALL_STATE);
+            hasListened = true;
         }
 
         public void stopListen() {
+            if(!hasListened){
+                return;
+            }
             TelephonyManager tm = (TelephonyManager) mContext.getSystemService(Service.TELEPHONY_SERVICE);
             tm.listen(this, PhoneStateListener.LISTEN_NONE);
         }

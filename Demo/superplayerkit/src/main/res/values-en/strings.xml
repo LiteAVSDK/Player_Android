@@ -41,4 +41,18 @@
     <string name="superplayer_weak_net_tip">Detected that your network is poor, it is recommended to switch to a lower video quality</string>
     <string name="superplayer_switch_high_quality_failed">Switching to high video quality failed, please try again later</string>
     <string name="superplayer_switching_high_quality">Switching to high video quality, please wait&#8230;</string>
+
+
+    <string name="common_toast_camera_permission_failed">Camera permission failed.</string>
+    <string name="common_toast_qr_code_error">The QR code is error.</string>
+    <string name="btn_forbit">Forbit</string>
+    <string name="permission_always_allow">Always Allow</string>
+    <string name="permission_introduction_title">Description of storage permission application</string>
+    <string name="permission_introduction_positive">allow authorization</string>
+    <string name="permission_introduction_write">Used to store SDK configuration files, log files and media files, read local media files</string>
+    <string name="permission_introduction_camera">Used to capture camera images, take photos and record videos</string>
+    <string name="permission_introduction_audio">Used to collect user voice and record voice</string>
+    <string name="permission_introduction_write_title">storage permission</string>
+    <string name="permission_introduction_camera_title">camera permission</string>
+    <string name="permission_introduction_audio_title">Microphone permissions</string>
 </resources>

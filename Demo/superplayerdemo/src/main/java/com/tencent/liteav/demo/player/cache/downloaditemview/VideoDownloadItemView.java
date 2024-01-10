@@ -82,6 +82,10 @@ public class VideoDownloadItemView extends RelativeLayout implements VideoDownlo
      */
     public void setVideoInfo(TXVodDownloadMediaInfo mediaInfo) {
         this.mMediaInfo = mediaInfo;
+
+        notifyUnRegisterCacheListener();
+        notifyRegisterCacheListener();
+
         final VideoModel videoModel = new VideoModel();
         videoModel.isEnableDownload = true;
         if (null != mediaInfo.getDataSource()) {

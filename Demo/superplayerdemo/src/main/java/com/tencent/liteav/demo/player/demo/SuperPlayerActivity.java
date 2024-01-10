@@ -38,10 +38,10 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
-import com.tencent.liteav.demo.common.utils.IntentUtils;
 import com.tencent.liteav.demo.player.R;
 import com.tencent.liteav.demo.player.expand.model.SuperPlayerConstants;
 import com.tencent.liteav.demo.player.expand.model.VideoDataMgr;
+import com.tencent.liteav.demo.superplayer.helper.IntentUtils;
 import com.tencent.liteav.demo.superplayer.helper.PictureInPictureHelper;
 import com.tencent.liteav.demo.vodcommon.entity.ConfigBean;
 import com.tencent.liteav.demo.vodcommon.entity.GetVideoInfoListListener;
@@ -521,6 +521,20 @@ public class SuperPlayerActivity extends FragmentActivity implements View.OnClic
                                     + "Rpb24iOjEyfX0sInVybEFjY2Vzc0luZm8iOnsiZG9tYWluIjoiMTUwMDAwNTgzMC52b2QyLm15cWNs"
                                  + "b3VkLmNvbSIsInNjaGVtZSI6IkhUVFBTIn19.q34pq7Bl0ryKDwUHGyzfXKP-CDI8vrm0k_y-IaxgF_U";
                             videoListModel.addVideoModel(encryptModel);
+
+                            encryptModel = new VideoModel();
+                            encryptModel.appid = 1500006438;
+                            encryptModel.title = getString(R.string.super_play_ghost_video);
+                            encryptModel.fileid = "387702307847129127";
+                            encryptModel.pSign = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhcHBJZCI6MTUwMDA"
+                                                 + "wNjQzOCwiZmlsZUlkIjoiMzg3NzAyMzA3ODQ3MTI5MTI3IiwiY29udG"
+                                                 + "VudEluZm8iOnsiYXVkaW9WaWRlb1R5cGUiOiJSYXdBZGFwdGl2ZSIsIn"
+                                                 + "Jhd0FkYXB0aXZlRGVmaW5pdGlvbiI6MTB9LCJjdXJyZW50VGltZVN0YW1w"
+                                                 + "IjoxNjg2ODgzMzYwLCJnaG9zdFdhdGVybWFya0luZm8iOnsidGV4dCI6I"
+                                                 + "mdob3N0IGlzIHdhdGNoaW5nIn19.0G2o4P5xVZ7zF"
+                                                 + "lFUgBLntfX03iGxK9ntD_AONClUUno";
+                            videoListModel.addVideoModel(encryptModel);
+
                             for (VideoModel videoModel : videoListModel.videoModelList) {
                                 onGetVodInfoOnebyOneOnSuccess(videoModel);
                             }

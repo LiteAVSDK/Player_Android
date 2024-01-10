@@ -150,6 +150,12 @@ public interface Player {
     void updateKeyFrameDescInfo(List<PlayKeyFrameDescInfo> list);
 
     /**
+     * Update VIPTrial Information
+     * 更新VIP试看信息
+     */
+    void updateVipInfo(int position);
+
+    /**
      * Whether to display video quality, default display
      *
      * 是否显示清晰度，默认显示

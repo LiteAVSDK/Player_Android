@@ -102,4 +102,5 @@
     <string name="super_player_vod_reset">Reset</string>
     <string name="super_player_vod_hard_first">Prefer hardware decoding (default)</string>
     <string name="super_player_vod_soft_first">Prefer software decoding</string>
+    <string name="super_play_ghost_video">Ghost watermarked video</string>
 </resources>

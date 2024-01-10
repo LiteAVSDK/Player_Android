@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
+        android:id="@+id/spl_tui_refresh"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <com.tencent.qcloud.tuiplayer.shortvideo.ui.view.TUIShortVideoView
+            android:id="@+id/super_short_video_view_play_fragment"
+            android:layout_height="match_parent"
+            android:layout_width="match_parent"
+            />
+    </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
+
+    <ImageButton
+        android:id="@+id/ib_back_play"
+        android:layout_width="54dp"
+        android:layout_height="54dp"
+        android:background="@android:color/transparent"
+        android:paddingLeft="12dp"
+        android:paddingTop="17dp"
+        android:paddingRight="17dp"
+        android:paddingBottom="17dp"
+        android:src="@drawable/tuiplayer_shortvideo_ic_back" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:paddingTop="14dp"
+        android:text="@string/short_video_play_back"
+        android:textColor="@color/superplayer_white"
+        android:textSize="18sp" />
+</RelativeLayout>

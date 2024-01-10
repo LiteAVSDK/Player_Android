@@ -98,4 +98,8 @@ public abstract class SuperPlayerObserver {
     public void onRcvSubTitleTrackInformation(List<TXTrackInfo> infoList) {
 
     }
+
+    public void onRcvWaterMark(String text, long duration) {
+
+    }
 }

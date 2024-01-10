@@ -7,8 +7,8 @@ import android.text.TextUtils;
 import android.util.Log;
 
 import com.google.gson.Gson;
-import com.tencent.liteav.demo.common.utils.IntentUtils;
 import com.tencent.liteav.demo.player.demo.SuperPlayerActivity;
+import com.tencent.liteav.demo.superplayer.helper.IntentUtils;
 
 import java.util.Map;
 

@@ -135,18 +135,18 @@ public class PictureInPictureHelper implements ServiceConnection {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
 
             final ArrayList<RemoteAction> actions = new ArrayList<>();
-
+            int defaultFlag = Build.VERSION.SDK_INT >= Build.VERSION_CODES.S ? PendingIntent.FLAG_IMMUTABLE : 0;
             final PendingIntent intentNext = PendingIntent.getBroadcast(mContext, PIP_REQUEST_TYPE_LAST,
-                    new Intent(PIP_ACTION_MEDIA_CONTROL).putExtra(PIP_EXTRA_CONTROL_TYPE, PIP_CONTROL_TYPE_NEXT), 0);
+                    new Intent(PIP_ACTION_MEDIA_CONTROL).putExtra(PIP_EXTRA_CONTROL_TYPE, PIP_CONTROL_TYPE_NEXT), defaultFlag);
             actions.add(new RemoteAction(Icon.createWithResource(mContext, R.drawable.superplayer_seek_left),
                     "", "", intentNext));
 
             final PendingIntent intentPause = PendingIntent.getBroadcast(mContext, requestCode,
-                    new Intent(PIP_ACTION_MEDIA_CONTROL).putExtra(PIP_EXTRA_CONTROL_TYPE, controlType), 0);
+                    new Intent(PIP_ACTION_MEDIA_CONTROL).putExtra(PIP_EXTRA_CONTROL_TYPE, controlType),  defaultFlag);
             actions.add(new RemoteAction(Icon.createWithResource(mContext, iconId), title, title, intentPause));
 
             final PendingIntent intentLast = PendingIntent.getBroadcast(mContext, PIP_REQUEST_TYPE_NEXT,
-                    new Intent(PIP_ACTION_MEDIA_CONTROL).putExtra(PIP_EXTRA_CONTROL_TYPE, PIP_CONTROL_TYPE_LAST), 0);
+                    new Intent(PIP_ACTION_MEDIA_CONTROL).putExtra(PIP_EXTRA_CONTROL_TYPE, PIP_CONTROL_TYPE_LAST), defaultFlag);
             actions.add(new RemoteAction(Icon.createWithResource(mContext, R.drawable.superplayer_seek_right),
                     "", "", intentLast));
 

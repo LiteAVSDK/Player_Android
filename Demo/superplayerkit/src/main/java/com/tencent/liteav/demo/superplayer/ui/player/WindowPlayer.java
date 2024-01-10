@@ -545,6 +545,15 @@ public class WindowPlayer extends AbsPlayer implements View.OnClickListener,
         }
     }
 
+
+    @Override
+    public void updateVipInfo(int position) {
+        super.updateVipInfo(position);
+        if (mPlayType == SuperPlayerDef.PlayerType.VOD) {
+            mVipWatchView.setCurrentTime(position);
+        }
+    }
+
     /**
      * Set background
      *

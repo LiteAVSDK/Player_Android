@@ -6,6 +6,7 @@ import android.content.Context;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.StrictMode;
+import android.util.Log;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -13,6 +14,7 @@ import androidx.multidex.MultiDexApplication;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.List;
@@ -42,6 +44,7 @@ public class DemoApplication extends MultiDexApplication implements Application.
         }
         closeAndroidPDialog();
         initActivityLife();
+        preRequestShortVideosIfNeed();
     }
 
     public static DemoApplication getApplication() {
@@ -128,5 +131,19 @@ public class DemoApplication extends MultiDexApplication implements Application.
 
     public boolean isUsActivity(int taskId) {
         return mAppTaskIds.contains(taskId);
+    }
+
+    private void preRequestShortVideosIfNeed() {
+        try {
+            Class<?> shortVideoModelClass = Class.forName("com.tencent.liteav.demo.player.demo.tuishortvideo."
+                    + "data.ShortVideoModel");
+            Method getInstanceMethod = shortVideoModelClass.getMethod("getInstance", Context.class);
+            Method preloadMethod = shortVideoModelClass.getMethod("preloadVideosIfNeed");
+            Object shortVideoModelObj = getInstanceMethod.invoke(null, this);
+            preloadMethod.invoke(shortVideoModelObj);
+        } catch (ClassNotFoundException | NoSuchMethodException | InvocationTargetException | IllegalAccessException e) {
+            Log.e(TAG, "preRequest shortVideo sources failed:", e);
+            e.printStackTrace();
+        }
     }
 }

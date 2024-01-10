@@ -5,6 +5,8 @@ import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.graphics.Point;
+import android.os.Handler;
+import android.os.Looper;
 import android.text.TextUtils;
 import android.util.AttributeSet;
 import android.view.Display;
@@ -26,7 +28,6 @@ import com.tencent.liteav.demo.superplayer.SuperPlayerModel;
 import com.tencent.liteav.demo.superplayer.model.entity.PlayImageSpriteInfo;
 import com.tencent.liteav.demo.superplayer.model.entity.PlayKeyFrameDescInfo;
 import com.tencent.liteav.demo.superplayer.model.entity.VideoQuality;
-import com.tencent.liteav.demo.superplayer.model.net.LogReport;
 import com.tencent.liteav.demo.superplayer.model.utils.VideoGestureDetector;
 import com.tencent.liteav.demo.superplayer.model.utils.VideoQualityUtils;
 import com.tencent.liteav.demo.superplayer.ui.view.PointSeekBar;
@@ -187,6 +188,7 @@ public class FullScreenPlayer extends AbsPlayer implements View.OnClickListener,
      */
     private void initialize(Context context) {
         initView(context);
+        // called in AsyncLayoutInflater，so use Main Looper
         mGestureDetector = new GestureDetector(getContext(),
                 new GestureDetector.SimpleOnGestureListener() {
             @Override
@@ -251,7 +253,7 @@ public class FullScreenPlayer extends AbsPlayer implements View.OnClickListener,
                     }
                 }
             }
-    });
+    }, new Handler(Looper.getMainLooper()));
 
 
         mGestureDetector.setIsLongpressEnabled(true);
@@ -756,8 +758,6 @@ public class FullScreenPlayer extends AbsPlayer implements View.OnClickListener,
         if (mPlayType == SuperPlayerDef.PlayerType.VOD) {
             mTXImageSprite = new TXImageSprite(getContext());
             if (info != null) {
-                // Sprite ELK report
-                LogReport.getInstance().uploadLogs(LogReport.ELK_ACTION_IMAGE_SPRITE, 0, 0);
                 mTXImageSprite.setVTTUrlAndImageUrls(info.webVttUrl, info.imageUrls);
             } else {
                 mTXImageSprite.setVTTUrlAndImageUrls(null, null);
@@ -780,6 +780,14 @@ public class FullScreenPlayer extends AbsPlayer implements View.OnClickListener,
     @Override
     public void updateKeyFrameDescInfo(List<PlayKeyFrameDescInfo> list) {
         mTXPlayKeyFrameDescInfoList = list;
+    }
+
+    @Override
+    public void updateVipInfo(int position) {
+        super.updateVipInfo(position);
+        if (mPlayType == SuperPlayerDef.PlayerType.VOD) {
+            mVipWatchView.setCurrentTime(position);
+        }
     }
 
     @Override
@@ -1103,8 +1111,6 @@ public class FullScreenPlayer extends AbsPlayer implements View.OnClickListener,
             postDelayed(mHideViewRunnable, 7000);
         }
         if (mTXPlayKeyFrameDescInfoList != null) {
-            // ELK click report
-            LogReport.getInstance().uploadLogs(LogReport.ELK_ACTION_PLAYER_POINT, 0, 0);
             mSelectedPos = pos;
             view.post(new Runnable() {
                 @Override

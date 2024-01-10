@@ -11,7 +11,6 @@ import android.os.Handler;
 import android.text.TextUtils;
 import android.util.Log;
 
-import com.tencent.liteav.demo.superplayer.R;
 import com.tencent.liteav.demo.superplayer.SubtitleSourceModel;
 import com.tencent.liteav.demo.superplayer.SuperPlayerCode;
 import com.tencent.liteav.demo.superplayer.SuperPlayerDef;
@@ -21,7 +20,6 @@ import com.tencent.liteav.demo.superplayer.model.entity.PlayImageSpriteInfo;
 import com.tencent.liteav.demo.superplayer.model.entity.PlayKeyFrameDescInfo;
 import com.tencent.liteav.demo.superplayer.model.entity.ResolutionName;
 import com.tencent.liteav.demo.superplayer.model.entity.VideoQuality;
-import com.tencent.liteav.demo.superplayer.model.net.LogReport;
 import com.tencent.liteav.demo.superplayer.model.protocol.IPlayInfoProtocol;
 import com.tencent.liteav.demo.superplayer.model.protocol.IPlayInfoRequestCallback;
 import com.tencent.liteav.demo.superplayer.model.protocol.PlayInfoParams;
@@ -78,8 +76,6 @@ public class SuperPlayerImpl implements SuperPlayer, ITXVodPlayListener, ITXLive
     // Record the playback time when switching to hardware decoding
     private int                        mSeekPos;
     private float                      mStartPos;
-    private long                       mReportLiveStartTime = -1; // Live start time, used to report usage time
-    private long                       mReportVodStartTime  = -1;  // On-demand start time, used to report usage time
     private long                       mMaxLiveProgressTime;      // Maximum viewing time for live streaming
     private boolean                    mIsAutoPlay          = true;
     private boolean                    mIsPlayWithFileId;      // Whether it is Tencent Cloud fileId playback
@@ -249,6 +245,10 @@ public class SuperPlayerImpl implements SuperPlayer, ITXVodPlayListener, ITXLive
                     }
                 }
                 updateVideoImageSpriteAndKeyFrame(playImageSpriteInfo,keyFrameDescInfoList);
+
+                String waterMarkText = param.getString(TXVodConstants.EVT_KEY_WATER_MARK_TEXT);
+                long videoDuration = param.getInt(TXVodConstants.EVT_PLAY_DURATION);
+                onRcvWaterMark(waterMarkText, videoDuration);
                 break;
             case TXLiveConstants.PLAY_EVT_VOD_PLAY_PREPARED:
                 onVodPlayPrepared();
@@ -458,9 +458,6 @@ public class SuperPlayerImpl implements SuperPlayer, ITXVodPlayListener, ITXLive
                 if (tmpProtocol == null) {
                     return;
                 }
-                if (mCurrentModel != null && mCurrentModel.playAction != PLAY_ACTION_PRELOAD) {
-                    mReportVodStartTime = System.currentTimeMillis();
-                }
                 mVodPlayer.setPlayerView(mVideoView);
                 playModeVideo(tmpProtocol);
                 updatePlayerType(SuperPlayerDef.PlayerType.VOD);
@@ -504,12 +501,10 @@ public class SuperPlayerImpl implements SuperPlayer, ITXVodPlayListener, ITXLive
         }
         // Live player: normal RTMP stream playback and webrtc
         if (isRTMPPlay(videoURL) || isWebrtcPlay(videoURL)) {
-            mReportLiveStartTime = System.currentTimeMillis();
             mLivePlayer.setPlayerView(mVideoView);
             playLiveURL(videoURL, TXLivePlayer.PLAY_TYPE_LIVE_RTMP);
         } else if (isFLVPlay(videoURL)) {
             // Live player: live FLV stream playback
-            mReportLiveStartTime = System.currentTimeMillis();
             mLivePlayer.setPlayerView(mVideoView);
             playTimeShiftLiveURL(model.appId, videoURL);
             if (model.multiURLs != null && !model.multiURLs.isEmpty()) {
@@ -517,7 +512,6 @@ public class SuperPlayerImpl implements SuperPlayer, ITXVodPlayListener, ITXLive
             }
         } else {
             // On-demand player: play on-demand files
-            mReportVodStartTime = System.currentTimeMillis();
             mVodPlayer.setPlayerView(mVideoView);
             playVodURL(videoURL);
         }
@@ -535,9 +529,6 @@ public class SuperPlayerImpl implements SuperPlayer, ITXVodPlayListener, ITXLive
     private void playWithFileId(SuperPlayerModel model) {
         if (model == null || model.videoId == null) {
             return;
-        }
-        if (mCurrentModel != null && mCurrentModel.playAction != PLAY_ACTION_PRELOAD) {
-            mReportVodStartTime = System.currentTimeMillis();
         }
         if (mVodPlayer != null) {
             mVodPlayer.setPlayerView(mVideoView);
@@ -758,26 +749,6 @@ public class SuperPlayerImpl implements SuperPlayer, ITXVodPlayListener, ITXLive
     }
 
     /**
-     * Report playback time
-     *
-     * 上报播放时长
-     */
-    private void reportPlayTime() {
-        if (mReportLiveStartTime != -1) {
-            long reportEndTime = System.currentTimeMillis();
-            long diff = (reportEndTime - mReportLiveStartTime) / 1000;
-            LogReport.getInstance().uploadLogs(LogReport.ELK_ACTION_LIVE_TIME, diff, 0);
-            mReportLiveStartTime = -1;
-        }
-        if (mReportVodStartTime != -1) {
-            long reportEndTime = System.currentTimeMillis();
-            long diff = (reportEndTime - mReportVodStartTime) / 1000;
-            LogReport.getInstance().uploadLogs(LogReport.ELK_ACTION_VOD_TIME, diff, mIsPlayWithFileId ? 1 : 0);
-            mReportVodStartTime = -1;
-        }
-    }
-
-    /**
      * Update playback progress
      *
      * 更新播放进度
@@ -863,6 +834,12 @@ public class SuperPlayerImpl implements SuperPlayer, ITXVodPlayListener, ITXLive
     private void onError(int code, String message) {
         if (mObserver != null) {
             mObserver.onError(code, message);
+        }
+    }
+
+    private void onRcvWaterMark(String text, long duration) {
+        if (mObserver != null) {
+            mObserver.onRcvWaterMark(text, duration);
         }
     }
 
@@ -1014,7 +991,6 @@ public class SuperPlayerImpl implements SuperPlayer, ITXVodPlayListener, ITXLive
             mLivePlayer.stopPlay(true);
             mVideoView.removeVideoView();
         }
-        reportPlayTime();
     }
 
     @Override
@@ -1066,12 +1042,6 @@ public class SuperPlayerImpl implements SuperPlayer, ITXVodPlayListener, ITXLive
             mLivePlayer.enableHardwareDecode(enable);
             playWithModel(mCurrentModel);
         }
-        // Hardware acceleration report
-        if (enable) {
-            LogReport.getInstance().uploadLogs(LogReport.ELK_ACTION_HW_DECODE, 0, 0);
-        } else {
-            LogReport.getInstance().uploadLogs(LogReport.ELK_ACTION_SOFT_DECODE, 0, 0);
-        }
     }
 
     @Override
@@ -1095,7 +1065,6 @@ public class SuperPlayerImpl implements SuperPlayer, ITXVodPlayListener, ITXLive
             }
         } else {
             updatePlayerType(SuperPlayerDef.PlayerType.LIVE_SHIFT);
-            LogReport.getInstance().uploadLogs(LogReport.ELK_ACTION_TIMESHIFT, 0, 0);
         }
         if (mObserver != null) {
             mObserver.onSeek(position);
@@ -1120,8 +1089,6 @@ public class SuperPlayerImpl implements SuperPlayer, ITXVodPlayListener, ITXLive
             mCurrentSpeedRate = speedLevel;
             mIsContinuePlayBackSeek = false;
         }
-        // Speed change report
-        LogReport.getInstance().uploadLogs(LogReport.ELK_ACTION_CHANGE_SPEED, 0, 0);
 
     }
 
@@ -1129,9 +1096,6 @@ public class SuperPlayerImpl implements SuperPlayer, ITXVodPlayListener, ITXLive
     public void setMirror(boolean isMirror) {
         if (mCurrentPlayType == SuperPlayerDef.PlayerType.VOD) {
             mVodPlayer.setMirror(isMirror);
-        }
-        if (isMirror) {
-            LogReport.getInstance().uploadLogs(LogReport.ELK_ACTION_MIRROR, 0, 0);
         }
     }
 
@@ -1165,8 +1129,6 @@ public class SuperPlayerImpl implements SuperPlayer, ITXVodPlayListener, ITXLive
             }
             updateStreamStartStatus(success, SuperPlayerDef.PlayerType.LIVE, quality);
         }
-        // Resolution reporting
-        LogReport.getInstance().uploadLogs(LogReport.ELK_ACTION_CHANGE_RESOLUTION, 0, 0);
     }
 
     @Override
@@ -1219,6 +1181,7 @@ public class SuperPlayerImpl implements SuperPlayer, ITXVodPlayListener, ITXLive
     @Override
     public void onClickSoundTrackItem(TXTrackInfo clickInfo) {
         List<TXTrackInfo> soundTrackInfoList = mVodPlayer.getAudioTrackInfo();
+        mVodPlayer.setMute(clickInfo.trackIndex == -1);
         if (clickInfo.trackIndex == -1) {
             for (TXTrackInfo trackInfo : soundTrackInfoList) {
                 mVodPlayer.deselectTrack(trackInfo.trackIndex);

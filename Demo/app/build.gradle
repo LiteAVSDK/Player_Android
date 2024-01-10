@@ -9,7 +9,7 @@ android {
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
         versionCode 24
-        versionName "11.4.0.3153"
+        versionName "11.6.0.3501"
 
         multiDexEnabled true
         ndk {
@@ -18,13 +18,17 @@ android {
     }
 
     signingConfigs {
-        release {
+        debug {
+            storeFile file('debug.keystore')
+            storePassword "android"
+            keyAlias "androiddebugkey"
+            keyPassword "android"
         }
     }
 
     buildTypes {
         release {
-            signingConfig signingConfigs.release
+            signingConfig signingConfigs.debug
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
@@ -54,10 +58,10 @@ dependencies {
 
     implementation fileTree(dir: 'libs', include: ['*.jar'])
     implementation rootProject.ext.liteavSdk
-    implementation project(':deprecatedcommon')
     implementation project(':superplayerdemo')
     implementation project(':feedvideo')
     implementation project(':shortvideo')
+    implementation project(":tuishortvideo")
 
     implementation 'androidx.appcompat:appcompat:1.0.0'
     implementation 'androidx.recyclerview:recyclerview:1.0.0'

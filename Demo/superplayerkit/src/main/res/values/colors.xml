@@ -30,4 +30,8 @@
     <color name="superplayer_cache_quality_list_bg">#ED000000</color>
     <color name="white">#ffffff</color>
     <color name="black">#000000</color>
+
+    <color name="app_dialog_bg">#66000000</color>
+    <color name="ugckit_actionsheet_gray">#8F8F8F</color>
+    <color name="ugckit_btn_blue">#0F73CB</color>
 </resources>

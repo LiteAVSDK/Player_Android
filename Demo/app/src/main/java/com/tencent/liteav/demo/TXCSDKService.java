@@ -14,9 +14,6 @@ public class TXCSDKService {
     private static final String licenceUrl = "Please replace it with your licenseUrl";
     private static final String licenseKey = "Please replace it with your licenseKey";
 
-    private static final String XMAGIC_AUTH_KEY = "Please replace it with your licenseKey";
-    private static final String XMAGIC_AUTH_LICENCE_URL = "Please replace it with your licenseUrl";
-
     private TXCSDKService() {
     }
 

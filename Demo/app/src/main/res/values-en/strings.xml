@@ -42,6 +42,7 @@
 
     <string name="app_item_super_player">Superplayer</string>
     <string name="app_item_shortvideo_player">Short Video Player</string>
+    <string name="app_item_tui_shortvideo_player">Short video component playback (Premium)</string>
     <string name="app_feed_player">Feed stream play</string>
     <string name="app_item_player">Player</string>
 

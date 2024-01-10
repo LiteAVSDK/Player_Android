@@ -125,6 +125,10 @@ public abstract class AbsPlayer extends RelativeLayout implements Player {
 
     }
 
+    @Override
+    public void updateVipInfo(int position) {
+
+    }
 
     public void setVipWatchModel(VipWatchModel vipWatchModel) {
         if (mVipWatchView != null) {

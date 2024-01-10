@@ -25,7 +25,6 @@ android {
 
 dependencies {
     api fileTree(dir: 'libs', include: ['*.jar'])
-    api project(':deprecatedcommon')
     api('com.blankj:utilcode:1.30.7', {
         exclude group: 'com.google.code.gson', module: 'gson'
     })

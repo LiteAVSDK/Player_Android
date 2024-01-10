@@ -102,5 +102,5 @@
     <string name="super_player_vod_reset">重置</string>
     <string name="super_player_vod_hard_first">优先硬解(默认)</string>
     <string name="super_player_vod_soft_first">优先软解</string>
-
+    <string name="super_play_ghost_video">幽灵水印视频</string>
 </resources>

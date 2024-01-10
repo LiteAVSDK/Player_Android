@@ -53,6 +53,7 @@
     <string name="app_item_video_upload">视频上传</string>
     <string name="app_item_xiao_shi_pin">小视频</string>
     <string name="app_item_ugsv">短视频</string>
+    <string name="app_item_tui_shortvideo_player">短视频组件播放(高级版)</string>
 
     <string name="app_item_trtc">实时音视频 TRTC</string>
     <string name="app_title_trtc">腾讯云TRTC实时互动</string>

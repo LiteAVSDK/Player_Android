@@ -1,8 +1,0 @@
-<?xml version="1.0" encoding="utf-8"?>
-<resources>
-    <color name="ugckit_white">#FFFFFF</color>
-    <color name="ugckit_actionsheet_gray">#8F8F8F</color>
-    <color name="ugckit_black">#000000</color>
-    <color name="ugckit_btn_blue">#0F73CB</color>
-    <color name="app_dialog_bg">#66000000</color>
-</resources>

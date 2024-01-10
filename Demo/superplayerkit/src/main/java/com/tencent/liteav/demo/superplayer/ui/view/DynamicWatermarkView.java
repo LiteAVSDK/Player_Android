@@ -13,6 +13,7 @@ import android.text.Layout;
 import android.text.TextPaint;
 import android.text.TextUtils;
 import android.util.AttributeSet;
+import android.util.DisplayMetrics;
 import android.view.View;
 
 import com.tencent.liteav.demo.superplayer.model.entity.DynamicWaterConfig;
@@ -59,6 +60,13 @@ public class DynamicWatermarkView extends View {
     private static final int DEGREE_0      = 0;
         private static final int TIME_STEP     = 40;    // The drawing interval of the watermark
     private static final int MSG_TYPE_DRAW = 0;
+    private static final int MSG_TYPE_PERIOD_SHOW = 1;
+    private static final int MSG_TYPE_PERIOD_HIDE = 2;
+    private int screenWidth;
+    private int screenHeight;
+    private long showPeriodTime = 0;     //in millisecond
+    private long hidePeriodTime = 0;     //in millisecond
+
     private static final int BORDER_LEFT   = 0;
     private static final int BORDER_TOP    = 1;
     private static final int BORDER_RIGHT  = 2;
@@ -95,6 +103,10 @@ public class DynamicWatermarkView extends View {
         bgPaint.setStyle(Paint.Style.FILL);
         handlerThread.start();
         drawHandler = new Handler(handlerThread.getLooper(), new HandlerThreadCallback());
+
+        DisplayMetrics displayMetrics = getResources().getDisplayMetrics();
+        screenWidth = displayMetrics.widthPixels;
+        screenHeight = displayMetrics.heightPixels;
     }
 
 
@@ -139,11 +151,33 @@ public class DynamicWatermarkView extends View {
         @Override
         public boolean handleMessage(Message msg) {
             if (msg.what == MSG_TYPE_DRAW) {
+                processData();
+                drawHandler.sendEmptyMessageDelayed(MSG_TYPE_DRAW, TIME_STEP);
                 if (getVisibility() == VISIBLE && isDrawing) {
-                    processData();
                     postInvalidate();
-                    drawHandler.sendEmptyMessageDelayed(MSG_TYPE_DRAW, TIME_STEP);
                 }
+            } else if (msg.what == MSG_TYPE_PERIOD_HIDE) {
+                post(new Runnable() {
+                    @Override
+                    public void run() {
+                        setVisibility(INVISIBLE);
+                    }
+                });
+                drawHandler.removeMessages(MSG_TYPE_PERIOD_HIDE);
+                drawHandler.removeMessages(MSG_TYPE_PERIOD_SHOW);
+                drawHandler.sendEmptyMessageDelayed(MSG_TYPE_PERIOD_SHOW, hidePeriodTime);
+            }  else if (msg.what == MSG_TYPE_PERIOD_SHOW) {
+                watermarkCenterY = RandomUtils.getRandomNumber(50, screenHeight);
+                watermarkCenterX = RandomUtils.getRandomNumber(50, screenWidth);
+                post(new Runnable() {
+                    @Override
+                    public void run() {
+                        setVisibility(VISIBLE);
+                    }
+                });
+                drawHandler.removeMessages(MSG_TYPE_PERIOD_HIDE);
+                drawHandler.removeMessages(MSG_TYPE_PERIOD_SHOW);
+                drawHandler.sendEmptyMessageDelayed(MSG_TYPE_PERIOD_HIDE, showPeriodTime);
             }
             return true;
         }
@@ -157,10 +191,31 @@ public class DynamicWatermarkView extends View {
             }
             this.dynamicWaterConfig = dynamicWaterConfig;
             textPaint.setColor(this.dynamicWaterConfig.tipTextColor);
+            initGhostPeriodTime();
             calculateBgRectWH();
         } else {
             this.dynamicWaterConfig = null;
             hide();
+        }
+    }
+
+    private void initGhostPeriodTime() {
+        if (dynamicWaterConfig.getShowType() == DynamicWaterConfig.GHOST_RUNNING) {
+            if (dynamicWaterConfig.durationInSecond == 0) {
+                showPeriodTime = 5000;
+                hidePeriodTime = 5000;
+            } else {
+                long cycle;
+                if (dynamicWaterConfig.durationInSecond <= 1 * 60) {
+                    cycle = dynamicWaterConfig.durationInSecond / 2;
+                } else if (dynamicWaterConfig.durationInSecond <= 30 * 60) {
+                    cycle = dynamicWaterConfig.durationInSecond / 4;
+                } else  {
+                    cycle = 30 * 60 / 4;
+                }
+                showPeriodTime = 1000 * cycle / 4;
+                hidePeriodTime = 1000 * cycle * 3 / 4;;
+            }
         }
     }
 
@@ -192,6 +247,11 @@ public class DynamicWatermarkView extends View {
                 setVisibility(VISIBLE);
                 isDrawing = true;
                 drawHandler.sendEmptyMessage(MSG_TYPE_DRAW);
+            }
+            if (dynamicWaterConfig.getShowType() == DynamicWaterConfig.GHOST_RUNNING) {
+                drawHandler.removeMessages(MSG_TYPE_PERIOD_HIDE);
+                drawHandler.removeMessages(MSG_TYPE_PERIOD_SHOW);
+                drawHandler.sendEmptyMessageDelayed(MSG_TYPE_PERIOD_HIDE, showPeriodTime);
             }
         } else {
             hide();

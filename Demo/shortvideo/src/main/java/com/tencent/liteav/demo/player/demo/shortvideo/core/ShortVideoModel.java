@@ -56,7 +56,7 @@ public class ShortVideoModel {
         mSourceList.clear();
         VideoModel videoModel;
         if (ConfigBean.getInstance().isIsUseDash()) {
-            loadDashData();
+            mSourceList.addAll(loadDashData());
         } else {
             for (int i = 0; i < FILE_IDS.length; i++) {
                 videoModel = new VideoModel();
