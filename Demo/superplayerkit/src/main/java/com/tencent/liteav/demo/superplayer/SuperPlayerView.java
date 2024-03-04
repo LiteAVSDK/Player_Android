@@ -1148,6 +1148,9 @@ public class SuperPlayerView extends RelativeLayout
             } else {
                 mWindowPlayer.updatePlayState(SuperPlayerDef.PlayerState.END);
                 mFullScreenPlayer.updatePlayState(SuperPlayerDef.PlayerState.END);
+                // sync End-State to PIP
+                mPictureInPictureHelper.updatePictureInPictureActions(R.drawable.superplayer_ic_vod_play_normal, "",
+                        PictureInPictureHelper.PIP_CONTROL_TYPE_PLAY, PictureInPictureHelper.PIP_REQUEST_TYPE_PLAY);
                 if (mWatcher != null) {
                     mWatcher.stop();
                 }

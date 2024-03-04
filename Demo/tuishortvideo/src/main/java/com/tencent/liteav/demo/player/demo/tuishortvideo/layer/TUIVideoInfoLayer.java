@@ -9,7 +9,6 @@ import android.widget.TextView;
 import com.tencent.liteav.demo.player.demo.tuishortvideo.R;
 import com.tencent.liteav.demo.player.demo.tuishortvideo.view.VideoSeekBar;
 import com.tencent.qcloud.tuiplayer.core.api.TUIPlayerController;
-import com.tencent.qcloud.tuiplayer.core.api.tools.PlayerHelper;
 import com.tencent.qcloud.tuiplayer.core.api.ui.view.TUIBaseLayer;
 
 public class TUIVideoInfoLayer extends TUIBaseLayer implements VideoSeekBar.VideoSeekListener {
@@ -95,9 +94,9 @@ public class TUIVideoInfoLayer extends TUIBaseLayer implements VideoSeekBar.Vide
             mTvProgress.post(new Runnable() {
                 @Override
                 public void run() {
-                    String timeStr = PlayerHelper.formattedTime((long) (videoDuration * barProgress) / 1000)
+                    String timeStr = formattedTime((long) (videoDuration * barProgress) / 1000)
                             + "/"
-                            + PlayerHelper.formattedTime(videoDuration / 1000);
+                            + formattedTime(videoDuration / 1000);
                     mTvProgress.setText(timeStr);
                 }
             });
@@ -120,5 +119,30 @@ public class TUIVideoInfoLayer extends TUIBaseLayer implements VideoSeekBar.Vide
         if (null != mTvProgress) {
             mTvProgress.setVisibility(View.GONE);
         }
+    }
+
+    // copied from TUIPlayerKit#PlayerHelper.java
+    private String formattedTime(long second) {
+        String formatTime;
+        long h, m, s;
+        h = second / 3600;
+        m = (second % 3600) / 60;
+        s = (second % 3600) % 60;
+        if (h == 0) {
+            formatTime = asTwoDigit(m) + ":" + asTwoDigit(s);
+        } else {
+            formatTime = asTwoDigit(h) + ":" + asTwoDigit(m) + ":" + asTwoDigit(s);
+        }
+        return formatTime;
+    }
+
+    // copied from TUIPlayerKit#PlayerHelper.java
+    private String asTwoDigit(long digit) {
+        String value = "";
+        if (digit < 10) {
+            value = "0";
+        }
+        value += String.valueOf(digit);
+        return value;
     }
 }

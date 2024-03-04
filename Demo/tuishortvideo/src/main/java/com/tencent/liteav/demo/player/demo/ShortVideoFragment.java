@@ -87,17 +87,24 @@ public class ShortVideoFragment extends Fragment implements View.OnClickListener
     }
 
     @Override
-    public void onReachedLast() {
-        mShortViewRefresh.setRefreshing(true);
-        ShortVideoModel.getInstance(getContext()).loadMore(false);
-    }
-
-    @Override
     public void onCreateItemLayer(TUILayerManger layerManger, int viewType) {
         layerManger.addLayer(new TUICoverLayer());
         layerManger.addLayer(new TUIVideoInfoLayer());
         layerManger.addLayer(new TUILoadingLayer());
         layerManger.addLayer(new TUIErrorLayer());
+    }
+
+
+    @Override
+    public void onPageChanged(int index, TUIVideoSource videoSource) {
+        if (index >= mSuperShortVideoView.getCurrentDataCount() - 1) {
+            mShortViewRefresh.setRefreshing(true);
+            ShortVideoModel.getInstance(getContext()).loadMore(false);
+        }
+    }
+
+    @Override
+    public void onNetStatus(TUIVideoSource model, Bundle bundle) {
     }
 
     @Override

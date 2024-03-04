@@ -1,0 +1,9 @@
+<resources>
+    <string name="short_video_get_data_failed">Failed to request data</string>
+    <string name="short_video_go_to_list">Swipe left to enter the video list</string>
+    <string name="short_video_i_know">I see</string>
+    <string name="short_video_move_seeek">Drag the progress bar to quickly view the video</string>
+    <string name="short_video_pause_video">Click to pause video playback</string>
+    <string name="short_video_play_back">Short video playback</string>
+    <string name="short_video_view_more_videos">See more videos up and down</string>
+</resources>

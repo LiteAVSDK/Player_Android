@@ -29,11 +29,11 @@ public class PictureInPictureHelper implements ServiceConnection {
 
     private static final String PIP_ACTION_MEDIA_CONTROL = "media_control";
     private static final String PIP_EXTRA_CONTROL_TYPE = "control_type";
-    private static final int PIP_CONTROL_TYPE_PLAY = 1;
+    public static final int PIP_CONTROL_TYPE_PLAY = 1;
     private static final int PIP_CONTROL_TYPE_PAUSE = 2;
     private static final int PIP_CONTROL_TYPE_LAST = 3;
     private static final int PIP_CONTROL_TYPE_NEXT = 4;
-    private static final int PIP_REQUEST_TYPE_PLAY = 1;
+    public static final int PIP_REQUEST_TYPE_PLAY = 1;
     private static final int PIP_REQUEST_TYPE_PAUSE = 2;
     private static final int PIP_REQUEST_TYPE_LAST = 3;
     private static final int PIP_REQUEST_TYPE_NEXT = 4;
