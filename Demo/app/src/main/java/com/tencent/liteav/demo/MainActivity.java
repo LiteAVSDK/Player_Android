@@ -116,6 +116,9 @@ public class MainActivity extends Activity {
     }
 
     public void startItemActivity(ChildBean childItem) {
+        if (childItem.mTargetClass != SuperPlayerActivity.class) {
+            SuperPlayerActivity.exitPIP(this);
+        }
         Intent intent = new Intent(this, childItem.getTargetClass());
         intent.putExtra("TITLE", childItem.mName);
         intent.putExtra("TYPE", childItem.mType);

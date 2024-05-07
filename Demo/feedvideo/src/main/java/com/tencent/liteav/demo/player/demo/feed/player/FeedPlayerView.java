@@ -196,6 +196,13 @@ public class FeedPlayerView extends FrameLayout implements FeedPlayer {
         }
     }
 
+    public void seek(int position) {
+        if (superPlayerView != null) {
+            superPlayerView.seek(position);
+        }
+    }
+
+
     @Override
     public void reset() {
         position = -1;

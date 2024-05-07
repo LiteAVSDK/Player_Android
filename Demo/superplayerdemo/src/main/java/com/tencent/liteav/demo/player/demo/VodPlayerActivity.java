@@ -52,7 +52,9 @@ import java.util.List;
 
 public class VodPlayerActivity extends Activity implements ITXVodPlayListener,
         VodResolutionView.OnClickResolutionItemListener {
+    public static  final int    REQUEST_CODE_QRCODE_SCAN     = 100;
     public static  final int    REQUEST_CODE_CONFIG          = 101;
+    public static  final int    REQUEST_CODE_SELECT_VIDEO    = 102;
     private static final String TAG                   = "VodPlayerActivity";
     private static final String WEBRTC_LINK_URL       = "https://cloud.tencent.com/document/product/454/12148";
     private static final String DEFAULT_PLAY_URL      = "http://1500005830.vod2.myqcloud.com/43843ec0vodtranscq1500005830/48d0f1f9387702299774251236/adp.10.m3u8";
@@ -81,6 +83,7 @@ public class VodPlayerActivity extends Activity implements ITXVodPlayListener,
     private   Button           mButtonCache;
     protected EditText         mEditRtmpUrlView;
     private   Button           mButtonScan;
+    private   Button           mButtonLocal;
 
     private boolean         mHWDecode    = false;
     private int             mCurrentRenderMode;
@@ -196,10 +199,23 @@ public class VodPlayerActivity extends Activity implements ITXVodPlayListener,
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(VodPlayerActivity.this, QRCodeScanActivity.class);
-                startActivityForResult(intent, 100);
+                startActivityForResult(intent, REQUEST_CODE_QRCODE_SCAN);
             }
         });
         mButtonScan.setEnabled(true);
+
+        mButtonLocal = findViewById(R.id.btnLocal);
+        mButtonLocal.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent();
+                intent.setType("video/*");
+                intent.setAction(Intent.ACTION_GET_CONTENT);
+                startActivityForResult(Intent.createChooser(intent, "选择视频"), REQUEST_CODE_SELECT_VIDEO);
+            }
+        });
+        mButtonLocal.setEnabled(true);
+
         mLinearRootView = (LinearLayout) findViewById(R.id.root);
         if (mVodPlayer == null) {
             mVodPlayer = new TXVodPlayer(this);
@@ -747,18 +763,35 @@ public class VodPlayerActivity extends Activity implements ITXVodPlayListener,
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
-        if (requestCode == REQUEST_CODE_CONFIG) {
-            setConfig();
-        }
-        if (requestCode != 100 || data == null || data.getExtras() == null || TextUtils.isEmpty(data.getExtras().getString("result"))) {
-            return;
-        }
-        String result = data.getExtras().getString("result");
-        if (mEditRtmpUrlView != null) {
-            mEditRtmpUrlView.setText(result);
+        if (resultCode != RESULT_OK) return;
+        switch (requestCode) {
+            case REQUEST_CODE_CONFIG: {
+                setConfig();
+            }
+                break;
+            case REQUEST_CODE_SELECT_VIDEO: {
+                if (data != null && data.getData() != null) {
+                    Uri videoUri = data.getData();
+                    if (mEditRtmpUrlView != null) {
+                        mEditRtmpUrlView.setText(videoUri.toString());
+                        return;
+                    }
+                }
+            }
+                break;
+            case REQUEST_CODE_QRCODE_SCAN: {
+                if (requestCode != 100 || data == null || data.getExtras() == null ||
+                        TextUtils.isEmpty(data.getExtras().getString("result"))) {
+                    return;
+                }
+                String result = data.getExtras().getString("result");
+                if (mEditRtmpUrlView != null) {
+                    mEditRtmpUrlView.setText(result);
+                }
+            }
+                break;
         }
     }
-
 
     static class TXPhoneStateListener extends PhoneStateListener implements Application.ActivityLifecycleCallbacks {
         WeakReference<TXVodPlayer> mPlayer;

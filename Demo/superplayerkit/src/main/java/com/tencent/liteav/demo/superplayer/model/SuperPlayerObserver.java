@@ -91,7 +91,7 @@ public abstract class SuperPlayerObserver {
 
     }
 
-    public void onRcvTrackInformation(List<TXTrackInfo> infoList) {
+    public void onRcvTrackInformation(List<TXTrackInfo> infoList, TXTrackInfo lastSelected) {
 
     }
 

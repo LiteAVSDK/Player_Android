@@ -245,10 +245,17 @@ public class SuperPlayerImpl implements SuperPlayer, ITXVodPlayListener, ITXLive
                     }
                 }
                 updateVideoImageSpriteAndKeyFrame(playImageSpriteInfo,keyFrameDescInfoList);
-
                 String waterMarkText = param.getString(TXVodConstants.EVT_KEY_WATER_MARK_TEXT);
                 long videoDuration = param.getInt(TXVodConstants.EVT_PLAY_DURATION);
                 onRcvWaterMark(waterMarkText, videoDuration);
+                if (mCurrentModel != null) {
+                    if (TextUtils.isEmpty(mCurrentModel.placeholderImage)) {
+                        mCurrentModel.placeholderImage = param.getString(TXVodConstants.EVT_PLAY_COVER_URL);
+                    }
+                    if (TextUtils.isEmpty(mCurrentModel.title)) {
+                        mCurrentModel.title = param.getString(TXVodConstants.EVT_PLAY_NAME);
+                    }
+                }
                 break;
             case TXLiveConstants.PLAY_EVT_VOD_PLAY_PREPARED:
                 onVodPlayPrepared();
@@ -325,7 +332,7 @@ public class SuperPlayerImpl implements SuperPlayer, ITXVodPlayListener, ITXLive
 
     private void getAudioTrackInfo() {
         List<TXTrackInfo> soundTrackInfo = mVodPlayer.getAudioTrackInfo();
-        mObserver.onRcvTrackInformation(soundTrackInfo);
+        mObserver.onRcvTrackInformation(soundTrackInfo, mSelectedSoundTrackInfo);
     }
 
     private void getSubTitleTrackInfo() {
@@ -940,6 +947,11 @@ public class SuperPlayerImpl implements SuperPlayer, ITXVodPlayListener, ITXLive
     }
 
     @Override
+    public float getVodDuration() {
+        return mVodPlayer.getDuration();
+    }
+
+    @Override
     public void pauseVod() {
         if (mCurrentPlayType == SuperPlayerDef.PlayerType.VOD) {
             mVodPlayer.pause();
@@ -1186,6 +1198,7 @@ public class SuperPlayerImpl implements SuperPlayer, ITXVodPlayListener, ITXLive
             for (TXTrackInfo trackInfo : soundTrackInfoList) {
                 mVodPlayer.deselectTrack(trackInfo.trackIndex);
             }
+            mSelectedSoundTrackInfo = clickInfo;
         } else {
             for (TXTrackInfo trackInfo : soundTrackInfoList) {
                 if (trackInfo.trackIndex == clickInfo.trackIndex) {

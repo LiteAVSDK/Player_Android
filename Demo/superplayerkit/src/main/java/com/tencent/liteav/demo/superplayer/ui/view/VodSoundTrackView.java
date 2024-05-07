@@ -45,25 +45,43 @@ public class VodSoundTrackView extends BaseListView<VodSoundTrackView.VodSoundTr
         return new VodSoundTrackAdapter();
     }
 
+    public void doInitAudioTrackSelect(TXTrackInfo lastTrackInfo) {
+        if (mData != null && mData.size() != 0) {
+            TXTrackInfo firstTrackInfo = mData.get(0);
+            // Can only be added once , prevent multiple calls
+            if (firstTrackInfo != null && firstTrackInfo.trackIndex != -1) {
+                TXTrackInfo info = new TXTrackInfo();
+                info.name = mContext.getString(R.string.superplayer_off);
+                info.trackIndex = -1;
+                mAdapter.mItems.add(0, info);
+                mData.add(0, info);
+            }
+            int initSelectIndex = 1;
+            TXTrackInfo initSelectTrackInfo = mData.get(1);
+            // restore last selected track
+            if (lastTrackInfo != null) {
+                int lastSelectedIndex = -1;
+                for (int i = 0; i < mData.size(); i++) {
+                    TXTrackInfo data = mData.get(i);
+                    if (data.name.equals(lastTrackInfo.name) && data.trackType == lastTrackInfo.trackType && data.trackIndex == lastTrackInfo.trackIndex) {
+                        lastSelectedIndex = i;
+                        break;
+                    }
+                }
+                if (lastSelectedIndex >= 0) {
+                    initSelectIndex = lastSelectedIndex;
+                    initSelectTrackInfo = lastTrackInfo;
+                }
+            }
+            mListener.onClickSoundTrackItem(initSelectTrackInfo);
+            setCurrentPosition(initSelectIndex);
+        }
+    }
 
     class VodSoundTrackAdapter extends BaseAdapter<VodSoundTrackItemView, TXTrackInfo> {
 
         public VodSoundTrackAdapter() {
             super();
-        }
-
-        @Override
-        public void setData(List<TXTrackInfo> txTrackInfos) {
-            super.setData(txTrackInfos);
-            if (txTrackInfos != null && txTrackInfos.size() != 0) {
-                TXTrackInfo info = new TXTrackInfo();
-                info.name = mContext.getString(R.string.superplayer_off);
-                info.trackIndex = -1;
-                mItems.add(0,info);
-                mData.add(0,info);
-                mListener.onClickSoundTrackItem(mData.get(1));
-                mCurrentPositionInAdapter = 1;
-            }
         }
 
         @Override

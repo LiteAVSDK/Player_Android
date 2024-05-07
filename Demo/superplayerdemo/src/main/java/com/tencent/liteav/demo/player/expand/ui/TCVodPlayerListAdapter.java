@@ -103,6 +103,10 @@ public class TCVodPlayerListAdapter extends RecyclerView.Adapter<TCVodPlayerList
         mVideoListModelList.add(videoListModel);
     }
 
+    public ArrayList<VideoListModel> getVideoListModelList() {
+        return mVideoListModelList;
+    }
+
     public void setOnItemClickListener(OnItemClickListener listener) {
         mOnItemClickListener = listener;
     }

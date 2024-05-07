@@ -227,4 +227,8 @@ public class FeedDetailView extends FrameLayout implements FeedDetailListClickLi
     public void resume() {
         feedPlayerView.resume();
     }
+
+    public long getProgress() {
+        return feedPlayerView.getProgress();
+    }
 }

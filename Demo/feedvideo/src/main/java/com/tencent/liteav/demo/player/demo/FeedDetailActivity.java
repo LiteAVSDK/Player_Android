@@ -1,5 +1,6 @@
 package com.tencent.liteav.demo.player.demo;
 
+import android.content.Intent;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
@@ -29,10 +30,11 @@ public class FeedDetailActivity  extends AppCompatActivity implements
         setContentView(R.layout.feed_activity_detail);
         feedVodListLoader = new FeedVodListLoader(this);
         feedDetailView = findViewById(R.id.feed_detail_view);
-        Serializable tempValue = getIntent().getExtras().getSerializable(FeedActivity.KEY_VIDEO_MODEL);
-        if (tempValue != null && tempValue instanceof VideoModel) {
-            VideoModel videoModel = (VideoModel) getIntent().getExtras().getSerializable(FeedActivity.KEY_VIDEO_MODEL);
-            int time = (int) getIntent().getLongExtra(KEY_CURRENT_TIME,0);
+        Bundle intentExtra = getIntent() == null ? null : getIntent().getExtras();
+        Serializable tempValue = intentExtra == null ? null : intentExtra.getSerializable(FeedActivity.KEY_VIDEO_MODEL);
+        if (tempValue instanceof VideoModel) {
+            VideoModel videoModel = (VideoModel) tempValue;
+            int time = getIntent() == null ? 0 : (int) getIntent().getLongExtra(KEY_CURRENT_TIME, 0);
             feedDetailView.setStartTime(time);
             feedDetailView.play(videoModel);
             feedDetailView.showDetailView(videoModel);
@@ -72,6 +74,15 @@ public class FeedDetailActivity  extends AppCompatActivity implements
     protected void onDestroy() {
         super.onDestroy();
         feedDetailView.destroy();
+    }
+
+    @Override
+    public void finish() {
+        long progress = feedDetailView.getProgress();
+        Intent result = new Intent();
+        result.putExtra(KEY_CURRENT_TIME, progress);
+        setResult(RESULT_OK, result);
+        super.finish();
     }
 
     @Override

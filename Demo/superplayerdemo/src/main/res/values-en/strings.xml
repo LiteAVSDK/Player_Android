@@ -72,8 +72,8 @@
     <string name="super_player_tv_screen_auto">Auto</string>
     <string name="super_player_tv_vod_self">Vod Adaptive</string>
     <string name="super_player_tv_live_self">Live Adaptive</string>
-    <string name="super_player_save_succeed">Save Succeed !</string>
-    <string name="super_player_reset_succeed">Reset Succeed !</string>
+    <string name="super_player_save_succeed">Save Succeed ! exit the play page and re-enter to take effect.</string>
+    <string name="super_player_reset_succeed">Reset Succeed ! exit the play page and re-enter to take effect.</string>
     <string name="super_player_multi_subtitle_video">Multi SubTitle Video</string>
     <string name="super_player_multi_sound_track_video">Multi Sound Track Video</string>
 

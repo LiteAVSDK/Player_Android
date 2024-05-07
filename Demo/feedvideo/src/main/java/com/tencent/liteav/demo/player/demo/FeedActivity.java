@@ -1,5 +1,6 @@
 package com.tencent.liteav.demo.player.demo;
 
+import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
 import android.view.View;
@@ -153,6 +154,12 @@ public class FeedActivity extends AppCompatActivity implements ActivityCompat.On
         super.onPause();
         feedView.onPause();
         getWindow().clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        feedView.onActivityResult(requestCode, resultCode, data);
     }
 
     @Override

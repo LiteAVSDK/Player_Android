@@ -321,7 +321,7 @@ public class SuperPlayerView extends RelativeLayout
 
     private void playWithModelInner(SuperPlayerModel model, boolean needChangeUI) {
         if (needChangeUI) {
-            mWindowPlayer.showPIPIV(model.vipWatchMode == null);
+            mWindowPlayer.showPIPIV(model.vipWatchMode == null && TextUtils.isEmpty(model.coverPictureUrl));
         }
         mPlayAction = mCurrentSuperPlayerModel.playAction;
         if (mPlayAction == PLAY_ACTION_AUTO_PLAY || mPlayAction == PLAY_ACTION_PRELOAD) {
@@ -466,6 +466,10 @@ public class SuperPlayerView extends RelativeLayout
         if (mWatcher != null) {
             mWatcher.stop();
         }
+    }
+
+    public void seek(float position) {
+        mSuperPlayer.seek((int) position);
     }
 
     /**
@@ -1097,6 +1101,10 @@ public class SuperPlayerView extends RelativeLayout
         return mSuperPlayer.getPlayerState();
     }
 
+    public SuperPlayerModel getCurrentSuperPlayerModel() {
+        return mCurrentSuperPlayerModel;
+    }
+
     private void actonOfPreloadOnPlayPrepare() {
         if (mPlayAction != PLAY_ACTION_PRELOAD) {
             mWindowPlayer.prepareLoading();
@@ -1121,6 +1129,9 @@ public class SuperPlayerView extends RelativeLayout
         public void onPlayBegin(String name) {
             mWindowPlayer.updatePlayState(SuperPlayerDef.PlayerState.PLAYING);
             mFullScreenPlayer.updatePlayState(SuperPlayerDef.PlayerState.PLAYING);
+            // sync Start-State to PIP when automatically playing the next episode
+            mPictureInPictureHelper.updatePictureInPictureActions(R.drawable.superplayer_ic_vod_pause_normal, "",
+                    PictureInPictureHelper.PIP_CONTROL_TYPE_PAUSE, PictureInPictureHelper.PIP_REQUEST_TYPE_PAUSE);
             updateTitle(name);
             mWindowPlayer.hideBackground();
             if (mDanmuView != null && mDanmuView.isPrepared() && mDanmuView.isPaused()) {
@@ -1257,6 +1268,9 @@ public class SuperPlayerView extends RelativeLayout
         public void onRcvFirstIframe() {
             super.onRcvFirstIframe();
             mWindowPlayer.toggleCoverView(false);
+            if (!TextUtils.isEmpty(mCurrentSuperPlayerModel.coverPictureUrl)) {
+                mWindowPlayer.showPIPIV(mCurrentSuperPlayerModel.vipWatchMode == null);
+            }
             mFullScreenPlayer.toggleCoverView(false);
             if (mDynamicWatermarkView != null) {
                 mDynamicWatermarkView.show();
@@ -1264,9 +1278,9 @@ public class SuperPlayerView extends RelativeLayout
         }
 
         @Override
-        public void onRcvTrackInformation(List<TXTrackInfo> infoList) {
-            super.onRcvTrackInformation(infoList);
-            mFullScreenPlayer.setVodSelectionViewPositionAndData(infoList);
+        public void onRcvTrackInformation(List<TXTrackInfo> infoList, TXTrackInfo lastSelected) {
+            super.onRcvTrackInformation(infoList, lastSelected);
+            mFullScreenPlayer.setVodSelectionViewPositionAndData(infoList, lastSelected);
         }
 
 
@@ -1457,6 +1471,7 @@ public class SuperPlayerView extends RelativeLayout
     @Override
     public void onClickPIPPlayBackward() {
         mProgress = mProgress + mPictureInPictureHelper.getTimeShiftInterval();
+        mProgress = (long) Math.min(mProgress, mSuperPlayer.getVodDuration());
         mSuperPlayer.seek((int) mProgress);
         mWindowPlayer.updateVideoProgress(mProgress, mDuration, mPlayAble);
         mFullScreenPlayer.updateVideoProgress(mProgress, mDuration, mPlayAble);
@@ -1465,6 +1480,7 @@ public class SuperPlayerView extends RelativeLayout
     @Override
     public void onClickPIPPlayForward() {
         mProgress = mProgress - mPictureInPictureHelper.getTimeShiftInterval();
+        mProgress = Math.max(0, mProgress);
         mSuperPlayer.seek((int) mProgress);
         mWindowPlayer.updateVideoProgress(mProgress, mDuration, mPlayAble);
         mFullScreenPlayer.updateVideoProgress(mProgress, mDuration, mPlayAble);

@@ -26,6 +26,17 @@
         android:background="@drawable/superplayer_qr_code"
         android:layout_alignParentRight="true"
         android:layout_toLeftOf="@+id/btnAdd" />
+    
+    <Button
+        android:id="@+id/btnLocal"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:layout_marginTop="5dp"
+        android:layout_marginRight="5dp"
+        android:layout_toLeftOf="@+id/btnScan"
+        android:background="@color/superplayer_color_gray"
+        android:text="本地"
+        android:textColor="@color/white" />
 
     <EditText
         android:id="@+id/roomid"
@@ -38,5 +49,5 @@
         android:paddingLeft="2dp"
         android:paddingRight="2dp"
         android:textColorHint="#3f000000"
-        android:layout_toLeftOf="@+id/btnScan"/>
+        android:layout_toLeftOf="@+id/btnLocal"/>
 </RelativeLayout>

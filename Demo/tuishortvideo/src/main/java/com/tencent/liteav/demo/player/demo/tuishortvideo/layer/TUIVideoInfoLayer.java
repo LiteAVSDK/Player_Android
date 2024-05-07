@@ -115,6 +115,7 @@ public class TUIVideoInfoLayer extends TUIBaseLayer implements VideoSeekBar.Vide
         TUIPlayerController controller = getPlayerController();
         if (null != controller && videoDuration > 0) {
             controller.seekTo((int) ((videoDuration * seekBar.getBarProgress()) / 1000));
+            setProgress(seekBar.getBarProgress());
         }
         if (null != mTvProgress) {
             mTvProgress.setVisibility(View.GONE);

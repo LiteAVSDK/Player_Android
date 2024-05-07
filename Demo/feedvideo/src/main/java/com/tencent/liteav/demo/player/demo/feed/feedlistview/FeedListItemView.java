@@ -143,6 +143,12 @@ public class FeedListItemView extends RelativeLayout {
         }
     }
 
+    public void seek(int position) {
+        if (feedPlayerView != null) {
+            feedPlayerView.seek(position);
+        }
+    }
+
     /**
      * reset itemView.
      * 还原ItemView

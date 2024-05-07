@@ -5,9 +5,11 @@ import static android.view.View.VISIBLE;
 
 import android.app.ActivityManager;
 import android.app.AlertDialog;
+import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.res.Configuration;
 import android.graphics.Color;
 import android.net.Uri;
@@ -34,6 +36,7 @@ import androidx.annotation.Nullable;
 import androidx.core.app.ActivityCompat;
 import androidx.fragment.app.FragmentActivity;
 import androidx.lifecycle.Lifecycle;
+import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
@@ -41,14 +44,6 @@ import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 import com.tencent.liteav.demo.player.R;
 import com.tencent.liteav.demo.player.expand.model.SuperPlayerConstants;
 import com.tencent.liteav.demo.player.expand.model.VideoDataMgr;
-import com.tencent.liteav.demo.superplayer.helper.IntentUtils;
-import com.tencent.liteav.demo.superplayer.helper.PictureInPictureHelper;
-import com.tencent.liteav.demo.vodcommon.entity.ConfigBean;
-import com.tencent.liteav.demo.vodcommon.entity.GetVideoInfoListListener;
-import com.tencent.liteav.demo.vodcommon.entity.SuperVodListLoader;
-import com.tencent.liteav.demo.vodcommon.entity.VideoInfo;
-import com.tencent.liteav.demo.vodcommon.entity.VideoListModel;
-import com.tencent.liteav.demo.vodcommon.entity.VideoModel;
 import com.tencent.liteav.demo.player.expand.ui.TCVodPlayerListAdapter;
 import com.tencent.liteav.demo.superplayer.SubtitleSourceModel;
 import com.tencent.liteav.demo.superplayer.SuperPlayerDef;
@@ -56,10 +51,21 @@ import com.tencent.liteav.demo.superplayer.SuperPlayerGlobalConfig;
 import com.tencent.liteav.demo.superplayer.SuperPlayerModel;
 import com.tencent.liteav.demo.superplayer.SuperPlayerVideoId;
 import com.tencent.liteav.demo.superplayer.SuperPlayerView;
+import com.tencent.liteav.demo.superplayer.helper.IntentUtils;
+import com.tencent.liteav.demo.superplayer.helper.PictureInPictureHelper;
+import com.tencent.liteav.demo.superplayer.model.ISuperPlayerListener;
+import com.tencent.liteav.demo.vodcommon.entity.ConfigBean;
+import com.tencent.liteav.demo.vodcommon.entity.GetVideoInfoListListener;
+import com.tencent.liteav.demo.vodcommon.entity.SuperVodListLoader;
+import com.tencent.liteav.demo.vodcommon.entity.VideoInfo;
+import com.tencent.liteav.demo.vodcommon.entity.VideoListModel;
+import com.tencent.liteav.demo.vodcommon.entity.VideoModel;
 import com.tencent.rtmp.TXLiveBase;
 import com.tencent.rtmp.TXLiveConstants;
 import com.tencent.rtmp.TXVodConstants;
+import com.tencent.rtmp.TXVodPlayer;
 
+import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -124,6 +130,7 @@ public class SuperPlayerActivity extends FragmentActivity implements View.OnClic
     private boolean                  mIsManualPause = false;
     private boolean                  mUseLocalLiveData = true;
     private boolean                  mIsEnteredPIPMode = false;
+    private LocalExitPIPBroadcastReceiver localExitPIPBroadcastReceiver;
 
     private static class ListTabItem {
         public ListTabItem(int type, TextView textView, ImageView imageView, View.OnClickListener listener) {
@@ -226,6 +233,66 @@ public class SuperPlayerActivity extends FragmentActivity implements View.OnClic
 
         mSuperPlayerView = (SuperPlayerView) findViewById(R.id.superVodPlayerView);
         mSuperPlayerView.setPlayerViewCallback(this);
+        mSuperPlayerView.setSuperPlayerListener(new ISuperPlayerListener() {
+            @Override
+            public void onVodPlayEvent(TXVodPlayer player, int event, Bundle param) {
+                switch (event) {
+                    case TXVodConstants.VOD_PLAY_EVT_GET_PLAYINFO_SUCC:
+                        SuperPlayerModel currentSuperPlayerModel = mSuperPlayerView.getCurrentSuperPlayerModel();
+                        if (currentSuperPlayerModel == null || currentSuperPlayerModel.videoId == null) {
+                            return;
+                        }
+                        ArrayList<VideoListModel> videoListModelList = mVodPlayerListAdapter.getVideoListModelList();
+                        if (videoListModelList == null || videoListModelList.isEmpty()) {
+                            return;
+                        }
+                        boolean needNotifyDataChange = false;
+
+                        for (VideoListModel videoListModel : videoListModelList) {
+                            if (videoListModel.videoModelList == null || videoListModel.videoModelList.isEmpty()) {
+                                continue;
+                            }
+                            for (VideoModel videoModel : videoListModel.videoModelList) {
+                                if (TextUtils.isEmpty(videoModel.fileid)) {
+                                    continue;
+                                }
+                                if (videoModel.appid == currentSuperPlayerModel.appId && videoModel.fileid.equals(currentSuperPlayerModel.videoId.fileId)) {
+                                    if (TextUtils.isEmpty(videoModel.placeholderImage)) {
+                                        videoModel.placeholderImage = param.getString(TXVodConstants.EVT_PLAY_COVER_URL);
+                                        needNotifyDataChange = true;
+                                    }
+                                    if (TextUtils.isEmpty(videoModel.title)) {
+                                        videoModel.title = param.getString(TXVodConstants.EVT_PLAY_NAME);
+                                        needNotifyDataChange = true;
+                                    }
+                                    break;
+                                }
+                            }
+                            if (needNotifyDataChange) {
+                                break;
+                            }
+                        }
+                        if (needNotifyDataChange) {
+                            mVodPlayerListAdapter.notifyDataSetChanged();
+                        }
+                        break;
+                    default:
+                        break;
+                }
+            }
+
+            @Override
+            public void onVodNetStatus(TXVodPlayer player, Bundle status) {
+            }
+
+            @Override
+            public void onLivePlayEvent(int event, Bundle param) {
+            }
+
+            @Override
+            public void onLiveNetStatus(Bundle status) {
+            }
+        });
 
         mVodPlayerListView = (RecyclerView) findViewById(R.id.superplayer_recycler_view);
         mVodPlayerListView.setLayoutManager(new LinearLayoutManager(this));
@@ -737,6 +804,7 @@ public class SuperPlayerActivity extends FragmentActivity implements View.OnClic
         if (mSuperPlayerView.getPlayerMode() != SuperPlayerDef.PlayerMode.FLOAT) {
             mSuperPlayerView.resetPlayer();
         }
+        unRegisterLocalExitPipReceiver();
         VideoDataMgr.getInstance().setGetVideoInfoListListener(null);
     }
 
@@ -1032,26 +1100,8 @@ public class SuperPlayerActivity extends FragmentActivity implements View.OnClic
                             videoModel.fileid = fileId;
                             videoModel.pSign = pSign;
                             videoModel.isEnableDownload = cbCache.isChecked();
-
-                            SuperVodListLoader loader = new SuperVodListLoader(SuperPlayerActivity.this);
-                            loader.getVodByFileId(videoModel, new SuperVodListLoader.OnVodInfoLoadListener() {
-                                @Override
-                                public void onSuccess(VideoModel videoModel) {
-                                    videoModel.videoURL = "";
-                                    onGetVodInfoOnebyOneOnSuccess(videoModel);
-                                }
-
-                                @Override
-                                public void onFail(int errCode) {
-                                    runOnUiThread(new Runnable() {
-                                        @Override
-                                        public void run() {
-                                            Toast.makeText(mContext, getString(R.string.superplayer_request_fail),
-                                                    Toast.LENGTH_SHORT).show();
-                                        }
-                                    });
-                                }
-                            });
+                            onGetVodInfoOnebyOneOnSuccess(videoModel);
+                            playVideoModel(videoModel);
                         } else {
                             String playUrl = etAppId.getText().toString();
                             if (TextUtils.isEmpty(playUrl)) {
@@ -1308,13 +1358,57 @@ public class SuperPlayerActivity extends FragmentActivity implements View.OnClic
         if (isInPictureInPictureMode) {
             mLayoutTitle.setVisibility(GONE);
             mSuperPlayerView.showPIPIV(false);
+            registerLocalExitPipReceiver();
         } else {
             mLayoutTitle.setVisibility(VISIBLE);
             mSuperPlayerView.showPIPIV(true);
+            unRegisterLocalExitPipReceiver();
         }
         if (getLifecycle().getCurrentState() == Lifecycle.State.CREATED
                 && (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O)) {
             finishAndRemoveTask();
+        }
+    }
+
+    private void registerLocalExitPipReceiver() {
+        if (localExitPIPBroadcastReceiver == null) {
+            localExitPIPBroadcastReceiver = new LocalExitPIPBroadcastReceiver(this);
+        }
+        IntentFilter intentFilter = new IntentFilter(LocalExitPIPBroadcastReceiver.EXIT_PIP);
+        LocalBroadcastManager.getInstance(this).registerReceiver(localExitPIPBroadcastReceiver, intentFilter);
+    }
+
+    private void unRegisterLocalExitPipReceiver() {
+        if (localExitPIPBroadcastReceiver != null) {
+            LocalBroadcastManager.getInstance(this).unregisterReceiver(localExitPIPBroadcastReceiver);
+            localExitPIPBroadcastReceiver = null;
+        }
+    }
+
+    public static void exitPIP(Context context){
+        LocalBroadcastManager.getInstance(context).sendBroadcast(new Intent(LocalExitPIPBroadcastReceiver.EXIT_PIP));
+    }
+
+    private static class LocalExitPIPBroadcastReceiver extends BroadcastReceiver {
+        public static final String EXIT_PIP = "com.tencent.liteav.demo.player.demo.SuperPlayerActivity.LocalExitPIPBroadcastReceiver.EXIT_PIP";
+        private final WeakReference<SuperPlayerActivity> activityRef;
+
+        LocalExitPIPBroadcastReceiver(SuperPlayerActivity activity) {
+            activityRef = new WeakReference<>(activity);
+        }
+
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            if (intent == null) {
+                return;
+            }
+            if (EXIT_PIP.equals(intent.getAction()) && activityRef.get() != null) {
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                    activityRef.get().finishAndRemoveTask();
+                } else {
+                    activityRef.get().finish();
+                }
+            }
         }
     }
 }

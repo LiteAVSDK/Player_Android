@@ -101,6 +101,13 @@ public interface SuperPlayer {
     String getPlayURL();
 
     /**
+     * Get the total video duration of the current vodPlayer
+     *
+     * 获取当前点播播放器视频总时长
+     */
+    float getVodDuration();
+
+    /**
      * Get the current player mode
      *
      * 获取当前播放器模式

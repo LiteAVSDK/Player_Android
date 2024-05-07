@@ -6,6 +6,7 @@ import android.content.Context;
 import android.graphics.Color;
 import android.os.Handler;
 import android.os.HandlerThread;
+import android.os.Looper;
 import android.text.TextUtils;
 import android.util.Log;
 
@@ -24,6 +25,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Locale;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -43,19 +45,19 @@ public class SuperVodListLoader {
     private static final String                M3U8_SUFFIX = ".m3u8";
     private static final String                TAG       = "SuperVodListLoader";
     private              Context               mContext;
-    private              Handler               mHandler;
-    private              HandlerThread         mHandlerThread;
+    private final        Handler               mHandler;
     private              boolean               mIsHttps  = true;
     private final        String                BASE_URL  = "http://playvideo.qcloud.com/getplayinfo/v4";
     private final        String                BASE_URLS = "https://playvideo.qcloud.com/getplayinfo/v4";
     private              OnVodInfoLoadListener mOnVodInfoLoadListener;
-    private              OkHttpClient          mHttpClient;
-    private              int                   mAppId    = 1500005830;
-    private              Object mLock = new Object();
+    private final        OkHttpClient          mHttpClient;
+    private final        int                   mAppId    = 1500005830;
+    private final        Object mLock = new Object();
+    private final        Handler               mMainHandler = new Handler(Looper.getMainLooper());
 
 
     public SuperVodListLoader(Context context) {
-        mHandlerThread = new HandlerThread("SuperVodListLoader");
+        HandlerThread mHandlerThread = new HandlerThread("SuperVodListLoader");
         mHandlerThread.start();
         mHandler = new Handler(mHandlerThread.getLooper());
         mContext = context;
@@ -174,6 +176,9 @@ public class SuperVodListLoader {
 
     public void getVideoListInfo(final List<VideoModel> videoModels, final boolean isCacheModel,
                                  final OnVodListLoadListener listener) {
+        if (listener == null) {
+            return;
+        }
         mHandler.post(new Runnable() {
             @Override
             public void run() {
@@ -186,17 +191,27 @@ public class SuperVodListLoader {
                             synchronized (mLock) {
                                 integer.getAndAdd(1);
                                 if (integer.get() == loadSize) {
-                                    VideoListModel videoListModel = new VideoListModel();
+                                    final VideoListModel videoListModel = new VideoListModel();
                                     videoListModel.videoModelList = videoModels;
                                     videoListModel.isEnableDownload = isCacheModel;
-                                    listener.onSuccess(videoListModel);
+                                    mMainHandler.post(new Runnable() {
+                                        @Override
+                                        public void run() {
+                                            listener.onSuccess(videoListModel);
+                                        }
+                                    });
                                 }
                             }
                         }
 
                         @Override
                         public void onFail(int errCode) {
-                            listener.onFail(-1);
+                            mMainHandler.post(new Runnable() {
+                                @Override
+                                public void run() {
+                                    listener.onFail(-1);
+                                }
+                            });
                         }
                     });
                 }
@@ -215,6 +230,9 @@ public class SuperVodListLoader {
     }
 
     public void getVodByFileId(final VideoModel model, final OnVodInfoLoadListener listener) {
+        if (listener == null) {
+            return;
+        }
         mHandler.post(new Runnable() {
             @Override
             public void run() {
@@ -224,7 +242,12 @@ public class SuperVodListLoader {
                 call.enqueue(new Callback() {
                     @Override
                     public void onFailure(Call call, IOException e) {
-                        listener.onFail(-1);
+                        mMainHandler.post(new Runnable() {
+                            @Override
+                            public void run() {
+                                listener.onFail(-1);
+                            }
+                        });
                     }
 
                     @Override
@@ -238,6 +261,9 @@ public class SuperVodListLoader {
     }
 
     public void getLiveList(final OnListLoadListener listener) {
+        if (listener == null) {
+            return;
+        }
         mHandler.post(new Runnable() {
             @Override
             public void run() {
@@ -250,9 +276,12 @@ public class SuperVodListLoader {
                 call.enqueue(new Callback() {
                     @Override
                     public void onFailure(Call call, IOException e) {
-                        if (listener != null) {
-                            listener.onFail(-1);
-                        }
+                        mMainHandler.post(new Runnable() {
+                            @Override
+                            public void run() {
+                                listener.onFail(-1);
+                            }
+                        });
                     }
 
                     @Override
@@ -263,15 +292,18 @@ public class SuperVodListLoader {
                             int code = jsonObject.getInt("code");
                             if (code != 200) {
                                 String message = jsonObject.getString("message");
-                                if (listener != null) {
-                                    listener.onFail(-1);
-                                }
+                                mMainHandler.post(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        listener.onFail(-1);
+                                    }
+                                });
                                 Log.e(TAG, message);
                                 return;
                             }
                             JSONObject data = jsonObject.optJSONObject("data");
                             JSONArray liveList = data.getJSONArray("list");
-                            ArrayList<VideoModel> modelList = new ArrayList<>();
+                            final ArrayList<VideoModel> modelList = new ArrayList<>();
                             for (int i = 0; i < liveList.length(); i++) {
                                 JSONObject playItem = liveList.optJSONObject(i);
                                 VideoModel model = new VideoModel();
@@ -291,9 +323,12 @@ public class SuperVodListLoader {
 
                                 modelList.add(model);
                             }
-                            if (listener != null) {
-                                listener.onSuccess(modelList);
-                            }
+                            mMainHandler.post(new Runnable() {
+                                @Override
+                                public void run() {
+                                    listener.onSuccess(modelList);
+                                }
+                            });
                         } catch (Exception e) {
                             e.printStackTrace();
                         }
@@ -303,9 +338,12 @@ public class SuperVodListLoader {
         });
     }
 
-    private void parseJson(VideoModel videoModel, String content, OnVodInfoLoadListener listener) {
+    private void parseJson(final VideoModel videoModel, String content, final OnVodInfoLoadListener listener) {
         if (TextUtils.isEmpty(content)) {
             Log.e(TAG, "parseJson err, content is empty!");
+            return;
+        }
+        if (listener == null) {
             return;
         }
 
@@ -314,7 +352,12 @@ public class SuperVodListLoader {
             int code = jsonObject.getInt("code");
             if (code != 0) {
                 String message = jsonObject.getString("message");
-                listener.onFail(-1);
+                mMainHandler.post(new Runnable() {
+                    @Override
+                    public void run() {
+                        listener.onFail(-1);
+                    }
+                });
                 Log.e(TAG, message);
                 return;
             }
@@ -362,7 +405,12 @@ public class SuperVodListLoader {
                 videoModel.duration = parserV4.getDuration();
             }
             videoModel.title = getTitleByFileId(videoModel);
-            listener.onSuccess(videoModel);
+            mMainHandler.post(new Runnable() {
+                @Override
+                public void run() {
+                    listener.onSuccess(videoModel);
+                }
+            });
         } catch (JSONException e) {
             e.printStackTrace();
         }
@@ -438,14 +486,12 @@ public class SuperVodListLoader {
         String urlStr;
         if (mIsHttps) {
             // Use HTTPS by default.
-            urlStr = String.format("%s/%d/%s", BASE_URLS, appId, fileId);
+            urlStr = String.format(Locale.ROOT, "%s/%d/%s", BASE_URLS, appId, fileId);
         } else {
-            urlStr = String.format("%s/%d/%s", BASE_URL, appId, fileId);
+            urlStr = String.format(Locale.ROOT, "%s/%d/%s", BASE_URL, appId, fileId);
         }
         String query = makeQueryString(null, pSign, null);
-        if (query != null) {
-            urlStr = urlStr + "?" + query;
-        }
+        urlStr = urlStr + "?" + query;
         return urlStr;
     }
 
@@ -457,15 +503,15 @@ public class SuperVodListLoader {
     private String makeQueryString(String pcfg, String psign, String content) {
         StringBuilder str = new StringBuilder();
         if (!TextUtils.isEmpty(pcfg)) {
-            str.append("pcfg=" + pcfg + "&");
+            str.append("pcfg=").append(pcfg).append("&");
         }
 
         if (!TextUtils.isEmpty(psign)) {
-            str.append("psign=" + psign + "&");
+            str.append("psign=").append(psign).append("&");
         }
 
         if (!TextUtils.isEmpty(content)) {
-            str.append("context=" + content + "&");
+            str.append("context=").append(content).append("&");
         }
         if (str.length() > 1) {
             str.deleteCharAt(str.length() - 1);

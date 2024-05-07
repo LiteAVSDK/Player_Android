@@ -1,5 +1,6 @@
 package com.tencent.liteav.demo.player.demo.feed;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
@@ -7,6 +8,7 @@ import android.util.AttributeSet;
 import android.widget.FrameLayout;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 
 import com.tencent.liteav.demo.player.demo.FeedActivity;
 import com.tencent.liteav.demo.player.demo.FeedDetailActivity;
@@ -20,6 +22,7 @@ import java.util.List;
 
 
 public class FeedView extends FrameLayout implements FeedListCallBack {
+    private static final int REQ_FEED_DETAIL = 1000;
 
     private FeedListView feedListView     = null;
     private FeedViewCallBack feedViewCallBack = null;
@@ -122,7 +125,11 @@ public class FeedView extends FrameLayout implements FeedListCallBack {
         bundle.putSerializable(FeedActivity.KEY_VIDEO_MODEL,(Serializable) videoModel);
         intent.putExtras(bundle);
         intent.putExtra(FeedActivity.KEY_CURRENT_TIME,feedListItemView.getProgress());
-        getContext().startActivity(intent);
+        if (getContext() instanceof Activity) {
+            ((Activity) getContext()).startActivityForResult(intent, REQ_FEED_DETAIL);
+        } else {
+            getContext().startActivity(intent);
+        }
     }
 
 
@@ -137,6 +144,15 @@ public class FeedView extends FrameLayout implements FeedListCallBack {
     public void onStopFullScreenPlay() {
         if (feedViewCallBack != null) {
             feedViewCallBack.onStopFullScreenPlay();
+        }
+    }
+
+    public void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        if (requestCode == REQ_FEED_DETAIL && data != null) {
+            long curPlayedProgress = data.getLongExtra(FeedActivity.KEY_CURRENT_TIME, -1L);
+            if (curPlayedProgress >= 0) {
+                feedListItemView.seek((int) curPlayedProgress);
+            }
         }
     }
 
