@@ -77,8 +77,6 @@
     <string name="super_player_multi_subtitle_video">多字幕视频</string>
     <string name="super_player_multi_sound_track_video">多音轨视频</string>
 
-    <string name="super_play_encrypt_video_introduction">加密视频_腾讯云业务介绍</string>
-
     <string name="super_player_vod_config">播放器配置</string>
     <string name="super_player_vod_need_accurate_seek">是否使用精准seek</string>
     <string name="super_player_vod_smooth_switch">平滑切换多码率</string>
@@ -102,5 +100,4 @@
     <string name="super_player_vod_reset">重置</string>
     <string name="super_player_vod_hard_first">优先硬解(默认)</string>
     <string name="super_player_vod_soft_first">优先软解</string>
-    <string name="super_play_ghost_video">幽灵水印视频</string>
 </resources>

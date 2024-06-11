@@ -40,4 +40,6 @@
     <string name="superplayer_vip_title">Try function demo </string>
     <string name="superplayer_vip_watch_tip">You can try it for %ss, open VIP to watch the full video</string>
     <string name="super_player_cache_video_title">Not just audio and video %1d</string>
+    <string name="super_play_encrypt_video_introduction">Encrypted Video_Tencent Cloud Business Introduction</string>
+    <string name="super_play_ghost_video">Ghost watermarked video</string>
 </resources>

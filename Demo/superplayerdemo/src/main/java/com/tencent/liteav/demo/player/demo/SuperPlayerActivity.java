@@ -3,6 +3,7 @@ package com.tencent.liteav.demo.player.demo;
 import static android.view.View.GONE;
 import static android.view.View.VISIBLE;
 
+import android.annotation.SuppressLint;
 import android.app.ActivityManager;
 import android.app.AlertDialog;
 import android.content.BroadcastReceiver;
@@ -406,12 +407,8 @@ public class SuperPlayerActivity extends FragmentActivity implements View.OnClic
         mSuperVodListLoader = new SuperVodListLoader(this);
 
         initSuperVodGlobalSetting();
-
         mVideoHasPlay = false;
-
         mVideoCount = 0;
-
-        TXLiveBase.setAppID("1253131631");
     }
 
     private void addVideoModelIntoVodPlayerListAdapter(VideoModel videoModel) {
@@ -461,54 +458,6 @@ public class SuperPlayerActivity extends FragmentActivity implements View.OnClic
                 mVideoHasPlay = true;
             }
             mSwipeRefreshLayout.setRefreshing(false);
-        } else {
-            mSuperVodListLoader.getLiveList(new SuperVodListLoader.OnListLoadListener() {
-                @Override
-                public void onSuccess(final List<VideoModel> superPlayerModelList) {
-
-                    SuperPlayerActivity.this.runOnUiThread(new Runnable() {
-                        @Override
-                        public void run() {
-                            if (mDataType != LIST_TYPE_LIVE) {
-                                return;
-                            }
-                            mVodPlayerListAdapter.clear();
-                            for (VideoModel videoModel :
-                                    superPlayerModelList) {
-                                addVideoModelIntoVodPlayerListAdapter(videoModel);
-                                mLiveList.add(videoModel);
-                            }
-                            if (!mVideoHasPlay && !mLiveList.isEmpty()) {
-                                if (mLiveList.get(0).appid > 0) {
-                                    TXLiveBase.setAppID("" + mLiveList.get(0).appid);
-                                }
-                                String from = getIntent().getStringExtra("from");
-                                if (TextUtils.isEmpty(from)) {
-                                    playVideoModel(mLiveList.get(0));
-                                } else {
-                                    playExternalVideo();
-                                }
-                                mVideoHasPlay = true;
-                            }
-                            mVodPlayerListAdapter.notifyDataSetChanged();
-
-                            mSwipeRefreshLayout.setRefreshing(false);
-                        }
-                    });
-                }
-
-                @Override
-                public void onFail(int errCode) {
-                    Log.e(TAG, "updateLiveList error");
-                    runOnUiThread(new Runnable() {
-                        @Override
-                        public void run() {
-                            mSwipeRefreshLayout.setRefreshing(false);
-                        }
-                    });
-                }
-            });
-            mVodPlayerListAdapter.notifyDataSetChanged();
         }
     }
 
@@ -519,9 +468,6 @@ public class SuperPlayerActivity extends FragmentActivity implements View.OnClic
                 if (mDataType != LIST_TYPE_VOD) {
                     return;
                 }
-                if (TextUtils.equals("8602268011437356984", videoModel.fileid)) {
-                    videoModel.title = getString(R.string.superplayer_cover_video_name);
-                }
                 addVideoModelIntoVodPlayerListAdapter(videoModel);
                 addVideoModelIntoVodList(videoModel);
             }
@@ -529,10 +475,6 @@ public class SuperPlayerActivity extends FragmentActivity implements View.OnClic
     }
 
     private List<VideoModel> getSubtitleVideoData() {
-        if (!ConfigBean.getInstance().isIsUseDash()) {
-            return Collections.EMPTY_LIST;
-        }
-
         VideoModel model = null;
         model = new VideoModel();
         model.placeholderImage = "http://1500005830.vod2.myqcloud.com/43843ec0vodtranscq1500005830/dc455d1d387702306937256938/coverBySnapshot_10_0.jpg";
@@ -572,64 +514,30 @@ public class SuperPlayerActivity extends FragmentActivity implements View.OnClic
     private void updateVodList() {
         if (mDefaultVideo) {
             ArrayList<VideoModel> superPlayerModels = mSuperVodListLoader.loadDefaultVodList(this.getApplicationContext());
-            mSuperVodListLoader.getVideoListInfo(superPlayerModels, false,
-                    new SuperVodListLoader.OnVodListLoadListener() {
-                        @Override
-                        public void onSuccess(VideoListModel videoListModel) {
-                            VideoModel encryptModel = new VideoModel();
-                            encryptModel.appid = 1500005830;
-                            encryptModel.title = getString(R.string.super_play_encrypt_video_introduction);
-                            encryptModel.placeholderImage = "https://1500005830.vod2.myqcloud.com/6c9a5118vodcq1500005830/35ab25fb243791578431393746/onEqUp.png";
-                            encryptModel.fileid = "243791578431393746";
-                            encryptModel.pSign = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhcHBJZCI6MTUwMDA"
-                                    + "wNTgzMCwiZmlsZUlkIjoiMjQzNzkxNTc4NDMxMzkzNzQ2IiwiY3VycmVudFRpbWVTdGFtc"
-                                    + "CI6MTY3MzQyNjIyNywiY29udGVudEluZm8iOnsiYXVkaW9WaWRlb1R5cGUiOiJQcm90ZWN0"
-                                    + "ZWRBZGFwdGl2ZSIsImRybUFkYXB0aXZlSW5mbyI6eyJwcml2YXRlRW5jcnlwdGlvbkRlZmluaX"
-                                    + "Rpb24iOjEyfX0sInVybEFjY2Vzc0luZm8iOnsiZG9tYWluIjoiMTUwMDAwNTgzMC52b2QyLm15cWNs"
-                                 + "b3VkLmNvbSIsInNjaGVtZSI6IkhUVFBTIn19.q34pq7Bl0ryKDwUHGyzfXKP-CDI8vrm0k_y-IaxgF_U";
-                            videoListModel.addVideoModel(encryptModel);
+            superPlayerModels.addAll(getSubtitleVideoData());
+            for (VideoModel videoModel : superPlayerModels) {
+                addVideoModelIntoVodPlayerListAdapter(videoModel);
+                addVideoModelIntoVodList(videoModel);
+            }
 
-                            encryptModel = new VideoModel();
-                            encryptModel.appid = 1500006438;
-                            encryptModel.title = getString(R.string.super_play_ghost_video);
-                            encryptModel.fileid = "387702307847129127";
-                            encryptModel.pSign = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhcHBJZCI6MTUwMDA"
-                                                 + "wNjQzOCwiZmlsZUlkIjoiMzg3NzAyMzA3ODQ3MTI5MTI3IiwiY29udG"
-                                                 + "VudEluZm8iOnsiYXVkaW9WaWRlb1R5cGUiOiJSYXdBZGFwdGl2ZSIsIn"
-                                                 + "Jhd0FkYXB0aXZlRGVmaW5pdGlvbiI6MTB9LCJjdXJyZW50VGltZVN0YW1w"
-                                                 + "IjoxNjg2ODgzMzYwLCJnaG9zdFdhdGVybWFya0luZm8iOnsidGV4dCI6I"
-                                                 + "mdob3N0IGlzIHdhdGNoaW5nIn19.0G2o4P5xVZ7zF"
-                                                 + "lFUgBLntfX03iGxK9ntD_AONClUUno";
-                            videoListModel.addVideoModel(encryptModel);
+            ArrayList<VideoModel> circleModels = mSuperVodListLoader.loadCircleVodList();
+            final VideoListModel circleVideoListModel = new VideoListModel();
+            circleVideoListModel.videoModelList = circleModels;
+            circleVideoListModel.isEnableDownload = false;
+            circleVideoListModel.title = getString(R.string.superplayer_carousel_list_title);
+            circleVideoListModel.icon = "http://1500005830.vod2.myqcloud.com/6c9a5118vodcq1500005830/6f443f33387702302226773793/2luyOg7pOR0A.png";
+            mVodPlayerListAdapter.addSuperPlayerModel(circleVideoListModel);
+            mVodList.add(circleVideoListModel);
 
-                            for (VideoModel videoModel : videoListModel.videoModelList) {
-                                onGetVodInfoOnebyOneOnSuccess(videoModel);
-                            }
-                            for (VideoModel model : getSubtitleVideoData()) {
-                                onGetVodInfoOnebyOneOnSuccess(model);
-                            }
-                        }
+            ArrayList<VideoModel> cacheModels = mSuperVodListLoader.loadCacheVodList();
+            final VideoListModel cacheVideoListModel = new VideoListModel();
+            cacheVideoListModel.videoModelList = cacheModels;
+            cacheVideoListModel.isEnableDownload = true;
+            cacheVideoListModel.title = getString(R.string.superplayer_offline_cache_title);
+            cacheVideoListModel.icon = "http://1500005830.vod2.myqcloud.com/6c9a5118vodcq1500005830/ae6444ab387702302227194724/n6SJb2ORhQMA.png";
+            mVodPlayerListAdapter.addSuperPlayerModel(cacheVideoListModel);
+            mVodList.add(circleVideoListModel);
 
-                @Override
-                public void onFail(int errCode) {
-
-                }
-            });
-            mSuperVodListLoader.getBatchVodList(new SuperVodListLoader.OnVodListLoadListener() {
-                @Override
-                public void onSuccess(VideoListModel videoModels) {
-                    if (videoModels.isEnableDownload) {
-                        addCacheVideo(videoModels);
-                    } else {
-                        addCircleVideo(videoModels);
-                    }
-                }
-
-                @Override
-                public void onFail(int errCode) {
-
-                }
-            });
             mImageAdd.setVisibility(VISIBLE);
         } else {
             mVideoId = getIntent().getStringExtra(SuperPlayerConstants.PLAYER_VIDEO_ID);
@@ -652,18 +560,9 @@ public class SuperPlayerActivity extends FragmentActivity implements View.OnClic
                             mSwipeRefreshLayout.setRefreshing(false);
                             ArrayList<VideoModel> videoModels = VideoDataMgr.getInstance().loadVideoInfoList(videoInfoList);
                             if (videoModels != null && videoModels.size() != 0) {
-                                mSuperVodListLoader.getVodInfoOneByOne(videoModels,
-                                        new SuperVodListLoader.OnVodInfoLoadListener() {
-                                            @Override
-                                            public void onSuccess(VideoModel videoModel) {
-                                                onGetVodInfoOnebyOneOnSuccess(videoModel);
-                                            }
-
-                                            @Override
-                                            public void onFail(int errCode) {
-
-                                            }
-                                        });
+                                for (VideoModel videoModel : videoModels) {
+                                    onGetVodInfoOnebyOneOnSuccess(videoModel);
+                                }
                             }
                         }
                     });
@@ -686,30 +585,6 @@ public class SuperPlayerActivity extends FragmentActivity implements View.OnClic
             mBtnScan.setVisibility(GONE);
             mImageAdd.setVisibility(GONE);
         }
-    }
-
-    private void addCircleVideo(final VideoListModel videoListModel) {
-        videoListModel.title = getString(R.string.superplayer_carousel_list_title);
-        videoListModel.icon = "http://1500005830.vod2.myqcloud.com/6c9a5118vodcq1500005830/6f443f33387702302226773793/2luyOg7pOR0A.png";
-        runOnUiThread(new Runnable() {
-            @Override
-            public void run() {
-                mVodPlayerListAdapter.addSuperPlayerModel(videoListModel);
-            }
-        });
-        mVodList.add(videoListModel);
-    }
-
-    private void addCacheVideo(final VideoListModel videoListModel) {
-        videoListModel.title = getString(R.string.superplayer_offline_cache_title);
-        videoListModel.icon = "http://1500005830.vod2.myqcloud.com/6c9a5118vodcq1500005830/ae6444ab387702302227194724/n6SJb2ORhQMA.png";
-        runOnUiThread(new Runnable() {
-            @Override
-            public void run() {
-                mVodPlayerListAdapter.addSuperPlayerModel(videoListModel);
-            }
-        });
-        mVodList.add(videoListModel);
     }
 
     private void playDefaultVideo(int appid, String fileid) {
@@ -1027,7 +902,7 @@ public class SuperPlayerActivity extends FragmentActivity implements View.OnClic
         return videoModel.videoURL.startsWith("txsuperplayer://play_vod");
     }
 
-    private String getValueByName(String url, String name) { //txsuperplayer://play_vod?v=4&appId=1400295357&fileId=5285890796599775084&pcfg=Default
+    private String getValueByName(String url, String name) {
         String result = "";
         int index = url.indexOf("?");
         String temp = url.substring(index + 1);
@@ -1228,26 +1103,12 @@ public class SuperPlayerActivity extends FragmentActivity implements View.OnClic
             String fileId = uri.getQueryParameter("fileId");
             String psign = uri.getQueryParameter("psign");
             playExternalVideo(appId, fileId, psign);
-        } else if (result.contains("https://playvideo.qcloud.com/getplayinfo/v4/")) {
-            String[] valueArray = result.split("/");
-            String appId = "";
-            String fileId = "";
-            if (valueArray.length >= MIN_VALUE_ARRAY_SIZE) {
-                appId = valueArray[APP_ID_INDEX];
-                int positionOfQuestionMark = valueArray[FILE_ID_INDEX].indexOf("?");
-                fileId = positionOfQuestionMark > 0 ? valueArray[FILE_ID_INDEX].
-                        substring(0, positionOfQuestionMark) : valueArray[FILE_ID_INDEX];
-            }
-            Uri uri = Uri.parse(result);
-            String psign = uri.getQueryParameter("psign");
-            playExternalVideo(appId, fileId, psign);
         } else {
             playNewVideo(result);
         }
     }
 
     private void playExternalVideo(String appId, String fileId, String psign) {
-//        txsuperplayer://play_vod?v=4&appId=1400295357&fileId=5285890796599775084&pcfg=Default
         String videoURL = "txsuperplayer://play_vod?appId=" + appId + "&fileId=" + fileId + "&psign=" + psign;
         Log.d(TAG, "playExternalVideo: videoURL -> " + videoURL);
         playNewVideo(videoURL);
@@ -1346,6 +1207,7 @@ public class SuperPlayerActivity extends FragmentActivity implements View.OnClic
         return getSharedPreferences(SHARE_PREFERENCE_NAME, Context.MODE_PRIVATE).getBoolean(key, false);
     }
 
+    @SuppressLint("MissingSuperCall")
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions,
                                            @NonNull int[] grantResults) {

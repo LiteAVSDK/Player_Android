@@ -10,6 +10,7 @@ import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
 import com.tencent.liteav.demo.player.R;
+import com.tencent.liteav.demo.vodcommon.entity.SuperVodListLoader;
 import com.tencent.liteav.demo.vodcommon.entity.VideoListModel;
 import com.tencent.liteav.demo.vodcommon.entity.VideoModel;
 
@@ -42,26 +43,27 @@ public class TCVodPlayerListAdapter extends RecyclerView.Adapter<TCVodPlayerList
                 && mVideoListModelList.get(position) != null
                 && mVideoListModelList.get(position).videoModelList.size() == 1) {
             final VideoModel videoModel = mVideoListModelList.get(position).videoModelList.get(0);
-            if (TextUtils.isEmpty(videoModel.placeholderImage)) {
-                Glide.with(mContext).load(R.drawable.superplayer_default_cover_thumb).into(holder.thumb);
-            } else {
+            if (!TextUtils.isEmpty(videoModel.coverPictureUrl)) {
+                Glide.with(mContext).load(videoModel.coverPictureUrl).into(holder.thumb);
+            } else if (!TextUtils.isEmpty(videoModel.placeholderImage)){
                 Glide.with(mContext).load(videoModel.placeholderImage).into(holder.thumb);
+            } else {
+                Glide.with(mContext).load(R.drawable.superplayer_default_cover_thumb).into(holder.thumb);
             }
             if (videoModel.duration > 0) {
                 holder.duration.setText(formattedTime(videoModel.duration));
             } else {
                 holder.duration.setText("");
             }
-            if (videoModel.title != null) {
-                holder.title.setText(videoModel.title);
-            }
-
+            holder.title.setText(videoModel.title == null ? "" : videoModel.title);
         } else {
             final VideoListModel videoListModel = mVideoListModelList.get(position);
             Glide.with(mContext).load(videoListModel.icon).into(holder.thumb);
             holder.title.setText(videoListModel.title);
             holder.duration.setText("");
         }
+        SuperVodListLoader.VideoInfoHolder.getInstance(mContext).cache(mVideoListModelList.get(position).videoModelList);
+
         holder.title.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

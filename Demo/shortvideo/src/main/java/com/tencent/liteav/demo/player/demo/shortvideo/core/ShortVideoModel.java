@@ -8,7 +8,6 @@ import android.os.Looper;
 
 import com.tencent.liteav.demo.vodcommon.entity.ConfigBean;
 import com.tencent.liteav.demo.vodcommon.entity.SuperVodListLoader;
-import com.tencent.liteav.demo.vodcommon.entity.VideoListModel;
 import com.tencent.liteav.demo.vodcommon.entity.VideoModel;
 import com.tencent.liteav.shortvideoplayerdemo.R;
 
@@ -18,16 +17,8 @@ import java.util.List;
 public class ShortVideoModel {
     private static final String TAG = "ShortVideoDemo:ShortVideoModel";
     private static volatile ShortVideoModel mInstance;
-    private static final int APP_ID = 1500005830;
-    private static final String[] FILE_IDS = new String[]{"387702294394366256", "387702294394228858",
-            "387702294394228636", "387702294394228527", "387702294167066523",
-            "387702294167066515", "387702294168748446", "387702294394227941"};
-
-
     SuperVodListLoader mListLoader;
-
     private ArrayList<VideoModel> mSourceList;
-    private boolean mIsHttps = true;
     private Context mContext;
     private IOnDataLoadFullListener mOnDataLoadFullListener;
 
@@ -54,17 +45,63 @@ public class ShortVideoModel {
 
     public void loadDefaultVideo() {
         mSourceList.clear();
-        VideoModel videoModel;
         if (ConfigBean.getInstance().isIsUseDash()) {
             mSourceList.addAll(loadDashData());
         } else {
-            for (int i = 0; i < FILE_IDS.length; i++) {
-                videoModel = new VideoModel();
-                videoModel.appid = APP_ID;
-                videoModel.fileid = FILE_IDS[i];
-                mSourceList.add(videoModel);
-            }
+            mSourceList.addAll(loadHlsData());
         }
+    }
+
+    private List<VideoModel> loadHlsData() {
+        List<VideoModel> dataList = new ArrayList<>();
+        VideoModel model = new VideoModel();
+        model.videoURL = "http://1500005830.vod2.myqcloud.com/43843ec0vodtranscq1500005830/3d98015b387702294394366256/adp.10.m3u8";
+        model.playAction = PLAY_ACTION_PRELOAD;
+        model.placeholderImage = "http://1500005830.vod2.myqcloud.com/43843ec0vodtranscq1500005830/3d98015b387702294394366256/coverBySnapshot/coverBySnapshot_10_0.jpg";
+        dataList.add(model);
+
+        model = new VideoModel();
+        model.videoURL = "http://1500005830.vod2.myqcloud.com/43843ec0vodtranscq1500005830/3afba900387702294394228858/adp.10.m3u8";
+        model.playAction = PLAY_ACTION_PRELOAD;
+        model.placeholderImage = "http://1500005830.vod2.myqcloud.com/43843ec0vodtranscq1500005830/3afba900387702294394228858/coverBySnapshot/coverBySnapshot_10_0.jpg";
+        dataList.add(model);
+
+        model = new VideoModel();
+        model.videoURL = "http://1500005830.vod2.myqcloud.com/43843ec0vodtranscq1500005830/3afba03a387702294394228636/adp.10.m3u8";
+        model.playAction = PLAY_ACTION_PRELOAD;
+        model.placeholderImage = "http://1500005830.vod2.myqcloud.com/43843ec0vodtranscq1500005830/3afba03a387702294394228636/coverBySnapshot/coverBySnapshot_10_0.jpg";
+        dataList.add(model);
+
+        model = new VideoModel();
+        model.videoURL = "http://1500005830.vod2.myqcloud.com/43843ec0vodtranscq1500005830/3afb9bd9387702294394228527/adp.10.m3u8";
+        model.playAction = PLAY_ACTION_PRELOAD;
+        model.placeholderImage = "http://1500005830.vod2.myqcloud.com/43843ec0vodtranscq1500005830/3afb9bd9387702294394228527/coverBySnapshot/coverBySnapshot_10_0.jpg";
+        dataList.add(model);
+
+        model = new VideoModel();
+        model.videoURL = "http://1500005830.vod2.myqcloud.com/43843ec0vodtranscq1500005830/6fc8e973387702294167066523/adp.10.m3u8";
+        model.playAction = PLAY_ACTION_PRELOAD;
+        model.placeholderImage = "http://1500005830.vod2.myqcloud.com/43843ec0vodtranscq1500005830/6fc8e973387702294167066523/coverBySnapshot/coverBySnapshot_10_0.jpg";
+        dataList.add(model);
+
+        model = new VideoModel();
+        model.videoURL = "http://1500005830.vod2.myqcloud.com/43843ec0vodtranscq1500005830/6fc8e954387702294167066515/adp.10.m3u8";
+        model.playAction = PLAY_ACTION_PRELOAD;
+        model.placeholderImage = "http://1500005830.vod2.myqcloud.com/43843ec0vodtranscq1500005830/6fc8e954387702294167066515/coverBySnapshot/coverBySnapshot_10_0.jpg";
+        dataList.add(model);
+
+        model = new VideoModel();
+        model.videoURL = "http://1500005830.vod2.myqcloud.com/43843ec0vodtranscq1500005830/ccf4265f387702294168748446/adp.10.m3u8";
+        model.playAction = PLAY_ACTION_PRELOAD;
+        model.placeholderImage = "http://1500005830.vod2.myqcloud.com/43843ec0vodtranscq1500005830/ccf4265f387702294168748446/coverBySnapshot/coverBySnapshot_10_0.jpg";
+        dataList.add(model);
+
+        model = new VideoModel();
+        model.videoURL = "http://1500005830.vod2.myqcloud.com/43843ec0vodtranscq1500005830/3afb20b8387702294394227941/adp.10.m3u8";
+        model.playAction = PLAY_ACTION_PRELOAD;
+        model.placeholderImage = "http://1500005830.vod2.myqcloud.com/43843ec0vodtranscq1500005830/3afb20b8387702294394227941/coverBySnapshot/coverBySnapshot_10_0.jpg";
+        dataList.add(model);
+        return dataList;
     }
 
     private List<VideoModel> loadDashData() {
@@ -122,26 +159,12 @@ public class ShortVideoModel {
     }
 
     public void getVideoByFileId() {
-        if (ConfigBean.getInstance().isIsUseDash()) {
-            new Handler(Looper.getMainLooper()).postDelayed(new Runnable() {
-                @Override
-                public void run() {
-                    mOnDataLoadFullListener.onLoadedSuccess(mSourceList);
-                }
-            },1000);
-        } else {
-            mListLoader.getVideoListInfo(mSourceList, false, new SuperVodListLoader.OnVodListLoadListener() {
-                @Override
-                public void onSuccess(VideoListModel videoListModel) {
-                    mOnDataLoadFullListener.onLoadedSuccess(videoListModel.videoModelList);
-                }
-
-                @Override
-                public void onFail(int errCode) {
-                    mOnDataLoadFullListener.onLoadedFailed(errCode);
-                }
-            });
-        }
+        new Handler(Looper.getMainLooper()).post(new Runnable() {
+            @Override
+            public void run() {
+                mOnDataLoadFullListener.onLoadedSuccess(mSourceList);
+            }
+        });
     }
 
     public void setOnDataLoadFullListener(IOnDataLoadFullListener listener) {

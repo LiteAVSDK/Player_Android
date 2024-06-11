@@ -101,6 +101,9 @@ public class VideoDownloadItemView extends RelativeLayout implements VideoDownlo
             loader.getVodByFileId(videoModel, new SuperVodListLoader.OnVodInfoLoadListener() {
                 @Override
                 public void onSuccess(final VideoModel videoModel) {
+                    if (TextUtils.isEmpty(videoModel.title)) {
+                        videoModel.title = SuperVodListLoader.VideoInfoHolder.getInstance(getContext()).get(videoModel.fileid);
+                    }
                     post(new Runnable() {
                         @Override
                         public void run() {
@@ -208,13 +211,17 @@ public class VideoDownloadItemView extends RelativeLayout implements VideoDownlo
 
     @Override
     public void onDownloadEvent(int event, TXVodDownloadMediaInfo mediaInfo) {
-        this.mMediaInfo = mediaInfo;
+        if (mMediaInfo != mediaInfo) {
+            return;
+        }
         updateDownloadState(mediaInfo);
     }
 
     @Override
     public void onDownloadError(TXVodDownloadMediaInfo mediaInfo, int errorCode, String errorMsg) {
-        this.mMediaInfo = mediaInfo;
+        if (mMediaInfo != mediaInfo) {
+            return;
+        }
         updateDownloadState(mediaInfo);
     }
 

@@ -85,7 +85,7 @@ public class FeedPlayerView extends FrameLayout implements FeedPlayer {
                 if (feedPlayerManager != null) {
                     feedPlayerManager.setPlayingFeedPlayerView(FeedPlayerView.this, position);
                 }
-                superPlayerView.setStartTime(0);
+//                superPlayerView.setStartTime(0);
             }
 
             @Override

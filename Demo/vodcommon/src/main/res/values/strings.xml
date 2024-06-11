@@ -40,5 +40,7 @@
     <string name="superplayer_vip_title">试看功能演示</string>
     <string name="superplayer_vip_watch_tip">可试看%ss，开通VIP观看完整视频</string>
     <string name="super_player_cache_video_title">不只是音视频 %1d</string>
+    <string name="super_play_encrypt_video_introduction">加密视频_腾讯云业务介绍</string>
+    <string name="super_play_ghost_video">幽灵水印视频</string>
 
 </resources>

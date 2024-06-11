@@ -3,37 +3,22 @@ package com.tencent.liteav.demo.vodcommon.entity;
 import static com.tencent.liteav.demo.superplayer.SuperPlayerModel.PLAY_ACTION_MANUAL_PLAY;
 
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.os.Handler;
 import android.os.HandlerThread;
 import android.os.Looper;
 import android.text.TextUtils;
-import android.util.Log;
 
 import com.tencent.liteav.demo.superplayer.model.VipWatchModel;
 import com.tencent.liteav.demo.superplayer.model.entity.DynamicWaterConfig;
-import com.tencent.liteav.demo.superplayer.model.entity.VideoQuality;
-import com.tencent.liteav.demo.superplayer.model.protocol.PlayInfoParserV2;
-import com.tencent.liteav.demo.superplayer.model.protocol.PlayInfoParserV4;
 import com.tencent.liteav.demo.vodcommon.R;
 
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
-
-import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
-import java.util.Locale;
 import java.util.concurrent.TimeUnit;
-import java.util.concurrent.atomic.AtomicInteger;
 
-import okhttp3.Call;
-import okhttp3.Callback;
 import okhttp3.OkHttpClient;
-import okhttp3.Request;
-import okhttp3.Response;
 
 /**
  * Get VOD information
@@ -42,31 +27,14 @@ import okhttp3.Response;
  */
 public class SuperVodListLoader {
 
-    private static final String                M3U8_SUFFIX = ".m3u8";
     private static final String                TAG       = "SuperVodListLoader";
     private              Context               mContext;
-    private final        Handler               mHandler;
-    private              boolean               mIsHttps  = true;
-    private final        String                BASE_URL  = "http://playvideo.qcloud.com/getplayinfo/v4";
-    private final        String                BASE_URLS = "https://playvideo.qcloud.com/getplayinfo/v4";
-    private              OnVodInfoLoadListener mOnVodInfoLoadListener;
-    private final        OkHttpClient          mHttpClient;
     private final        int                   mAppId    = 1500005830;
-    private final        Object mLock = new Object();
     private final        Handler               mMainHandler = new Handler(Looper.getMainLooper());
 
 
     public SuperVodListLoader(Context context) {
-        HandlerThread mHandlerThread = new HandlerThread("SuperVodListLoader");
-        mHandlerThread.start();
-        mHandler = new Handler(mHandlerThread.getLooper());
         mContext = context;
-        mHttpClient = new OkHttpClient();
-        mHttpClient.newBuilder().connectTimeout(5, TimeUnit.SECONDS);
-    }
-
-    public void setOnVodInfoLoadListener(OnVodInfoLoadListener listener) {
-        mOnVodInfoLoadListener = listener;
     }
 
     public ArrayList<VideoModel> loadDefaultVodList(Context applicationContext) {
@@ -74,12 +42,15 @@ public class SuperVodListLoader {
         VideoModel model = new VideoModel();
         model.appid = mAppId;
         model.fileid = "387702299774251236";
+        model.title = getTitleByFileId(model);
+        model.coverPictureUrl = "http://1500005830.vod2.myqcloud.com/43843ec0vodtranscq1500005830/48d0f1f9387702299774251236/coverBySnapshot/coverBySnapshot_10_0.jpg";
         list.add(model);
 
         model = new VideoModel();
         model.appid = mAppId;
         model.fileid = "387702299774390972";
         model.title = applicationContext.getString(R.string.superplayer_dynamic_watermark_title);
+        model.coverPictureUrl = "http://1500005830.vod2.myqcloud.com/6c9a5118vodcq1500005830/4b6e0e84387702299774390972/387702299947629622.png";
         String tipStr = applicationContext.getString(R.string.superplayer_dynamic_watermark_tip);
         model.dynamicWaterConfig = new DynamicWaterConfig(tipStr, 30, Color.parseColor("#FF3333"));
         list.add(model);
@@ -87,17 +58,22 @@ public class SuperVodListLoader {
         model = new VideoModel();
         model.appid = mAppId;
         model.fileid = "387702299774253670";
+        model.title = getTitleByFileId(model);
+        model.coverPictureUrl = "http://1500005830.vod2.myqcloud.com/6c9a5118vodcq1500005830/48d21c3d387702299774253670/387702299947604155.png";
         list.add(model);
 
         model = new VideoModel();
         model.appid = mAppId;
         model.fileid = "387702299774574470";
+        model.title = getTitleByFileId(model);
+        model.coverPictureUrl = "http://1500005830.vod2.myqcloud.com/6c9a5118vodcq1500005830/4ff64b01387702299774574470/387702304138941858.png";
         list.add(model);
 
         model = new VideoModel();
         model.appid = mAppId;
         model.fileid = "387702299774545556";
         model.title = applicationContext.getString(R.string.superplayer_vip_title);
+        model.coverPictureUrl = "http://1500005830.vod2.myqcloud.com/6c9a5118vodcq1500005830/4fc091e4387702299774545556/387702299947278317.png";
         model.vipWatchModel = new VipWatchModel(applicationContext.getString(R.string.superplayer_vip_watch_tip), 15);
         list.add(model);
 
@@ -109,6 +85,33 @@ public class SuperVodListLoader {
         model.coverPictureUrl = "http://1500005830.vod2.myqcloud.com/6c9a5118vodcq1500005830/cc1e28208602268011087336518/MXUW1a5I9TsA.png";
         list.add(model);
 
+        model = new VideoModel();
+        model.appid = 1500005830;
+        model.title = applicationContext.getString(R.string.super_play_encrypt_video_introduction);
+        model.placeholderImage = "https://1500005830.vod2.myqcloud.com/6c9a5118vodcq1500005830/35ab25fb243791578431393746/onEqUp.png";
+        model.fileid = "243791578431393746";
+        model.pSign = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhcHBJZCI6MTUwMDA"
+                + "wNTgzMCwiZmlsZUlkIjoiMjQzNzkxNTc4NDMxMzkzNzQ2IiwiY3VycmVudFRpbWVTdGFtc"
+                + "CI6MTY3MzQyNjIyNywiY29udGVudEluZm8iOnsiYXVkaW9WaWRlb1R5cGUiOiJQcm90ZWN0"
+                + "ZWRBZGFwdGl2ZSIsImRybUFkYXB0aXZlSW5mbyI6eyJwcml2YXRlRW5jcnlwdGlvbkRlZmluaX"
+                + "Rpb24iOjEyfX0sInVybEFjY2Vzc0luZm8iOnsiZG9tYWluIjoiMTUwMDAwNTgzMC52b2QyLm15cWNs"
+                + "b3VkLmNvbSIsInNjaGVtZSI6IkhUVFBTIn19.q34pq7Bl0ryKDwUHGyzfXKP-CDI8vrm0k_y-IaxgF_U";
+        list.add(model);
+
+        model = new VideoModel();
+        model.appid = 1500006438;
+        model.title = applicationContext.getString(R.string.super_play_ghost_video);
+        model.fileid = "387702307847129127";
+        model.placeholderImage = "http://1500006438.vod2.myqcloud.com/4384ba25vodtranscq1500006438/558b62f3387702307847129127/coverBySnapshot_10_0.jpg";
+        model.pSign = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhcHBJZCI6MTUwMDA"
+                + "wNjQzOCwiZmlsZUlkIjoiMzg3NzAyMzA3ODQ3MTI5MTI3IiwiY29udG"
+                + "VudEluZm8iOnsiYXVkaW9WaWRlb1R5cGUiOiJSYXdBZGFwdGl2ZSIsIn"
+                + "Jhd0FkYXB0aXZlRGVmaW5pdGlvbiI6MTB9LCJjdXJyZW50VGltZVN0YW1w"
+                + "IjoxNjg2ODgzMzYwLCJnaG9zdFdhdGVybWFya0luZm8iOnsidGV4dCI6I"
+                + "mdob3N0IGlzIHdhdGNoaW5nIn19.0G2o4P5xVZ7zF"
+                + "lFUgBLntfX03iGxK9ntD_AONClUUno";
+        list.add(model);
+
         return list;
     }
 
@@ -117,17 +120,23 @@ public class SuperVodListLoader {
         model = new VideoModel();
         model.appid = mAppId;
         model.fileid = "387702299774211080";
+        model.title = getTitleByFileId(model);
+        model.coverPictureUrl = "http://1500005830.vod2.myqcloud.com/43843ec0vodtranscq1500005830/48888812387702299774211080/coverBySnapshot/coverBySnapshot_10_0.jpg";
         ArrayList<VideoModel> list = new ArrayList<>();
         list.add(model);
 
         model = new VideoModel();
         model.appid = mAppId;
         model.fileid = "387702299774644824";
+        model.title = getTitleByFileId(model);
+        model.coverPictureUrl = "http://1500005830.vod2.myqcloud.com/43843ec0vodtranscq1500005830/52153a82387702299774644824/coverBySnapshot/coverBySnapshot_10_0.jpg";
         list.add(model);
 
         model = new VideoModel();
         model.appid = mAppId;
         model.fileid = "387702299774544650";
+        model.title = getTitleByFileId(model);
+        model.coverPictureUrl = "http://1500005830.vod2.myqcloud.com/43843ec0vodtranscq1500005830/4fc009be387702299774544650/coverBySnapshot/coverBySnapshot_10_0.jpg";
         list.add(model);
         return list;
     }
@@ -136,6 +145,8 @@ public class SuperVodListLoader {
         VideoModel model = new VideoModel();
         model.appid = 1500005830;
         model.fileid = "387702299773851453";
+        model.title = getTitleByFileId(model);
+        model.coverPictureUrl = "http://1500005830.vod2.myqcloud.com/43843ec0vodtranscq1500005830/09d5b1bf387702299773851453/coverBySnapshot/coverBySnapshot_10_0.jpg";
         model.isEnableDownload = true;
         ArrayList<VideoModel> list = new ArrayList<>();
         list.add(model);
@@ -143,78 +154,50 @@ public class SuperVodListLoader {
         model = new VideoModel();
         model.appid = 1500005830;
         model.fileid = "387702299774155981";
+        model.title = getTitleByFileId(model);
+        model.coverPictureUrl = "http://1500005830.vod2.myqcloud.com/43843ec0vodtranscq1500005830/467e1943387702299774155981/coverBySnapshot/coverBySnapshot_10_0.jpg";
         model.isEnableDownload = true;
         list.add(model);
 
         model = new VideoModel();
         model.appid = 1500005830;
         model.fileid = "387702299773830943";
+        model.title = getTitleByFileId(model);
+        model.coverPictureUrl = "http://1500005830.vod2.myqcloud.com/43843ec0vodtranscq1500005830/09b10980387702299773830943/coverBySnapshot/coverBySnapshot_10_0.jpg";
         model.isEnableDownload = true;
         list.add(model);
 
         model = new VideoModel();
         model.appid = 1500005830;
         model.fileid = "387702299773823860";
+        model.title = getTitleByFileId(model);
+        model.coverPictureUrl = "http://1500005830.vod2.myqcloud.com/43843ec0vodtranscq1500005830/09a09220387702299773823860/coverBySnapshot/coverBySnapshot_10_0.jpg";
         model.isEnableDownload = true;
         list.add(model);
 
         model = new VideoModel();
         model.appid = 1500005830;
         model.fileid = "387702299774156604";
+        model.title = getTitleByFileId(model);
+        model.coverPictureUrl = "http://1500005830.vod2.myqcloud.com/43843ec0vodtranscq1500005830/467e97dc387702299774156604/coverBySnapshot/coverBySnapshot_10_0.jpg";
         model.isEnableDownload = true;
         list.add(model);
         return list;
     }
 
-    public void getBatchVodList(final OnVodListLoadListener listener) {
-        ArrayList<VideoModel> circleModels = loadCircleVodList();
-        ArrayList<VideoModel> cacheModels = loadCacheVodList();
-
-        getVideoListInfo(circleModels, false, listener);
-        getVideoListInfo(cacheModels, true, listener);
-    }
 
     public void getVideoListInfo(final List<VideoModel> videoModels, final boolean isCacheModel,
                                  final OnVodListLoadListener listener) {
         if (listener == null) {
             return;
         }
-        mHandler.post(new Runnable() {
+        mMainHandler.post(new Runnable() {
             @Override
             public void run() {
-                final int loadSize = videoModels.size();
-                final AtomicInteger integer = new AtomicInteger(0);
-                for (VideoModel model : videoModels) {
-                    getVodByFileId(model, new OnVodInfoLoadListener() {
-                        @Override
-                        public void onSuccess(VideoModel videoModel) {
-                            synchronized (mLock) {
-                                integer.getAndAdd(1);
-                                if (integer.get() == loadSize) {
-                                    final VideoListModel videoListModel = new VideoListModel();
-                                    videoListModel.videoModelList = videoModels;
-                                    videoListModel.isEnableDownload = isCacheModel;
-                                    mMainHandler.post(new Runnable() {
-                                        @Override
-                                        public void run() {
-                                            listener.onSuccess(videoListModel);
-                                        }
-                                    });
-                                }
-                            }
-                        }
-
-                        @Override
-                        public void onFail(int errCode) {
-                            mMainHandler.post(new Runnable() {
-                                @Override
-                                public void run() {
-                                    listener.onFail(-1);
-                                }
-                            });
-                        }
-                    });
-                }
+                final VideoListModel videoListModel = new VideoListModel();
+                videoListModel.videoModelList = videoModels;
+                videoListModel.isEnableDownload = isCacheModel;
+                listener.onSuccess(videoListModel);
             }
         });
     }
@@ -233,187 +216,13 @@ public class SuperVodListLoader {
         if (listener == null) {
             return;
         }
-        mHandler.post(new Runnable() {
+        model.title = getTitleByFileId(model);
+        mMainHandler.post(new Runnable() {
             @Override
             public void run() {
-                String urlStr = makeUrlString(model.appid, model.fileid, model.pSign);
-                Request request = new Request.Builder().url(urlStr).build();
-                Call call = mHttpClient.newCall(request);
-                call.enqueue(new Callback() {
-                    @Override
-                    public void onFailure(Call call, IOException e) {
-                        mMainHandler.post(new Runnable() {
-                            @Override
-                            public void run() {
-                                listener.onFail(-1);
-                            }
-                        });
-                    }
-
-                    @Override
-                    public void onResponse(Call call, Response response) throws IOException {
-                        String content = response.body().string();
-                        parseJson(model, content, listener);
-                    }
-                });
+                listener.onSuccess(model);
             }
         });
-    }
-
-    public void getLiveList(final OnListLoadListener listener) {
-        if (listener == null) {
-            return;
-        }
-        mHandler.post(new Runnable() {
-            @Override
-            public void run() {
-                String urlStr = "http://xzb.qcloud.com/get_live_list2";
-
-                OkHttpClient okHttpClient = new OkHttpClient();
-                okHttpClient.newBuilder().connectTimeout(5, TimeUnit.SECONDS);
-                Request request = new Request.Builder().url(urlStr).build();
-                Call call = okHttpClient.newCall(request);
-                call.enqueue(new Callback() {
-                    @Override
-                    public void onFailure(Call call, IOException e) {
-                        mMainHandler.post(new Runnable() {
-                            @Override
-                            public void run() {
-                                listener.onFail(-1);
-                            }
-                        });
-                    }
-
-                    @Override
-                    public void onResponse(Call call, Response response) throws IOException {
-                        String content = response.body().string();
-                        try {
-                            JSONObject jsonObject = new JSONObject(content);
-                            int code = jsonObject.getInt("code");
-                            if (code != 200) {
-                                String message = jsonObject.getString("message");
-                                mMainHandler.post(new Runnable() {
-                                    @Override
-                                    public void run() {
-                                        listener.onFail(-1);
-                                    }
-                                });
-                                Log.e(TAG, message);
-                                return;
-                            }
-                            JSONObject data = jsonObject.optJSONObject("data");
-                            JSONArray liveList = data.getJSONArray("list");
-                            final ArrayList<VideoModel> modelList = new ArrayList<>();
-                            for (int i = 0; i < liveList.length(); i++) {
-                                JSONObject playItem = liveList.optJSONObject(i);
-                                VideoModel model = new VideoModel();
-                                model.appid = playItem.optInt("appId", 0);
-                                model.title = playItem.optString("name", "");
-                                model.placeholderImage = playItem.optString("coverUrl", "");
-                                JSONArray urlList = playItem.getJSONArray("playUrl");
-                                if (urlList.length() > 0) {
-                                    model.multiVideoURLs = new ArrayList<>(urlList.length());
-                                    model.playDefaultIndex = 0;
-                                    model.videoURL = urlList.optJSONObject(model.playDefaultIndex).optString("url", "");
-                                    for (int j = 0; j < urlList.length(); j++) {
-                                        JSONObject urlItem = urlList.optJSONObject(j);
-                                        model.multiVideoURLs.add(new VideoModel.VideoPlayerURL(urlItem.optString("title", ""), urlItem.optString("url", "")));
-                                    }
-                                }
-
-                                modelList.add(model);
-                            }
-                            mMainHandler.post(new Runnable() {
-                                @Override
-                                public void run() {
-                                    listener.onSuccess(modelList);
-                                }
-                            });
-                        } catch (Exception e) {
-                            e.printStackTrace();
-                        }
-                    }
-                });
-            }
-        });
-    }
-
-    private void parseJson(final VideoModel videoModel, String content, final OnVodInfoLoadListener listener) {
-        if (TextUtils.isEmpty(content)) {
-            Log.e(TAG, "parseJson err, content is empty!");
-            return;
-        }
-        if (listener == null) {
-            return;
-        }
-
-        try {
-            JSONObject jsonObject = new JSONObject(content);
-            int code = jsonObject.getInt("code");
-            if (code != 0) {
-                String message = jsonObject.getString("message");
-                mMainHandler.post(new Runnable() {
-                    @Override
-                    public void run() {
-                        listener.onFail(-1);
-                    }
-                });
-                Log.e(TAG, message);
-                return;
-            }
-
-            int version = jsonObject.getInt("version");
-            if (version == 2) {
-                PlayInfoParserV2 parserV2 = new PlayInfoParserV2(jsonObject);
-
-                videoModel.placeholderImage = parserV2.getCoverUrl();
-                videoModel.duration = parserV2.getDuration();
-                upDataTitle(videoModel, parserV2.getName());
-
-                String url = parserV2.getURL();
-                if ((url != null && url.contains(M3U8_SUFFIX)) || parserV2.getVideoQualityList().isEmpty()) {
-                    videoModel.videoURL = url;
-                    if (videoModel.multiVideoURLs != null) {
-                        videoModel.multiVideoURLs.clear();
-                    }
-                } else {
-                    videoModel.videoURL = null;
-                    videoModel.multiVideoURLs = new ArrayList<>();
-                    List<VideoQuality> videoQualityList = parserV2.getVideoQualityList();
-                    Collections.sort(videoQualityList); // Sort the bitrate from high to low
-                    for (int i = 0; i < videoQualityList.size(); i++) {
-                        VideoQuality videoQuality = videoQualityList.get(i);
-                        videoModel.multiVideoURLs.add(
-                                new VideoModel.VideoPlayerURL(videoQuality.title, videoQuality.url));
-                    }
-                    videoModel.videoQualityList.addAll(videoQualityList);
-                    if (parserV2.getDefaultVideoQuality() != null &&  parserV2.getDefaultVideoQuality().index >= 0) {
-                        videoModel.playDefaultIndex = parserV2.getDefaultVideoQuality().index;
-                    }
-                }
-            } else if (version == 4) {
-                PlayInfoParserV4 parserV4 = new PlayInfoParserV4(jsonObject);
-                if (TextUtils.isEmpty(parserV4.getDRMType())) {
-                    videoModel.videoURL = parserV4.getURL();
-                }
-                String title = parserV4.getDescription();
-                if (TextUtils.isEmpty(title)) {
-                    title = parserV4.getName();
-                }
-                upDataTitle(videoModel, title);
-                videoModel.placeholderImage = parserV4.getCoverUrl();
-                videoModel.duration = parserV4.getDuration();
-            }
-            videoModel.title = getTitleByFileId(videoModel);
-            mMainHandler.post(new Runnable() {
-                @Override
-                public void run() {
-                    listener.onSuccess(videoModel);
-                }
-            });
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
     }
 
     /**
@@ -471,67 +280,63 @@ public class SuperVodListLoader {
         return title;
     }
 
-    private void upDataTitle(VideoModel videoModel, String newTitle) {
-        if (TextUtils.isEmpty(videoModel.title)) {
-            videoModel.title = newTitle;
+
+    public static final class VideoInfoHolder {
+        private final SharedPreferences sharedPreferences;
+        private final SharedPreferences.Editor editor;
+
+        private volatile static VideoInfoHolder INSTANCE;
+
+        private VideoInfoHolder(Context context) {
+            sharedPreferences = context.getSharedPreferences("video_cache_info", Context.MODE_PRIVATE);
+            editor = sharedPreferences.edit();
+        }
+
+        public static VideoInfoHolder getInstance(Context context) {
+            if (INSTANCE == null) {
+                synchronized (VideoInfoHolder.class) {
+                    if (INSTANCE == null) {
+                        INSTANCE = new VideoInfoHolder(context.getApplicationContext());
+                    }
+                }
+            }
+            return INSTANCE;
+        }
+
+        public void cache(String fileId, String title) {
+            if (!TextUtils.isEmpty(fileId) && !TextUtils.isEmpty(title)) {
+                editor.putString(fileId, title);
+                editor.apply();
+            }
+        }
+
+        public void cache(List<VideoModel> modelList) {
+            if (modelList == null || modelList.isEmpty()) {
+                return;
+            }
+            for (VideoModel model : modelList) {
+                if (model == null || TextUtils.isEmpty(model.fileid) || TextUtils.isEmpty(model.title)) {
+                    continue;
+                }
+                editor.putString(model.fileid, model.title);
+            }
+            editor.apply();
+        }
+
+        public String get(String fileId) {
+            if (TextUtils.isEmpty(fileId)) {
+                return "";
+            }
+            return sharedPreferences.getString(fileId, "");
         }
     }
 
-    /**
-     * Assemble the protocol request URL.
-     *
-     * 拼装协议请求url
-     */
-    private String makeUrlString(int appId, String fileId, String pSign) {
-        String urlStr;
-        if (mIsHttps) {
-            // Use HTTPS by default.
-            urlStr = String.format(Locale.ROOT, "%s/%d/%s", BASE_URLS, appId, fileId);
-        } else {
-            urlStr = String.format(Locale.ROOT, "%s/%d/%s", BASE_URL, appId, fileId);
-        }
-        String query = makeQueryString(null, pSign, null);
-        urlStr = urlStr + "?" + query;
-        return urlStr;
-    }
-
-    /**
-     * Assemble the query field in the protocol request URL.
-     *
-     * 拼装协议请求url中的query字段
-     */
-    private String makeQueryString(String pcfg, String psign, String content) {
-        StringBuilder str = new StringBuilder();
-        if (!TextUtils.isEmpty(pcfg)) {
-            str.append("pcfg=").append(pcfg).append("&");
-        }
-
-        if (!TextUtils.isEmpty(psign)) {
-            str.append("psign=").append(psign).append("&");
-        }
-
-        if (!TextUtils.isEmpty(content)) {
-            str.append("context=").append(content).append("&");
-        }
-        if (str.length() > 1) {
-            str.deleteCharAt(str.length() - 1);
-        }
-        return str.toString();
-    }
 
     public interface OnVodInfoLoadListener {
         void onSuccess(VideoModel videoModel);
 
         void onFail(int errCode);
     }
-
-
-    public interface OnListLoadListener {
-        void onSuccess(List<VideoModel> videoModels);
-
-        void onFail(int errCode);
-    }
-
 
     public interface OnVodListLoadListener {
         void onSuccess(VideoListModel videoListModel);

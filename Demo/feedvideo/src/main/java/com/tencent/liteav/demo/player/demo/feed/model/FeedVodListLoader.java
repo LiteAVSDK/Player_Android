@@ -7,10 +7,10 @@ import android.os.Handler;
 import android.os.Looper;
 
 import com.tencent.liteav.demo.feedvideo.R;
+import com.tencent.liteav.demo.superplayer.SuperPlayerModel;
 import com.tencent.liteav.demo.vodcommon.entity.ConfigBean;
 import com.tencent.liteav.demo.vodcommon.entity.SuperVodListLoader;
 import com.tencent.liteav.demo.vodcommon.entity.VideoModel;
-import com.tencent.liteav.demo.superplayer.SuperPlayerModel;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -89,6 +89,7 @@ public class FeedVodListLoader {
         model.playAction = PLAY_ACTION_PRELOAD;
         model.videoDescription = mContext.getString(R.string.tencent_cloud_audio_and_video_achievements_introduction);;
         model.videoMoreDescription = mContext.getString(R.string.tencent_cloud_audio_and_video_achievements_detail);
+        model.placeholderImage = "http://1500005830.vod2.myqcloud.com/6c9a5118vodcq1500005830/48d0f1f9387702299774251236/387702299947979020.png";
         list.add(model);
         model = new VideoModel();
         model.appid = 1500005830;
@@ -96,6 +97,7 @@ public class FeedVodListLoader {
         model.playAction = PLAY_ACTION_PRELOAD;
         model.videoDescription = mContext.getString(R.string.tencent_cloud_audio_and_video_steady_introduction);
         model.videoMoreDescription = mContext.getString(R.string.tencent_cloud_audio_and_video_steady_detail);
+        model.placeholderImage = "http://1500005830.vod2.myqcloud.com/43843ec0vodtranscq1500005830/4fc009be387702299774544650/coverBySnapshot/coverBySnapshot_10_0.jpg";
         list.add(model);
         model = new VideoModel();
         model.appid = 1500005830;
@@ -103,6 +105,7 @@ public class FeedVodListLoader {
         model.playAction = PLAY_ACTION_PRELOAD;
         model.videoDescription = mContext.getString(R.string.tencent_cloud_audio_and_video_real_introduction);
         model.videoMoreDescription = mContext.getString(R.string.tencent_cloud_audio_and_video_real_detail);
+        model.placeholderImage = "http://1500005830.vod2.myqcloud.com/43843ec0vodtranscq1500005830/52153a82387702299774644824/coverBySnapshot/coverBySnapshot_10_0.jpg";
         list.add(model);
         model = new VideoModel();
         model.appid = 1500005830;
@@ -110,6 +113,7 @@ public class FeedVodListLoader {
         model.playAction = PLAY_ACTION_PRELOAD;
         model.videoDescription = mContext.getString(R.string.tencent_cloud_audio_and_video_complete_introduction);
         model.videoMoreDescription = mContext.getString(R.string.tencent_cloud_audio_and_video_complete_detail);
+        model.placeholderImage = "http://1500005830.vod2.myqcloud.com/43843ec0vodtranscq1500005830/48888812387702299774211080/coverBySnapshot/coverBySnapshot_10_0.jpg";
         list.add(model);
         model = new VideoModel();
         model.appid = 1500005830;
@@ -117,6 +121,7 @@ public class FeedVodListLoader {
         model.playAction = PLAY_ACTION_PRELOAD;
         model.videoDescription = mContext.getString(R.string.tencent_cloud_business_introduction_introduction);
         model.videoMoreDescription = mContext.getString(R.string.tencent_cloud_business_introduction_detail);
+        model.placeholderImage = "http://1500005830.vod2.myqcloud.com/6c9a5118vodcq1500005830/4fc091e4387702299774545556/387702299947278317.png";
         list.add(model);
         model = new VideoModel();
         model.appid = 1500005830;
@@ -124,6 +129,7 @@ public class FeedVodListLoader {
         model.playAction = PLAY_ACTION_PRELOAD;
         model.videoDescription = mContext.getString(R.string.what_are_numbers_introduction);
         model.videoMoreDescription = mContext.getString(R.string.what_are_numbers_detail);
+        model.placeholderImage = "http://1500005830.vod2.myqcloud.com/6c9a5118vodcq1500005830/4ff64b01387702299774574470/387702299947750409.png";
         list.add(model);
         model = new VideoModel();
         model.appid = 1500005830;
@@ -131,6 +137,7 @@ public class FeedVodListLoader {
         model.playAction = PLAY_ACTION_PRELOAD;
         model.videoDescription = mContext.getString(R.string.simplify_complexity_and_build_big_from_small_introduction);
         model.videoMoreDescription = mContext.getString(R.string.simplify_complexity_and_build_big_from_small_detail);;
+        model.placeholderImage = "http://1500005830.vod2.myqcloud.com/6c9a5118vodcq1500005830/48d21c3d387702299774253670/387702299947604155.png";
         list.add(model);
         model = new VideoModel();
         model.appid = 1500005830;
@@ -138,6 +145,7 @@ public class FeedVodListLoader {
         model.playAction = PLAY_ACTION_PRELOAD;
         model.videoDescription = mContext.getString(R.string.tencent_cloud_audio_and_video_introduction);
         model.videoMoreDescription = mContext.getString(R.string.tencent_cloud_audio_and_video_detail);
+        model.placeholderImage = "http://1500005830.vod2.myqcloud.com/6c9a5118vodcq1500005830/4b6e0e84387702299774390972/387702299947629622.png";
         list.add(model);
         return list;
     }

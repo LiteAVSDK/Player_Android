@@ -77,7 +77,6 @@
     <string name="super_player_multi_subtitle_video">Multi SubTitle Video</string>
     <string name="super_player_multi_sound_track_video">Multi Sound Track Video</string>
 
-    <string name="super_play_encrypt_video_introduction">Encrypted Video_Tencent Cloud Business Introduction</string>
 
     <string name="super_player_vod_config">Player configuration</string>
     <string name="super_player_vod_need_accurate_seek">Whether to use accurate seek</string>
@@ -102,5 +101,4 @@
     <string name="super_player_vod_reset">Reset</string>
     <string name="super_player_vod_hard_first">Prefer hardware decoding (default)</string>
     <string name="super_player_vod_soft_first">Prefer software decoding</string>
-    <string name="super_play_ghost_video">Ghost watermarked video</string>
 </resources>
