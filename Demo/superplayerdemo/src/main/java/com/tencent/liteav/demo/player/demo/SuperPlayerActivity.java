@@ -1217,6 +1217,7 @@ public class SuperPlayerActivity extends FragmentActivity implements View.OnClic
     @Override
     public void onPictureInPictureModeChanged(boolean isInPictureInPictureMode, Configuration newConfig) {
         super.onPictureInPictureModeChanged(isInPictureInPictureMode, newConfig);
+        mSuperPlayerView.onPictureInPictureModeChanged(isInPictureInPictureMode);
         if (isInPictureInPictureMode) {
             mLayoutTitle.setVisibility(GONE);
             mSuperPlayerView.showPIPIV(false);

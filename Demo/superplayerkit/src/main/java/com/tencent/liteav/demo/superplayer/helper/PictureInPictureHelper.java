@@ -43,6 +43,7 @@ public class PictureInPictureHelper implements ServiceConnection {
     private Context mContext;
     private OnPictureInPictureClickListener mListener;
     private boolean mIsBindService = false;
+    private boolean isInPipMode;
 
 
     public PictureInPictureHelper(Context context) {
@@ -199,6 +200,13 @@ public class PictureInPictureHelper implements ServiceConnection {
         return PIP_TIME_SHIFT_INTERVAL;
     }
 
+    public void onPictureInPictureModeChanged(boolean isInPictureInPictureMode) {
+        isInPipMode = isInPictureInPictureMode;
+    }
+
+    public boolean isInPipMode() {
+        return isInPipMode;
+    }
 
     public void release() {
         if (mReceiver != null) {
