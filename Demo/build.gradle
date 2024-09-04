@@ -3,7 +3,6 @@
 buildscript {
 
     repositories {
-        jcenter()
         google()
         mavenCentral()
     }
@@ -21,7 +20,6 @@ allprojects {
         maven { url "https://mirrors.tencent.com/nexus/repository/maven-public/" }
         maven { url "https://mirrors.tencent.com/repository/maven/YoutuEntertainment" }
         maven { url "https://mirrors.tencent.com/repository/maven/thirdparty" }
-        jcenter()
         google()
         mavenCentral()
     }

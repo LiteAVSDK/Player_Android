@@ -24,9 +24,8 @@ android {
 }
 
 dependencies {
-    implementation fileTree(dir: 'libs', include: ['*.jar'])
+    implementation fileTree(dir: 'libs', include: ['*.aar'])
     implementation rootProject.ext.liteavSdk
-    implementation 'com.github.ctiao:DanmakuFlameMaster:0.5.3'
 
     implementation 'androidx.appcompat:appcompat:1.0.0'
     implementation 'androidx.recyclerview:recyclerview:1.0.0'
