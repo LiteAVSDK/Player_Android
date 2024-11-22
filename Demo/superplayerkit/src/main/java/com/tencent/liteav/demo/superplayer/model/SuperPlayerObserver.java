@@ -48,6 +48,14 @@ public abstract class SuperPlayerObserver {
     }
 
     /**
+     * Player error
+     *
+     * 播放器错误
+     */
+    public void onPlayError() {
+    }
+
+    /**
      * Player enters loading state
      *
      * 播放器进入Loading状态

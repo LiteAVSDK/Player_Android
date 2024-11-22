@@ -13,7 +13,8 @@ public class SuperPlayerDef {
         PLAYING,
         PAUSE,
         LOADING,
-        END
+        END,
+        ERROR
     }
 
     public enum PlayerType {

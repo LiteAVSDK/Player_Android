@@ -276,6 +276,7 @@ public class WindowPlayer extends AbsPlayer implements View.OnClickListener,
             case INIT:
             case PAUSE:
             case END:
+            case ERROR:
                 if (mControllerCallback != null) {
                     mControllerCallback.onResume();
                 }
@@ -447,6 +448,7 @@ public class WindowPlayer extends AbsPlayer implements View.OnClickListener,
                 toggleView(mLayoutReplay, false);
                 break;
             case PAUSE:
+            case ERROR:
                 mIvPause.setImageResource(R.drawable.superplayer_ic_vod_play_normal);
                 toggleView(mPbLiveLoading, false);
                 toggleView(mLayoutReplay, false);

@@ -536,7 +536,7 @@ public class SuperPlayerActivity extends FragmentActivity implements View.OnClic
             cacheVideoListModel.title = getString(R.string.superplayer_offline_cache_title);
             cacheVideoListModel.icon = "http://1500005830.vod2.myqcloud.com/6c9a5118vodcq1500005830/ae6444ab387702302227194724/n6SJb2ORhQMA.png";
             mVodPlayerListAdapter.addSuperPlayerModel(cacheVideoListModel);
-            mVodList.add(circleVideoListModel);
+            mVodList.add(cacheVideoListModel);
 
             mImageAdd.setVisibility(VISIBLE);
         } else {

@@ -310,7 +310,7 @@ public class SuperPlayerImpl implements SuperPlayer, ITXVodPlayListener, ITXLive
         if (event < 0) {
             // Failed to play on-demand file
             mVodPlayer.stopPlay(true);
-            updatePlayerState(SuperPlayerDef.PlayerState.PAUSE);
+            updatePlayerState(SuperPlayerDef.PlayerState.ERROR);
             onError(SuperPlayerCode.VOD_PLAY_FAIL, param.getString(TXLiveConstants.EVT_DESCRIPTION));
         }
         if (mSuperPlayerListener != null) {
@@ -644,6 +644,9 @@ public class SuperPlayerImpl implements SuperPlayer, ITXVodPlayListener, ITXLive
             case PAUSE:
                 mObserver.onPlayPause();
                 break;
+            case ERROR:
+                mObserver.onPlayError();
+                break;
             case LOADING:
                 mObserver.onPlayLoading();
                 break;
@@ -724,6 +727,7 @@ public class SuperPlayerImpl implements SuperPlayer, ITXVodPlayListener, ITXLive
     public void play(SuperPlayerModel model) {
         mPlayAction = model.playAction;
         mCurrentModel = model;
+        mCurrentPlayVideoURL = null;
         playWithModel(model);
     }
 

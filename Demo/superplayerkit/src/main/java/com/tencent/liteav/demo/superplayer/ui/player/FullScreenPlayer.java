@@ -418,6 +418,7 @@ public class FullScreenPlayer extends AbsPlayer implements View.OnClickListener,
             case INIT:
             case PAUSE:
             case END:
+            case ERROR:
                 if (mLockScreen) {
                     return;
                 }
@@ -607,6 +608,7 @@ public class FullScreenPlayer extends AbsPlayer implements View.OnClickListener,
                 toggleView(mImageStartAndResume, false);
                 break;
             case PAUSE:
+            case ERROR:
                 mIvPause.setImageResource(R.drawable.superplayer_ic_vod_play_normal);
                 toggleView(mLayoutReplay, false);
                 toggleView(mImageStartAndResume, true);

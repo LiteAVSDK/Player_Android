@@ -186,7 +186,9 @@ public class DanmuView extends DanmakuView {
                 case MSG_SEND_DANMU:
                     sendDanmu();
                     int time = new Random().nextInt(1000);
-                    mDanmuHandler.sendEmptyMessageDelayed(MSG_SEND_DANMU, time);
+                    if (mDanmuHandler != null) {
+                        mDanmuHandler.sendEmptyMessageDelayed(MSG_SEND_DANMU, time);
+                    }
                     break;
             }
         }
