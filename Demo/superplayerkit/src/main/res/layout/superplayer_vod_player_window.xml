@@ -124,6 +124,7 @@
             android:layout_height="wrap_content"
             android:layout_gravity="center_vertical"
             android:text="00:00"
+            android:ems="3"
             android:textColor="@android:color/white"
             android:textSize="11.0sp" />
 

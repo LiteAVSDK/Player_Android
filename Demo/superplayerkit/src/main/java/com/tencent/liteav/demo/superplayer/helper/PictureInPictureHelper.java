@@ -1,5 +1,6 @@
 package com.tencent.liteav.demo.superplayer.helper;
 
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.AppOpsManager;
 import android.app.PendingIntent;
@@ -46,6 +47,7 @@ public class PictureInPictureHelper implements ServiceConnection {
     private boolean isInPipMode;
 
 
+    @SuppressLint({"WrongConstant", "UnspecifiedRegisterReceiverFlag"})
     public PictureInPictureHelper(Context context) {
         mContext = context;
         mReceiver = new BroadcastReceiver() {
@@ -81,7 +83,11 @@ public class PictureInPictureHelper implements ServiceConnection {
                 }
             }
         };
-        mContext.registerReceiver(mReceiver, new IntentFilter(PIP_ACTION_MEDIA_CONTROL));
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            mContext.registerReceiver(mReceiver, new IntentFilter(PIP_ACTION_MEDIA_CONTROL), 0x04);
+        } else {
+            mContext.registerReceiver(mReceiver, new IntentFilter(PIP_ACTION_MEDIA_CONTROL));
+        }
     }
 
     public void setListener(OnPictureInPictureClickListener listener) {
