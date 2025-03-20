@@ -246,7 +246,7 @@ public class SuperPlayerView extends RelativeLayout
      * {@link com.tencent.rtmp.TXLiveBase#setLicence} to play successfully. Otherwise, the playback will fail
      * (black screen). Set it once globally.
      * Live License, short video License and video playback License can all be used. If you have not obtained the
-     * above License, you can <a href="https://cloud.tencent.com/act/event/License">quickly and freely apply
+     * above License, you can <a href="https://www.tencentcloud.com/zh/document/product/266/51098">quickly and freely apply
      * for License</a> to play normally.
      * @param models SuperPlayerModel list
      * @param isLoopPlayList Whether to loop
@@ -258,7 +258,7 @@ public class SuperPlayerView extends RelativeLayout
      * 注意：10.7版本开始，需要通过{@link com.tencent.rtmp.TXLiveBase#setLicence} 设置 License后方可成功播放， 否则将播放失败
      *              （黑屏），全局仅设置一次即可。
      * 直播License、短视频Licence和视频播放Licence均可使用，若您暂未获取上述Licence，可
-     *              <a href="https://cloud.tencent.com/act/event/License">快速免费申请Licence</a>以正常播放
+     *              <a href="https://cloud.tencent.com/document/product/881/74588#.E8.B4.AD.E4.B9.B0.E5.B9.B6.E6.96.B0.E5.BB.BA.E6.AD.A3.E5.BC.8F.E7.89.88-license">快速免费申请Licence</a>以正常播放
      * @param models superPlayerModel列表
      * @param isLoopPlayList 是否循环
      * @param index 开始播放的视频索引
@@ -275,7 +275,7 @@ public class SuperPlayerView extends RelativeLayout
      * {@link com.tencent.rtmp.TXLiveBase#setLicence} to play successfully. Otherwise, the playback will fail
      * (black screen). Set it once globally.
      * Live License, short video License and video playback License can all be used. If you have not obtained
-     * the above License, you can <a href="https://cloud.tencent.com/act/event/License">quickly and freely apply for
+     * the above License, you can <a href="https://www.tencentcloud.com/zh/document/product/266/51098">quickly and freely apply for
      * License</a> to play normally.
      * @param model Play data model
      *
@@ -283,7 +283,7 @@ public class SuperPlayerView extends RelativeLayout
      * 注意：10.7版本开始，需要通过{@link com.tencent.rtmp.TXLiveBase#setLicence} 设置 Licence后方可成功播放， 否则将播放失败（黑屏）
      *              ，全局仅设置一次即可。
      * 直播License、短视频Licence和视频播放Licence均可使用，若您暂未获取上述Licence，可
-     *              <a href="https://cloud.tencent.com/act/event/License">快速免费申请Licence</a>以正常播放
+     *              <a href="https://cloud.tencent.com/document/product/881/74588#.E8.B4.AD.E4.B9.B0.E5.B9.B6.E6.96.B0.E5.BB.BA.E6.AD.A3.E5.BC.8F.E7.89.88-license>快速免费申请Licence</a>以正常播放
      * @param model 播放数据模型
      */
     public void playWithModelNeedLicence(SuperPlayerModel model) {
