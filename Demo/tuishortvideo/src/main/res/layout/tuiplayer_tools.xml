@@ -1,0 +1,444 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/cl_tool_container"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/gl_setting_line"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:orientation="vertical"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintGuide_percent="0.75"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/cl_content_container"
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        android:background="@color/tui_trans_c_black"
+        android:padding="20dp"
+        android:visibility="gone"
+        tools:visibility="visible"
+        android:clickable="true"
+        android:focusable="true"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toStartOf="@id/gl_setting_line"
+        app:layout_constraintHorizontal_bias="0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <TextView
+            android:id="@+id/tv_config_title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:text="@string/tuiplayer_tui_menu"
+            android:textColor="@color/tui_white_teeth"
+            android:textSize="18sp"
+            android:textStyle="bold"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <androidx.core.widget.NestedScrollView
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:fillViewport="true"
+            app:layout_constraintTop_toBottomOf="@id/tv_config_title"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent">
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+
+                <TextView
+                    android:id="@+id/tv_config_data_control"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="15dp"
+                    android:text="@string/tuiplayer_tui_data_control"
+                    android:textColor="@color/tui_white_teeth"
+                    android:textSize="16sp"
+                    android:textStyle="bold"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintHorizontal_bias="0"
+                    app:layout_constraintStart_toStartOf="parent" />
+
+                <TextView
+                    android:id="@+id/tv_config_range_tip"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="15dp"
+                    android:text="@string/tuiplayer_range_hint"
+                    android:textColor="@color/tui_white_teeth"
+                    android:textSize="13sp"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintHorizontal_bias="0"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/tv_config_data_control" />
+
+                <EditText
+                    android:id="@+id/et_range"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="10dp"
+                    android:inputType="text|number"
+                    android:textColor="@color/tui_white_teeth"
+                    android:textSize="14sp"
+                    android:theme="@style/tui_light_edittext"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintHorizontal_bias="0"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/tv_config_range_tip" />
+
+                <Button
+                    android:id="@+id/btn_data_remove"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="10dp"
+                    android:layout_marginEnd="10dp"
+                    android:layout_marginBottom="20dp"
+                    android:background="@color/tui_white_teeth"
+                    android:minWidth="0dp"
+                    android:minHeight="0dp"
+                    android:paddingStart="10dp"
+                    android:paddingTop="5dp"
+                    android:paddingEnd="10dp"
+                    android:paddingBottom="5dp"
+                    android:text="@string/tuiplayer_tui_data_remove"
+                    android:textColor="@color/black"
+                    android:textSize="14sp"
+                    app:layout_constraintEnd_toStartOf="@+id/btn_data_insert"
+                    app:layout_constraintHorizontal_chainStyle="spread"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/et_range" />
+
+                <Button
+                    android:id="@id/btn_data_insert"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="10dp"
+                    android:background="@color/tui_white_teeth"
+                    android:minWidth="0dp"
+                    android:minHeight="0dp"
+                    android:paddingStart="10dp"
+                    android:paddingTop="5dp"
+                    android:paddingEnd="10dp"
+                    android:paddingBottom="5dp"
+                    android:text="@string/tuiplayer_tui_data_insert"
+                    android:textColor="@color/black"
+                    android:textSize="14sp"
+                    app:layout_constraintBottom_toBottomOf="@id/btn_data_remove"
+                    app:layout_constraintEnd_toStartOf="@+id/btn_data_replace"
+                    app:layout_constraintStart_toEndOf="@id/btn_data_remove"
+                    app:layout_constraintTop_toTopOf="@id/btn_data_remove" />
+
+                <Button
+                    android:id="@id/btn_data_replace"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:background="@color/tui_white_teeth"
+                    android:minWidth="0dp"
+                    android:minHeight="0dp"
+                    android:paddingStart="10dp"
+                    android:paddingTop="5dp"
+                    android:paddingEnd="10dp"
+                    android:paddingBottom="5dp"
+                    android:text="@string/tuiplayer_tui_data_replace"
+                    android:textColor="@color/black"
+                    android:textSize="14sp"
+                    app:layout_constraintBottom_toBottomOf="@id/btn_data_insert"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toEndOf="@id/btn_data_insert"
+                    app:layout_constraintTop_toTopOf="@id/btn_data_insert" />
+
+                <TextView
+                    android:id="@+id/tv_config_strategy_control"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="20dp"
+                    android:text="@string/tuiplayer_tui_strategy_control"
+                    android:textColor="@color/tui_white_teeth"
+                    android:textSize="16sp"
+                    android:textStyle="bold"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintHorizontal_bias="0"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/btn_data_remove" />
+
+                <TextView
+                    android:id="@+id/tv_config_resume_model_label"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="15dp"
+                    android:layout_marginEnd="20dp"
+                    android:text="@string/tuiplayer_tui_resume_model"
+                    android:textColor="@color/tui_white_teeth"
+                    android:textSize="15sp"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/tv_config_strategy_control" />
+
+                <androidx.appcompat.widget.AppCompatSpinner
+                    android:id="@+id/acsp_resume_mode"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:textColor="@color/tui_white_teeth"
+                    android:backgroundTint="@color/tui_white_teeth"
+                    android:popupBackground="@color/tui_trans_c_black"
+                    android:layout_marginEnd="20dp"
+                    app:layout_constraintBottom_toBottomOf="@id/tv_config_resume_model_label"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintHorizontal_bias="0"
+                    app:layout_constraintStart_toEndOf="@id/tv_config_resume_model_label"
+                    app:layout_constraintTop_toTopOf="@id/tv_config_resume_model_label"
+                    tools:ignore="UnusedAttribute" />
+
+                <TextView
+                    android:id="@+id/tv_config_loop_model_label"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="15dp"
+                    android:layout_marginEnd="20dp"
+                    android:text="@string/tuiplayer_tui_loop_model"
+                    android:textColor="@color/tui_white_teeth"
+                    android:textSize="15sp"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/tv_config_resume_model_label" />
+
+                <androidx.appcompat.widget.AppCompatSpinner
+                    android:id="@+id/acsp_loop_mode"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:textColor="@color/tui_white_teeth"
+                    android:backgroundTint="@color/tui_white_teeth"
+                    android:popupBackground="@color/tui_trans_c_black"
+                    android:layout_marginEnd="20dp"
+                    app:layout_constraintBottom_toBottomOf="@id/tv_config_loop_model_label"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintHorizontal_bias="0"
+                    app:layout_constraintStart_toEndOf="@id/tv_config_loop_model_label"
+                    app:layout_constraintTop_toTopOf="@id/tv_config_loop_model_label"
+                    tools:ignore="UnusedAttribute" />
+
+                <TextView
+                    android:id="@+id/tv_config_render_mode_label"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="15dp"
+                    android:layout_marginEnd="20dp"
+                    android:text="@string/tuiplayer_tui_render_mode"
+                    android:textColor="@color/tui_white_teeth"
+                    android:textSize="15sp"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/tv_config_loop_model_label" />
+
+                <androidx.appcompat.widget.AppCompatSpinner
+                    android:id="@+id/acsp_render_mode"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:textColor="@color/tui_white_teeth"
+                    android:backgroundTint="@color/tui_white_teeth"
+                    android:popupBackground="@color/tui_trans_c_black"
+                    android:layout_marginEnd="20dp"
+                    app:layout_constraintBottom_toBottomOf="@id/tv_config_render_mode_label"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintHorizontal_bias="0"
+                    app:layout_constraintStart_toEndOf="@id/tv_config_render_mode_label"
+                    app:layout_constraintTop_toTopOf="@id/tv_config_render_mode_label"
+                    tools:ignore="UnusedAttribute" />
+
+                <TextView
+                    android:id="@+id/tv_config_sr_mode_label"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="15dp"
+                    android:layout_marginEnd="20dp"
+                    android:text="@string/tuiplayer_tui_sr_mode"
+                    android:textColor="@color/tui_white_teeth"
+                    android:textSize="15sp"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/tv_config_render_mode_label" />
+
+                <androidx.appcompat.widget.AppCompatSpinner
+                    android:id="@+id/acsp_sr_mode"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:textColor="@color/tui_white_teeth"
+                    android:backgroundTint="@color/tui_white_teeth"
+                    android:popupBackground="@color/tui_trans_c_black"
+                    android:layout_marginEnd="20dp"
+                    app:layout_constraintBottom_toBottomOf="@id/tv_config_sr_mode_label"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintHorizontal_bias="0"
+                    app:layout_constraintStart_toEndOf="@id/tv_config_sr_mode_label"
+                    app:layout_constraintTop_toTopOf="@id/tv_config_sr_mode_label"
+                    tools:ignore="UnusedAttribute" />
+
+                <TextView
+                    android:id="@+id/tv_config_an_mode_label"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="15dp"
+                    android:layout_marginEnd="20dp"
+                    android:text="@string/tuiplayer_tui_an_mode"
+                    android:textColor="@color/tui_white_teeth"
+                    android:textSize="15sp"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/tv_config_sr_mode_label" />
+
+                <androidx.appcompat.widget.AppCompatSpinner
+                    android:id="@+id/acsp_an_mode"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:textColor="@color/tui_white_teeth"
+                    android:backgroundTint="@color/tui_white_teeth"
+                    android:popupBackground="@color/tui_trans_c_black"
+                    android:layout_marginEnd="20dp"
+                    app:layout_constraintBottom_toBottomOf="@id/tv_config_an_mode_label"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintHorizontal_bias="0"
+                    app:layout_constraintStart_toEndOf="@id/tv_config_an_mode_label"
+                    app:layout_constraintTop_toTopOf="@id/tv_config_an_mode_label"
+                    tools:ignore="UnusedAttribute" />
+
+                <TextView
+                    android:id="@+id/tv_config_render_rotation_label"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="15dp"
+                    android:layout_marginEnd="20dp"
+                    android:text="@string/tuiplayer_tui_render_rotation"
+                    android:textColor="@color/tui_white_teeth"
+                    android:textSize="15sp"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/tv_config_an_mode_label" />
+
+                <androidx.appcompat.widget.AppCompatSpinner
+                    android:id="@+id/acsp_render_rotation_mode"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:textColor="@color/tui_white_teeth"
+                    android:backgroundTint="@color/tui_white_teeth"
+                    android:popupBackground="@color/tui_trans_c_black"
+                    android:layout_marginEnd="20dp"
+                    app:layout_constraintBottom_toBottomOf="@id/tv_config_render_rotation_label"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintHorizontal_bias="0"
+                    app:layout_constraintStart_toEndOf="@id/tv_config_render_rotation_label"
+                    app:layout_constraintTop_toTopOf="@id/tv_config_render_rotation_label"
+                    tools:ignore="UnusedAttribute" />
+
+                <TextView
+                    android:id="@+id/tv_config_mirror_label"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="15dp"
+                    android:layout_marginEnd="20dp"
+                    android:text="@string/tuiplayer_tui_mirror"
+                    android:textColor="@color/tui_white_teeth"
+                    android:textSize="15sp"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/tv_config_render_rotation_label" />
+
+                <androidx.appcompat.widget.SwitchCompat
+                    android:id="@+id/sc_config_mirror"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="20dp"
+                    android:layout_marginStart="20dp"
+                    app:layout_constraintBottom_toBottomOf="@id/tv_config_mirror_label"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintHorizontal_bias="1"
+                    app:layout_constraintStart_toEndOf="@id/tv_config_mirror_label"
+                    app:layout_constraintTop_toTopOf="@id/tv_config_mirror_label"/>
+
+                <TextView
+                    android:id="@+id/tv_config_mute_label"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="15dp"
+                    android:layout_marginEnd="20dp"
+                    android:text="@string/tuiplayer_tui_mute"
+                    android:textColor="@color/tui_white_teeth"
+                    android:textSize="15sp"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/tv_config_mirror_label" />
+
+                <androidx.appcompat.widget.SwitchCompat
+                    android:id="@+id/sc_config_mute"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="20dp"
+                    app:layout_constraintBottom_toBottomOf="@id/tv_config_mute_label"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintHorizontal_bias="1"
+                    app:layout_constraintStart_toEndOf="@id/tv_config_mute_label"
+                    app:layout_constraintTop_toTopOf="@id/tv_config_mute_label"/>
+
+                <Button
+                    android:id="@+id/btn_jump_random"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:minWidth="0dp"
+                    android:minHeight="0dp"
+                    android:text="@string/tuiplayer_tui_jump_random_no_anim"
+                    android:paddingStart="10dp"
+                    android:paddingTop="10dp"
+                    android:paddingEnd="10dp"
+                    android:paddingBottom="10dp"
+                    android:textColor="@color/black"
+                    app:layout_constraintHorizontal_chainStyle="spread"
+                    android:textSize="14sp"
+                    android:layout_marginTop="15dp"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintEnd_toStartOf="@+id/btn_enter_back_no_pause"
+                    app:layout_constraintTop_toBottomOf="@id/tv_config_mute_label"/>
+
+                <Button
+                    android:id="@id/btn_enter_back_no_pause"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:minWidth="0dp"
+                    android:minHeight="0dp"
+                    android:text="@string/tuiplayer_tui_enter_back_no_pause"
+                    android:paddingStart="10dp"
+                    android:paddingTop="10dp"
+                    android:paddingEnd="10dp"
+                    android:paddingBottom="10dp"
+                    android:textColor="@color/black"
+                    android:textSize="14sp"
+                    app:layout_constraintStart_toEndOf="@id/btn_jump_random"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toTopOf="@id/btn_jump_random"
+                    app:layout_constraintBottom_toBottomOf="@id/btn_jump_random"/>
+            </androidx.constraintlayout.widget.ConstraintLayout>
+        </androidx.core.widget.NestedScrollView>
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <ImageView
+        android:id="@+id/iv_setting_view"
+        android:layout_width="30dp"
+        android:layout_height="110dp"
+        android:background="@drawable/tuiplayer_trapezoid_trans_black"
+        android:paddingStart="5dp"
+        android:paddingTop="40dp"
+        android:paddingEnd="5dp"
+        android:paddingBottom="40dp"
+        android:scaleType="fitCenter"
+        android:src="@drawable/tuiplayer_ic_settings"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toEndOf="@id/cl_content_container"
+        app:layout_constraintTop_toTopOf="parent" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

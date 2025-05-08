@@ -1,9 +1,91 @@
 <resources>
-    <string name="short_video_get_data_failed">数据请求失败</string>
-    <string name="short_video_go_to_list">左滑进入视频列表</string>
-    <string name="short_video_i_know">我知道了</string>
-    <string name="short_video_move_seeek">拖拽进度条快速查看视频</string>
-    <string name="short_video_pause_video">点击可暂停视频播放</string>
+    <string name="tuiplayer_alpha_player">Alpha播放器</string>
+    <string name="tuiplayer_input_local_video_path">请输入本地视频地址</string>
+    <string name="tuiplayer_call_resolution_list">画质</string>
+    <string name="tuiplayer_call_function">功能</string>
+    <string name="tuiplayer_call_landscape">全屏</string>
+    <string name="tuiplayer_resolution_global">global</string>
+    <string name="tuiplayer_range_hint">0&#8211;1代表从0到1,用逗号分割数字代表按角标删除，如:1,2,3</string>
+    <string name="tuiplayer_tui_menu">TUI菜单</string>
+    <string name="tuiplayer_tui_data_control">数据操作</string>
+    <string name="tuiplayer_tui_data_remove">移除</string>
+    <string name="tuiplayer_tui_data_insert">插入</string>
+    <string name="tuiplayer_tui_data_replace">替换</string>
+    <string name="tuiplayer_tui_strategy_control">配置修改</string>
+    <string name="tuiplayer_tui_resume_model">续播模式</string>
+    <string name="tuiplayer_tui_loop_model">循环模式</string>
+    <string name="tuiplayer_tui_render_mode">渲染模式(Live/Vod)</string>
+    <string name="tuiplayer_tui_sr_mode">超分模式(Vod)</string>
+    <string name="tuiplayer_tui_an_mode">音量均衡(Vod)</string>
+    <string name="tuiplayer_tui_render_rotation">渲染角度(Live/Vod)</string>
+    <string name="tuiplayer_tui_mirror">镜像(Vod)</string>
+    <string name="tuiplayer_tui_mute">静音</string>
+    <string name="tuiplayer_tui_click_enter_live">点击进入直播间</string>
+    <string name="tuiplayer_tui_img_display">图片展示</string>
+    <string name="tuiplayer_tui_img_display_desc">这是一个展示图片的自定义页面</string>
+    <string name="tuiplayer_tui_jump_random_no_anim">随机跳跃(无动画)</string>
+    <string name="tuiplayer_tui_enter_back_no_pause">不暂停进入后台</string>
+    <string name="tuiplayer_header_pulling">下拉可以刷新</string>
+    <string name="tuiplayer_header_refreshing">正在刷新…</string>
+    <string name="tuiplayer_header_release">释放立即刷新</string>
+    <string name="tuiplayer_header_refresh_finish">刷新完成</string>
+    <string name="tuiplayer_header_refresh_failure">刷新失败</string>
+    <string name="tuiplayer_header_update">M-d HH:mm</string>
+    <string name="tuiplayer_footer_pulling">上拉加载更多</string>
+    <string name="tuiplayer_footer_release">释放立即加载</string>
+    <string name="tuiplayer_footer_loading">正在加载…</string>
+    <string name="tuiplayer_footer_loading_finish">加载完成</string>
+    <string name="tuiplayer_footer_loading_failure">加载失败</string>
+    <string name="tuiplayer_footer_nothing">没有更多数据了</string>
+    <string name="tuiplayer_player_error_retry">网络异常，点击重试</string>
+
     <string name="short_video_play_back">短视频播放</string>
+    <string name="short_video_live_title">直播间页面</string>
+    <string name="short_video_get_data_failed">数据请求失败</string>
     <string name="short_video_view_more_videos">上下查看更多视频</string>
+    <string name="short_video_pause_video">点击可暂停视频播放</string>
+    <string name="short_video_go_to_list">左滑进入视频列表</string>
+    <string name="short_video_move_seeek">拖拽进度条快速查看视频</string>
+
+
+
+    <string-array name="tuiplayer_resume_mode_array">
+        <item>NONE</item>
+        <item>RESUME_CURRENT</item>
+        <item>RESUME_PLAYED</item>
+    </string-array>
+
+    <string-array name="tuiplayer_loop_mode_array">
+        <item>MODE_ONE_LOOP</item>
+        <item>MODE_LIST_LOOP</item>
+        <item>MODE_NO_LOOP</item>
+    </string-array>
+
+    <string-array name="tuiplayer_render_mode_array">
+        <item>adjustResolution</item>
+        <item>fillView</item>
+    </string-array>
+
+    <string-array name="tuiplayer_sr_mode_array">
+        <item>none</item>
+        <item>ASR</item>
+    </string-array>
+
+    <string-array name="tuiplayer_an_array">
+        <item>off</item>
+        <item>low</item>
+        <item>standard</item>
+        <item>high</item>
+    </string-array>
+
+    <string-array name="tuiplayer_render_rotation_array">
+        <item>0</item>
+        <item>90</item>
+        <item>180</item>
+        <item>270</item>
+    </string-array>
+
+    <string name="tui_short_video_render_view">tuiShortVideoRenderView</string>
+
+
 </resources>

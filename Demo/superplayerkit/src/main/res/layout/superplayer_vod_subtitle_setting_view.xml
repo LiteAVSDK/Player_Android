@@ -12,7 +12,7 @@
         android:id="@+id/subtitle_setting_back"
         android:layout_marginTop="20dp"
         android:layout_marginLeft="20dp"
-        android:src="@drawable/common_ic_back"
+        android:src="@drawable/superplayer_ic_back"
         android:layout_width="15dp"
         android:layout_height="15dp"/>
 

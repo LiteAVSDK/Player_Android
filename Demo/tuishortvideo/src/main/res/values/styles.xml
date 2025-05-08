@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources xmlns:tools="http://schemas.android.com/tools">
+
+    <!-- Application theme. -->
+    <style name="DemoAppTheme" parent="Theme.AppCompat.DayNight.NoActionBar">
+    </style>
+    <!-- 取消界面转场动画使用-->
+    <style name="UnplugAnimTheme" parent="@style/DemoAppTheme">
+        <item name="android:windowAnimationStyle">@style/UnplugAnimation</item>
+        <item name="android:windowActivityTransitions" tools:targetApi="lollipop">false</item>
+        <item name="android:windowEnterTransition" tools:targetApi="lollipop">@null</item>
+        <item name="android:windowExitTransition" tools:targetApi="lollipop">@null</item>
+        <item name="android:screenOrientation">user</item>
+    </style>
+
+    <style name="TUITransBg" parent="@style/DemoAppTheme">
+        <item name="android:windowBackground">@android:color/transparent</item>
+        <item name="android:background">@android:color/transparent</item>
+        <item name="android:backgroundDimEnabled">false</item>
+        <!-- windowIsTranslucent will cause many problems, so set it to false  -->
+        <item name="android:windowIsTranslucent">false</item>
+    </style>
+
+    <style name="tui_light_edittext" parent="@style/Theme.AppCompat.Light">
+        <item name="colorControlNormal">@color/tui_white_teeth</item>
+    </style>
+
+    <style name="TUITransBgUnPlugAnim" parent="@style/TUIUnplugAnimation">
+        <item name="android:windowBackground">@android:color/transparent</item>
+        <item name="android:background">@android:color/transparent</item>
+        <item name="android:backgroundDimEnabled">false</item>
+        <item name="android:windowIsTranslucent">true</item>
+    </style>
+
+    <style name="TUIUnplugAnimation" parent="@style/DemoAppTheme">
+        <item name="android:activityOpenEnterAnimation">@android:anim/fade_in</item>
+        <item name="android:activityOpenExitAnimation">@android:anim/fade_out</item>
+        <item name="android:activityCloseEnterAnimation">@null</item>
+        <item name="android:activityCloseExitAnimation">@null</item>
+        <item name="android:taskOpenEnterAnimation">@null</item>
+        <item name="android:taskOpenExitAnimation">@null</item>
+        <item name="android:taskCloseEnterAnimation">@null</item>
+        <item name="android:taskCloseExitAnimation">@null</item>
+        <item name="android:taskToFrontEnterAnimation">@null</item>
+        <item name="android:taskToFrontExitAnimation">@null</item>
+        <item name="android:taskToBackEnterAnimation">@null</item>
+        <item name="android:taskToBackExitAnimation">@null</item>
+    </style>
+
+</resources>

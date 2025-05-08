@@ -9,7 +9,7 @@ android {
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
         versionCode 24
-        versionName "12.3.0.5012"
+        versionName "12.5.0.5368"
 
         multiDexEnabled true
         ndk {

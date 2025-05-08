@@ -44,6 +44,9 @@ public class VideoDownloadListAdapter extends RecyclerView.Adapter<VideoDownload
     @Override
     public void onBindViewHolder(@NonNull final VideoDownloadViewHolder holder, int position) {
         final TXVodDownloadMediaInfo mediaInfo = mMediaInfoList.get(position);
+        if (mediaInfo == null) {
+            return;
+        }
         holder.mCacheItemView.setVideoInfo(mediaInfo);
         holder.mCacheItemView.setOnClickListener(new View.OnClickListener() {
             @Override

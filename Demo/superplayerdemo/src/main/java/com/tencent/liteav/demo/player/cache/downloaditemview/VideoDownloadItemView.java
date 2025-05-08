@@ -81,6 +81,9 @@ public class VideoDownloadItemView extends RelativeLayout implements VideoDownlo
      * 设置视频下载信息
      */
     public void setVideoInfo(TXVodDownloadMediaInfo mediaInfo) {
+        if (mediaInfo == null) {
+            return;
+        }
         this.mMediaInfo = mediaInfo;
 
         notifyUnRegisterCacheListener();
@@ -95,7 +98,9 @@ public class VideoDownloadItemView extends RelativeLayout implements VideoDownlo
             videoModel.pSign = dataSource.getPSign();
 
             mTvVideoQualityView.setText(getQualityText(dataSource.getQuality()));
-            mVideoSizeTV.setText(byteToMBStr((long)mediaInfo.getDownloadSize()));
+            mVideoSizeTV.setText(byteToMBStr(mediaInfo.getDownloadSize()));
+            // trans to second
+            videoModel.duration = (mediaInfo.getDuration() / 1000);
 
             SuperVodListLoader loader = mVideoDownloadHelper.getLoader();
             loader.getVodByFileId(videoModel, new SuperVodListLoader.OnVodInfoLoadListener() {
@@ -180,6 +185,7 @@ public class VideoDownloadItemView extends RelativeLayout implements VideoDownlo
         if (downloadState == TXVodDownloadMediaInfo.STATE_FINISH) {
             downloadProgress = 100;
         }
+        mVideoSizeTV.setText(byteToMBStr(mediaInfo.getDownloadSize()));
         mTvVideoCacheProgressView.setText(String.format(mVideoDownloadHelper.getProgressFormatter(), downloadProgress));
         mTvVideoCacheStateTextView.setText(mVideoDownloadHelper.getProgressStateTextRes(downloadState));
         mVVideoCacheStateIconView.setBackgroundResource(mVideoDownloadHelper.getProgressStateIconRes(downloadState));

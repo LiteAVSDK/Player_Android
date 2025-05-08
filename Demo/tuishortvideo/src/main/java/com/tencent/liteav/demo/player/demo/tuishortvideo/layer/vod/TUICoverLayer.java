@@ -1,5 +1,6 @@
-package com.tencent.liteav.demo.player.demo.tuishortvideo.layer;
+package com.tencent.liteav.demo.player.demo.tuishortvideo.layer.vod;
 
+import android.graphics.drawable.ColorDrawable;
 import android.text.TextUtils;
 import android.view.Gravity;
 import android.view.View;
@@ -12,18 +13,19 @@ import com.bumptech.glide.load.DecodeFormat;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.bumptech.glide.request.RequestOptions;
 import com.tencent.qcloud.tuiplayer.core.api.TUIPlayerController;
+import com.tencent.qcloud.tuiplayer.core.api.common.TUIConstants;
 import com.tencent.qcloud.tuiplayer.core.api.model.TUIFileVideoInfo;
 import com.tencent.qcloud.tuiplayer.core.api.model.TUIVideoSource;
-import com.tencent.qcloud.tuiplayer.core.api.ui.view.TUIBaseLayer;
 import com.tencent.qcloud.tuiplayer.core.api.ui.view.TUIBaseVideoView;
+import com.tencent.qcloud.tuiplayer.core.api.ui.view.TUIVodLayer;
 
-public class TUICoverLayer extends TUIBaseLayer {
+public class TUICoverLayer extends TUIVodLayer {
 
     private String coverUrlFromServer = null;
-    RequestOptions imgOptions = new RequestOptions()
-            .centerCrop()
+    private final RequestOptions imgOptions = new RequestOptions()
             .diskCacheStrategy(DiskCacheStrategy.AUTOMATIC)
-            .skipMemoryCache(true)
+            .dontAnimate()
+            .dontTransform()
             .format(DecodeFormat.PREFER_RGB_565);
 
     @Override
@@ -50,19 +52,26 @@ public class TUICoverLayer extends TUIBaseLayer {
 
     @Override
     public void onControllerUnBind(TUIPlayerController controller) {
-        super.onControllerUnBind(controller);
         // show cover when unbind
         show();
+        coverUrlFromServer = null;
     }
+
+    /**
+     * video rec first frame, you can use {@link #onRcvFirstIframe()} to hide cover.
+     * but there may be a slightly delay in rendering the first frame of the first video to the texture sometimes,
+     * in this condition, if you encounter a problem after the cover hidden but the first frame hasn't been
+     * rendered yet, you can use this method to prevent it.
+     */
+    @Override
+    public void onFirstFrameRendered() {
+//        hidden();
+    }
+
 
     @Override
     public void onRcvFirstIframe() {
         hidden();
-    }
-
-    @Override
-    protected void unBindLayerManager() {
-        super.unBindLayerManager();
     }
 
     @Override
@@ -72,11 +81,8 @@ public class TUICoverLayer extends TUIBaseLayer {
             if (null != videoView && null != params) {
                 String coverUrl = params.getCoverUrl();
                 if (!TextUtils.isEmpty(coverUrl)) {
-                    ImageView imageView = getView();
-                    Glide.with(videoView).load(coverUrl)
-                            .centerCrop()
-                            .into(imageView);
                     coverUrlFromServer = coverUrl;
+                    loadCover();
                 }
             }
         }
@@ -85,23 +91,44 @@ public class TUICoverLayer extends TUIBaseLayer {
     @Override
     public void onViewRecycled(TUIBaseVideoView videoView) {
         super.onViewRecycled(videoView);
-        // clear image bitmap when page itemView recycled
-        Glide.with(videoView.getContext()).clear(getView());
+        // viewHolder is target recycle
+
     }
 
     private void loadCover() {
         TUIBaseVideoView videoView = getVideoView();
         if (null != videoView) {
-            TUIVideoSource videoSource = videoView.getVideoModel();
+            TUIVideoSource videoSource = (TUIVideoSource) videoView.getVideoModel();
             if (null != videoSource) {
                 ImageView imageView = getView();
-                if (!TextUtils.isEmpty(videoSource.coverPictureUrl)) {
-                    Glide.with(videoView).load(videoSource.coverPictureUrl)
-                            .apply(imgOptions)
+                final int renderMode = getRenderMode();
+                RequestOptions requestOptions = imgOptions.clone();
+                if (renderMode == TUIConstants.TUIRenderMode.FULL_FILL_SCREEN) {
+                    ViewGroup.LayoutParams params = imageView.getLayoutParams();
+                    params.height = ViewGroup.LayoutParams.MATCH_PARENT;
+                    params.width = ViewGroup.LayoutParams.MATCH_PARENT;
+                    imageView.setLayoutParams(params);
+                    imageView.setAdjustViewBounds(false);
+                    requestOptions = requestOptions.centerCrop();
+                } else if (renderMode == TUIConstants.TUIRenderMode.ADJUST_RESOLUTION) {
+                    ViewGroup.LayoutParams params = imageView.getLayoutParams();
+                    params.height = ViewGroup.LayoutParams.WRAP_CONTENT;
+                    params.width = ViewGroup.LayoutParams.MATCH_PARENT;
+                    imageView.setLayoutParams(params);
+                    imageView.setAdjustViewBounds(true);
+                    requestOptions = requestOptions.fitCenter();
+                }
+                if (!TextUtils.isEmpty(videoSource.getCoverPictureUrl())) {
+                    Glide.with(videoView).load(videoSource.getCoverPictureUrl())
+                            .apply(requestOptions)
                             .into(imageView);
                 } else if (!TextUtils.isEmpty(coverUrlFromServer)) {
                     Glide.with(videoView).load(coverUrlFromServer)
-                            .apply(imgOptions)
+                            .apply(requestOptions)
+                            .into(imageView);
+                } else {
+                    Glide.with(videoView).load(new ColorDrawable(0x00000000))
+                            .apply(requestOptions)
                             .into(imageView);
                 }
             }

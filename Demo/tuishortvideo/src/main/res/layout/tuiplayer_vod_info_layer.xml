@@ -1,0 +1,145 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <TextView
+        android:id="@+id/tv_tui_progress_time"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintBottom_toTopOf="@+id/vsb_tui_video_progress"
+        android:layout_marginBottom="30dp"
+        android:visibility="gone"
+        android:textSize="24sp"
+        android:textStyle="bold"
+        android:textColor="@color/tui_white_teeth"
+        android:lines="1"/>
+
+    <com.tencent.liteav.demo.player.demo.tuishortvideo.view.VideoSeekBar
+        android:id="@id/vsb_tui_video_progress"
+        android:layout_width="match_parent"
+        android:layout_height="15dp"
+        app:vsb_drag_bar="@drawable/tuiplayer_shortvideo_thumb_view"
+        app:vsb_progress_background_color="@color/tui_trans_black"
+        app:vsb_progress_color="@color/tui_trans_white"
+        app:vsb_progress_bar_color="@color/superplayer_transparent"
+        app:vsb_drag_bar_reached_color="@color/tui_white_teeth"
+        app:vsb_progress_height="2dp"
+        app:vsb_progress_drag_height="8dp"
+        android:layout_marginBottom="50dp"
+        android:layout_marginStart="15dp"
+        android:layout_marginEnd="15dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"/>
+
+    <ImageView
+        android:id="@+id/iv_tui_pause"
+        android:layout_width="80dp"
+        android:layout_height="80dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        android:visibility="gone"
+        android:src="@drawable/tuiplayer_shortvideo_pause"/>
+
+    <ImageView
+        android:id="@+id/iv_tui_comment"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:padding="15dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintHorizontal_bias="1"
+        app:layout_constraintVertical_bias="0.7"
+        android:layout_marginEnd="20dp"
+        android:background="@color/tui_trans_d_black"
+        android:src="@drawable/tuiplayer_shortvideo_comment"/>
+
+    <ImageView
+        android:id="@+id/iv_tui_fullscreen"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:padding="15dp"
+        android:src="@drawable/tuiplayer_ic_fullscreen"
+        android:background="@color/tui_trans_d_black"
+        app:layout_constraintStart_toStartOf="@id/iv_tui_comment"
+        app:layout_constraintEnd_toEndOf="@id/iv_tui_comment"
+        app:layout_constraintTop_toBottomOf="@id/iv_tui_comment"/>
+
+    <TextView
+        android:id="@+id/tv_call_resolution"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:textSize="12sp"
+        android:autoSizePresetSizes="12sp"
+        android:autoSizeMinTextSize="6sp"
+        android:autoSizeMaxTextSize="18sp"
+        android:textColor="@color/white"
+        android:text="@string/tuiplayer_call_resolution_list"
+        android:gravity="center"
+        android:background="@color/tui_trans_d_black"
+        app:layout_constraintTop_toBottomOf="@id/iv_tui_fullscreen"
+        app:layout_constraintStart_toStartOf="@id/iv_tui_comment"
+        app:layout_constraintEnd_toEndOf="@id/iv_tui_comment"
+        tools:ignore="UnusedAttribute" />
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/cl_quality_container"
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:visibility="gone"
+        android:paddingTop="10dp"
+        android:paddingBottom="10dp"
+        android:background="@color/superplayer_white"
+        tools:visibility="visible"
+        app:layout_constraintHorizontal_bias="1"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent">
+
+        <androidx.appcompat.widget.SwitchCompat
+            android:id="@+id/st_global"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/tuiplayer_resolution_global"
+            android:layout_marginTop="50dp"
+            android:textColor="@color/superplayer_black"
+            app:thumbTint="@color/vod_setting_button"
+            app:trackTint="@color/tuilayer_switch_track_selector"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"/>
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/rv_quality_list"
+            android:layout_width="100dp"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+            app:layout_constraintHorizontal_bias="1"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/st_global"
+            app:layout_constraintBottom_toBottomOf="parent"/>
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <com.tencent.liteav.demo.player.demo.tuishortvideo.layer.comment.TUICommentDemoMenu
+        android:id="@+id/tdm_comment_list"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"/>
+
+</androidx.constraintlayout.widget.ConstraintLayout>

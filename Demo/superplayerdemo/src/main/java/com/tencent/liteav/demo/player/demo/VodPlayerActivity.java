@@ -88,9 +88,11 @@ public class VodPlayerActivity extends Activity implements ITXVodPlayListener,
     private boolean         mHWDecode    = false;
     private int             mCurrentRenderMode;
     private int             mCurrentRenderRotation;
+    private VodPlayerState  mPlayerState = VodPlayerState.INIT;
     private boolean         mEnableMute  = false;
     private boolean         mStartSeek   = false;
     private boolean         mVideoPause  = false;
+    private boolean         mNeedToPause = false;
     private long            mStartPlayTS = 0;
     private TXVodPlayConfig mPlayConfig;
     private boolean         mEnableCache = false;
@@ -242,11 +244,14 @@ public class VodPlayerActivity extends Activity implements ITXVodPlayListener,
                 if (mVideoPlay) {
                     if (!mVodPlayer.isPlaying()) {
                         mVodPlayer.resume();
+                        mNeedToPause = false;
                         mButtonPlay.setBackgroundResource(R.drawable.superplayer_play_pause);
                         mLinearRootView.setBackgroundColor(0xff000000);
                         enableQRCodeBtn(false);
                     } else {
                         mVodPlayer.pause();
+                        mNeedToPause = false;
+                        mPlayerState = VodPlayerState.PAUSE;
                         mButtonPlay.setBackgroundResource(R.drawable.superplayer_play_start);
                         enableQRCodeBtn(true);
                     }
@@ -519,7 +524,11 @@ public class VodPlayerActivity extends Activity implements ITXVodPlayListener,
         Log.d(TAG, "onPause()");
         super.onPause();
         if (mVodPlayer != null) {
-            mVodPlayer.pause();
+            if (mPlayerState == VodPlayerState.LOADING || mPlayerState == VodPlayerState.INIT) {
+                mNeedToPause = true;
+            } else {
+                mVodPlayer.pause();
+            }
         }
     }
 
@@ -539,6 +548,7 @@ public class VodPlayerActivity extends Activity implements ITXVodPlayListener,
         if (mVideoPlay && !mVideoPause) {
             if (mVodPlayer != null) {
                 mVodPlayer.resume();
+                mNeedToPause = false;
             }
         }
     }
@@ -576,6 +586,7 @@ public class VodPlayerActivity extends Activity implements ITXVodPlayListener,
         mVodPlayer.setConfig(mPlayConfig);
         mVodPlayer.setAutoPlay(true);
         int result = mVodPlayer.startVodPlay(playUrl);
+        mNeedToPause = false;
         mIsStopped = false;
         if (result != 0) {
             mButtonPlay.setBackgroundResource(R.drawable.superplayer_play_start);
@@ -601,6 +612,7 @@ public class VodPlayerActivity extends Activity implements ITXVodPlayListener,
         }
         mVideoPause = false;
         mVideoPlay = false;
+        mPlayerState = VodPlayerState.END;
     }
 
     @Override
@@ -656,11 +668,18 @@ public class VodPlayerActivity extends Activity implements ITXVodPlayListener,
 
         if (event == TXLiveConstants.PLAY_EVT_PLAY_BEGIN) {
             stopLoadingAnimation();
+            mPlayerState = VodPlayerState.PLAYING;
             Log.d("AutoMonitor", "PlayFirstRender,cost=" + (System.currentTimeMillis() - mStartPlayTS));
             if (mPhoneListener.isInBackground()) {
                 mVodPlayer.pause();
+                mNeedToPause = false;
+                mPlayerState = VodPlayerState.PAUSE;
             }
-
+            if (mNeedToPause) {
+                mVodPlayer.pause();
+                mNeedToPause = false;
+                mPlayerState = VodPlayerState.PAUSE;
+            }
 
         } else if (event == TXLiveConstants.PLAY_EVT_PLAY_PROGRESS) {
             if (mStartSeek) {
@@ -696,11 +715,14 @@ public class VodPlayerActivity extends Activity implements ITXVodPlayListener,
             }
         } else if (event == TXLiveConstants.PLAY_EVT_PLAY_LOADING) {
             startLoadingAnimation();
+            mPlayerState = VodPlayerState.LOADING;
         } else if (event == TXLiveConstants.PLAY_EVT_RCV_FIRST_I_FRAME) {
             stopLoadingAnimation();
             findViewById(R.id.playerHeaderView).setVisibility(View.GONE);
             if (mPhoneListener.isInBackground()) {
                 mVodPlayer.pause();
+                mPlayerState = VodPlayerState.PAUSE;
+                mNeedToPause = false;
             }
         } else if (event == TXLiveConstants.PLAY_EVT_CHANGE_RESOLUTION) {
         } else if (event == TXLiveConstants.PLAY_ERR_HLS_KEY) {
@@ -901,6 +923,7 @@ public class VodPlayerActivity extends Activity implements ITXVodPlayListener,
                     Log.i(TAG, "onQualitySelect quality.url:" + quality.url);
                     mVodPlayer.setStartTime(currentTime);
                     mVodPlayer.startVodPlay(quality.url);
+                    mNeedToPause = false;
                 }
             } else { //br!=0;index!=-1;url=null
                 Log.i(TAG, "setBitrateIndex quality.index:" + quality.index);
@@ -923,5 +946,13 @@ public class VodPlayerActivity extends Activity implements ITXVodPlayListener,
                 }
             }
         }
+    }
+
+    enum VodPlayerState {
+        INIT,
+        PLAYING,
+        PAUSE,
+        LOADING,
+        END,
     }
 }

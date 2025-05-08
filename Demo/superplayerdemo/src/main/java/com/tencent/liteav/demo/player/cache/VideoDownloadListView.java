@@ -72,10 +72,16 @@ public class VideoDownloadListView extends RelativeLayout
         if (isNeedClean) {
             mMediaInfoList.clear();
         }
+        List<TXVodDownloadMediaInfo> mediaInfoListFilter = new ArrayList<>();
+        for (TXVodDownloadMediaInfo mediaInfo : mediaInfoList) {
+            if (mediaInfo != null && !mediaInfo.isResourceBroken()) {
+                mediaInfoListFilter.add(mediaInfo);
+            }
+        }
         int oldLength = mMediaInfoList.size();
-        mMediaInfoList.addAll(mediaInfoList);
+        mMediaInfoList.addAll(mediaInfoListFilter);
 
-        mVideoDownloadListAdapter.notifyItemRangeInserted(oldLength, mediaInfoList.size());
+        mVideoDownloadListAdapter.notifyItemRangeInserted(oldLength, mediaInfoListFilter.size());
         checkIfShowEmptyView();
     }
 
@@ -98,7 +104,7 @@ public class VideoDownloadListView extends RelativeLayout
                 = new VideoDownloadCenter.OnMediaInfoFetchListener() {
             @Override
             public void onReady(TXVodDownloadMediaInfo mediaInfo) {
-                if (mediaInfo != orgMediaInfo) {
+                if (mediaInfo != orgMediaInfo && mediaInfo != null && !mediaInfo.isResourceBroken()) {
                     int index = mMediaInfoList.indexOf(orgMediaInfo);
                     mMediaInfoList.remove(orgMediaInfo);
                     mMediaInfoList.add(index, mediaInfo);

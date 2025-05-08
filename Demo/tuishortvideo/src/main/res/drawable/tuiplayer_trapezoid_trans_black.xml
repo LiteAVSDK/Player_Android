@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<shape xmlns:android="http://schemas.android.com/apk/res/android">
+    <solid android:color="@color/tui_trans_c_black" /> <!-- 设置背景颜色 -->
+    <corners
+        android:topLeftRadius="0dp"
+        android:bottomLeftRadius="0dp"
+        android:topRightRadius="20dp"
+        android:bottomRightRadius="20dp" /> <!-- 设置圆角半径 -->
+</shape>

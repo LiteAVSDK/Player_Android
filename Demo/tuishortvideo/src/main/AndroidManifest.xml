@@ -2,6 +2,8 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.tencent.liteav.demo.player.demo.tuishortvideo">
 
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+
     <application>
         <activity
             android:name="com.tencent.liteav.demo.player.demo.TUIShortVideoActivity"
@@ -9,6 +11,20 @@
             android:launchMode="singleTask"
             android:screenOrientation="portrait"
             android:theme="@style/Theme.AppCompat.Light.NoActionBar"
+            android:windowSoftInputMode="stateHidden" />
+        <activity
+            android:name=".TUILandScapeActivity"
+            android:configChanges="orientation|keyboardHidden|screenSize|smallestScreenSize|screenLayout"
+            android:exported="false"
+            android:theme="@style/TUITransBg"
+            android:launchMode="singleTask"
+            android:windowSoftInputMode="stateHidden"  />
+        <activity
+            android:name=".TUIShortVideoLiveActivity"
+            android:configChanges="orientation|keyboardHidden|screenSize|smallestScreenSize|screenLayout"
+            android:exported="true"
+            android:launchMode="singleTask"
+            android:theme="@style/TUITransBgUnPlugAnim"
             android:windowSoftInputMode="stateHidden" />
     </application>
 </manifest>

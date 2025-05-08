@@ -352,7 +352,7 @@ public class SuperPlayerImpl implements SuperPlayer, ITXVodPlayListener, ITXLive
             updateVideoQualityList(videoQualities, defaultQuality);
         }
         if (mNeedToPause) {
-            pauseVod();
+            mVodPlayer.pause();
             return;
         }
         if (isNeedResume) {
@@ -788,7 +788,12 @@ public class SuperPlayerImpl implements SuperPlayer, ITXVodPlayListener, ITXLive
     @Override
     public void pauseVod() {
         if (mCurrentPlayType == SuperPlayerDef.PlayerType.VOD) {
-            mVodPlayer.pause();
+            if (mCurrentPlayState == SuperPlayerDef.PlayerState.LOADING ||
+                    mCurrentPlayState == SuperPlayerDef.PlayerState.INIT) {
+                mNeedToPause = true;
+            } else {
+                mVodPlayer.pause();
+            }
         }
         updatePlayerState(SuperPlayerDef.PlayerState.PAUSE);
     }

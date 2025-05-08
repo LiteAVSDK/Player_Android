@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout
+    android:id="@+id/cl_landscape_container"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".demo.shortvideo.TUILandScapeActivity">
+
+    <com.tencent.qcloud.tuiplayer.core.api.ui.view.TUIVideoRenderView
+        android:id="@+id/txc_vv_landscape"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent" />
+
+    <ImageButton
+        android:id="@+id/ib_back_play"
+        android:layout_width="54dp"
+        android:layout_height="54dp"
+        android:background="@android:color/transparent"
+        android:paddingLeft="12dp"
+        android:paddingTop="17dp"
+        android:paddingRight="17dp"
+        android:paddingBottom="17dp"
+        android:src="@drawable/tuiplayer_shortvideo_ic_back"
+        app:layout_constraintHorizontal_bias="0"
+        app:layout_constraintVertical_bias="0"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent" />
+
+    <ImageView
+        android:id="@+id/iv_tui_pause"
+        android:layout_width="80dp"
+        android:layout_height="80dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        android:visibility="gone"
+        android:src="@drawable/tuiplayer_shortvideo_pause"/>
+
+    <TextView
+        android:id="@+id/tv_tui_progress_time"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintBottom_toTopOf="@+id/vsb_tui_video_progress"
+        android:layout_marginBottom="30dp"
+        android:visibility="gone"
+        tools:visibility="visible"
+        android:textSize="24sp"
+        android:textStyle="bold"
+        android:textColor="@color/tui_white_teeth"
+        android:lines="1"/>
+
+    <com.tencent.liteav.demo.player.demo.tuishortvideo.view.VideoSeekBar
+        android:id="@id/vsb_tui_video_progress"
+        android:layout_width="match_parent"
+        android:layout_height="15dp"
+        app:vsb_drag_bar="@drawable/tuiplayer_shortvideo_thumb_view"
+        app:vsb_progress_background_color="@color/tui_trans_black"
+        app:vsb_progress_color="@color/tui_trans_white"
+        app:vsb_progress_bar_color="@color/superplayer_transparent"
+        app:vsb_drag_bar_reached_color="@color/tui_white_teeth"
+        app:vsb_progress_height="2dp"
+        app:vsb_progress_drag_height="8dp"
+        android:layout_marginBottom="50dp"
+        android:layout_marginStart="15dp"
+        android:layout_marginEnd="15dp"
+        android:visibility="invisible"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"/>
+
+</androidx.constraintlayout.widget.ConstraintLayout>

@@ -1,9 +1,88 @@
+<?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="short_video_get_data_failed">Failed to request data</string>
-    <string name="short_video_go_to_list">Swipe left to enter the video list</string>
-    <string name="short_video_i_know">I see</string>
-    <string name="short_video_move_seeek">Drag the progress bar to quickly view the video</string>
-    <string name="short_video_pause_video">Click to pause video playback</string>
+    <string name="tuiplayer_alpha_player">Alpha Player</string>
+    <string name="tuiplayer_input_local_video_path">Input local video path</string>
+    <string name="tuiplayer_call_resolution_list">resolution</string>
+    <string name="tuiplayer_call_function">menu</string>
+    <string name="tuiplayer_call_landscape">fullscreen</string>
+    <string name="tuiplayer_resolution_global">global</string>
+    <string name="tuiplayer_range_hint">0&#8211;1 is from 0 to 1, 1,2,3 is delete by index</string>
+    <string name="tuiplayer_tui_menu">TUI MENU</string>
+    <string name="tuiplayer_tui_data_control">data control</string>
+    <string name="tuiplayer_tui_data_remove">remove</string>
+    <string name="tuiplayer_tui_data_insert">insert</string>
+    <string name="tuiplayer_tui_data_replace">replace</string>
+    <string name="tuiplayer_tui_strategy_control">Settings</string>
+    <string name="tuiplayer_tui_resume_model">resume mode</string>
+    <string name="tuiplayer_tui_loop_model">loop mode</string>
+    <string name="tuiplayer_tui_render_mode">render mode(Live/Vod)</string>
+    <string name="tuiplayer_tui_sr_mode">superResolution(Vod)</string>
+    <string name="tuiplayer_tui_an_mode">audioNormalization(Vod)</string>
+    <string name="tuiplayer_tui_render_rotation">renderRotation(Live/Vod)</string>
+    <string name="tuiplayer_tui_mirror">mirror(Vod)</string>
+    <string name="tuiplayer_tui_mute">mute</string>
+    <string name="tuiplayer_tui_click_enter_live">Click to enter the live room</string>
+    <string name="tuiplayer_tui_img_display">Picture Display</string>
+    <string name="tuiplayer_tui_img_display_desc">This is a custom page for displaying images</string>
+    <string name="tuiplayer_tui_jump_random_no_anim">random Jump(no anim)</string>
+    <string name="tuiplayer_tui_enter_back_no_pause">enterBack without pause</string>
+    <string name="tuiplayer_header_pulling">Pull down to refresh</string>
+    <string name="tuiplayer_header_refreshing">Refreshing&#8230;</string>
+    <string name="tuiplayer_header_release">Release to refresh immediately</string>
+    <string name="tuiplayer_header_refresh_finish">Refresh complete</string>
+    <string name="tuiplayer_header_refresh_failure">Refresh failed</string>
+    <string name="tuiplayer_header_update">M-d HH:mm</string>
+    <string name="tuiplayer_footer_pulling">Pull up to load more</string>
+    <string name="tuiplayer_footer_release">Release to load immediately</string>
+    <string name="tuiplayer_footer_loading">Loading&#8230;</string>
+    <string name="tuiplayer_footer_loading_finish">Load complete</string>
+    <string name="tuiplayer_footer_loading_failure">Load failed</string>
+    <string name="tuiplayer_footer_nothing">No more data</string>
+    <string name="tuiplayer_player_error_retry">net failed, click to retry</string>
+
     <string name="short_video_play_back">Short video playback</string>
+    <string name="short_video_live_title">Live Room Page</string>
+    <string name="short_video_get_data_failed">Failed to request data</string>
     <string name="short_video_view_more_videos">See more videos up and down</string>
+    <string name="short_video_pause_video">Click to pause video playback</string>
+    <string name="short_video_go_to_list">Swipe left to enter the video list</string>
+    <string name="short_video_move_seeek">Drag the progress bar to quickly view the video</string>
+
+    <string-array name="tuiplayer_resume_mode_array">
+        <item>NONE</item>
+        <item>RESUME_CURRENT</item>
+        <item>RESUME_PLAYED</item>
+    </string-array>
+
+    <string-array name="tuiplayer_loop_mode_array">
+        <item>MODE_ONE_LOOP</item>
+        <item>MODE_LIST_LOOP</item>
+        <item>MODE_NO_LOOP</item>
+    </string-array>
+
+    <string-array name="tuiplayer_render_mode_array">
+        <item>adjustResolution</item>
+        <item>fillView</item>
+    </string-array>
+
+    <string-array name="tuiplayer_sr_mode_array">
+        <item>none</item>
+        <item>ASR</item>
+    </string-array>
+
+    <string-array name="tuiplayer_an_array">
+        <item>off</item>
+        <item>low</item>
+        <item>standard</item>
+        <item>high</item>
+    </string-array>
+
+    <string-array name="tuiplayer_render_rotation_array">
+        <item>0</item>
+        <item>90</item>
+        <item>180</item>
+        <item>270</item>
+    </string-array>
+
+    <string name="tui_short_video_render_view">tuiShortVideoRenderView</string>
 </resources>

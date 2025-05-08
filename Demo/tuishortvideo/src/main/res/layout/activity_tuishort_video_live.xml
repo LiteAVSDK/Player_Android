@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/tuiplayer_shortvideo_content_bg"
+    tools:context=".TUIShortVideoLiveActivity">
+
+    <com.tencent.qcloud.tuiplayer.core.api.ui.view.TUIVideoRenderView
+        android:id="@+id/txc_vv_live"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        tools:ignore="UnusedAttribute" />
+
+    <ImageView
+        android:id="@+id/iv_tui_fullscreen"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:padding="15dp"
+        android:background="@color/tui_trans_d_black"
+        android:src="@drawable/tuiplayer_ic_fullscreen"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintHorizontal_bias="1"
+        app:layout_constraintVertical_bias="0.7"
+        android:layout_marginEnd="20dp"/>
+
+    <ImageButton
+        android:id="@+id/ib_back_play"
+        android:layout_width="54dp"
+        android:layout_height="54dp"
+        android:background="@android:color/transparent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        android:paddingLeft="12dp"
+        android:paddingTop="17dp"
+        android:paddingRight="17dp"
+        android:paddingBottom="17dp"
+        android:src="@drawable/tuiplayer_shortvideo_ic_back" />
+
+    <TextView
+        android:id="@+id/tv_title"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:paddingTop="14dp"
+        android:text="@string/short_video_live_title"
+        android:textColor="@color/superplayer_white"
+        android:textSize="18sp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"/>
+
+</androidx.constraintlayout.widget.ConstraintLayout>

@@ -11,7 +11,14 @@
     <color name="superplayer_color_gray">#787878</color>
     <color name="superplayer_transparent">#00000000</color>
     <color name="superplayer_white">#ffffff</color>
+
+    <color name="tui_trans_start_black">#01000000</color>
+    <color name="tui_trans_mid_black">#CC000000</color>
+    <color name="tui_trans_end_black">#EE000000</color>
+    <color name="tui_trans_d_black">#DD000000</color>
+    <color name="tui_trans_c_black">#CC000000</color>
     <color name="tui_trans_black">#55000000</color>
-    <color name="tui_trans_white">#88FEFEFE</color>
     <color name="tui_white_teeth">#FFFEFEFE</color>
+    <color name="tui_trans_white">#88FEFEFE</color>
+    <color name="tui_blue">#FF4444FE</color>
 </resources>
