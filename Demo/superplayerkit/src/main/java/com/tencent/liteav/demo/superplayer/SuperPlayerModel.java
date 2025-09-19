@@ -5,6 +5,7 @@ import com.tencent.liteav.demo.superplayer.model.VipWatchModel;
 import com.tencent.liteav.demo.superplayer.model.entity.DynamicWaterConfig;
 import com.tencent.liteav.demo.superplayer.model.entity.SuperPlayerVideoIdV2;
 import com.tencent.liteav.demo.superplayer.model.entity.VideoQuality;
+import com.tencent.rtmp.TXPlayerDrmBuilder;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -104,13 +105,19 @@ public class SuperPlayerModel {
      */
     public SuperPlayerVideoId videoId;
 
-    /*
+    /**
      * Used to be compatible with the old version (V2) Tencent Cloud VOD File ID playback parameters
      *  (to be deprecated, not recommended for use).
      * 用于兼容旧版本(V2)腾讯云点播 File ID 播放参数（即将废弃，不推荐使用）
      */
     @Deprecated
     public SuperPlayerVideoIdV2 videoIdV2;
+
+    /**
+     *  DRM playback information, used in conjunction with TXVodPlayer#startPlayDrm
+     *  DRM播放信息，配合TXVodPlayer#startPlayDrm使用
+     */
+    public TXPlayerDrmBuilder drmBuilder = null;
 
     // Video file name (used to display on the UI layer); when playing with file id, if title is not specified,
     // the title returned by FileId will be used; when playing with url, title needs to be specified,

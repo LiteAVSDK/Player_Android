@@ -16,7 +16,7 @@
             android:name=".TUILandScapeActivity"
             android:configChanges="orientation|keyboardHidden|screenSize|smallestScreenSize|screenLayout"
             android:exported="false"
-            android:theme="@style/TUITransBg"
+            android:theme="@style/TUITransBgUnPlugAnim"
             android:launchMode="singleTask"
             android:windowSoftInputMode="stateHidden"  />
         <activity

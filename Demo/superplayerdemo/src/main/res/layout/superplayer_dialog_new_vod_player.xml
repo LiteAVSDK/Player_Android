@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <ViewStub
+        android:id="@+id/layoutVideoAddPre"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout="@layout/superplayer_dialog_new_vod_player_pre"/>
+
+    <ViewStub
+        android:id="@+id/layoutVideoAddUrl"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:visibility="gone"
+        android:layout="@layout/superplayer_dialog_new_vod_player_url"
+        />
+
+    <ViewStub
+        android:id="@+id/layoutVideoAddFileId"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:visibility="gone"
+        android:layout="@layout/superplayer_dialog_new_vod_player_fileid"
+        />
+
+</FrameLayout>

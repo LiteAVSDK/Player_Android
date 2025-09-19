@@ -8,11 +8,11 @@ import android.view.ViewGroup;
 import android.widget.FrameLayout;
 import android.widget.ProgressBar;
 
+import com.tencent.liteav.demo.player.demo.tuishortvideo.R;
 import com.tencent.qcloud.tuiplayer.core.api.TUIPlayerController;
 import com.tencent.qcloud.tuiplayer.core.api.model.TUILiveSource;
 import com.tencent.qcloud.tuiplayer.core.api.ui.player.ITUILivePlayer;
 import com.tencent.qcloud.tuiplayer.core.api.ui.view.TUILiveLayer;
-import com.tencent.qcloud.tuiplayer.shortvideo.R;
 
 public class TUILiveLoadingLayer extends TUILiveLayer {
 

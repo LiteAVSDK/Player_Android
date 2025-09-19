@@ -124,6 +124,22 @@ public class TUILandScapeActivity extends AppCompatActivity implements VideoSeek
     }
 
     @Override
+    protected void onPause() {
+        super.onPause();
+        if (null != mPlayer) {
+            mPlayer.pause();
+        }
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        if (null != mPlayer) {
+            mPlayer.resumePlay();
+        }
+    }
+
+    @Override
     protected void onDestroy() {
         super.onDestroy();
         if (null != mVodObserver && mPlayer instanceof ITUIVodPlayer) {

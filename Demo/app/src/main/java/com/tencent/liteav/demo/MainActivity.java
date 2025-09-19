@@ -10,6 +10,8 @@ import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Looper;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -27,7 +29,6 @@ import com.tencent.liteav.demo.player.demo.FeedActivity;
 import com.tencent.liteav.demo.player.demo.SuperPlayerActivity;
 import com.tencent.liteav.demo.player.demo.TUIShortVideoActivity;
 import com.tencent.liteav.demo.player.demo.VodPlayerActivity;
-import com.tencent.liteav.demo.player.demo.shortvideo.view.ShortVideoActivity;
 import com.tencent.rtmp.TXLiveBase;
 
 import java.io.File;
@@ -35,6 +36,7 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.InputStream;
+import java.lang.ref.WeakReference;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
@@ -70,15 +72,21 @@ public class MainActivity extends Activity {
         mMainTitle.setOnLongClickListener(new View.OnLongClickListener() {
             @Override
             public boolean onLongClick(View v) {
+                WeakReference<Activity> activityRef = new WeakReference<>(MainActivity.this);
                 AsyncTask.execute(new Runnable() {
                     @Override
                     public void run() {
                         File logFile = getLogFile();
                         if (logFile != null) {
-                            Intent intent = new Intent(Intent.ACTION_SEND);
-                            intent.setType("application/octet-stream");
-                            intent.putExtra(Intent.EXTRA_STREAM, UriUtils.file2Uri(logFile));
-                            startActivity(Intent.createChooser(intent, getString(R.string.app_title_share_log)));
+                            new Handler(Looper.getMainLooper()).post(() -> {
+                                Activity activity = activityRef.get();
+                                if (activity != null && !activity.isDestroyed() && !activity.isFinishing()) {
+                                    Intent intent = new Intent(Intent.ACTION_SEND);
+                                    intent.setType("application/octet-stream");
+                                    intent.putExtra(Intent.EXTRA_STREAM, UriUtils.file2Uri(logFile));
+                                    activity.startActivity(Intent.createChooser(intent, activity.getString(R.string.app_title_share_log)));
+                                }
+                            });
                         }
                     }
                 });
@@ -155,8 +163,6 @@ public class MainActivity extends Activity {
                 SuperPlayerActivity.class));
         playerChildList.add(new ChildBean(getString(R.string.app_vod_player), R.drawable.play, 3,
                 VodPlayerActivity.class));
-        playerChildList.add(new ChildBean(getString(R.string.app_item_shortvideo_player), R.drawable.play, 3,
-                ShortVideoActivity.class));
         playerChildList.add(new ChildBean(getString(R.string.app_item_tui_shortvideo_player), R.drawable.play, 3,
                         TUIShortVideoActivity.class));
         playerChildList.add(new ChildBean(getString(R.string.app_feed_player), R.drawable.play, 3, FeedActivity.class));

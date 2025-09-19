@@ -4,10 +4,10 @@
     android:layout_height="180dp"
     android:background="@color/superplayer_black">
 
-    <com.tencent.rtmp.ui.TXCloudVideoView
-        android:id="@+id/superplayer_float_cloud_video_view"
+    <com.tencent.liteav.demo.superplayer.ui.player.SuperPlayerRenderView
+        android:id="@+id/superplayer_float_render_view"
         android:layout_width="match_parent"
-        android:layout_height="match_parent" />
+        android:layout_height="match_parent"/>
 
     <ImageView
         android:id="@+id/superplayer_iv_close"

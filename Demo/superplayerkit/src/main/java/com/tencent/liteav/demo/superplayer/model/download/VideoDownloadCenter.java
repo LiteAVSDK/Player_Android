@@ -160,6 +160,8 @@ public class VideoDownloadCenter {
             } else {
                 getDownloadMediaInfo(superPlayerModel.url, listener);
             }
+        } else if (null != superPlayerModel.drmBuilder) {
+            getDownloadMediaInfo(superPlayerModel.drmBuilder.getPlayUrl(), listener);
         }
     }
 
@@ -222,8 +224,10 @@ public class VideoDownloadCenter {
 
         if (null != downloadDataSource) {
             return mDownloadManager.startDownload(downloadDataSource);
+        } else if (null != superPlayerModel.drmBuilder) {
+            return mDownloadManager.startDownloadDrm(superPlayerModel.drmBuilder, downloadModel.getPreferResolution(), userName);
         } else {
-            return mDownloadManager.startDownloadUrl(superPlayerModel.url, userName);
+            return mDownloadManager.startDownloadUrl(superPlayerModel.url, downloadModel.getPreferResolution(), userName);
         }
     }
 

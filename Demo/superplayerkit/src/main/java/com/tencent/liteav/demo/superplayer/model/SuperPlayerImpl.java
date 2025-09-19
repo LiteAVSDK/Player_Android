@@ -19,6 +19,7 @@ import com.tencent.liteav.demo.superplayer.model.entity.PlayImageSpriteInfo;
 import com.tencent.liteav.demo.superplayer.model.entity.PlayKeyFrameDescInfo;
 import com.tencent.liteav.demo.superplayer.model.entity.VideoQuality;
 import com.tencent.liteav.demo.superplayer.model.utils.VideoQualityUtils;
+import com.tencent.liteav.demo.superplayer.ui.player.SuperPlayerRenderView;
 import com.tencent.liteav.txcplayer.model.TXSubtitleRenderModel;
 import com.tencent.rtmp.ITXLivePlayListener;
 import com.tencent.rtmp.ITXVodPlayListener;
@@ -32,7 +33,6 @@ import com.tencent.rtmp.TXTrackInfo;
 import com.tencent.rtmp.TXVodConstants;
 import com.tencent.rtmp.TXVodPlayConfig;
 import com.tencent.rtmp.TXVodPlayer;
-import com.tencent.rtmp.ui.TXCloudVideoView;
 import com.tencent.rtmp.ui.TXSubtitleView;
 
 import java.io.File;
@@ -48,7 +48,7 @@ public class SuperPlayerImpl implements SuperPlayer, ITXVodPlayListener, ITXLive
     private static final int    PLAY_BACK_WARD_PLAY_INTERVAL_MILLI_SECOND = 1000;
 
     private Context                    mContext;
-    private TXCloudVideoView           mVideoView;        // Tencent Cloud video playback view
+    private SuperPlayerRenderView      mVideoView;        // Tencent Cloud video playback view
     private TXVodPlayer                mVodPlayer;
     private TXVodPlayConfig            mVodPlayConfig;
     private TXLivePlayer               mLivePlayer;
@@ -83,7 +83,7 @@ public class SuperPlayerImpl implements SuperPlayer, ITXVodPlayListener, ITXLive
     private Handler                    mHandler;
     private float                      mCurrentSpeedRate    = 1;
 
-    public SuperPlayerImpl(Context context, TXCloudVideoView videoView) {
+    public SuperPlayerImpl(Context context, SuperPlayerRenderView videoView) {
         initialize(context, videoView);
     }
 
@@ -100,6 +100,13 @@ public class SuperPlayerImpl implements SuperPlayer, ITXVodPlayListener, ITXLive
             Log.d(TAG, playEventLog);
         }
         switch (event) {
+            case TXLiveConstants.PLAY_EVT_CHANGE_RESOLUTION:
+                int resolutionWidth = param.getInt(TXLiveConstants.EVT_PARAM1);
+                int resolutionHeight = param.getInt(TXLiveConstants.EVT_PARAM2);
+                if (null != mVideoView) {
+                    mVideoView.notifyVideoResolution(resolutionWidth, resolutionHeight);
+                }
+                break;
             case TXLiveConstants.PLAY_EVT_VOD_PLAY_PREPARED:
             case TXLiveConstants.PLAY_EVT_PLAY_BEGIN:
                 updatePlayerState(SuperPlayerDef.PlayerState.PLAYING);
@@ -213,6 +220,13 @@ public class SuperPlayerImpl implements SuperPlayer, ITXVodPlayListener, ITXLive
             Log.d(TAG, playEventLog);
         }
         switch (event) {
+            case TXLiveConstants.PLAY_EVT_CHANGE_RESOLUTION:
+                int resolutionWidth = param.getInt(TXLiveConstants.EVT_PARAM1);
+                int resolutionHeight = param.getInt(TXLiveConstants.EVT_PARAM2);
+                if (null != mVideoView) {
+                    mVideoView.notifyVideoResolution(resolutionWidth, resolutionHeight);
+                }
+                break;
             case TXVodConstants.VOD_PLAY_EVT_GET_PLAYINFO_SUCC:
                 mCurrentPlayVideoURL = param.getString(TXVodConstants.EVT_PLAY_URL);
                 PlayImageSpriteInfo playImageSpriteInfo = new PlayImageSpriteInfo();
@@ -360,7 +374,7 @@ public class SuperPlayerImpl implements SuperPlayer, ITXVodPlayListener, ITXLive
         }
     }
 
-    private void initialize(Context context, TXCloudVideoView videoView) {
+    private void initialize(Context context, SuperPlayerRenderView videoView) {
         mContext = context;
         mVideoView = videoView;
         mHandler = new Handler();
@@ -378,7 +392,7 @@ public class SuperPlayerImpl implements SuperPlayer, ITXVodPlayListener, ITXLive
             File sdcardDir = context.getExternalFilesDir(null);
             TXPlayerGlobalSetting.setCacheFolderPath(sdcardDir.getPath() + "/txcache");
         }
-        mVodPlayConfig.setPreferredResolution(720 * 1280);
+        mVodPlayConfig.setPreferredResolution(config.preferResolution);
         TXPlayerGlobalSetting.setMaxCacheSize(config.maxCacheSizeMB);
         mVodPlayConfig.setHeaders(config.headers);
         mVodPlayer.setConfig(mVodPlayConfig);
@@ -418,6 +432,8 @@ public class SuperPlayerImpl implements SuperPlayer, ITXVodPlayListener, ITXLive
             playWithUrl(model);
         } else if (model.videoId != null) {
             playWithFileId(model);
+        } else if (model.drmBuilder != null) {
+            playWithDrm(model);
         }
         addSubtitle();
     }
@@ -449,18 +465,16 @@ public class SuperPlayerImpl implements SuperPlayer, ITXVodPlayListener, ITXLive
         }
         // Live player: normal RTMP stream playback and webrtc
         if (isRTMPPlay(videoURL) || isWebrtcPlay(videoURL)) {
-            mLivePlayer.setPlayerView(mVideoView);
+            mVideoView.bindPlayer(mLivePlayer);
             playLiveURL(videoURL, TXLivePlayer.PLAY_TYPE_LIVE_RTMP);
         } else if (isFLVPlay(videoURL)) {
             // Live player: live FLV stream playback
-            mLivePlayer.setPlayerView(mVideoView);
+            mVideoView.bindPlayer(mLivePlayer);
             playTimeShiftLiveURL(model.appId, videoURL);
             if (model.multiURLs != null && !model.multiURLs.isEmpty()) {
                 startMultiStreamLiveURL(videoURL);
             }
         } else {
-            // On-demand player: play on-demand files
-            mVodPlayer.setPlayerView(mVideoView);
             playVodURL(videoURL);
         }
         boolean isLivePlay = (isRTMPPlay(videoURL) || isFLVPlay(videoURL) || isWebrtcPlay(videoURL));
@@ -479,7 +493,9 @@ public class SuperPlayerImpl implements SuperPlayer, ITXVodPlayListener, ITXLive
             return;
         }
         if (mVodPlayer != null) {
-            mVodPlayer.setPlayerView(mVideoView);
+            // apply user renderView config
+            mVideoView.refreshRenderView();
+            mVideoView.bindPlayer(mVodPlayer);
             mVodPlayer.setStartTime(mStartPos);
             mVodPlayer.setAutoPlay(mIsAutoPlay);
             if (mPlayAction == PLAY_ACTION_AUTO_PLAY || mPlayAction == PLAY_ACTION_MANUAL_PLAY) {
@@ -493,6 +509,31 @@ public class SuperPlayerImpl implements SuperPlayer, ITXVodPlayListener, ITXLive
             mVodPlayer.startVodPlay(params);
         }
         mIsPlayWithFileId = true;
+        updatePlayerType(SuperPlayerDef.PlayerType.VOD);
+        updatePlayProgress(0, model.duration,0);
+    }
+
+    private void playWithDrm(SuperPlayerModel model) {
+        if (model == null || model.drmBuilder == null) {
+            return;
+        }
+        if (mVodPlayer != null) {
+            // drm must use surface view
+            SuperPlayerGlobalConfig.getInstance().renderViewType = SuperPlayerDef.PlayerRenderType.SURFACE_VIEW;
+            mVideoView.refreshRenderView();
+            mVideoView.bindPlayer(mVodPlayer);
+            mVodPlayer.setStartTime(mStartPos);
+            mVodPlayer.setAutoPlay(mIsAutoPlay);
+            if (mPlayAction == PLAY_ACTION_AUTO_PLAY || mPlayAction == PLAY_ACTION_MANUAL_PLAY) {
+                mVodPlayer.setAutoPlay(true);
+            } else if (mPlayAction == PLAY_ACTION_PRELOAD) {
+                mVodPlayer.setAutoPlay(false);
+                mPlayAction = PLAY_ACTION_AUTO_PLAY;
+            }
+            mVodPlayer.setVodListener(this);
+            mVodPlayer.startPlayDrm(model.drmBuilder);
+        }
+        mIsPlayWithFileId = false;
         updatePlayerType(SuperPlayerDef.PlayerType.VOD);
         updatePlayProgress(0, model.duration,0);
     }
@@ -514,6 +555,8 @@ public class SuperPlayerImpl implements SuperPlayer, ITXVodPlayListener, ITXLive
             playVodURL(model.url);
         } else if (model.videoId != null) {
             playWithFileId(model);
+        } else if (model.drmBuilder != null) {
+            playWithDrm(model);
         }
         addSubtitle();
     }
@@ -527,7 +570,7 @@ public class SuperPlayerImpl implements SuperPlayer, ITXVodPlayListener, ITXLive
         mCurrentPlayVideoURL = url;
         if (mLivePlayer != null) {
             mLivePlayer.setPlayListener(this);
-            mLivePlayer.setPlayerView(mVideoView);
+            mVideoView.bindPlayer(mLivePlayer);
             int result = mLivePlayer.startLivePlay(url, playType);
             if (result != 0) {
                 Log.e(TAG, "playLiveURL videoURL:" + url + ",result:" + result);
@@ -561,6 +604,10 @@ public class SuperPlayerImpl implements SuperPlayer, ITXVodPlayListener, ITXLive
             if (mCurrentIndex != -1) {
                 mVodPlayer.setBitrateIndex(mCurrentIndex);
             }
+            // On-demand player: play on-demand files
+            mVideoView.bindPlayer(mVodPlayer);
+            // apply user renderView config
+            mVideoView.refreshRenderView();
             mVodPlayer.startVodPlay(url);
         }
         mIsPlayWithFileId = false;
@@ -840,7 +887,7 @@ public class SuperPlayerImpl implements SuperPlayer, ITXVodPlayListener, ITXLive
         if (mLivePlayer != null) {
             mLivePlayer.setPlayListener(null);
             mLivePlayer.stopPlay(true);
-            mVideoView.removeVideoView();
+            mVideoView.clearLastImg();
         }
     }
 
@@ -892,12 +939,12 @@ public class SuperPlayerImpl implements SuperPlayer, ITXVodPlayListener, ITXLive
     }
 
     @Override
-    public void setPlayerView(TXCloudVideoView videoView) {
+    public void setPlayerView(SuperPlayerRenderView videoView) {
         mVideoView = videoView;
         if (mCurrentPlayType == SuperPlayerDef.PlayerType.VOD) {
-            mVodPlayer.setPlayerView(videoView);
+            mVideoView.bindPlayer(mVodPlayer);
         } else {
-            mLivePlayer.setPlayerView(videoView);
+            mVideoView.bindPlayer(mLivePlayer);
         }
     }
 

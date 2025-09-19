@@ -1,5 +1,6 @@
 package com.tencent.liteav.demo.superplayer;
 
+import com.tencent.liteav.demo.superplayer.helper.annoation.SuperPlayerRenderTypeParams;
 import com.tencent.liteav.txcplayer.model.TXSubtitleRenderModel;
 import com.tencent.rtmp.TXLiveConstants;
 
@@ -33,6 +34,20 @@ public class SuperPlayerGlobalConfig {
      * 默认播放填充模式 （ 默认播放模式为 自适应模式 ）
      */
     public int renderMode = TXLiveConstants.RENDER_MODE_ADJUST_RESOLUTION;
+
+    /**
+     * The player's rendering view types can be referred to in {@link SuperPlayerDef.PlayerRenderType}.
+     * {@link SuperPlayerDef.PlayerRenderType#SURFACE_VIEW} supports DRM playback.
+     * {@link SuperPlayerDef.PlayerRenderType#CLOUD_VIEW} does not support DRM playback.
+     * Default is {@link SuperPlayerDef.PlayerRenderType#SURFACE_VIEW}
+     *
+     * 播放器渲染 view 类型，可参考 {@link SuperPlayerDef.PlayerRenderType}
+     * {@link SuperPlayerDef.PlayerRenderType#SURFACE_VIEW} 支持 drm 播放。
+     * {@link SuperPlayerDef.PlayerRenderType#CLOUD_VIEW} 不支持 drm 播放。
+     * 默认为 {@link SuperPlayerDef.PlayerRenderType#SURFACE_VIEW}
+     */
+    @SuperPlayerRenderTypeParams
+    public int renderViewType = SuperPlayerDef.PlayerRenderType.CLOUD_VIEW;
 
     /**
      * The maximum number of buffers for the player.
@@ -118,6 +133,8 @@ public class SuperPlayerGlobalConfig {
      * 请求header
      */
     public Map<String,String> headers = new HashMap<>();
+
+    public long preferResolution = 720 * 1280;
 
     public static TXSubtitleRenderModel createVodDefaultSubtitleRenderModel() {
         TXSubtitleRenderModel model = new TXSubtitleRenderModel();

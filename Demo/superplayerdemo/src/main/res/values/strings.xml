@@ -10,6 +10,7 @@
     <string name="superplayer_vod_exo">exo</string>
     <string name="superplayer_scancode_tip">二维码播放地址错误，请检查！</string>
     <string name="superplayer_small_video_special_effects_editing">小视频-特效剪辑</string>
+    <string name="superplayer_choose_video_type">请选择需要添加的视频源类型</string>
     <string name="superplayer_set_appid_fileid">请设置AppID，FileID 和 PSign</string>
     <string name="superplayer_set_play_url">请设置播放地址</string>
     <string name="superplayer_input_correct_appid">请输入正确的AppId</string>
@@ -43,7 +44,10 @@
     <string name="superplayer_cover_title">自定义封面演示</string>
     <string name="superplayer_offline_cache_title">离线缓存（全屏）演示</string>
     <string name="superplayer_carousel_list_title">视频列表轮播演示</string>
-    
+    <string name="superplayer_add_drm_switch">drm 视频</string>
+    <string name="superplayer_add_pre_url">url 视频</string>
+    <string name="superplayer_add_pre_fileId">fileId 视频</string>
+
     <string name="superplayer_cache_progress">缓存进度：%1$d%%</string>
     <string name="superplayer_cache_video_size">MB</string>
     <string name="superplayer_cache_state_cacheing">缓存中</string>

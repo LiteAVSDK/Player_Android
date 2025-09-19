@@ -194,7 +194,7 @@ public class VideoSeekBar extends ViewGroup {
             return false;
         }
         boolean isHandle = false;
-        switch (event.getAction()) {
+        switch (event.getActionMasked()) {
             case MotionEvent.ACTION_DOWN:
                 isHandle = handleDownEvent(event);
                 break;
@@ -229,7 +229,7 @@ public class VideoSeekBar extends ViewGroup {
                 mDragBarLeft = (mLeft + mViewWidth) - mDragBarRadius;
                 mDragBarRight = mRight;
             }
-            float center = mDragBarLeft + mDragBarRadius;
+            final float center = mDragBarLeft;
             mCurrentBarProgress = center / mViewWidth;
             invalidate();
             mLastX = x;
@@ -273,6 +273,7 @@ public class VideoSeekBar extends ViewGroup {
             }
             mCurrentDragOffset = 0;
             int dragCenter = (int) (mLeft + (mViewWidth * mCurrentBarProgress));
+            mCurrentProgress = mCurrentBarProgress;
             mDragBarLeft = dragCenter - mDragBarRadius;
             mDragBarRight = dragCenter + mDragBarRadius;
             mLastX = mDragBarLeft;

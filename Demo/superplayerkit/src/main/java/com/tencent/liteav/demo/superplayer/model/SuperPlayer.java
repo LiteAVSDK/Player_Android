@@ -3,6 +3,7 @@ package com.tencent.liteav.demo.superplayer.model;
 import com.tencent.liteav.demo.superplayer.SuperPlayerDef;
 import com.tencent.liteav.demo.superplayer.SuperPlayerModel;
 import com.tencent.liteav.demo.superplayer.model.entity.VideoQuality;
+import com.tencent.liteav.demo.superplayer.ui.player.SuperPlayerRenderView;
 import com.tencent.liteav.txcplayer.model.TXSubtitleRenderModel;
 import com.tencent.rtmp.TXLivePlayer;
 import com.tencent.rtmp.TXTrackInfo;
@@ -86,7 +87,7 @@ public interface SuperPlayer {
 
     void enableHardwareDecode(boolean enable);
 
-    void setPlayerView(TXCloudVideoView videoView);
+    void setPlayerView(SuperPlayerRenderView videoView);
 
     void seek(int position);
 

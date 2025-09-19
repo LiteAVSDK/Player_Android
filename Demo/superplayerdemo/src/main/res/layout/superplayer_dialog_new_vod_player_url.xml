@@ -1,0 +1,144 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <FrameLayout
+        android:id="@+id/fl_url_container"
+        android:animateLayoutChanges="true"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <LinearLayout
+            android:id="@+id/ll_url_view"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:paddingLeft="10dp"
+            android:paddingRight="10dp">
+
+            <TextView
+                android:id="@+id/superplayer_tv_url_label"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="5dp"
+                android:layout_marginBottom="5dp"
+                android:text="url"
+                android:textColor="@color/superplayer_white"
+                android:textSize="14dp" />
+
+            <EditText
+                android:id="@+id/superplayer_et_url"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="5dp"
+                android:background="@drawable/superplayer_ic_vod_search"
+                android:textColor="@color/superplayer_white"
+                android:textSize="14dp" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/ll_drm_url"
+            android:orientation="vertical"
+            android:paddingLeft="10dp"
+            android:paddingRight="10dp"
+            android:visibility="gone"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="5dp"
+                android:layout_marginBottom="5dp"
+                android:text="DrmLicenseUrl"
+                android:textColor="@color/superplayer_white"
+                android:textSize="14dp" />
+
+            <EditText
+                android:id="@+id/superplayer_et_drm_license_url"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@drawable/superplayer_ic_vod_search"
+                android:textColor="@color/superplayer_white"
+                android:textSize="14dp" />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="5dp"
+                android:layout_marginBottom="5dp"
+                android:text="PlayUrl"
+                android:textColor="@color/superplayer_white"
+                android:textSize="14dp" />
+
+            <EditText
+                android:id="@+id/superplayer_drm_play_url"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@drawable/superplayer_ic_vod_search"
+                android:textColor="@color/superplayer_white"
+                android:textSize="14dp" />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="5dp"
+                android:layout_marginBottom="5dp"
+                android:text="DeviceCertificateUrl(optional)"
+                android:textColor="@color/superplayer_white"
+                android:textSize="14dp" />
+
+            <EditText
+                android:id="@+id/superplayer_et_drm_cert_url"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@drawable/superplayer_ic_vod_search"
+                android:textColor="@color/superplayer_white"
+                android:hint="(optional)"
+                android:textSize="14dp" />
+        </LinearLayout>
+
+    </FrameLayout>
+
+    <CheckBox
+        android:id="@+id/superplayer_cb_url_cache_switch"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
+        android:checked="false"
+        android:text="@string/superplayer_cache_download_switch"/>
+
+    <CheckBox
+        android:id="@+id/superplayer_cb_drm_switch"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="5dp"
+        android:checked="false"
+        android:text="@string/superplayer_add_drm_switch"/>
+
+    <LinearLayout
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <Button
+            android:id="@+id/btn_url_confirm"
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:layout_height="wrap_content"
+            android:layout_margin="10dp"
+            android:text="@string/superplayer_ok"/>
+
+        <Button
+            android:id="@+id/btn_url_cancel"
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:layout_height="wrap_content"
+            android:layout_margin="10dp"
+            android:text="@string/superplayer_cancel"/>
+
+    </LinearLayout>
+</LinearLayout>

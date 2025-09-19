@@ -72,6 +72,7 @@ public abstract class BaseListView<ADAPTER extends BaseAdapter,DATA>  extends Re
         mData.clear();
         mData.addAll(list);
         mAdapter.setData(list);
+        mAdapter.mCurrentPositionInAdapter = -1;
     }
 
     protected abstract String getTitle();

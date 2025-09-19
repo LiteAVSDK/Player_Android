@@ -10,6 +10,7 @@ import com.tencent.liteav.demo.superplayer.SuperPlayerVideoId;
 import com.tencent.liteav.demo.superplayer.model.VipWatchModel;
 import com.tencent.liteav.demo.superplayer.model.entity.DynamicWaterConfig;
 import com.tencent.liteav.demo.superplayer.model.entity.VideoQuality;
+import com.tencent.rtmp.TXPlayerDrmBuilder;
 
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -73,6 +74,12 @@ public class VideoModel implements Serializable {
      */
     public String pSign;
 
+    /**
+     *  DRM playback information, used in conjunction with TXVodPlayer#startPlayDrm
+     *  DRM播放信息，配合TXVodPlayer#startPlayDrm使用
+     */
+    public TXPlayerDrmBuilder drmBuilder = null;
+
     public int playAction = PLAY_ACTION_AUTO_PLAY;
 
     public List<VideoQuality> videoQualityList = new ArrayList<>();
@@ -110,7 +117,6 @@ public class VideoModel implements Serializable {
      * 是否启用缓存下载能力
      */
     public boolean isEnableDownload = false;
-
 
     public static class VideoPlayerURL implements  Serializable {
 
@@ -172,6 +178,10 @@ public class VideoModel implements Serializable {
             superPlayerModel.videoId = new SuperPlayerVideoId();
             superPlayerModel.videoId.fileId = fileid;
             superPlayerModel.videoId.pSign = pSign;
+        }
+
+        if (null != drmBuilder) {
+            superPlayerModel.drmBuilder = drmBuilder;
         }
 
         superPlayerModel.subtitleSourceModelList = subtitleSourceModelList;

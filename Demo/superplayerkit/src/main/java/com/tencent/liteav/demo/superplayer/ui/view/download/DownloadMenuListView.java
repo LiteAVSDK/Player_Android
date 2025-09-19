@@ -60,6 +60,7 @@ public class DownloadMenuListView extends RelativeLayout
     private DownloadMenuListAdapter    mMenuListAdapter;
     private List<SuperPlayerModel>     mSuperPlayerModelList = new ArrayList<>();
     private List<VideoQuality>         mVideoQualityList     = new ArrayList<>();
+    private VideoQuality               mCurVideoQuality      = null;
     private DownloadQualityListAdapter mDownloadQualityListAdapter;
 
 
@@ -164,8 +165,10 @@ public class DownloadMenuListView extends RelativeLayout
     private void setCurrentQualityId(VideoQuality videoQuality) {
         if (null != videoQuality) {
             mCurrentQualityId = VideoQualityUtils.getCacheVideoQualityIndex(videoQuality);
+            mCurVideoQuality = videoQuality;
         } else {
             mCurrentQualityId = 0;
+            mCurVideoQuality = null;
         }
     }
 
@@ -187,6 +190,9 @@ public class DownloadMenuListView extends RelativeLayout
                             videoDownloadModel.setQualityId(mCurrentQualityId);
                             videoDownloadModel.setPlayerModel(superPlayerModel);
                             videoDownloadModel.setUserName(mUserName);
+                            if (null != mCurVideoQuality) {
+                                videoDownloadModel.setPreferResolution((long) mCurVideoQuality.width * mCurVideoQuality.height);
+                            }
 
                             TXVodDownloadMediaInfo downloadMediaInfo = VideoDownloadCenter.getInstance()
                                     .startDownload(videoDownloadModel);

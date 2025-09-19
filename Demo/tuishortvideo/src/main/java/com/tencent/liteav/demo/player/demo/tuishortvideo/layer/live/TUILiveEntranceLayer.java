@@ -82,7 +82,6 @@ public class TUILiveEntranceLayer extends TUILiveLayer {
         int code = SVDemoConstants.getEmptyEvent((Map<String, Object>) videoSource.getExtInfo());
         if (code == SVDemoConstants.LayerEventCode.PLUG_RENDER_VIEW) {
             if (getPlayer() != null) {
-                getVideoView().getDisplayView().handleRenderRecycle();
                 getPlayer().setDisplayView(getVideoView().getDisplayView());
             }
         } else {

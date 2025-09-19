@@ -308,8 +308,13 @@ public class VodMoreView extends RelativeLayout implements RadioGroup.OnCheckedC
      */
     public void updatePlayType(SuperPlayerDef.PlayerType playType) {
         if (playType == SuperPlayerDef.PlayerType.VOD) {
-            mLayoutSpeed.setVisibility(View.VISIBLE);
-            mLayoutMirror.setVisibility(View.VISIBLE);
+            if (SuperPlayerGlobalConfig.getInstance().renderViewType != SuperPlayerDef.PlayerRenderType.SURFACE_VIEW) {
+                mLayoutSpeed.setVisibility(View.VISIBLE);
+                mLayoutMirror.setVisibility(View.VISIBLE);
+            } else {
+                mLayoutSpeed.setVisibility(View.GONE);
+                mLayoutMirror.setVisibility(View.GONE);
+            }
         } else {
             mLayoutSpeed.setVisibility(View.GONE);
             mLayoutMirror.setVisibility(View.GONE);

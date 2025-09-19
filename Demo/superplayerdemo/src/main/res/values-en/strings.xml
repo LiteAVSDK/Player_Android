@@ -10,6 +10,7 @@
     <string name="superplayer_vod_exo">exo</string>
     <string name="superplayer_scancode_tip">Invalid playback URL. Check the QR code.</string>
     <string name="superplayer_small_video_special_effects_editing">UGSV - Special Effects</string>
+    <string name="superplayer_choose_video_type">Please select the type of video source to add</string>
     <string name="superplayer_set_appid_fileid">Set AppID, FileID and PSign</string>
     <string name="superplayer_set_play_url">Set Playback URL</string>
     <string name="superplayer_input_correct_appid">Enter a valid AppID.</string>
@@ -43,6 +44,9 @@
     <string name="superplayer_cover_title">Custom cover presentation</string>
     <string name="superplayer_offline_cache_title">Offline download（Fullscreen）demo</string>
     <string name="superplayer_carousel_list_title">Video list carousel demo</string>
+    <string name="superplayer_add_drm_switch">Enable DRM</string>
+    <string name="superplayer_add_pre_url">url Video</string>
+    <string name="superplayer_add_pre_fileId">fileId Video</string>
 
     <string name="superplayer_cache_progress">progress：%1$d%%</string>
     <string name="superplayer_cache_video_size">MB</string>

@@ -8,11 +8,11 @@ import android.view.ViewGroup;
 import android.widget.FrameLayout;
 import android.widget.ProgressBar;
 
+import com.tencent.liteav.demo.player.demo.tuishortvideo.R;
 import com.tencent.liteav.demo.player.demo.tuishortvideo.layer.vod.message.DemoVodLayerEvent;
 import com.tencent.liteav.demo.player.demo.tuishortvideo.layer.vod.message.DemoVodLayerEventConstants;
 import com.tencent.qcloud.tuiplayer.core.api.TUIPlayerController;
 import com.tencent.qcloud.tuiplayer.core.api.ui.view.TUIVodLayer;
-import com.tencent.qcloud.tuiplayer.shortvideo.R;
 
 public class TUILoadingLayer extends TUIVodLayer implements DemoVodLayerEvent {
 

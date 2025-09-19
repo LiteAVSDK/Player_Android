@@ -1,5 +1,6 @@
 package com.tencent.liteav.demo.superplayer.model.download;
 
+import com.tencent.liteav.demo.superplayer.SuperPlayerGlobalConfig;
 import com.tencent.liteav.demo.superplayer.SuperPlayerModel;
 
 /**
@@ -12,6 +13,8 @@ public class VideoDownloadModel {
     private int qualityId;
 
     private String userName;
+
+    private long mPreferResolution = SuperPlayerGlobalConfig.getInstance().preferResolution;
 
     public SuperPlayerModel getPlayerModel() {
         return playerModel;
@@ -35,5 +38,13 @@ public class VideoDownloadModel {
 
     public void setUserName(String userName) {
         this.userName = userName;
+    }
+
+    public void setPreferResolution(long resolution) {
+        mPreferResolution = resolution;
+    }
+
+    public long getPreferResolution() {
+        return mPreferResolution;
     }
 }

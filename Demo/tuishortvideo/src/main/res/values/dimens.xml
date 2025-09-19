@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- MEDIA CONTROLLER -->
+    <dimen name="tui_loading_size">40dp</dimen>
+
+</resources>

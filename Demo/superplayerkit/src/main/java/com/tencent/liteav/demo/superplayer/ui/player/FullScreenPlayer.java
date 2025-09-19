@@ -1267,8 +1267,20 @@ public class FullScreenPlayer extends AbsPlayer implements View.OnClickListener,
     }
 
     public void setVodSubtitlesViewPositionAndData(List<TXTrackInfo> models) {
+        boolean isEmpty = models.isEmpty();
         mVodSubtitlesView.setModelList(models);
-        mIvSubtitle.setVisibility(models.size() == 0 ? GONE : VISIBLE);
+        mIvSubtitle.setVisibility(isEmpty? GONE : VISIBLE);
+        if (!isEmpty) {
+            for (int i = 0; i < models.size(); i++) {
+                TXTrackInfo info = models.get(i);
+                if (!info.isInternal) {
+                    if (info.isSelected) {
+                        mVodSubtitlesView.setCurrentPosition(i);
+                        break;
+                    }
+                }
+            }
+        }
     }
 
     /**

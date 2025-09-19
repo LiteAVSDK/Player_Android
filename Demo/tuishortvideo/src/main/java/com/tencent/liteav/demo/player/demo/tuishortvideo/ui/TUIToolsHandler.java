@@ -397,7 +397,9 @@ public class TUIToolsHandler implements View.OnClickListener {
                 final int count = mShortView.getDataManager().getCurrentDataCount();
                 final int curIndex = mShortView.getDataManager().getCurrentIndex();
                 final int randomIndex = findNextRandomIndex(count, curIndex);
-                mShortView.startPlayIndex(randomIndex, false);
+                if (randomIndex >= 0) {
+                    mShortView.startPlayIndex(randomIndex, false);
+                }
             } else if (viewId == R.id.btn_enter_back_no_pause) {
                 Context context = v.getContext();
                 if (context instanceof Activity) {
@@ -410,7 +412,14 @@ public class TUIToolsHandler implements View.OnClickListener {
         }
     }
 
+    /**
+     * @return -1 时表示生成随机索引失败
+     */
     private int findNextRandomIndex(int count, int noSameIndex) {
+        // count = 1时会 StackOverflowError
+        if (count <= 1 || noSameIndex < 0 || noSameIndex >= count) {
+            return -1;
+        }
         final int randomIndex = (int) (count * Math.random());
         if (noSameIndex == randomIndex || count == randomIndex) {
             return findNextRandomIndex(count, noSameIndex);

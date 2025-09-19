@@ -2,13 +2,13 @@ package com.tencent.liteav.demo.player.demo;
 
 import static android.view.View.GONE;
 import static android.view.View.VISIBLE;
+import static com.tencent.liteav.demo.player.expand.SuperPlayerConstants.LIST_TYPE_LIVE;
+import static com.tencent.liteav.demo.player.expand.SuperPlayerConstants.LIST_TYPE_VOD;
 
 import android.annotation.SuppressLint;
 import android.app.ActivityManager;
-import android.app.AlertDialog;
 import android.content.BroadcastReceiver;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.res.Configuration;
@@ -19,13 +19,10 @@ import android.os.Bundle;
 import android.os.PowerManager;
 import android.text.TextUtils;
 import android.util.Log;
-import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
-import android.widget.CheckBox;
-import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
@@ -46,6 +43,7 @@ import com.tencent.liteav.demo.player.R;
 import com.tencent.liteav.demo.player.expand.model.SuperPlayerConstants;
 import com.tencent.liteav.demo.player.expand.model.VideoDataMgr;
 import com.tencent.liteav.demo.player.expand.ui.TCVodPlayerListAdapter;
+import com.tencent.liteav.demo.player.view.dialog.PlayerAddVideoDialog;
 import com.tencent.liteav.demo.superplayer.SubtitleSourceModel;
 import com.tencent.liteav.demo.superplayer.SuperPlayerDef;
 import com.tencent.liteav.demo.superplayer.SuperPlayerGlobalConfig;
@@ -55,7 +53,6 @@ import com.tencent.liteav.demo.superplayer.SuperPlayerView;
 import com.tencent.liteav.demo.superplayer.helper.IntentUtils;
 import com.tencent.liteav.demo.superplayer.helper.PictureInPictureHelper;
 import com.tencent.liteav.demo.superplayer.model.ISuperPlayerListener;
-import com.tencent.liteav.demo.vodcommon.entity.ConfigBean;
 import com.tencent.liteav.demo.vodcommon.entity.GetVideoInfoListListener;
 import com.tencent.liteav.demo.vodcommon.entity.SuperVodListLoader;
 import com.tencent.liteav.demo.vodcommon.entity.VideoInfo;
@@ -63,12 +60,12 @@ import com.tencent.liteav.demo.vodcommon.entity.VideoListModel;
 import com.tencent.liteav.demo.vodcommon.entity.VideoModel;
 import com.tencent.rtmp.TXLiveBase;
 import com.tencent.rtmp.TXLiveConstants;
+import com.tencent.rtmp.TXPlayerGlobalSetting;
 import com.tencent.rtmp.TXVodConstants;
 import com.tencent.rtmp.TXVodPlayer;
 
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
 
@@ -92,13 +89,7 @@ public class SuperPlayerActivity extends FragmentActivity implements View.OnClic
     private static final String DEFAULT_IMAGHOLDER    = "http://xiaozhibo-10055601.file.myqcloud.com/coverImg.jpg";
     // The aspect ratio of the player view displayed on the current interface, using the mainstream 16:9.
     private static final float sPlayerViewDisplayRatio = (float) 720 / 1280;
-    private static final int    LIST_TYPE_LIVE        = 0;
-    private static final int    LIST_TYPE_VOD         = 1;
     private static final int    REQUEST_CODE_QR_SCAN  = 100;
-    private static final int    APP_ID_INDEX          = 5;
-    private static final int    FILE_ID_INDEX         = 6;
-    private static final int    MIN_VALUE_ARRAY_SIZE  = 7;
-
 
     private Context                  mContext;
     private RelativeLayout           mLayoutTitle;
@@ -159,8 +150,6 @@ public class SuperPlayerActivity extends FragmentActivity implements View.OnClic
         mDataType = mDefaultVideo ? LIST_TYPE_LIVE : LIST_TYPE_VOD;
         updateList(mDataType);
     }
-
-
 
     @Override
     protected void onNewIntent(Intent intent) {
@@ -538,6 +527,12 @@ public class SuperPlayerActivity extends FragmentActivity implements View.OnClic
             mVodPlayerListAdapter.addSuperPlayerModel(cacheVideoListModel);
             mVodList.add(cacheVideoListModel);
 
+            List<VideoModel> drmVideos = mSuperVodListLoader.loadDrmVodList();
+            for (VideoModel videoModel : drmVideos) {
+                addVideoModelIntoVodPlayerListAdapter(videoModel);
+                addVideoModelIntoVodList(videoModel);
+            }
+
             mImageAdd.setVisibility(VISIBLE);
         } else {
             mVideoId = getIntent().getStringExtra(SuperPlayerConstants.PLAYER_VIDEO_ID);
@@ -625,29 +620,8 @@ public class SuperPlayerActivity extends FragmentActivity implements View.OnClic
     @Override
     protected void onResume() {
         super.onResume();
+        mSuperPlayerView.onPageResume();
         mIsEnteredPIPMode = false;
-        if (mSuperPlayerView.getPlayerState() == SuperPlayerDef.PlayerState.PLAYING
-                || mSuperPlayerView.getPlayerState() == SuperPlayerDef.PlayerState.PAUSE) {
-            Log.i(TAG, "onResume state :" + mSuperPlayerView.getPlayerState());
-            if (!mSuperPlayerView.isShowingVipView() && !mIsManualPause) {
-                mSuperPlayerView.onResume();
-            }
-            if (mSuperPlayerView.getPlayerMode() == SuperPlayerDef.PlayerMode.FLOAT) {
-                mSuperPlayerView.switchPlayMode(SuperPlayerDef.PlayerMode.WINDOW);
-            }
-        }
-        if (mSuperPlayerView.getPlayerMode() == SuperPlayerDef.PlayerMode.FULLSCREEN) {
-            View decorView = getWindow().getDecorView();
-            if (decorView == null) return;
-            if (Build.VERSION.SDK_INT > 11 && Build.VERSION.SDK_INT < 19) { // lower api
-                decorView.setSystemUiVisibility(View.GONE);
-            } else if (Build.VERSION.SDK_INT >= 19) {
-                int uiOptions = View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
-                        | View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY | View.SYSTEM_UI_FLAG_FULLSCREEN;
-                decorView.setSystemUiVisibility(uiOptions);
-            }
-        }
-        mSuperPlayerView.setNeedToPause(false);
     }
 
     @Override
@@ -660,16 +634,7 @@ public class SuperPlayerActivity extends FragmentActivity implements View.OnClic
             mIsEnteredPIPMode = true;
             return;
         }
-        if (mSuperPlayerView.getPlayerMode() != SuperPlayerDef.PlayerMode.FLOAT) {
-            if (mSuperPlayerView.getPlayerState() == SuperPlayerDef.PlayerState.PAUSE) {
-                mIsManualPause = true;
-            } else {
-                mIsManualPause = false;
-            }
-            mSuperPlayerView.onPause();
-            mSuperPlayerView.setNeedToPause(true);
-        }
-
+        mSuperPlayerView.onPagePause();
     }
 
     @Override
@@ -721,7 +686,7 @@ public class SuperPlayerActivity extends FragmentActivity implements View.OnClic
                 superPlayerModelV3.url = videoModel.videoURL;
             }
         }
-        if (videoModel.multiVideoURLs != null && videoModel.multiVideoURLs.size() > 0) {
+        if (videoModel.multiVideoURLs != null && !videoModel.multiVideoURLs.isEmpty()) {
             superPlayerModelV3.multiURLs = new ArrayList<>();
             for (VideoModel.VideoPlayerURL modelURL : videoModel.multiVideoURLs) {
                 superPlayerModelV3.multiURLs.add(new SuperPlayerModel.SuperPlayerURL(modelURL.url, modelURL.title));
@@ -732,6 +697,9 @@ public class SuperPlayerActivity extends FragmentActivity implements View.OnClic
             superPlayerModelV3.videoId = new SuperPlayerVideoId();
             superPlayerModelV3.videoId.fileId = videoModel.fileid;
             superPlayerModelV3.videoId.pSign = videoModel.pSign;
+        }
+        if (null != videoModel.drmBuilder) {
+            superPlayerModelV3.drmBuilder = videoModel.drmBuilder;
         }
         superPlayerModelV3.playDefaultIndex = videoModel.playDefaultIndex;
         superPlayerModelV3.subtitleSourceModelList = videoModel.subtitleSourceModelList;
@@ -917,84 +885,19 @@ public class SuperPlayerActivity extends FragmentActivity implements View.OnClic
     }
 
     private void showAddVideoDialog() {
-        AlertDialog.Builder dialog = new AlertDialog.Builder(this);
-        final View dialogView = LayoutInflater.from(this).inflate(R.layout.superplayer_dialog_new_vod_player_fileid, null);
-
-        dialog.setView(dialogView);
-
-        final EditText etAppId = (EditText) dialogView.findViewById(R.id.superplayer_et_appid);
-        final EditText etFileId = (EditText) dialogView.findViewById(R.id.superplayer_et_fileid);
-        final EditText etPSign = (EditText) dialogView.findViewById(R.id.superplayer_et_psign);
-        final CheckBox cbCache = dialogView.findViewById(R.id.superplayer_cb_cache_switch);
-
-        if (mDataType == LIST_TYPE_VOD) {
-            dialog.setTitle(getString(R.string.superplayer_set_appid_fileid));
-        } else {
-            dialog.setTitle(getString(R.string.superplayer_set_play_url));
-            dialogView.findViewById(R.id.superplayer_tv_appid_text).setVisibility(GONE);
-            dialogView.findViewById(R.id.superplayer_tv_fileid_text).setVisibility(GONE);
-            etFileId.setVisibility(GONE);
-            etPSign.setVisibility(GONE);
-            cbCache.setVisibility(GONE);
-        }
-
-        dialog.setPositiveButton(getString(R.string.superplayer_cancel), new DialogInterface.OnClickListener() {
+        TXPlayerGlobalSetting.setDrmProvisionEnv(TXPlayerGlobalSetting.DrmProvisionEnv.DRM_PROVISION_ENV_CN);
+        PlayerAddVideoDialog addVideoDialog = new PlayerAddVideoDialog(this, mDataType);
+        addVideoDialog.setOnAddVideoListener(new PlayerAddVideoDialog.OnAddVideoListener() {
             @Override
-            public void onClick(DialogInterface dialog, int which) {
-                dialog.dismiss();
+            public void onAddVideo(VideoModel videoModel) {
+                onGetVodInfoOnebyOneOnSuccess(videoModel);
+                if (TextUtils.isEmpty(videoModel.title)) {
+                    videoModel.title = getString(R.string.superplayer_test_video) + (mVideoCount++);
+                }
+                playVideoModel(videoModel);
             }
         });
-        dialog.setNegativeButton(getString(R.string.superplayer_ok),
-                new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-
-                        if (mDataType == LIST_TYPE_VOD) {
-                            String appId = etAppId.getText().toString();
-                            String fileId = etFileId.getText().toString();
-                            String pSign = etPSign.getText().toString();
-
-                            if (TextUtils.isEmpty(appId)) {
-                                Toast.makeText(mContext, getString(R.string.superplayer_input_correct_appid), Toast.LENGTH_SHORT).show();
-                                return;
-                            }
-                            if (TextUtils.isEmpty(fileId)) {
-                                Toast.makeText(mContext, getString(R.string.superplayer_input_correct_fileid), Toast.LENGTH_SHORT).show();
-                                return;
-                            }
-                            int appid;
-                            try {
-                                appid = Integer.parseInt(appId);
-                            } catch (NumberFormatException e) {
-                                Toast.makeText(mContext, getString(R.string.superplayer_input_correct_appid), Toast.LENGTH_SHORT).show();
-                                return;
-                            }
-
-                            VideoModel videoModel = new VideoModel();
-                            videoModel.appid = appid;
-                            videoModel.fileid = fileId;
-                            videoModel.pSign = pSign;
-                            videoModel.isEnableDownload = cbCache.isChecked();
-                            onGetVodInfoOnebyOneOnSuccess(videoModel);
-                            playVideoModel(videoModel);
-                        } else {
-                            String playUrl = etAppId.getText().toString();
-                            if (TextUtils.isEmpty(playUrl)) {
-                                Toast.makeText(mContext, getString(R.string.superplayer_input_correct_play_url), Toast.LENGTH_SHORT).show();
-                            } else {
-                                playNewVideo(playUrl);
-                                runOnUiThread(new Runnable() {
-                                    @Override
-                                    public void run() {
-                                        mSwipeRefreshLayout.setRefreshing(false);
-                                    }
-                                });
-                            }
-                        }
-
-                    }
-                });
-        dialog.show();
+        addVideoDialog.show();
     }
 
     private void addVideoModelIntoVodList(VideoModel videoModel) {

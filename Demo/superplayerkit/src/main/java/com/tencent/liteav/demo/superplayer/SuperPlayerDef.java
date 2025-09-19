@@ -27,4 +27,15 @@ public class SuperPlayerDef {
         LANDSCAPE,
         PORTRAIT
     }
+
+    public interface PlayerRenderType {
+        /**
+         * child view is textureView,not support drm play
+         */
+        int CLOUD_VIEW = 0;
+        /**
+         * domain view is SurfaceView, support drm play
+         */
+        int SURFACE_VIEW = 1;
+    }
 }

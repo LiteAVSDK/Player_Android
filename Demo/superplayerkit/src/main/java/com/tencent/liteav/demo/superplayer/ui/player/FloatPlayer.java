@@ -33,7 +33,7 @@ import java.lang.reflect.Field;
  */
 public class FloatPlayer extends AbsPlayer implements View.OnClickListener, VipWatchView.VipWatchViewClickListener {
 
-    private TXCloudVideoView mFloatVideoView;
+    private SuperPlayerRenderView mRenderView;
 
     private int   mStatusBarHeight;   // System status bar height.
     private float mXDownInScreen;   // Distance from the press event to the left edge of the screen.
@@ -63,7 +63,7 @@ public class FloatPlayer extends AbsPlayer implements View.OnClickListener, VipW
 
     private void initView(Context context) {
         LayoutInflater.from(context).inflate(R.layout.superplayer_vod_player_float, this);
-        mFloatVideoView = (TXCloudVideoView) findViewById(R.id.superplayer_float_cloud_video_view);
+        mRenderView = findViewById(R.id.superplayer_float_render_view);
         ImageView ivClose = (ImageView) findViewById(R.id.superplayer_iv_close);
         ivClose.setOnClickListener(this);
         mVipWatchView = findViewById(R.id.superplayer_vip_watch_view);
@@ -89,8 +89,8 @@ public class FloatPlayer extends AbsPlayer implements View.OnClickListener, VipW
      *
      * 获取悬浮窗中的视频播放view
      */
-    public TXCloudVideoView getFloatVideoView() {
-        return mFloatVideoView;
+    public SuperPlayerRenderView getFloatVideoView() {
+        return mRenderView;
     }
 
     /**

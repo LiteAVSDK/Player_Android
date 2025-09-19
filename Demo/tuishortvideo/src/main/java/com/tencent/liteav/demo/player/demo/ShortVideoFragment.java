@@ -59,6 +59,7 @@ public class ShortVideoFragment extends Fragment implements View.OnClickListener
     private TUIRefreshLayout mRefreshLayout;
 
     private boolean mNeedPause = true;
+    private boolean isPausedBeforeBackground = false;
 
     private final TUIShortVideoListener mListener = new TUIShortVideoListener() {
 
@@ -175,7 +176,9 @@ public class ShortVideoFragment extends Fragment implements View.OnClickListener
     @Override
     public void onPause() {
         super.onPause();
-        if (mNeedPause) {
+        if (!mShortVideoView.isPlaying()) {
+            isPausedBeforeBackground = true;
+        } else if (mNeedPause) {
             mShortVideoView.pause();
         } else {
             mNeedPause = true;
@@ -185,7 +188,10 @@ public class ShortVideoFragment extends Fragment implements View.OnClickListener
     @Override
     public void onResume() {
         super.onResume();
-        mShortVideoView.resume();
+        if (!isPausedBeforeBackground) {
+            mShortVideoView.resume();
+        }
+        isPausedBeforeBackground = false;
     }
 
     public void onLoaded(List<TUIPlaySource> shortVideoBeanList, boolean isRefresh) {

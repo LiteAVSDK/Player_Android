@@ -55,13 +55,13 @@ import com.tencent.liteav.demo.superplayer.ui.helper.VolumeChangeHelper;
 import com.tencent.liteav.demo.superplayer.ui.player.FloatPlayer;
 import com.tencent.liteav.demo.superplayer.ui.player.FullScreenPlayer;
 import com.tencent.liteav.demo.superplayer.ui.player.Player;
+import com.tencent.liteav.demo.superplayer.ui.player.SuperPlayerRenderView;
 import com.tencent.liteav.demo.superplayer.ui.player.WindowPlayer;
 import com.tencent.liteav.demo.superplayer.ui.view.DanmuView;
 import com.tencent.liteav.demo.superplayer.ui.view.DynamicWatermarkView;
 import com.tencent.liteav.txcplayer.model.TXSubtitleRenderModel;
 import com.tencent.rtmp.TXLivePlayer;
 import com.tencent.rtmp.TXTrackInfo;
-import com.tencent.rtmp.ui.TXCloudVideoView;
 import com.tencent.rtmp.ui.TXSubtitleView;
 
 import java.io.File;
@@ -109,7 +109,7 @@ public class SuperPlayerView extends RelativeLayout
 
     private Context                    mContext;
     private ViewGroup                  mRootView;
-    private TXCloudVideoView           mTXCloudVideoView;
+    private SuperPlayerRenderView      mRenderView;
     private FullScreenPlayer           mFullScreenPlayer;
     private WindowPlayer               mWindowPlayer;
     private FloatPlayer                mFloatPlayer;
@@ -140,6 +140,7 @@ public class SuperPlayerView extends RelativeLayout
     private VolumeChangeHelper         mVolumeChangeHelper;
     private PictureInPictureHelper     mPictureInPictureHelper;
     private long                       mPlayAble;
+    private boolean                  mIsManualPause = false;
 
     public SuperPlayerView(Context context) {
         super(context);
@@ -164,7 +165,7 @@ public class SuperPlayerView extends RelativeLayout
 
     private void initView() {
         mRootView = (ViewGroup) LayoutInflater.from(mContext).inflate(R.layout.superplayer_vod_view, null);
-        mTXCloudVideoView = (TXCloudVideoView) mRootView.findViewById(R.id.superplayer_cloud_video_view);
+        mRenderView = mRootView.findViewById(R.id.superplayer_render_view);
         mFullScreenPlayer = (FullScreenPlayer) mRootView.findViewById(R.id.superplayer_controller_large);
         mWindowPlayer = (WindowPlayer) mRootView.findViewById(R.id.superplayer_controller_small);
         mFloatPlayer = (FloatPlayer) mRootView.findViewById(R.id.superplayer_controller_float);
@@ -184,14 +185,14 @@ public class SuperPlayerView extends RelativeLayout
 
         removeAllViews();
         mRootView.removeView(mDanmuView);
-        mRootView.removeView(mTXCloudVideoView);
+        mRootView.removeView(mRenderView);
         mRootView.removeView(mWindowPlayer);
         mRootView.removeView(mFullScreenPlayer);
         mRootView.removeView(mFloatPlayer);
         mRootView.removeView(mDynamicWatermarkLayout);
         mRootView.removeView(mSubtitleView);
 
-        addView(mTXCloudVideoView);
+        addView(mRenderView);
         addView(mDynamicWatermarkLayout);
         addView(mDanmuView);
         addView(mSubtitleView);
@@ -203,7 +204,7 @@ public class SuperPlayerView extends RelativeLayout
     }
 
     private void initPlayer() {
-        mSuperPlayer = new SuperPlayerImpl(mContext, mTXCloudVideoView);
+        mSuperPlayer = new SuperPlayerImpl(mContext, mRenderView);
         mSuperPlayer.setObserver(new PlayerObserver());
         mSuperPlayer.setSubTitleView(mSubtitleView);
         if (mSuperPlayer.getPlayerMode() == SuperPlayerDef.PlayerMode.FULLSCREEN) {
@@ -246,7 +247,7 @@ public class SuperPlayerView extends RelativeLayout
      * {@link com.tencent.rtmp.TXLiveBase#setLicence} to play successfully. Otherwise, the playback will fail
      * (black screen). Set it once globally.
      * Live License, short video License and video playback License can all be used. If you have not obtained the
-     * above License, you can <a href="https://www.tencentcloud.com/zh/document/product/266/51098">quickly and freely apply
+     * above License, you can <a href="https://cloud.tencent.com/act/event/License">quickly and freely apply
      * for License</a> to play normally.
      * @param models SuperPlayerModel list
      * @param isLoopPlayList Whether to loop
@@ -258,7 +259,7 @@ public class SuperPlayerView extends RelativeLayout
      * 注意：10.7版本开始，需要通过{@link com.tencent.rtmp.TXLiveBase#setLicence} 设置 License后方可成功播放， 否则将播放失败
      *              （黑屏），全局仅设置一次即可。
      * 直播License、短视频Licence和视频播放Licence均可使用，若您暂未获取上述Licence，可
-     *              <a href="https://cloud.tencent.com/document/product/881/74588#.E8.B4.AD.E4.B9.B0.E5.B9.B6.E6.96.B0.E5.BB.BA.E6.AD.A3.E5.BC.8F.E7.89.88-license">快速免费申请Licence</a>以正常播放
+     *              <a href="https://cloud.tencent.com/act/event/License">快速免费申请Licence</a>以正常播放
      * @param models superPlayerModel列表
      * @param isLoopPlayList 是否循环
      * @param index 开始播放的视频索引
@@ -275,7 +276,7 @@ public class SuperPlayerView extends RelativeLayout
      * {@link com.tencent.rtmp.TXLiveBase#setLicence} to play successfully. Otherwise, the playback will fail
      * (black screen). Set it once globally.
      * Live License, short video License and video playback License can all be used. If you have not obtained
-     * the above License, you can <a href="https://www.tencentcloud.com/zh/document/product/266/51098">quickly and freely apply for
+     * the above License, you can <a href="https://cloud.tencent.com/act/event/License">quickly and freely apply for
      * License</a> to play normally.
      * @param model Play data model
      *
@@ -283,7 +284,7 @@ public class SuperPlayerView extends RelativeLayout
      * 注意：10.7版本开始，需要通过{@link com.tencent.rtmp.TXLiveBase#setLicence} 设置 Licence后方可成功播放， 否则将播放失败（黑屏）
      *              ，全局仅设置一次即可。
      * 直播License、短视频Licence和视频播放Licence均可使用，若您暂未获取上述Licence，可
-     *              <a href="https://cloud.tencent.com/document/product/881/74588#.E8.B4.AD.E4.B9.B0.E5.B9.B6.E6.96.B0.E5.BB.BA.E6.AD.A3.E5.BC.8F.E7.89.88-license>快速免费申请Licence</a>以正常播放
+     *              <a href="https://cloud.tencent.com/act/event/License">快速免费申请Licence</a>以正常播放
      * @param model 播放数据模型
      */
     public void playWithModelNeedLicence(SuperPlayerModel model) {
@@ -332,7 +333,7 @@ public class SuperPlayerView extends RelativeLayout
         mFullScreenPlayer.preparePlayVideo(model);
         mWindowPlayer.preparePlayVideo(model);
 
-        boolean isShowDownloadView = model.isEnableCache && (model.videoId != null || model.videoIdV2 != null);
+        boolean isShowDownloadView = model.isEnableCache;
         mFullScreenPlayer.updateDownloadViewShow(isShowDownloadView);
         mFullScreenPlayer.setVipWatchModel(model.vipWatchMode);
         mWindowPlayer.setVipWatchModel(model.vipWatchMode);
@@ -576,7 +577,7 @@ public class SuperPlayerView extends RelativeLayout
                 mFloatPlayer.removeDynamicWatermarkView();
                 mDynamicWatermarkLayout.addView(mDynamicWatermarkView);
                 mWindowManager.removeView(mFloatPlayer);
-                mSuperPlayer.setPlayerView(mTXCloudVideoView);
+                mSuperPlayer.setPlayerView(mRenderView);
                 if (!isShowingVipView()) {    //Do not perform resume operation when the preview function is displayed.
                     mSuperPlayer.resume();
                 }
@@ -647,7 +648,7 @@ public class SuperPlayerView extends RelativeLayout
         }
         mDynamicWatermarkLayout.removeAllViews();
         mFloatPlayer.addDynamicWatermarkView(mDynamicWatermarkView);
-        TXCloudVideoView videoView = mFloatPlayer.getFloatVideoView();
+        SuperPlayerRenderView videoView = mFloatPlayer.getFloatVideoView();
         if (videoView != null) {
             mSuperPlayer.setPlayerView(videoView);
             mSuperPlayer.resume();
@@ -850,7 +851,7 @@ public class SuperPlayerView extends RelativeLayout
 
         @Override
         public void enterPictureInPictureMode() {
-            mPictureInPictureHelper.enterPictureInPictureMode(getPlayerState(), mTXCloudVideoView);
+            mPictureInPictureHelper.enterPictureInPictureMode(getPlayerState(), mRenderView);
         }
 
         @Override
@@ -1504,4 +1505,45 @@ public class SuperPlayerView extends RelativeLayout
         mWindowPlayer.showPIPIV(isShow);
     }
 
+    /**
+     * Handle the necessary tasks after the current page's lifecycle resumes.
+     *
+     * 处理当前页面生命周期 resume 之后的必要任务
+     */
+    public void onPageResume() {
+        if (getPlayerState() == SuperPlayerDef.PlayerState.PLAYING
+                || getPlayerState() == SuperPlayerDef.PlayerState.PAUSE) {
+            Log.i(TAG, "onResume state :" + getPlayerState());
+            if (!isShowingVipView() && !mIsManualPause) {
+                onResume();
+            }
+            if (getPlayerMode() == SuperPlayerDef.PlayerMode.FLOAT) {
+                switchPlayMode(SuperPlayerDef.PlayerMode.WINDOW);
+            }
+        }
+        if (getPlayerMode() == SuperPlayerDef.PlayerMode.FULLSCREEN) {
+            View decorView = ((Activity)getContext()).getWindow().getDecorView();
+            if (Build.VERSION.SDK_INT > 11 && Build.VERSION.SDK_INT < 19) { // lower api
+                decorView.setSystemUiVisibility(View.GONE);
+            } else if (Build.VERSION.SDK_INT >= 19) {
+                int uiOptions = View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
+                        | View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY | View.SYSTEM_UI_FLAG_FULLSCREEN;
+                decorView.setSystemUiVisibility(uiOptions);
+            }
+        }
+        setNeedToPause(false);
+    }
+
+    /**
+     * Handle the necessary tasks after the current page's lifecycle pauses.
+     *
+     * 处理当前页面声明周期 pause 之后的必要任务
+     */
+    public void onPagePause() {
+        if (getPlayerMode() != SuperPlayerDef.PlayerMode.FLOAT) {
+            mIsManualPause = getPlayerState() == SuperPlayerDef.PlayerState.PAUSE;
+            onPause();
+            setNeedToPause(true);
+        }
+    }
 }
