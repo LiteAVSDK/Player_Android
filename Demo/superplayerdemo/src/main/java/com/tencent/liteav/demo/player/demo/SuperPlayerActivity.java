@@ -892,7 +892,22 @@ public class SuperPlayerActivity extends FragmentActivity implements View.OnClic
             public void onAddVideo(VideoModel videoModel) {
                 onGetVodInfoOnebyOneOnSuccess(videoModel);
                 if (TextUtils.isEmpty(videoModel.title)) {
-                    videoModel.title = getString(R.string.superplayer_test_video) + (mVideoCount++);
+                    videoModel.title = mSuperVodListLoader.getTitleByFileId(videoModel);
+                    // if loader also has no title
+                    if (TextUtils.isEmpty(videoModel.title)) {
+                        videoModel.title = getString(R.string.superplayer_test_video) + (mVideoCount++);
+                        if (!TextUtils.isEmpty(videoModel.videoURL)) {
+                            SuperVodListLoader.VideoInfoHolder.getInstance(
+                                    getApplicationContext()).cache(videoModel.videoURL, videoModel.title);
+                        } else if (!TextUtils.isEmpty(videoModel.fileid)) {
+                            SuperVodListLoader.VideoInfoHolder.getInstance(
+                                    getApplicationContext()).cache(videoModel.fileid, videoModel.title);
+                        } else if (videoModel.drmBuilder != null
+                                && !TextUtils.isEmpty(videoModel.drmBuilder.getPlayUrl())) {
+                            SuperVodListLoader.VideoInfoHolder.getInstance(
+                                    getApplicationContext()).cache(videoModel.drmBuilder.getPlayUrl(), videoModel.title);
+                        }
+                    }
                 }
                 playVideoModel(videoModel);
             }

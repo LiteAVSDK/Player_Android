@@ -25,7 +25,7 @@ public class TUIShortVideoActivity extends FragmentActivity implements  ShortVid
     private static final String TAG = "ShortVideoDemo:TUIShortVideoActivity";
 
     private static final String LICENCE_URL =
-            "https://license.vod2.myqcloud.com/license/v2/1252463788_1/v_cube.license";
+            "Please replace it with your licenseUrl";
     private static final String LICENCE_KEY = "Please replace it with your licenseKey";
 
     private ShortVideoFragment mPlayFragment;

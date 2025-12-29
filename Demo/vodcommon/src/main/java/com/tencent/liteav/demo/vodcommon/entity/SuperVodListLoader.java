@@ -15,7 +15,9 @@ import com.tencent.liteav.demo.vodcommon.R;
 import com.tencent.rtmp.TXPlayerDrmBuilder;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Get VOD information
@@ -28,6 +30,20 @@ public class SuperVodListLoader {
     private              Context               mContext;
     private final        int                   mAppId    = 1500005830;
     private final        Handler               mMainHandler = new Handler(Looper.getMainLooper());
+
+    private static final Map<String, Integer> VIDEO_TITLE_CACHE_HARD_CODE = new HashMap<String, Integer>(){{
+        put("387702299774251236", R.string.tencent_cloud_audio_and_video_achievements_title);
+        put("387702299774544650", R.string.tencent_cloud_audio_and_video_steady_title);
+        put("387702299774644824", R.string.tencent_cloud_audio_and_video_real_title);
+        put("387702299774211080", R.string.tencent_cloud_audio_and_video_complete_title);
+        put("387702299774545556", R.string.tencent_cloud_business_introduction_title);
+        put("387702299774574470", R.string.what_are_numbers_title);
+        put("387702299774253670", R.string.simplify_complexity_and_build_big_from_small_title);
+        put("387702299774390972", R.string.superplayer_dynamic_watermark_title);
+        put("8602268011437356984", R.string.superplayer_cover_title);
+        put("243791578431393746", R.string.super_play_encrypt_video_introduction);
+        put("387702307847129127", R.string.super_play_ghost_video);
+    }};
 
 
     public SuperVodListLoader(Context context) {
@@ -46,7 +62,7 @@ public class SuperVodListLoader {
         model = new VideoModel();
         model.appid = mAppId;
         model.fileid = "387702299774390972";
-        model.title = applicationContext.getString(R.string.superplayer_dynamic_watermark_title);
+        model.title = getTitleByFileId(model);
         model.coverPictureUrl = "http://1500005830.vod2.myqcloud.com/6c9a5118vodcq1500005830/4b6e0e84387702299774390972/387702299947629622.png";
         String tipStr = applicationContext.getString(R.string.superplayer_dynamic_watermark_tip);
         model.dynamicWaterConfig = new DynamicWaterConfig(tipStr, 30, Color.parseColor("#FF3333"));
@@ -69,6 +85,7 @@ public class SuperVodListLoader {
         model = new VideoModel();
         model.appid = mAppId;
         model.fileid = "387702299774545556";
+        // unique title
         model.title = applicationContext.getString(R.string.superplayer_vip_title);
         model.coverPictureUrl = "http://1500005830.vod2.myqcloud.com/6c9a5118vodcq1500005830/4fc091e4387702299774545556/387702299947278317.png";
         model.vipWatchModel = new VipWatchModel(applicationContext.getString(R.string.superplayer_vip_watch_tip), 15);
@@ -78,15 +95,15 @@ public class SuperVodListLoader {
         model.appid = mAppId;
         model.playAction = PLAY_ACTION_MANUAL_PLAY;
         model.fileid = "8602268011437356984";
-        model.title = applicationContext.getString(R.string.superplayer_cover_title);
+        model.title = getTitleByFileId(model);
         model.coverPictureUrl = "http://1500005830.vod2.myqcloud.com/6c9a5118vodcq1500005830/cc1e28208602268011087336518/MXUW1a5I9TsA.png";
         list.add(model);
 
         model = new VideoModel();
         model.appid = 1500005830;
-        model.title = applicationContext.getString(R.string.super_play_encrypt_video_introduction);
-        model.placeholderImage = "https://1500005830.vod2.myqcloud.com/6c9a5118vodcq1500005830/35ab25fb243791578431393746/onEqUp.png";
         model.fileid = "243791578431393746";
+        model.title = getTitleByFileId(model);
+        model.placeholderImage = "https://1500005830.vod2.myqcloud.com/6c9a5118vodcq1500005830/35ab25fb243791578431393746/onEqUp.png";
         model.pSign = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhcHBJZCI6MTUwMDA"
                 + "wNTgzMCwiZmlsZUlkIjoiMjQzNzkxNTc4NDMxMzkzNzQ2IiwiY3VycmVudFRpbWVTdGFtc"
                 + "CI6MTY3MzQyNjIyNywiY29udGVudEluZm8iOnsiYXVkaW9WaWRlb1R5cGUiOiJQcm90ZWN0"
@@ -97,8 +114,8 @@ public class SuperVodListLoader {
 
         model = new VideoModel();
         model.appid = 1500006438;
-        model.title = applicationContext.getString(R.string.super_play_ghost_video);
         model.fileid = "387702307847129127";
+        model.title = getTitleByFileId(model);
         model.placeholderImage = "http://1500006438.vod2.myqcloud.com/4384ba25vodtranscq1500006438/558b62f3387702307847129127/coverBySnapshot_10_0.jpg";
         model.pSign = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhcHBJZCI6MTUwMDA"
                 + "wNjQzOCwiZmlsZUlkIjoiMzg3NzAyMzA3ODQ3MTI5MTI3IiwiY29udG"
@@ -241,51 +258,35 @@ public class SuperVodListLoader {
      *
      * 根据视频ID 获取视频标题
      */
-    private String getTitleByFileId(VideoModel model) {
+    public String getTitleByFileId(VideoModel model) {
         String fileId = model.fileid;
         String title = "";
+        if (TextUtils.isEmpty(fileId)) {
+            return title;
+        }
         switch (fileId) {
-            case "387702299774251236":
-                title = mContext.getString(R.string.tencent_cloud_audio_and_video_achievements_title);
-                break;
-            case "387702299774544650":
-                title = mContext.getString(R.string.tencent_cloud_audio_and_video_steady_title);
-                break;
-            case "387702299774644824":
-                title = mContext.getString(R.string.tencent_cloud_audio_and_video_real_title);
-                break;
-            case "387702299774211080":
-                title = mContext.getString(R.string.tencent_cloud_audio_and_video_complete_title);
-                break;
-            case "387702299774545556":
-                title = mContext.getString(R.string.tencent_cloud_business_introduction_title);
-                break;
-            case "387702299774574470":
-                title = mContext.getString(R.string.what_are_numbers_title);
-                break;
-            case "387702299774253670":
-                title = mContext.getString(R.string.simplify_complexity_and_build_big_from_small_title);
-                break;
-            case "387702299774390972":
-                title = mContext.getString(R.string.superplayer_dynamic_watermark_title);
-                break;
             case "387702299773851453":
-                title = String.format(mContext.getString(R.string.super_player_cache_video_title),1);
+                title = String.format(mContext.getString(R.string.super_player_cache_video_title), 1);
                 break;
             case "387702299774155981":
-                title = String.format(mContext.getString(R.string.super_player_cache_video_title),2);
+                title = String.format(mContext.getString(R.string.super_player_cache_video_title), 2);
                 break;
             case "387702299773830943":
-                title = String.format(mContext.getString(R.string.super_player_cache_video_title),3);
+                title = String.format(mContext.getString(R.string.super_player_cache_video_title), 3);
                 break;
             case "387702299773823860":
-                title = String.format(mContext.getString(R.string.super_player_cache_video_title),4);
+                title = String.format(mContext.getString(R.string.super_player_cache_video_title), 4);
                 break;
             case "387702299774156604":
-                title = String.format(mContext.getString(R.string.super_player_cache_video_title),5);
+                title = String.format(mContext.getString(R.string.super_player_cache_video_title), 5);
                 break;
             default:
-                title = model.title;
+                Integer titeResInt = VIDEO_TITLE_CACHE_HARD_CODE.get(fileId);
+                if (null != titeResInt) {
+                    title = mContext.getString(titeResInt);
+                } else {
+                    title = model.title;
+                }
                 break;
         }
         return title;
