@@ -136,15 +136,19 @@ public class VideoDownloadItemView extends RelativeLayout implements VideoDownlo
             VideoDownloadCenter.getInstance()
                     .getDownloadMediaInfo(mediaInfo.getUrl(), new VideoDownloadCenter.OnMediaInfoFetchListener() {
                         @Override
-                        public void onReady(TXVodDownloadMediaInfo mediaInfo) {
-                            int duration = mediaInfo.getDuration() / 1000;
+                        public void onReady(TXVodDownloadMediaInfo obtainInfo) {
+                            // there can be accessing deleted files under async concurrency
+                            if (null == obtainInfo) {
+                                return;
+                            }
+                            int duration = obtainInfo.getDuration() / 1000;
                             mTvVideoDurationView.setText(mVideoDownloadHelper.formattedTime(duration));
                             Glide.with(getContext())
                                     .load(VideoDownloadHelper.DEFAULT_DOWNLOAD_VIDEO_COVER)
                                     .into(mIvVideoCoverView);
                             mTvVideoNameView.setText(getContext()
                                     .getResources().getString(R.string.superplayer_test_video));
-                            videoModel.videoURL = mediaInfo.getUrl();
+                            videoModel.videoURL = obtainInfo.getUrl();
                         }
                     });
         }

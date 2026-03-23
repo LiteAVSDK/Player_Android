@@ -270,12 +270,22 @@
                 android:textSize="18sp" />
 
             <ImageButton
-                android:id="@+id/webrtc_link_button"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:id="@+id/volume_balance_button"
+                android:layout_width="20dp"
+                android:layout_height="20dp"
                 android:layout_centerVertical="true"
                 android:background="@android:color/transparent"
-                android:padding="10dp"
+                android:layout_marginRight="10dp"
+                android:layout_toLeftOf="@id/webrtc_link_button"
+                android:src="@drawable/superplayer_volume_balance_off" />
+
+            <ImageButton
+                android:id="@+id/webrtc_link_button"
+                android:layout_width="20dp"
+                android:layout_height="20dp"
+                android:layout_centerVertical="true"
+                android:layout_marginRight="10dp"
+                android:background="@android:color/transparent"
                 android:layout_toLeftOf="@id/superplayer_vod_setting"
                 android:src="@drawable/superplayer_question_link" />
 

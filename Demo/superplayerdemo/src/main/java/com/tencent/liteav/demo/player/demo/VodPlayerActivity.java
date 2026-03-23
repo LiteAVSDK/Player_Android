@@ -20,6 +20,7 @@ import android.view.View;
 import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.SeekBar;
@@ -107,6 +108,10 @@ public class VodPlayerActivity extends Activity implements ITXVodPlayListener,
     private String          mUrl;
     private TextView        mMediaType;
     private ImageView       mIBSetting;
+    
+    // 音量均衡相关
+    private boolean         mVolumeBalanceEnabled = false;
+    private ImageButton     mVolumeBalanceBtn;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -483,6 +488,15 @@ public class VodPlayerActivity extends Activity implements ITXVodPlayListener,
         mVodResolutionView = findViewById(R.id.vod_quality_view);
         mVodResolutionView.setOnClickResolutionItemListener(this);
 
+        // 音量均衡按钮
+        mVolumeBalanceBtn = (ImageButton) findViewById(R.id.volume_balance_button);
+        mVolumeBalanceBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                toggleVolumeBalance();
+            }
+        });
+
         findViewById(R.id.webrtc_link_button).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -585,9 +599,13 @@ public class VodPlayerActivity extends Activity implements ITXVodPlayListener,
         mVodPlayer.setRenderMode(mCurrentRenderMode);
         mVodPlayer.setConfig(mPlayConfig);
         mVodPlayer.setAutoPlay(true);
+        mVodPlayer.setLoop(true);
         int result = mVodPlayer.startVodPlay(playUrl);
         mNeedToPause = false;
         mIsStopped = false;
+        
+        // 设置音量均衡初始状态
+        enableVolumeBalance(mVolumeBalanceEnabled);
         if (result != 0) {
             mButtonPlay.setBackgroundResource(R.drawable.superplayer_play_start);
             mLinearRootView.setBackgroundResource(R.drawable.superplayer_content_bg);
@@ -613,6 +631,43 @@ public class VodPlayerActivity extends Activity implements ITXVodPlayListener,
         mVideoPause = false;
         mVideoPlay = false;
         mPlayerState = VodPlayerState.END;
+    }
+
+    /**
+     * Toggle volume balance on/off
+     * 切换音量均衡开关
+     */
+    private void toggleVolumeBalance() {
+        mVolumeBalanceEnabled = !mVolumeBalanceEnabled;
+        
+        // 更新按钮图标
+        int iconRes = mVolumeBalanceEnabled ? 
+            R.drawable.superplayer_volume_balance_on : 
+            R.drawable.superplayer_volume_balance_off;
+        mVolumeBalanceBtn.setImageResource(iconRes);
+        
+        // 显示提示信息
+        String message = mVolumeBalanceEnabled ? "音量均衡已开启" : "音量均衡已关闭";
+        Toast.makeText(this, message, Toast.LENGTH_SHORT).show();
+        
+        // 设置音量均衡
+        enableVolumeBalance(mVolumeBalanceEnabled);
+    }
+
+    /**
+     * Enable or disable volume balance
+     * 启用或禁用音量均衡
+     */
+    private void enableVolumeBalance(boolean enabled) {
+        if (mVodPlayer != null) {
+            if (enabled) {
+                // 开启音量均衡，使用标准响度
+                mVodPlayer.setAudioNormalization(TXVodConstants.AUDIO_NORMALIZATION_STANDARD);
+            } else {
+                // 关闭音量均衡
+                mVodPlayer.setAudioNormalization(TXVodConstants.AUDIO_NORMALIZATION_OFF);
+            }
+        }
     }
 
     @Override

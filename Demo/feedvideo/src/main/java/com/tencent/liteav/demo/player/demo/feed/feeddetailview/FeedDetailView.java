@@ -35,6 +35,8 @@ import java.util.List;
  */
 public class FeedDetailView extends FrameLayout implements FeedDetailListClickListener {
 
+    private static final float sPlayerViewDisplayRatio = (float) 720 / 1280;
+
     private RecyclerView                      recyclerView           = null;
     private FeedDetailAdapter feedDetailAdapter      = null;
     private ImageView                         headImg                = null;
@@ -92,6 +94,7 @@ public class FeedDetailView extends FrameLayout implements FeedDetailListClickLi
         });
         feedDetailAdapter = new FeedDetailAdapter(this);
         recyclerView.setAdapter(feedDetailAdapter);
+        adjustSuperPlayerViewAndMaskHeight();
     }
 
     /**
@@ -120,6 +123,14 @@ public class FeedDetailView extends FrameLayout implements FeedDetailListClickLi
         feedDetailAdapter.setFeedEntityList(videoModels);
     }
 
+
+    private void adjustSuperPlayerViewAndMaskHeight() {
+        final int screenWidth = ((Activity)feedPlayerView.getContext()).getWindowManager().getDefaultDisplay().getWidth();
+        ViewGroup.LayoutParams layoutParams = feedPlayerView.getLayoutParams();
+        layoutParams.width = screenWidth;
+        layoutParams.height = (int) (screenWidth * sPlayerViewDisplayRatio);
+        feedPlayerView.setLayoutParams(layoutParams);
+    }
 
     /**
      * Add detail page to feed view.

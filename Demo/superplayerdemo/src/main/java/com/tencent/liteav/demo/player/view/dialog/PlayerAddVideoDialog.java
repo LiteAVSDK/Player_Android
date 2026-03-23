@@ -288,7 +288,7 @@ public class PlayerAddVideoDialog extends Dialog {
                 builder.setKeyLicenseUrl(licenseUrl);
                 builder.setPlayUrl(drmPlayUrl);
                 if (!TextUtils.isEmpty(certUrl)) {
-                    builder.setDeviceCertificateUrl(certUrl);
+                    builder.setProvisionUrl(certUrl);
                 }
                 videoModel.drmBuilder = builder;
             }

@@ -24,8 +24,7 @@ public class TUIShortVideoActivity extends FragmentActivity implements  ShortVid
 
     private static final String TAG = "ShortVideoDemo:TUIShortVideoActivity";
 
-    private static final String LICENCE_URL =
-            "Please replace it with your licenseUrl";
+    private static final String LICENCE_URL = "Please replace it with your licenseUrl";
     private static final String LICENCE_KEY = "Please replace it with your licenseKey";
 
     private ShortVideoFragment mPlayFragment;
@@ -33,13 +32,18 @@ public class TUIShortVideoActivity extends FragmentActivity implements  ShortVid
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        // set status background to black
-        TUIPlayerConfig config = new TUIPlayerConfig.Builder()
-                .enableLog(true)
-                .licenseKey(LICENCE_KEY)
-                .licenseUrl(LICENCE_URL)
-                .build();
-        TUIPlayerCore.init(getApplicationContext(), config);
+        /**
+         * 当你单独集成 TUI 短视频的时候，需要调用以下初始化方法来配置播放器的 license 以及其他初始化配置
+         *
+         * When integrating the TUI Short Video component independently, you need to call the following
+         * initialization method to configure the player license and other initialization settings.
+         */
+//        TUIPlayerConfig config = new TUIPlayerConfig.Builder()
+//                .enableLog(true)
+//                .licenseKey(LICENCE_KEY)
+//                .licenseUrl(LICENCE_URL)
+//                .build();
+//        TUIPlayerCore.init(getApplicationContext(), config);
         // copy superResolution resource
         String destPath = getCacheDir().getAbsolutePath() + "/sr_resource";
         File file = new File(destPath);
