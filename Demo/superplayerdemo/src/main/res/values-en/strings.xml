@@ -105,4 +105,13 @@
     <string name="super_player_vod_reset">Reset</string>
     <string name="super_player_vod_hard_first">Prefer hardware decoding (default)</string>
     <string name="super_player_vod_soft_first">Prefer software decoding</string>
+
+    <!-- High Quality Demo - Audio Vivid & HDR Vivid -->
+    <string name="high_quality_title">Audio Vivid &amp; HDR Vivid</string>
+    <string name="high_quality_video_source">Video Source:</string>
+    <string name="high_quality_audio_source">Audio Source:</string>
+    <string name="high_quality_reopen">Restart</string>
+    <string name="high_quality_fullscreen">Fullscreen</string>
+    <string name="high_quality_media_info_default">Now Playing: Waiting for playback...</string>
+    <string name="high_quality_next_video">Next</string>
 </resources>

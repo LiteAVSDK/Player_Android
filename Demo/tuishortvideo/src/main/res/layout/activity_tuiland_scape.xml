@@ -6,7 +6,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".demo.shortvideo.TUILandScapeActivity">
+    android:background="@drawable/tuiplayer_shortvideo_content_bg">
 
     <com.tencent.qcloud.tuiplayer.core.api.ui.view.TUIVideoRenderView
         android:id="@+id/txc_vv_landscape"

@@ -106,7 +106,7 @@ public class ShortVideoModel {
 
     private List<VideoModel> loadDashData() {
         VideoModel model = new VideoModel();
-        model.videoURL = "http://1500004424.vod2.myqcloud.com/4383a13evodtranscq1500004424/baff45348602268011141077324/adp.20.mpd";
+        model.videoURL = "https://dash.akamaized.net/akamai/bbb_30fps/bbb_30fps.mpd";
         model.playAction = PLAY_ACTION_PRELOAD;
         model.title = mContext.getString(R.string.superplayer_one_segment_multi_bitrate);
         List<VideoModel> dashData = new ArrayList<>();
@@ -120,7 +120,7 @@ public class ShortVideoModel {
 
 
         model = new VideoModel();
-        model.videoURL = "http://1500004424.vod2.myqcloud.com/4383a13evodtranscq1500004424/baff45348602268011141077324/adp.22.mpd";
+        model.videoURL = "https://storage.googleapis.com/wvmedia/clear/h264/tears/tears.mpd";
         model.title = mContext.getString(R.string.superplayer_multi_segment_multi_bitrate);
         model.playAction = PLAY_ACTION_PRELOAD;
         dashData.add(model);
@@ -132,7 +132,7 @@ public class ShortVideoModel {
         dashData.add(model);
 
         model = new VideoModel();
-        model.videoURL = "http://1500004424.vod2.myqcloud.com/4383a13evodtranscq1500004424/baff45348602268011141077324/adp.1163819.mpd";
+        model.videoURL = "https://storage.googleapis.com/wvmedia/clear/hevc/tears/tears.mpd";
         model.title = mContext.getString(R.string.superplayer_one_segment_one_bitrate);
         model.playAction = PLAY_ACTION_PRELOAD;
         dashData.add(model);
@@ -144,13 +144,13 @@ public class ShortVideoModel {
         dashData.add(model);
 
         model = new VideoModel();
-        model.videoURL = "http://1500004424.vod2.myqcloud.com/4383a13evodtranscq1500004424/baff45348602268011141077324/adp.1163820.mpd";
+        model.videoURL = "https://storage.googleapis.com/wvmedia/clear/hevc/tears/tears_uhd.mpd";
         model.title = mContext.getString(R.string.superplayer_multi_segment_one_bitrate);
         model.playAction = PLAY_ACTION_PRELOAD;
         dashData.add(model);
 
         model = new VideoModel();
-        model.videoURL = "https://bitmovin-a.akamaihd.net/content/MI201109210084_1/mpds/f08e80da-bf1d-4e3d-8899-f0f6155f6efa.mpd";
+        model.videoURL = "https://dash.akamaized.net/dash264/TestCasesIOP33/adapatationSetSwitching/5/manifest.mpd";
         model.title = mContext.getString(R.string.superplayer_number_based);
         model.playAction = PLAY_ACTION_PRELOAD;
         dashData.add(model);

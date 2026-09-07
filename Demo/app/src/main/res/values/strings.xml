@@ -114,7 +114,7 @@
     <string name="app_vod_player">点播播放器</string>
     <string name="app_rtc_player">超低延时播放</string>
     <string name="app_feed_player">Feed流播放</string>
-
+    <string name="app_high_quality_player">高品质播放</string>
     <string name="app_item_other_tools">其他工具</string>
     <string name="item_live_pusher_v1">直播推流 V1</string>
     <string name="item_live_pusher_video_v1">视频分享 V1</string>

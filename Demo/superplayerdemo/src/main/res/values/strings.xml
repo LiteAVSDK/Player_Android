@@ -104,4 +104,13 @@
     <string name="super_player_vod_reset">重置</string>
     <string name="super_player_vod_hard_first">优先硬解(默认)</string>
     <string name="super_player_vod_soft_first">优先软解</string>
+
+    <!-- 高品质内容Demo - Audio Vivid & HDR Vivid -->
+    <string name="high_quality_title">Audio Vivid &amp; HDR Vivid</string>
+    <string name="high_quality_video_source">视频源：</string>
+    <string name="high_quality_audio_source">音频源：</string>
+    <string name="high_quality_reopen">重新播放</string>
+    <string name="high_quality_fullscreen">全屏</string>
+    <string name="high_quality_media_info_default">当前播放：等待播放...</string>
+    <string name="high_quality_next_video">下一个</string>
 </resources>

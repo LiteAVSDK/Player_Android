@@ -178,7 +178,8 @@ public class ShortVideoFragment extends Fragment implements View.OnClickListener
         super.onPause();
         if (!mShortVideoView.isPlaying()) {
             isPausedBeforeBackground = true;
-        } else if (mNeedPause) {
+        }
+        if (mNeedPause) {
             mShortVideoView.pause();
         } else {
             mNeedPause = true;

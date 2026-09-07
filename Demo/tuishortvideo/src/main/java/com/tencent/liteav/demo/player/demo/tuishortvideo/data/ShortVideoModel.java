@@ -150,8 +150,7 @@ public class ShortVideoModel {
         List<VideoModel> tempList = new ArrayList<>();
         VideoModel model;
         model = new VideoModel();
-        model.videoURL = "http://1500004424.vod2.myqcloud" +
-                ".com/4383a13evodtranscq1500004424/baff45348602268011141077324/adp.20.mpd";
+        model.videoURL = "https://dash.akamaized.net/akamai/bbb_30fps/bbb_30fps.mpd";
         model.title = "单分片 && 多码率";
         tempList.add(model);
 
@@ -162,8 +161,7 @@ public class ShortVideoModel {
         tempList.add(model);
 
         model = new VideoModel();
-        model.videoURL = "http://1500004424.vod2.myqcloud" +
-                ".com/4383a13evodtranscq1500004424/baff45348602268011141077324/adp.22.mpd";
+        model.videoURL = "https://storage.googleapis.com/wvmedia/clear/h264/tears/tears.mpd";
         model.title = "多分片 && 多码率";
         tempList.add(model);
 
@@ -173,8 +171,7 @@ public class ShortVideoModel {
         tempList.add(model);
 
         model = new VideoModel();
-        model.videoURL = "http://1500004424.vod2.myqcloud" +
-                ".com/4383a13evodtranscq1500004424/baff45348602268011141077324/adp.1163819.mpd";
+        model.videoURL = "https://storage.googleapis.com/wvmedia/clear/hevc/tears/tears.mpd";
         model.title = "单分片 && 单码率";
         tempList.add(model);
 
@@ -184,14 +181,12 @@ public class ShortVideoModel {
         tempList.add(model);
 
         model = new VideoModel();
-        model.videoURL = "http://1500004424.vod2.myqcloud" +
-                ".com/4383a13evodtranscq1500004424/baff45348602268011141077324/adp.1163820.mpd";
+        model.videoURL = "https://storage.googleapis.com/wvmedia/clear/hevc/tears/tears_uhd.mpd";
         model.title = "多分片 && 单码率";
         tempList.add(model);
 
         model = new VideoModel();
-        model.videoURL = "https://bitmovin-a.akamaihd.net/content/MI201109210084_1/mpds/f08e80da-bf1d-4e3d-8899" +
-                "-f0f6155f6efa.mpd";
+        model.videoURL = "https://dash.akamaized.net/dash264/TestCasesIOP33/adapatationSetSwitching/5/manifest.mpd";
         model.title = "number-based";
         tempList.add(model);
 

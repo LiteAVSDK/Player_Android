@@ -22,9 +22,9 @@
         <activity
             android:name=".TUIShortVideoLiveActivity"
             android:configChanges="orientation|keyboardHidden|screenSize|smallestScreenSize|screenLayout"
-            android:exported="true"
+            android:exported="false"
             android:launchMode="singleTask"
-            android:theme="@style/TUITransBgUnPlugAnim"
+            android:theme="@style/Theme.AppCompat.Light.NoActionBar"
             android:windowSoftInputMode="stateHidden" />
     </application>
 </manifest>
